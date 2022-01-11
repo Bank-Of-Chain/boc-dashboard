@@ -1,0 +1,27 @@
+name: Release Pro
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        uses: borales/actions-yarn@master
+        with:
+          cmd: install
+      - name: Release
+        uses: borales/actions-yarn@master
+        with:
+          cmd: build
+      - name: Zip&Upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: admin
+          path: dist/
