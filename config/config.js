@@ -6,7 +6,9 @@ import proxy from './proxy';
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
   hash: true,
-  antd: {},
+  antd: {
+    dark: true
+  },
   dva: {
     hmr: true,
   },
@@ -33,19 +35,8 @@ export default defineConfig({
   // umi routes: https://umijs.org/docs/routing
   routes: [
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      icon: 'dashboard',
-      routes: [
-        {
-          path: '/dashboard',
-          redirect: '/dashboard/analysis',
-        },
-      ],
-    },
-    {
       path: '/',
-      redirect: '/dashboard/analysis',
+      component: './dashboard/analysis'
     },
     {
       component: '404',
