@@ -5,7 +5,7 @@ export default () => {
   const intl = useIntl();
   const defaultMessage = intl.formatMessage({
     id: 'app.copyright.produced',
-    defaultMessage: '蚂蚁集团体验技术部出品',
+    defaultMessage: 'BOC区块链团队',
   });
   const currentYear = new Date().getFullYear();
   return (
@@ -13,9 +13,9 @@ export default () => {
       copyright={`${currentYear} ${defaultMessage}`}
       links={[
         {
-          key: 'Ant Design Pro',
-          title: 'Ant Design Pro',
-          href: 'https://pro.ant.design',
+          key: 'BOC Dashboard',
+          title: 'BOC Dashboard',
+          href: 'https://bankofchain.io/dashboard',
           blankTarget: true,
         },
         {
@@ -25,9 +25,9 @@ export default () => {
           blankTarget: true,
         },
         {
-          key: 'Ant Design',
-          title: 'Ant Design',
-          href: 'https://ant.design',
+          key: 'BOC Vault',
+          title: 'BOC Vault',
+          href: 'https://bankofchain.io/',
           blankTarget: true,
         },
       ]}
