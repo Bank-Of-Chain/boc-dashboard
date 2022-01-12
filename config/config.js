@@ -3,10 +3,11 @@ import { defineConfig } from 'umi';
 import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-const { REACT_APP_ENV } = process.env;
+const { REACT_APP_ENV, NODE_ENV } = process.env;
+const isDev = NODE_ENV === 'development';
 export default defineConfig({
-  base: '/dashboard/',
-  publicPath: '/dashboard/',
+  base: isDev ? '/' : '/dashboard/',
+  publicPath: isDev ? '/' : '/dashboard/',
   hash: true,
   antd: {
     dark: true
