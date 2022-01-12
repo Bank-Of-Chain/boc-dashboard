@@ -42,6 +42,10 @@ export default defineConfig({
       component: './dashboard/analysis'
     },
     {
+      path: '/strategy/:id',
+      component: './dashboard/strategy'
+    },
+    {
       component: '404',
     },
   ],
