@@ -10,6 +10,10 @@ import ProportionSales from './components/ProportionSales'
 import { useRequest, useModel } from 'umi'
 import { fakeChartData } from './service'
 import PageLoading from './components/PageLoading'
+
+// === Utils === //
+import { filter } from 'lodash'
+// === Styles === //
 import styles from './style.less'
 
 const Analysis = () => {
@@ -40,21 +44,13 @@ const Analysis = () => {
             >
               <Line
                 forceFit
-                height={400}
-                data={data?.offlineChartData}
                 responsive
+                data={filter(data?.offlineChartData, { type: '支付笔数' })}
+                padding='auto'
                 xField='date'
                 yField='value'
-                seriesField='type'
-                interactions={[
-                  {
-                    type: 'slider',
-                    cfg: {},
-                  },
-                ]}
-                legend={{
-                  position: 'top-center',
-                }}
+                height={400}
+                smooth
               />
             </div>
           </Card>
@@ -67,7 +63,7 @@ const Analysis = () => {
         >
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Suspense fallback={null}>
-              <ProportionSales loading={loading} salesPieData={data?.salesTypeDataOnline || []} />
+              <ProportionSales loading={loading} visitData={dataSource?.vaultDetail} />
             </Suspense>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>

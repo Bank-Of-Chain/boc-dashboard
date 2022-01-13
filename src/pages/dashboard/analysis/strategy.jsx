@@ -12,6 +12,7 @@ import find from 'lodash/find'
 
 // === Styles === //
 import styles from './style.less'
+import { filter } from 'lodash'
 
 const Strategy = props => {
   const { id } = props?.match?.params
@@ -30,7 +31,7 @@ const Strategy = props => {
               <Image
                 preview={false}
                 width={300}
-                src='https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
+                src={`/images/${strategy?.protocol.id}.webp`}
               />
             </Col>
             <Col xl={10} lg={10} md={10} sm={10} xs={10}>
@@ -74,21 +75,13 @@ const Strategy = props => {
           >
             <Line
               forceFit
-              height={400}
-              data={data?.offlineChartData}
               responsive
+              data={filter(data?.offlineChartData, { type: '支付笔数' })}
+              padding='auto'
               xField='date'
               yField='value'
-              seriesField='type'
-              interactions={[
-                {
-                  type: 'slider',
-                  cfg: {},
-                },
-              ]}
-              legend={{
-                position: 'top-center',
-              }}
+              height={400}
+              smooth
             />
           </div>
         </Card>
