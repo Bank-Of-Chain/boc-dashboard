@@ -1,16 +1,12 @@
-import { Card, Radio, Typography } from 'antd';
+import { Card } from 'antd';
 import numeral from 'numeral';
 import { Donut } from '@ant-design/charts';
 import React from 'react';
 import styles from '../style.less';
-const { Text } = Typography;
 
 const ProportionSales = ({
-  dropdownGroup,
-  salesType,
   loading,
   salesPieData,
-  handleChangeSalesType,
 }) => (
   <Card
     loading={loading}
