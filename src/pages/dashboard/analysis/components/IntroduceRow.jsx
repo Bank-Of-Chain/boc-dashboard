@@ -22,14 +22,14 @@ const IntroduceRow = ({ loading, visitData }) => (
     <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title="总销售额"
+        title="TVL"
         action={
-          <Tooltip title="指标说明">
+          <Tooltip title="总锁仓量">
             <InfoCircleOutlined />
           </Tooltip>
         }
         loading={loading}
-        total={() => <Yuan>126560</Yuan>}
+        total={() => <Yuan>{visitData?.tvl?.usdtAmount}</Yuan>}
         footer={<Field label="日销售额" value={`￥${numeral(12423).format('0,0')}`} />}
         contentHeight={46}
       >
@@ -53,7 +53,7 @@ const IntroduceRow = ({ loading, visitData }) => (
       <ChartCard
         bordered={false}
         loading={loading}
-        title="访问量"
+        title="Holders"
         action={
           <Tooltip title="指标说明">
             <InfoCircleOutlined />
@@ -78,7 +78,7 @@ const IntroduceRow = ({ loading, visitData }) => (
       <ChartCard
         bordered={false}
         loading={loading}
-        title="支付笔数"
+        title="Share Price"
         action={
           <Tooltip title="指标说明">
             <InfoCircleOutlined />
@@ -95,7 +95,7 @@ const IntroduceRow = ({ loading, visitData }) => (
       <ChartCard
         loading={loading}
         bordered={false}
-        title="运营活动效果"
+        title="NIOF"
         action={
           <Tooltip title="指标说明">
             <InfoCircleOutlined />
