@@ -1,4 +1,8 @@
 import moment from 'moment';
+import {
+  Random
+} from 'mockjs';
+import map from 'lodash/map';
 // mock data
 const visitData = [];
 const beginDay = new Date().getTime();
@@ -42,8 +46,7 @@ for (let i = 0; i < 50; i += 1) {
   });
 }
 
-const salesTypeData = [
-  {
+const salesTypeData = [{
     x: '家用电器',
     y: 4544,
   },
@@ -68,8 +71,7 @@ const salesTypeData = [
     y: 1231,
   },
 ];
-const salesTypeDataOnline = [
-  {
+const salesTypeDataOnline = [{
     x: '家用电器',
     y: 244,
   },
@@ -94,8 +96,7 @@ const salesTypeDataOnline = [
     y: 111,
   },
 ];
-const salesTypeDataOffline = [
-  {
+const salesTypeDataOffline = [{
     x: '家用电器',
     y: 99,
   },
@@ -141,8 +142,7 @@ for (let i = 0; i < 20; i += 1) {
   });
 }
 
-const radarOriginData = [
-  {
+const radarOriginData = [{
     name: '个人',
     ref: 10,
     koubei: 8,
@@ -205,6 +205,146 @@ const fakeChartData = (_, res) => {
   });
 };
 
+/** */
+const fakeToken = () => {
+  return {
+    id: Random.guid(),
+    name: Random.word(5),
+    symbol: Random.word(5),
+    decimals: Random.pick([6, 18])
+  }
+}
+
+/** */
+const fakeTokenDetail = () => {
+  return {
+    id: Random.guid(),
+    token: fakeToken(),
+    amount: Random.natural(),
+    usdtAmount: Random.natural(),
+    usdtPrice: fakeUsdtPrice(),
+    usdtInUSD: Random.natural()
+  }
+}
+/** */
+const fakeVaultHourlyData = () => {
+  return {
+    id: Random.guid(),
+    pricePerShare: fakeTokenDetail(),
+    netInflowFunds: fakeTokenDetail()
+  }
+}
+/** */
+const fakeVaultDailyData = () => {
+  return {
+    id: Random.guid(),
+    newHolderCount: Random.natural(),
+    tvl: fakeTokenDetail(),
+    pricePerShare: fakeTokenDetail(),
+    // newHolders: map(Random.range(Random.natural(5, 20)), Random.guid),
+    totalProfit: fakeTokenDetail()
+  }
+}
+
+/** */
+const fakeStrategyReport = () => {
+  return {
+    id: Random.guid(),
+    strategy: fakeStrategy(),
+    profit: fakeTokenDetail(),
+    timestamp: Random.date('T')
+  }
+}
+
+/** */
+const fakeCalAPY = () => {
+  return {
+    id: Random.guid(),
+    strategy: fakeStrategy(),
+    assetsBefore: Random.natural(),
+    assetsDelta: Random.natural(),
+    timeDelta: Random.date('T'),
+    timestamp: Random.date('T')
+  }
+}
+/** */
+const fakeStrategy = () => {
+  return {
+    id: Random.guid(),
+    name: Random.word(10),
+    vault: fakeVault(),
+    protocol: fakeProtocol(),
+    addToVault: Random.boolean(),
+    minReportDelay: Random.natural(),
+    maxReportDelay: Random.natural(),
+    profitFactor: Random.natural(),
+    underlyingTokens: map(Random.range(Random.natural(5, 10)), fakeTokenDetail),
+    debt: fakeTokenDetail(),
+    depositedAssets: fakeTokenDetail(),
+    investedTargetAssets: fakeTokenDetail(),
+    reports: map(Random.range(Random.natural(5, 10)), fakeStrategyReport),
+    lastReportTime: Random.natural(),
+  }
+}
+
+/** */
+const fakeAccount = () => {
+  return {
+    id: Random.guid(),
+    depositedAssets: Random.natural(),
+    accumulatedProfit: Random.natural()
+  }
+}
+
+/** */
+const fakeUsdtPrice = () => {
+  return {
+    id: Random.guid(),
+    price: Random.natural(),
+  }
+}
+/** */
+const fakeVault = () => {
+  return {
+    id: Random.guid(),
+    decimals: Random.pick([6, 18]),
+    // strategies: map(Random.range(Random.natural(5, 20)), fakeStrategy),
+    profitFeePercent: 0,
+    emergencyShutdown: Random.boolean(),
+    adjustPosition: Random.boolean(),
+    pricePerShare: fakeTokenDetail(),
+    tvl: fakeTokenDetail(),
+    tokenDetails: map(Random.range(Random.natural(5, 20)), fakeTokenDetail),
+    holderCount: Random.natural(),
+    holders: map(Random.range(Random.natural(5, 20)), fakeAccount)
+  }
+};
+
+/** */
+const fakeProtocol = () => {
+  return {
+    id: Random.guid(),
+    totalDebt: fakeTokenDetail(),
+    strategies: map(Random.range(Random.natural(5, 20)), fakeStrategy)
+  }
+};
+
+
 export default {
   'GET  /api/fake_analysis_chart_data': fakeChartData,
+  'GET  /api/vault-1': (_, res) => res.json({
+    data: fakeVault(),
+  }),
+  'GET  /api/vault-2': (_, res) => res.json({
+    data: fakeVaultDailyData(),
+  }),
+  'GET  /api/vault-3': (_, res) => res.json({
+    data: fakeVaultHourlyData(),
+  }),
+  'GET  /api/protocol-3': (_, res) => res.json({
+    data: fakeProtocol(),
+  }),
+  'GET  /api/strategy-3': (_, res) => res.json({
+    data: fakeStrategy(),
+  }),
 };
