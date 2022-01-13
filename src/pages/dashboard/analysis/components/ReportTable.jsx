@@ -1,27 +1,34 @@
 import { Card, Table } from 'antd'
 import React from 'react'
+
+// === Utils === //
+import moment from 'moment'
+
+// === Styles === //
 import styles from '../style.less'
 const columns = [
   {
     title: 'Txn Hash',
-    dataIndex: 'count',
-    key: 'count',
+    dataIndex: 'id',
+    key: 'id',
+    render: text => <a>{text}</a>,
   },
   {
     title: 'Profit',
-    dataIndex: 'count',
-    key: 'count',
-    render: text => <a href='/'>{text}</a>,
+    dataIndex: 'id',
+    key: 'id',
+    render: (text, item) => <a>{item.profit.amount}</a>,
   },
   {
     title: 'Date',
-    dataIndex: 'count',
-    key: 'count',
+    dataIndex: 'timestamp',
+    key: 'timestamp',
     className: styles.alignRight,
+    render: text => moment(Number(text)).format('YYYY-MM-DD HH:mm'),
   },
 ]
 
-const ReportTable = ({ loading, visitData2, searchData, dropdownGroup }) => (
+const ReportTable = ({ loading, visitData, dropdownGroup }) => (
   <Card
     loading={loading}
     bordered={false}
@@ -33,15 +40,15 @@ const ReportTable = ({ loading, visitData2, searchData, dropdownGroup }) => (
     }}
   >
     <Table
-      rowKey={record => record.index}
+      rowKey={record => record.id}
       size='small'
       columns={columns}
-      dataSource={searchData}
+      dataSource={visitData}
       pagination={{
         style: {
           marginBottom: 0,
         },
-        pageSize: 5,
+        pageSize: 10,
       }}
     />
   </Card>

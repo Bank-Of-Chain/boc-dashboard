@@ -1,63 +1,26 @@
-import { Suspense, useState } from 'react'
-import { EllipsisOutlined } from '@ant-design/icons'
-import { Col, Dropdown, Menu, Row, Card, Image, Descriptions } from 'antd'
+import { Suspense } from 'react'
+import { Col, Row, Card, Image, Descriptions } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
-import TransationsTable from './components/TransationsTable'
 import ReportTable from './components/ReportTable'
-import ApyData from './components/ApyData'
+import { Line } from '@ant-design/charts'
 import { useRequest, useModel, history } from 'umi'
 import { fakeChartData } from './service'
-import { getTimeDistance } from './utils/utils'
 import { LeftOutlined } from '@ant-design/icons'
+
+// === Utils === //
+import find from 'lodash/find'
+
+// === Styles === //
 import styles from './style.less'
 
-const Strategy = () => {
-  const [salesType, setSalesType] = useState('all')
-  const [currentTabKey, setCurrentTabKey] = useState('')
-  const [rangePickerValue, setRangePickerValue] = useState(getTimeDistance('year'))
+const Strategy = props => {
+  const { id } = props?.match?.params
   const { data } = useRequest(fakeChartData)
 
   const { dataSource, reload, loading } = useModel('useDashboardData')
-  console.log('dataSource=', dataSource)
-
-  const isActive = type => {
-    if (!rangePickerValue) {
-      return ''
-    }
-
-    const value = getTimeDistance(type)
-
-    if (!value) {
-      return ''
-    }
-
-    if (!rangePickerValue[0] || !rangePickerValue[1]) {
-      return ''
-    }
-
-    if (
-      rangePickerValue[0].isSame(value[0], 'day') &&
-      rangePickerValue[1].isSame(value[1], 'day')
-    ) {
-      return styles.currentDate
-    }
-
-    return ''
-  }
-
-  let salesPieData
-
-  if (salesType === 'all') {
-    salesPieData = data?.salesTypeData
-  } else {
-    salesPieData = salesType === 'online' ? data?.salesTypeDataOnline : data?.salesTypeDataOffline
-  }
-
-  const handleTabChange = key => {
-    setCurrentTabKey(key)
-  }
-
-  const activeKey = currentTabKey || (data?.offlineData[0] && data?.offlineData[0].name) || ''
+  const { vaultDetail } = dataSource
+  //TODO:  默认选中第一个
+  const strategy = find(vaultDetail.strategies, { id }) || vaultDetail.strategies[0]
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -95,27 +58,43 @@ const Strategy = () => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <ApyData
-          activeKey={activeKey}
+        <Card
           loading={loading}
-          offlineData={data?.offlineData || []}
-          offlineChartData={data?.offlineChartData || []}
-          handleTabChange={handleTabChange}
-        />
+          title='Apy'
+          className={styles.offlineCard}
+          bordered={false}
+          style={{
+            marginTop: 32,
+          }}
+        >
+          <div
+            style={{
+              padding: '0 24px',
+            }}
+          >
+            <Line
+              forceFit
+              height={400}
+              data={data?.offlineChartData}
+              responsive
+              xField='date'
+              yField='value'
+              seriesField='type'
+              interactions={[
+                {
+                  type: 'slider',
+                  cfg: {},
+                },
+              ]}
+              legend={{
+                position: 'top-center',
+              }}
+            />
+          </div>
+        </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <ReportTable
-          loading={loading}
-          visitData2={data?.visitData2 || []}
-          searchData={data?.searchData || []}
-        />
-      </Suspense>
-      <Suspense fallback={null}>
-        <TransationsTable
-          loading={loading}
-          visitData2={data?.visitData2 || []}
-          searchData={data?.searchData || []}
-        />
+        <ReportTable loading={loading} visitData={strategy.reports || []} />
       </Suspense>
     </GridContent>
   )

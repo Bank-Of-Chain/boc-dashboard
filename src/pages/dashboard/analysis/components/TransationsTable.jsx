@@ -1,38 +1,48 @@
 import { Card, Table } from 'antd'
 import React from 'react'
-import Trend from './Trend'
+
+// === Styles === //
 import styles from '../style.less'
+
+// === Utils === //
+import moment from 'moment'
+
 const columns = [
   {
     title: 'Txn Hash',
-    dataIndex: 'index',
-    key: 'index',
+    dataIndex: 'id',
+    key: 'id',
+    render: text => <a>{text}</a>,
   },
   {
     title: 'Method',
-    dataIndex: 'keyword',
-    key: 'keyword',
+    dataIndex: 'method',
+    key: 'method',
+    render: text => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
   },
   {
     title: 'Account',
-    dataIndex: 'count',
-    key: 'count',
+    dataIndex: 'address',
+    key: 'address',
     className: styles.alignRight,
+    render: text => <a>{text}</a>,
   },
   {
     title: 'From',
-    dataIndex: 'range',
-    key: 'range',
+    dataIndex: 'from',
+    key: 'from',
+    render: text => <a>{text}</a>,
   },
   {
     title: 'Date',
-    dataIndex: 'count',
-    key: 'count',
+    dataIndex: 'timestamp',
+    key: 'timestamp',
     className: styles.alignRight,
+    render: text => moment(Number(text)).format('YYYY-MM-DD HH:mm'),
   },
 ]
 
-const TransationsTable = ({ loading, visitData2, searchData, dropdownGroup }) => (
+const TransationsTable = ({ loading, visitData, dropdownGroup }) => (
   <Card
     loading={loading}
     bordered={false}
@@ -44,15 +54,15 @@ const TransationsTable = ({ loading, visitData2, searchData, dropdownGroup }) =>
     }}
   >
     <Table
-      rowKey={record => record.index}
+      rowKey={record => record.id}
       size='small'
       columns={columns}
-      dataSource={searchData}
+      dataSource={visitData}
       pagination={{
         style: {
           marginBottom: 0,
         },
-        pageSize: 5,
+        pageSize: 10,
       }}
     />
   </Card>

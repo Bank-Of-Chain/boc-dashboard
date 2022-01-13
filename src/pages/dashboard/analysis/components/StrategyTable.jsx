@@ -1,80 +1,61 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Table, Tooltip } from 'antd';
-import { TinyArea } from '@ant-design/charts';
-import React from 'react';
-import numeral from 'numeral';
-import NumberInfo from './NumberInfo';
-import Trend from './Trend';
-import styles from '../style.less';
-import { history } from 'umi';
+import { Card, Table, Image } from 'antd'
+import React from 'react'
+import styles from '../style.less'
+import { history } from 'umi'
+import { map } from 'lodash'
+
+// === Components === //
+import CoinSuperPosition from './CoinSuperPosition/index'
+
 const columns = [
   {
     title: 'Name',
-    dataIndex: 'count',
-    key: 'count',
+    dataIndex: 'name',
+    key: 'name',
+    render: (text, item) => (
+      <div>
+        <Image
+          preview={false}
+          width={30}
+          src={`./images/${item.protocol.id}.webp`}
+          placeholder={item.protocol.id}
+          alt={item.protocol.id}
+        />
+        <a>{text}</a>
+      </div>
+    ),
   },
   {
     title: 'Wants',
-    dataIndex: 'count',
-    key: 'count',
-    render: (text) => <a href="/">{text}</a>,
+    dataIndex: 'id',
+    key: 'id',
+    render: (text, item) => <CoinSuperPosition array={map(item.underlyingTokens, 'id')} />,
   },
   {
     title: 'Deposited',
-    dataIndex: 'count',
-    key: 'count',
-    sorter: (a, b) => a.count - b.count,
+    dataIndex: 'id',
+    key: 'id',
     className: styles.alignRight,
+    render: (text, item) => <a>{item?.depositedAssets?.amount}</a>,
   },
   {
     title: 'Profit(week)',
-    dataIndex: 'range',
-    key: 'range',
-    sorter: (a, b) => a.range - b.range,
-    render: (text, record) => (
-      <Trend flag={record.status === 1 ? 'down' : 'up'}>
-        <span
-          style={{
-            marginRight: 4,
-          }}
-        >
-          {text}%
-        </span>
-      </Trend>
-    ),
-  },
-  {
-    title: 'Last Report Time',
-    dataIndex: 'count',
-    key: 'count',
-    sorter: (a, b) => a.count - b.count,
-    className: styles.alignRight,
+    dataIndex: 'profitFactor',
+    key: 'profitFactor',
   },
   {
     title: '',
-    dataIndex: 'range',
-    key: 'range',
-    sorter: (a, b) => a.range - b.range,
-    render: (text, record) => (
-      <Trend flag={record.status === 1 ? 'down' : 'up'}>
-        <span
-          style={{
-            marginRight: 4,
-          }}
-          onClick={() => history.push(`/strategy/${record.index}`)}
-        >
-          Details
-        </span>
-      </Trend>
-    ),
+    dataIndex: 'id',
+    key: 'id',
+    render: (text, record) => <a onClick={() => history.push(`/strategy/${record.id}`)}>Details</a>,
   },
-];
+]
 
-const StrategyTable = ({ loading, visitData2, searchData, dropdownGroup }) => (
+const StrategyTable = ({ loading, searchData, dropdownGroup }) => (
   <Card
     loading={loading}
     bordered={false}
-    title="Strategies"
+    title='Strategies'
     extra={dropdownGroup}
     style={{
       height: '100%',
@@ -82,18 +63,18 @@ const StrategyTable = ({ loading, visitData2, searchData, dropdownGroup }) => (
     }}
   >
     <Table
-      rowKey={(record) => record.index}
-      size="small"
+      rowKey={record => record.id}
+      size='small'
       columns={columns}
       dataSource={searchData}
       pagination={{
         style: {
           marginBottom: 0,
         },
-        pageSize: 5,
+        pageSize: 100,
       }}
     />
   </Card>
-);
+)
 
-export default StrategyTable;
+export default StrategyTable
