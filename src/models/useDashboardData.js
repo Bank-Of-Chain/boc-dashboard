@@ -7,14 +7,16 @@ import {
   getVaultDailyData,
   getVaultHourlyData,
   getProtocols,
-  getStrategyById
+  getStrategyById,
+  getTransations
 } from '@/services/dashboard-service';
 
 const dataMerge = () => {
-  return Promise.all([getVaultDetails()]).then((rs) => {
-    const [vaultDetail] = rs
+  return Promise.all([getVaultDetails(), getTransations()]).then((rs) => {
+    const [vaultDetail, transations] = rs
     const nextData = {
-      vaultDetail: vaultDetail.data
+      vaultDetail: vaultDetail.data,
+      transations: transations.data
     }
     return {
       data: nextData

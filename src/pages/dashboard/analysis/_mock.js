@@ -218,7 +218,7 @@ const fakeToken = () => {
 /** */
 const fakeTokenDetail = () => {
   return {
-    id: Random.guid(),
+    id: Random.pick(['0xdAC17F958D2ee523a2206206994597C13D831ec7', '0x55d398326f99059fF775485246999027B3197955', '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', '0x8E870D67F660D95d5be530380D0eC0bd388289E1', '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3']),
     token: fakeToken(),
     amount: Random.natural(),
     usdtAmount: Random.natural(),
@@ -250,7 +250,7 @@ const fakeVaultDailyData = () => {
 const fakeStrategyReport = () => {
   return {
     id: Random.guid(),
-    strategy: fakeStrategy(),
+    // strategy: fakeStrategy(),
     profit: fakeTokenDetail(),
     timestamp: Random.date('T')
   }
@@ -272,13 +272,13 @@ const fakeStrategy = () => {
   return {
     id: Random.guid(),
     name: Random.word(10),
-    vault: fakeVault(),
+    // vault: fakeVault(),
     protocol: fakeProtocol(),
     addToVault: Random.boolean(),
     minReportDelay: Random.natural(),
     maxReportDelay: Random.natural(),
     profitFactor: Random.natural(),
-    underlyingTokens: map(Random.range(Random.natural(5, 10)), fakeTokenDetail),
+    underlyingTokens: map(Random.range(Random.natural(1, 4)), fakeTokenDetail),
     debt: fakeTokenDetail(),
     depositedAssets: fakeTokenDetail(),
     investedTargetAssets: fakeTokenDetail(),
@@ -308,7 +308,7 @@ const fakeVault = () => {
   return {
     id: Random.guid(),
     decimals: Random.pick([6, 18]),
-    // strategies: map(Random.range(Random.natural(5, 20)), fakeStrategy),
+    strategies: map(Random.range(Random.natural(5, 20)), fakeStrategy),
     profitFeePercent: 0,
     emergencyShutdown: Random.boolean(),
     adjustPosition: Random.boolean(),
@@ -323,11 +323,23 @@ const fakeVault = () => {
 /** */
 const fakeProtocol = () => {
   return {
-    id: Random.guid(),
+    id: Random.pick(['dodo', 'convex', 'uniswap', 'uniswapv3']),
     totalDebt: fakeTokenDetail(),
-    strategies: map(Random.range(Random.natural(5, 20)), fakeStrategy)
+    // strategies: map(Random.range(Random.natural(5, 20)), fakeStrategy)
   }
 };
+
+const fakeImportantTxn = () => {
+  return {
+    id: Random.guid(),
+    method: Random.pick(['Deposit', 'Withdraw']),
+    address: Random.guid(),
+    tokenDetails: map(Random.range(Random.natural(5, 20)), fakeTokenDetail),
+    totalValueInUSD: Random.natural(),
+    from: Random.guid(),
+    timestamp: Random.date('T')
+  }
+}
 
 
 export default {
@@ -346,5 +358,8 @@ export default {
   }),
   'GET  /api/strategy-3': (_, res) => res.json({
     data: fakeStrategy(),
+  }),
+  'GET  /api/txn-1': (_, res) => res.json({
+    data: map(Random.range(Random.natural(5, 30)), fakeImportantTxn),
   }),
 };

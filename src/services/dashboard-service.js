@@ -51,3 +51,9 @@ export const getStrategyById = async () => {
   const url = '/api/strategy-3';
   return await request(url);
 }
+
+export const getTransations = async () => {
+  // TODO: 待实现
+  const url = '/api/txn-1';
+  return await request(url);
+}
