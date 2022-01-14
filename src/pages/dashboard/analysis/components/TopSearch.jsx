@@ -16,15 +16,15 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     render: text => (
-      <div>
+      <div className={styles.tableCell}>
         <Image
-          preview={false}
           width={30}
+          preview={false}
           src={`./images/${text}.webp`}
           placeholder={text}
           alt={text}
         />
-        <a>{text}</a>
+        <a className={styles.text}>{text}</a>
       </div>
     ),
   },

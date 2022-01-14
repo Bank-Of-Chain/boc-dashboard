@@ -13,7 +13,7 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     render: (text, item) => (
-      <div>
+      <div className={styles.tableCell}>
         <Image
           preview={false}
           width={30}
@@ -21,22 +21,21 @@ const columns = [
           placeholder={item.protocol.id}
           alt={item.protocol.id}
         />
-        <a>{text}</a>
+        <a className={styles.text}>{text}</a>
       </div>
     ),
   },
   {
     title: 'Wants',
-    dataIndex: 'id',
-    key: 'id',
-    render: (text, item) => <CoinSuperPosition array={map(item.underlyingTokens, 'id')} />,
+    dataIndex: 'underlyingTokens',
+    key: 'underlyingTokens',
+    render: text => <CoinSuperPosition array={map(text, 'id')} />,
   },
   {
     title: 'Deposited',
-    dataIndex: 'id',
-    key: 'id',
-    className: styles.alignRight,
-    render: (text, item) => <a>{item?.depositedAssets?.amount}</a>,
+    dataIndex: ['depositedAssets', 'amount'],
+    key: 'deposit',
+    render: text => <a>{text}</a>,
   },
   {
     title: 'Profit(week)',
@@ -47,7 +46,7 @@ const columns = [
     title: '',
     dataIndex: 'id',
     key: 'id',
-    render: (text, record) => <a onClick={() => history.push(`/strategy/${record.id}`)}>Details</a>,
+    render: text => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
   },
 ]
 

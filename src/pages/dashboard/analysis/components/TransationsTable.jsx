@@ -24,7 +24,6 @@ const columns = [
     title: 'Account',
     dataIndex: 'address',
     key: 'address',
-    className: styles.alignRight,
     render: text => <a>{text}</a>,
   },
   {
@@ -37,7 +36,6 @@ const columns = [
     title: 'Date',
     dataIndex: 'timestamp',
     key: 'timestamp',
-    className: styles.alignRight,
     render: text => moment(Number(text)).fromNow(),
   },
 ]

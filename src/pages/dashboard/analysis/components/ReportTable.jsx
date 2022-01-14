@@ -32,7 +32,6 @@ const columns = [
     title: 'Date',
     dataIndex: 'timestamp',
     key: 'timestamp',
-    className: styles.alignRight,
     render: text => moment(Number(text)).fromNow(),
   },
 ]
