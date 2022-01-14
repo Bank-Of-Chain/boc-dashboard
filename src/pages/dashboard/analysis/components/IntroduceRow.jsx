@@ -14,6 +14,37 @@ const topColResponsiveProps = {
   xl: 8,
 }
 
+const visitData2 = [
+  {
+    x: '2022-01-13',
+    y: 1,
+  },
+  {
+    x: '2022-01-14',
+    y: 6,
+  },
+  {
+    x: '2022-01-15',
+    y: 4,
+  },
+  {
+    x: '2022-01-16',
+    y: 8,
+  },
+  {
+    x: '2022-01-17',
+    y: 3,
+  },
+  {
+    x: '2022-01-18',
+    y: 7,
+  },
+  {
+    x: '2022-01-19',
+    y: 2,
+  },
+]
+
 const IntroduceRow = ({ loading, visitData }) => (
   <Row gutter={24}>
     <Col {...topColResponsiveProps}>
@@ -27,8 +58,8 @@ const IntroduceRow = ({ loading, visitData }) => (
         }
         loading={loading}
         total={() => <Dollar>{visitData?.tvl?.amount}</Dollar>}
-        footer={<Field label='日销售额' value={`￥${numeral(123123123).format('0,0')}`} />}
-        contentHeight={46}
+        footer={<Field label='今日新增' value={<Dollar>{visitData?.tvl?.amount}</Dollar>} />}
+        contentHeight={100}
       >
         <Trend
           flag='up'
@@ -58,16 +89,16 @@ const IntroduceRow = ({ loading, visitData }) => (
         }
         total={numeral(visitData?.holders?.length).format('0,0')}
         footer={<Field label='当日新增' value={numeral(1234).format('0,0')} />}
-        contentHeight={46}
+        contentHeight={100}
       >
         <TinyArea
           color='#975FE4'
           xField='x'
-          height={46}
+          height={100}
           forceFit
           yField='y'
           smooth
-          data={visitData}
+          data={visitData2}
         />
       </ChartCard>
     </Col>
@@ -83,9 +114,9 @@ const IntroduceRow = ({ loading, visitData }) => (
         }
         total={numeral(visitData?.pricePerShare?.amount).format('0,0')}
         footer={<Field label='转化率' value='60%' />}
-        contentHeight={46}
+        contentHeight={100}
       >
-        <TinyColumn xField='x' height={46} forceFit yField='y' data={visitData} />
+        <TinyColumn xField='x' height={100} forceFit yField='y' data={visitData2} />
       </ChartCard>
     </Col>
   </Row>

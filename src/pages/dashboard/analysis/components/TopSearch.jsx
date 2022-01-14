@@ -37,12 +37,40 @@ const columns = [
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
-    className: styles.alignRight,
   },
 ]
 
 const TopSearch = ({ loading, visitData, dropdownGroup }) => {
-  const visitData2 = []
+  const visitData2 = [
+    {
+      x: '2022-01-13',
+      y: 1,
+    },
+    {
+      x: '2022-01-14',
+      y: 6,
+    },
+    {
+      x: '2022-01-15',
+      y: 4,
+    },
+    {
+      x: '2022-01-16',
+      y: 8,
+    },
+    {
+      x: '2022-01-17',
+      y: 3,
+    },
+    {
+      x: '2022-01-18',
+      y: 7,
+    },
+    {
+      x: '2022-01-19',
+      y: 2,
+    },
+  ]
   const { strategies } = visitData
   const total = sumBy(strategies, 'debt.amount')
 
@@ -50,7 +78,7 @@ const TopSearch = ({ loading, visitData, dropdownGroup }) => {
   const tableData = values(
     mapValues(groupData, (o, key) => {
       const amount = sumBy(o, 'debt.amount')
-      return { name: key, amount, percent: `${(100 * amount) / total}%` }
+      return { name: key, amount, percent: `${((100 * amount) / total).toFixed(2)}%` }
     }),
   )
   return (

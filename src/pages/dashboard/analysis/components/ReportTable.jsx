@@ -14,17 +14,26 @@ const columns = [
     render: text => <a>{text}</a>,
   },
   {
+    title: 'Amount',
+    dataIndex: ['profit', 'amount'],
+    key: 'amount',
+  },
+  {
     title: 'Profit',
-    dataIndex: 'id',
-    key: 'id',
-    render: (text, item) => <a>{item.profit.amount}</a>,
+    dataIndex: ['profit', 'usdtAmount'],
+    key: 'profit',
+  },
+  {
+    title: 'Price',
+    dataIndex: ['profit', 'usdtPrice', 'price'],
+    key: 'price',
   },
   {
     title: 'Date',
     dataIndex: 'timestamp',
     key: 'timestamp',
     className: styles.alignRight,
-    render: text => moment(Number(text)).format('YYYY-MM-DD HH:mm'),
+    render: text => moment(Number(text)).fromNow(),
   },
 ]
 

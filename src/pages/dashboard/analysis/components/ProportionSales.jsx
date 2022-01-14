@@ -17,7 +17,6 @@ const ProportionSales = ({ loading, visitData }) => {
       return { name: key, amount }
     }),
   )
-  console.log('tableData=', tableData)
   return (
     <Card
       loading={loading}

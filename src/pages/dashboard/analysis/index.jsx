@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
-import { Col, Row, Card } from 'antd'
+import { Suspense, useState } from 'react'
+import { Col, Row, Card, Button } from 'antd'
 import { Line } from '@ant-design/charts'
 import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
@@ -12,15 +12,18 @@ import { fakeChartData } from './service'
 import PageLoading from './components/PageLoading'
 
 // === Utils === //
-import { filter } from 'lodash'
+import { filter, map } from 'lodash'
 // === Styles === //
 import styles from './style.less'
 
+const buttons = ['1D', '1W', '1M', '1Y']
+
 const Analysis = () => {
+  const [currentTab, setCurrentTab] = useState(buttons[0])
   const { data } = useRequest(fakeChartData)
 
   const { dataSource, reload, loading } = useModel('useDashboardData')
-
+  console.log('dataSource=', dataSource, data)
   return (
     <GridContent>
       <>
@@ -33,6 +36,17 @@ const Analysis = () => {
             title='TVL'
             className={styles.offlineCard}
             bordered={false}
+            extra={map(buttons, b => (
+              <Button
+                key={b}
+                ghost
+                style={{ marginLeft: 10 }}
+                type={currentTab === b ? 'primary' : ''}
+                onClick={() => setCurrentTab(b)}
+              >
+                {b}
+              </Button>
+            ))}
             style={{
               marginTop: 32,
             }}
