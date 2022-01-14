@@ -8,10 +8,10 @@ import Dollar from '../utils/Dollar'
 import styles from '../style.less'
 const topColResponsiveProps = {
   xs: 24,
-  sm: 8,
-  md: 8,
-  lg: 8,
-  xl: 8,
+  sm: 12,
+  md: 12,
+  lg: 12,
+  xl: 12,
 }
 
 const visitData2 = [
@@ -89,31 +89,6 @@ const IntroduceRow = ({ loading, visitData }) => (
         }
         total={numeral(visitData?.holders?.length).format('0,0')}
         footer={<Field label='当日新增' value={numeral(1234).format('0,0')} />}
-        contentHeight={100}
-      >
-        <TinyArea
-          color='#975FE4'
-          xField='x'
-          height={100}
-          forceFit
-          yField='y'
-          smooth
-          data={visitData2}
-        />
-      </ChartCard>
-    </Col>
-    <Col {...topColResponsiveProps}>
-      <ChartCard
-        bordered={false}
-        loading={loading}
-        title='Share Price'
-        action={
-          <Tooltip title='指标说明'>
-            <InfoCircleOutlined />
-          </Tooltip>
-        }
-        total={numeral(visitData?.pricePerShare?.amount).format('0,0')}
-        footer={<Field label='转化率' value='60%' />}
         contentHeight={100}
       >
         <TinyColumn xField='x' height={100} forceFit yField='y' data={visitData2} />

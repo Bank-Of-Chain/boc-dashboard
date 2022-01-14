@@ -69,6 +69,46 @@ const Analysis = () => {
             </div>
           </Card>
         </Suspense>
+        <Suspense fallback={null}>
+          <Card
+            loading={loading}
+            title='Share Price'
+            className={styles.offlineCard}
+            bordered={false}
+            extra={map(buttons, b => (
+              <Button
+                key={b}
+                ghost
+                style={{ marginLeft: 10 }}
+                type={currentTab === b ? 'primary' : ''}
+                onClick={() => setCurrentTab(b)}
+              >
+                {b}
+              </Button>
+            ))}
+            style={{
+              marginTop: 32,
+            }}
+          >
+            <div
+              style={{
+                padding: '0 24px',
+              }}
+            >
+              <Line
+                forceFit
+                responsive
+                color={['#2ca02c']}
+                data={filter(data?.offlineChartData, { type: '支付笔数' })}
+                padding='auto'
+                xField='date'
+                yField='value'
+                height={400}
+                smooth
+              />
+            </div>
+          </Card>
+        </Suspense>
         <Row
           gutter={24}
           style={{
