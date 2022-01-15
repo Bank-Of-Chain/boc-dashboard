@@ -22,3 +22,38 @@ export const fetchData = async () => {
     method: 'post'
   });
 }
+export const getVaultDetails = async () => {
+  // TODO: 待实现
+  const url = '/api/vault-1';
+  return await request(url);
+}
+
+export const getVaultDailyData = async () => {
+  // TODO: 待实现
+  const url = '/api/vault-2';
+  return await request(url);
+}
+
+export const getVaultHourlyData = async () => {
+  // TODO: 待实现
+  const url = '/api/vault-3';
+  return await request(url);
+}
+
+export const getProtocols = async () => {
+  // TODO: 待实现
+  const url = '/api/protocol-3';
+  return await request(url);
+}
+
+export const getStrategyById = async () => {
+  // TODO: 待实现
+  const url = '/api/strategy-3';
+  return await request(url);
+}
+
+export const getTransations = async () => {
+  // TODO: 待实现
+  const url = '/api/txn-1';
+  return await request(url);
+}
