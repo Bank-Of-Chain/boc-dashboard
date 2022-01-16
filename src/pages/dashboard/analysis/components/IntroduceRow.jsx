@@ -1,18 +1,18 @@
-import { InfoCircleOutlined } from '@ant-design/icons'
-import { TinyArea, TinyColumn, Progress } from '@ant-design/charts'
-import { Col, Row, Tooltip } from 'antd'
-import numeral from 'numeral'
-import { ChartCard, Field } from './Charts'
-import Trend from './Trend'
-import Dollar from '../utils/Dollar'
-import styles from '../style.less'
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { TinyArea, TinyColumn, Progress } from '@ant-design/charts';
+import { Col, Row, Tooltip } from 'antd';
+import numeral from 'numeral';
+import { ChartCard, Field } from './Charts';
+import Trend from './Trend';
+import Dollar from '../utils/Dollar';
+import styles from '../style.less';
 const topColResponsiveProps = {
   xs: 24,
   sm: 12,
   md: 12,
   lg: 12,
   xl: 12,
-}
+};
 
 const visitData2 = [
   {
@@ -43,26 +43,28 @@ const visitData2 = [
     x: '2022-01-19',
     y: 2,
   },
-]
+];
 
 const IntroduceRow = ({ loading, visitData }) => (
   <Row gutter={24}>
     <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title='TVL'
+        title="TVL"
         action={
-          <Tooltip title='总锁仓量'>
+          <Tooltip title="总锁仓量">
             <InfoCircleOutlined />
           </Tooltip>
         }
         loading={loading}
-        total={() => <Dollar>{visitData?.tvl?.amount}</Dollar>}
-        footer={<Field label='今日新增' value={<Dollar>{visitData?.tvl?.amount}</Dollar>} />}
+        total={() => <Dollar>{visitData?.vaultDetail?.tvl?.usdtInUSD}</Dollar>}
+        footer={
+          <Field label="今日新增" value={<Dollar>{visitData?.vaultDetail?.tvl?.amount}</Dollar>} />
+        }
         contentHeight={100}
       >
         <Trend
-          flag='up'
+          flag="up"
           style={{
             marginRight: 16,
           }}
@@ -70,7 +72,7 @@ const IntroduceRow = ({ loading, visitData }) => (
           周同比
           <span className={styles.trendText}>12%</span>
         </Trend>
-        <Trend flag='down'>
+        <Trend flag="down">
           日同比
           <span className={styles.trendText}>11%</span>
         </Trend>
@@ -81,19 +83,24 @@ const IntroduceRow = ({ loading, visitData }) => (
       <ChartCard
         bordered={false}
         loading={loading}
-        title='Holders'
+        title="Holders"
         action={
-          <Tooltip title='指标说明'>
+          <Tooltip title="持仓人数">
             <InfoCircleOutlined />
           </Tooltip>
         }
-        total={numeral(visitData?.holders?.length).format('0,0')}
-        footer={<Field label='当日新增' value={numeral(1234).format('0,0')} />}
+        total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
+        footer={
+          <Field
+            label="当日新增"
+            value={numeral(visitData?.vaultTodayData?.newHolderCount).format('0,0')}
+          />
+        }
         contentHeight={100}
       >
-        <TinyColumn xField='x' height={100} forceFit yField='y' data={visitData2} />
+        <TinyColumn xField="x" height={100} forceFit yField="y" data={visitData2} />
       </ChartCard>
     </Col>
   </Row>
-)
-export default IntroduceRow
+);
+export default IntroduceRow;

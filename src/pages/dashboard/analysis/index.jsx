@@ -1,42 +1,42 @@
-import { Suspense, useState } from 'react'
-import { Col, Row, Card, Button } from 'antd'
-import { Line } from '@ant-design/charts'
-import { GridContent } from '@ant-design/pro-layout'
-import IntroduceRow from './components/IntroduceRow'
-import StrategyTable from './components/StrategyTable'
-import TransationsTable from './components/TransationsTable'
-import TopSearch from './components/TopSearch'
-import ProportionSales from './components/ProportionSales'
-import { useRequest, useModel } from 'umi'
-import { fakeChartData } from './service'
-import PageLoading from './components/PageLoading'
+import { Suspense, useState } from 'react';
+import { Col, Row, Card, Button } from 'antd';
+import { Line } from '@ant-design/charts';
+import { GridContent } from '@ant-design/pro-layout';
+import IntroduceRow from './components/IntroduceRow';
+import StrategyTable from './components/StrategyTable';
+import TransationsTable from './components/TransationsTable';
+import TopSearch from './components/TopSearch';
+import ProportionSales from './components/ProportionSales';
+import { useRequest, useModel } from 'umi';
+import { fakeChartData } from './service';
+import PageLoading from './components/PageLoading';
 
 // === Utils === //
-import { filter, map } from 'lodash'
+import { filter, map } from 'lodash';
 // === Styles === //
-import styles from './style.less'
+import styles from './style.less';
 
-const buttons = ['1D', '1W', '1M', '1Y']
+const buttons = ['1D', '1W', '1M', '1Y'];
 
 const Analysis = () => {
-  const [currentTab, setCurrentTab] = useState(buttons[0])
-  const { data } = useRequest(fakeChartData)
+  const [currentTab, setCurrentTab] = useState(buttons[0]);
+  const { data } = useRequest(fakeChartData);
 
-  const { dataSource, reload, loading } = useModel('useDashboardData')
-  console.log('dataSource=', dataSource, data)
+  const { dataSource, reload, loading } = useModel('useDashboardData');
+  console.log('dataSource=', dataSource, data);
   return (
     <GridContent>
       <>
         <Suspense fallback={<PageLoading />}>
-          <IntroduceRow loading={loading} visitData={dataSource?.vaultDetail} />
+          <IntroduceRow loading={loading} visitData={dataSource} />
         </Suspense>
         <Suspense fallback={null}>
           <Card
             loading={loading}
-            title='TVL'
+            title="TVL"
             className={styles.offlineCard}
             bordered={false}
-            extra={map(buttons, b => (
+            extra={map(buttons, (b) => (
               <Button
                 key={b}
                 ghost
@@ -60,9 +60,9 @@ const Analysis = () => {
                 forceFit
                 responsive
                 data={filter(data?.offlineChartData, { type: '支付笔数' })}
-                padding='auto'
-                xField='date'
-                yField='value'
+                padding="auto"
+                xField="date"
+                yField="value"
                 height={400}
                 smooth
               />
@@ -72,10 +72,10 @@ const Analysis = () => {
         <Suspense fallback={null}>
           <Card
             loading={loading}
-            title='Share Price'
+            title="Share Price"
             className={styles.offlineCard}
             bordered={false}
-            extra={map(buttons, b => (
+            extra={map(buttons, (b) => (
               <Button
                 key={b}
                 ghost
@@ -100,9 +100,9 @@ const Analysis = () => {
                 responsive
                 color={['#2ca02c']}
                 data={filter(data?.offlineChartData, { type: '支付笔数' })}
-                padding='auto'
-                xField='date'
-                yField='value'
+                padding="auto"
+                xField="date"
+                yField="value"
                 height={400}
                 smooth
               />
@@ -134,7 +134,7 @@ const Analysis = () => {
         </Suspense>
       </>
     </GridContent>
-  )
-}
+  );
+};
 
-export default Analysis
+export default Analysis;

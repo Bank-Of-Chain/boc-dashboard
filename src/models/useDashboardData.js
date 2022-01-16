@@ -1,6 +1,4 @@
-import {
-  useRequest
-} from 'umi';
+import { useRequest } from 'umi';
 import {
   fetchData,
   getVaultDetails,
@@ -8,21 +6,23 @@ import {
   getVaultHourlyData,
   getProtocols,
   getStrategyById,
-  getTransations
+  getTransations,
+  getVaultTodayData,
 } from '@/services/dashboard-service';
 
 const dataMerge = () => {
-  return Promise.all([getVaultDetails(), getTransations()]).then((rs) => {
-    const [vaultDetail, transations] = rs
+  return Promise.all([getVaultDetails(), getTransations(), getVaultTodayData()]).then((rs) => {
+    const [vaultDetail, transations, vaultTodayData] = rs;
     const nextData = {
       vaultDetail: vaultDetail.data,
-      transations: transations.data
-    }
+      transations: transations.data,
+      vaultTodayData: vaultTodayData.data,
+    };
     return {
-      data: nextData
-    }
-  })
-}
+      data: nextData,
+    };
+  });
+};
 
 export default function useDashboardData() {
   const msg = useRequest(() => dataMerge());
