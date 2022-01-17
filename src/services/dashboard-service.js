@@ -161,10 +161,41 @@ export const getProtocols = async () => {
   return await request(url);
 };
 
-export const getStrategyById = async () => {
-  // TODO: 待实现
-  const url = '/api/strategy-3';
-  return await request(url);
+const STRATEGY_DETAIL_QUERY = `
+query($strategyAddress: Bytes) {
+  strategy(id: $strategyAddress) {
+    id
+    name
+    protocol {
+      id
+    }
+    underlyingTokens {
+      token {
+        id
+        symbol
+      }
+    }
+    addToVault
+    debt
+    depositedAssets
+    usdtPrice
+    reports {
+      id
+      profit
+      usdtPrice
+      timestamp
+    }
+    lastReportTime
+  }
+}
+`;
+export const getStrategyById = async (strategyAddress) => {
+  return await client.query({
+    query: gql(STRATEGY_DETAIL_QUERY),
+    variables: {
+      strategyAddress,
+    },
+  });
 };
 
 const TXN_QUERY = `
