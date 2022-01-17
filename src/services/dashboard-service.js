@@ -32,8 +32,14 @@ export const fetchData = async () => {
   });
 };
 
+function getDaysAgoTimestamp(daysAgo) {
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const daysAgoTimestamp = currentTimestamp - daysAgo * 86400;
+  return daysAgoTimestamp - (daysAgoTimestamp % 86400);
+}
+
 const VAULT_DETAIL_QUERY = `
-query {
+query($sevenDaysAgoTimestamp: BigInt) {
   vaults(first: 1) {
     id
     decimals
@@ -61,33 +67,31 @@ query {
       debt
       depositedAssets
       usdtPrice
+      reports(where: {
+        timestamp_gt: $sevenDaysAgoTimestamp
+      }) {
+        profit
+        usdtPrice
+      }
     }
   }
 }
 `;
 export const getVaultDetails = async () => {
-  try {
-    const {
-      data
-    } = await client.query({
-      query: gql(VAULT_DETAIL_QUERY),
-    });
-    return {
-      data: data.vaults[0],
-    };
-  } catch (e) {
-    console.error('getVaultDetails error', e)
-    return {
-      data: {
-        strategies: []
-      }
-    }
-  }
+  const { data } = await client.query({
+    query: gql(VAULT_DETAIL_QUERY),
+    variables: {
+      sevenDaysAgoTimestamp: getDaysAgoTimestamp(7),
+    },
+  });
+  return {
+    data: data.vaults[0],
+  };
 };
 
 const VAULT_DAILY_QERY = `
-query($beginDayTimestamp: Int) {
-  vaultDailyDatas (where: {
+query($beginDayTimestamp: BigInt) {
+  vaultDailylyDatas (where: {
     id_gt: $beginDayTimestamp
   }) {
     id
@@ -100,18 +104,16 @@ query($beginDayTimestamp: Int) {
 }
 `;
 export const getVaultDailyData = async (day) => {
-  const currentTimestamp = Date.parse(new Date());
-  const beginDayTimestamp = Math.floor((currentTimestamp / 1000 - day * 86400) / 86400);
   return await client.query({
     query: gql(VAULT_DAILY_QERY),
     variables: {
-      beginDayTimestamp,
+      beginDayTimestamp: getDaysAgoTimestamp(day),
     },
   }).then(resp => get(resp, 'data.vaultDailyDatas'));
 };
 
 const VAULT_TODAY_QUERY = `
-query($todayTimestamp: Int) {
+query($todayTimestamp: BigInt) {
   vaultDailyData (id: $todayTimestamp) {
     id
     newHolderCount
@@ -123,30 +125,21 @@ query($todayTimestamp: Int) {
 }
 `;
 export const getVaultTodayData = async () => {
-  try {
-    const currentTimestamp = Date.parse(new Date());
-    const todayTimestamp = Math.floor(currentTimestamp / 1000 / 86400);
-    const {
-      data
-    } = await client.query({
-      query: gql(VAULT_TODAY_QUERY),
-      variables: {
-        todayTimestamp,
-      },
-    });
-    return {
-      data: data.vaultDailyData,
-    };
-  } catch (error) {
-    console.error('getVaultTodayData Error=', error)
-    return {
-      data: {}
-    }
-  }
+  const currentTimestamp = Math.floor(Date.parse(new Date()) / 1000);
+  const todayTimestamp = currentTimestamp - (currentTimestamp % 86400);
+  const { data } = await client.query({
+    query: gql(VAULT_TODAY_QUERY),
+    variables: {
+      todayTimestamp,
+    },
+  });
+  return {
+    data: data.vaultDailyData,
+  };
 };
 
 const vaultHourlyData = `
-query($beginHourTimestamp: Int) {
+query($beginHourTimestamp: BigInt) {
   vaultHourlyDatas (where: {
     id_gt: $beginHourTimestamp
   }) {
@@ -158,12 +151,10 @@ query($beginHourTimestamp: Int) {
 }
 `;
 export const getVaultHourlyData = async (day) => {
-  const currentTimestamp = Date.parse(new Date());
-  const beginHourTimestamp = Math.floor((currentTimestamp / 1000 - day * 24 * 3600) / 3600);
   return await client.query({
     query: gql(vaultHourlyData),
     variables: {
-      beginHourTimestamp,
+      beginHourTimestamp: getDaysAgoTimestamp(day),
     },
   }).then(resp => get(resp, 'data.vaultHourlyDatas'));
 };
