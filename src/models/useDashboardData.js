@@ -13,11 +13,10 @@ import {
 } from '@/services/dashboard-service';
 
 const dataMerge = () => {
-  return Promise.all([getVaultDetails(), getTransations(), getVaultTodayData()]).then((rs) => {
-    const [vaultDetail = {}, transations = {}, vaultTodayData = {}] = rs;
+  return Promise.all([getVaultDetails(), getVaultTodayData()]).then((rs) => {
+    const [vaultDetail = {}, vaultTodayData = {}] = rs;
     const nextData = {
       vaultDetail: vaultDetail?.data,
-      transations: transations?.data,
       vaultTodayData: vaultTodayData?.data,
     };
     return {
