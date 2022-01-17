@@ -17,7 +17,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
   const groupData = groupBy(strategies, 'protocol.id')
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      const amount = sumBy(o, 'debt')
+      const amount = sumBy(o, o => Number(o.debt))
       return { name: MATIC_STRATEGIES_MAP[key], amount }
     }),
   );

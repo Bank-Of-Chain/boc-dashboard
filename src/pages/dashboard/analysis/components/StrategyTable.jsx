@@ -2,7 +2,7 @@ import { Card, Table, Image } from 'antd'
 import React from 'react'
 import styles from '../style.less'
 import { history } from 'umi'
-import { map } from 'lodash'
+import { map, sumBy } from 'lodash'
 
 // === Constants === //
 import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
@@ -44,8 +44,9 @@ const columns = [
   },
   {
     title: 'Profit(week)',
-    dataIndex: 'profitFactor',
-    key: 'profitFactor',
+    dataIndex: 'reports',
+    key: 'reports',
+    render: value => `${sumBy(value, o => BigInt(o.profit))}`,
   },
   {
     title: '',

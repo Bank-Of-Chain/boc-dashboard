@@ -12,7 +12,11 @@ const columns = [
     title: 'Txn Hash',
     dataIndex: 'id',
     key: 'id',
-    render: text => <a>{text}</a>,
+    width: 300,
+    ellipsis: {
+      showTitle: false,
+    },
+    render: text => <a title={text}>{text}</a>,
   },
   {
     title: 'Method',
@@ -24,19 +28,27 @@ const columns = [
     title: 'Account',
     dataIndex: 'address',
     key: 'address',
-    render: text => <a>{text}</a>,
+    width: 300,
+    ellipsis: {
+      showTitle: false,
+    },
+    render: text => <a title={text}>{text}</a>,
   },
   {
     title: 'From',
     dataIndex: 'from',
     key: 'from',
-    render: text => <a>{text}</a>,
+    width: 200,
+    ellipsis: {
+      showTitle: false,
+    },
+    render: text => <a title={text}>{text}</a>,
   },
   {
     title: 'Date',
     dataIndex: 'timestamp',
     key: 'timestamp',
-    render: text => moment(Number(text)).fromNow(),
+    render: text => moment(1000 * text).fromNow(),
   },
 ]
 

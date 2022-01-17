@@ -95,7 +95,7 @@ const IntroduceRow = ({ loading, visitData }) => (
             value={numeral(visitData?.vaultTodayData?.newHolderCount).format('0,0')}
           />
         }
-        contentHeight={100}
+        contentHeight={70}
       >
         <TinyColumn xField="x" height={100} forceFit yField="y" data={visitData2} />
       </ChartCard>

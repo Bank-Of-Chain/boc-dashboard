@@ -41,40 +41,12 @@ const columns = [
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
+    render: text => `${text}`,
   },
 ]
 
 const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
-  const visitData2 = [
-    {
-      x: '2022-01-13',
-      y: 1,
-    },
-    {
-      x: '2022-01-14',
-      y: 6,
-    },
-    {
-      x: '2022-01-15',
-      y: 4,
-    },
-    {
-      x: '2022-01-16',
-      y: 8,
-    },
-    {
-      x: '2022-01-17',
-      y: 3,
-    },
-    {
-      x: '2022-01-18',
-      y: 7,
-    },
-    {
-      x: '2022-01-19',
-      y: 2,
-    },
-  ]
+  const visitData2 = []
   const { strategies = [] } = visitData
   const total = sumBy(strategies, o => BigInt(o.debt))
 
@@ -122,8 +94,8 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
             }
             gap={8}
             total={12.33}
-            status='up'
-            subTotal={17.1}
+            // status='up'
+            // subTotal={17.1}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
         </Col>
@@ -148,8 +120,8 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             total={15.6}
-            status='down'
-            subTotal={26.2}
+            // status='down'
+            // subTotal={26.2}
             gap={8}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
@@ -175,8 +147,8 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             total={12.7}
-            status='down'
-            subTotal={26.2}
+            // status='down'
+            // subTotal={26.2}
             gap={8}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
