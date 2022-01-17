@@ -5,6 +5,9 @@ import React from 'react'
 import NumberInfo from './NumberInfo'
 import styles from '../style.less'
 
+// === Constants === //
+import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
+
 // === Utils === //
 import groupBy from 'lodash/groupBy'
 import sumBy from 'lodash/sumBy'
@@ -23,6 +26,7 @@ const columns = [
           src={`./images/${text}.webp`}
           placeholder={text}
           alt={text}
+          fallback={'./images/default.webp'}
         />
         <a className={styles.text}>{text}</a>
       </div>
@@ -40,7 +44,7 @@ const columns = [
   },
 ]
 
-const TopSearch = ({ loading, visitData, dropdownGroup }) => {
+const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
   const visitData2 = [
     {
       x: '2022-01-13',
@@ -71,14 +75,18 @@ const TopSearch = ({ loading, visitData, dropdownGroup }) => {
       y: 2,
     },
   ]
-  const { strategies } = visitData
-  const total = sumBy(strategies, 'debt.amount')
+  const { strategies = [] } = visitData
+  const total = sumBy(strategies, o => BigInt(o.debt))
 
   const groupData = groupBy(strategies, 'protocol.id')
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      const amount = sumBy(o, 'debt.amount')
-      return { name: key, amount, percent: `${((100 * amount) / total).toFixed(2)}%` }
+      const amount = sumBy(o, o => BigInt(o.debt))
+      return {
+        name: MATIC_STRATEGIES_MAP[key],
+        amount,
+        percent: `${(100n * amount) / total}%`,
+      }
     }),
   )
   return (

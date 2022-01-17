@@ -4,6 +4,9 @@ import styles from '../style.less'
 import { history } from 'umi'
 import { map } from 'lodash'
 
+// === Constants === //
+import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
+
 // === Components === //
 import CoinSuperPosition from './CoinSuperPosition/index'
 
@@ -12,14 +15,16 @@ const columns = [
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
+    width: 350,
     render: (text, item) => (
       <div className={styles.tableCell}>
         <Image
           preview={false}
           width={30}
-          src={`./images/${item.protocol.id}.webp`}
+          src={`./images/${MATIC_STRATEGIES_MAP[item.protocol.id]}.webp`}
           placeholder={item.protocol.id}
-          alt={item.protocol.id}
+          alt={MATIC_STRATEGIES_MAP[item.protocol.id]}
+          fallback={'./images/default.webp'}
         />
         <a className={styles.text}>{text}</a>
       </div>
@@ -29,12 +34,12 @@ const columns = [
     title: 'Wants',
     dataIndex: 'underlyingTokens',
     key: 'underlyingTokens',
-    render: text => <CoinSuperPosition array={map(text, 'id')} />,
+    render: text => <CoinSuperPosition array={map(text, 'token.id')} />,
   },
   {
     title: 'Deposited',
-    dataIndex: ['depositedAssets', 'amount'],
-    key: 'deposit',
+    dataIndex: 'depositedAssets',
+    key: 'depositedAssets',
     render: text => <a>{text}</a>,
   },
   {

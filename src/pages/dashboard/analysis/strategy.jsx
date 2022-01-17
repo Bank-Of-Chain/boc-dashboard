@@ -24,8 +24,7 @@ const Strategy = props => {
   const { dataSource, reload, loading } = useModel('useDashboardData')
   console.log('dataSource=', dataSource)
   const { vaultDetail } = dataSource
-  //TODO:  默认选中第一个
-  const strategy = find(vaultDetail.strategies, { id }) || vaultDetail.strategies[0]
+  const strategy = find(vaultDetail.strategies, { id })
 
   const { underlyingTokens, depositedAssets } = strategy
   return (

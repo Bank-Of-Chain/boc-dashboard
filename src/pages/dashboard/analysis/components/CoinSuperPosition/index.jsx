@@ -36,10 +36,17 @@ const addressMap = {
   '0x0000000000085d4780B73119b644AE5ecd22b376': TUSD_IMAGE,
   '0x14016E85a25aeb13065688cAFB43044C2ef86784': TUSD_IMAGE,
 }
+const DEFAULT = './images/default.webp';
 
 const CoinSuperPosition = ({ array, size = 24 }) => {
   const imageRender = (address, i) => (
-    <Image preview={false} key={`${address + i}`} width={size} src={addressMap[address]} />
+    <Image
+      preview={false}
+      key={`${address + i}`}
+      width={size}
+      src={addressMap[address] || DEFAULT}
+      fallback={DEFAULT}
+    />
   )
 
   if (isString(array)) {

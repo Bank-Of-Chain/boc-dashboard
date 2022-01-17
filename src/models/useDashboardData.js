@@ -1,4 +1,6 @@
-import { useRequest } from 'umi';
+import {
+  useRequest
+} from 'umi';
 import {
   fetchData,
   getVaultDetails,
@@ -12,15 +14,17 @@ import {
 
 const dataMerge = () => {
   return Promise.all([getVaultDetails(), getTransations(), getVaultTodayData()]).then((rs) => {
-    const [vaultDetail, transations, vaultTodayData] = rs;
+    const [vaultDetail = {}, transations = {}, vaultTodayData = {}] = rs;
     const nextData = {
-      vaultDetail: vaultDetail.data,
-      transations: transations.data,
-      vaultTodayData: vaultTodayData.data,
+      vaultDetail: vaultDetail?.data,
+      transations: transations?.data,
+      vaultTodayData: vaultTodayData?.data,
     };
     return {
       data: nextData,
     };
+  }).catch(error => {
+    console.error('DashBoard数据初始化失败', error)
   });
 };
 
