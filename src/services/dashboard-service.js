@@ -34,10 +34,7 @@ query {
     tvl
     usdtPrice
     holderCount
-    strategies(where: {
-      debt_gt: 0
-      addToVault: true
-    }) {
+    strategies(where: {debt_gt: 0, addToVault: true}) {
       id
       name
       protocol {
@@ -46,8 +43,10 @@ query {
         usdtPrice
       }
       underlyingTokens {
-        id
-        name
+        token {
+          id
+          symbol
+        }
       }
       addToVault
       debt
