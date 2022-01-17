@@ -28,40 +28,31 @@ query {
   vaults(first: 1) {
     id
     decimals
-    profitFeePercent
     emergencyShutdown
     adjustPosition
-    pricePerShare {
-      usdtInUSD
-    }
-    tvl {
-      usdtInUSD
-    }
+    pricePerShare
+    tvl
+    usdtPrice
     holderCount
-    strategies {
+    strategies(where: {
+      debt_gt: 0
+      addToVault: true
+    }) {
       id
       name
       protocol {
         id
-        totalDebt {
-          usdtInUSD
-        }
+        totalDebt
+        usdtPrice
+      }
+      underlyingTokens {
+        id
+        name
       }
       addToVault
-      debt {
-        usdtInUSD
-      }
-      reports {
-        id
-        strategy {
-          id
-        }
-        profit {
-          usdtInUSD
-        }
-        timestamp
-      }
-      lastReportTime
+      debt
+      depositedAssets
+      usdtPrice
     }
   }
 }
@@ -81,12 +72,11 @@ query($beginDayTimestamp: Int) {
     id_gt: $beginDayTimestamp
   }) {
     id
-    tvl {
-      usdtInUSD
-    }
-    pricePerShare {
-      usdtInUSD
-    }
+    newHolderCount
+    tvl
+    pricePerShare
+    totalProfit
+    usdtPrice
   }
 }
 `;
@@ -106,15 +96,10 @@ query($todayTimestamp: Int) {
   vaultDailyData (id: $todayTimestamp) {
     id
     newHolderCount
-    tvl {
-      usdtInUSD
-    }
-    pricePerShare {
-      usdtInUSD
-    }
-    totalProfit {
-      usdtInUSD
-    }
+    tvl
+    pricePerShare
+    totalProfit
+    usdtPrice
   }
 }
 `;
@@ -138,12 +123,9 @@ query($beginHourTimestamp: Int) {
     id_gt: $beginHourTimestamp
   }) {
     id
-    tvl {
-      usdtInUSD
-    }
-    pricePerShare {
-      usdtInUSD
-    }
+    tvl
+    pricePerShare
+    usdtPrice
   }
 }
 `;

@@ -57,10 +57,9 @@ const IntroduceRow = ({ loading, visitData }) => (
           </Tooltip>
         }
         loading={loading}
-        total={() => <Dollar>{visitData?.vaultDetail?.tvl?.usdtInUSD}</Dollar>}
-        footer={
-          <Field label="今日新增" value={<Dollar>{visitData?.vaultDetail?.tvl?.amount}</Dollar>} />
-        }
+        total={() => (
+          <Dollar>{visitData?.vaultDetail?.tvl * visitData?.vaultDetail?.usdtPrice}</Dollar>
+        )}
         contentHeight={100}
       >
         <Trend
