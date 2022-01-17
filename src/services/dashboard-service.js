@@ -1,7 +1,7 @@
 import { client } from '../../src/apollo/client';
 import { gql } from '@apollo/client';
 import { request } from 'umi';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 export const fetchData = async () => {
   const postBody = {
     query: `{
@@ -183,10 +183,11 @@ query($relatedContractAddress: Bytes) {
 }
 `;
 export const getTransations = async (relatedContractAddress) => {
+  if(isEmpty(relatedContractAddress)) return
   return await client.query({
     query: gql(TXN_QUERY),
     variables: {
       relatedContractAddress,
     },
-  });
+  }).then(data => data.data.importantEvents);
 };
