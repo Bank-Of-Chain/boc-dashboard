@@ -83,10 +83,11 @@ export const getVaultDetails = async () => {
 
 const VAULT_DAILY_QERY = `
 query($beginDayTimestamp: BigInt) {
-  vaultDailylyDatas (where: {
+  vaultDailyDatas (where: {
     id_gt: $beginDayTimestamp
   }) {
     id
+    holderCount
     newHolderCount
     tvl
     pricePerShare
@@ -96,6 +97,7 @@ query($beginDayTimestamp: BigInt) {
 }
 `;
 export const getVaultDailyData = async (day) => {
+  if(isEmpty(day)) return
   return await client
     .query({
       query: gql(VAULT_DAILY_QERY),
@@ -195,7 +197,7 @@ export const getStrategyById = async (strategyAddress) => {
     variables: {
       strategyAddress,
     },
-  });
+  }).then(data => data.data.strategy);
 };
 
 const TXN_QUERY = `

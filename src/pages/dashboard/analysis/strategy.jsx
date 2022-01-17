@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Col, Row, Card, Image, Descriptions } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import ReportTable from './components/ReportTable'
@@ -16,19 +16,24 @@ import CoinSuperPosition from './components/CoinSuperPosition/index'
 // === Utils === //
 import find from 'lodash/find'
 
+// === Services === //
+import { getStrategyById } from './../../../services/dashboard-service'
+
 // === Styles === //
 import styles from './style.less'
-import { filter, map } from 'lodash'
+import { filter, isEmpty, map } from 'lodash'
+import { useState } from 'react'
 
 const Strategy = props => {
   const { id } = props?.match?.params
-  const { data } = useRequest(fakeChartData)
+  const loading = false
+  const [strategy, setStrategy] = useState({})
+  console.log('strategy=', strategy);
+  useEffect(() => {
+    getStrategyById(id).then(setStrategy)
+  }, [id])
 
-  const { dataSource, reload, loading } = useModel('useDashboardData')
-  console.log('dataSource=', dataSource)
-  const { vaultDetail } = dataSource
-  const strategy = find(vaultDetail.strategies, { id })
-
+  if (isEmpty(strategy)) return null
   const { underlyingTokens, depositedAssets } = strategy
   return (
     <GridContent>
@@ -36,7 +41,12 @@ const Strategy = props => {
         <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false}>
           <Row justify='space-around'>
             <Col xl={8} lg={8} md={8} sm={8} xs={8}>
-              <Image preview={false} width={300} src={`/images/${MATIC_STRATEGIES_MAP[strategy?.protocol.id]}.webp`} fallback={'/images/default.webp'} />
+              <Image
+                preview={false}
+                width={300}
+                src={`/images/${MATIC_STRATEGIES_MAP[strategy?.protocol.id]}.webp`}
+                fallback={'/images/default.webp'}
+              />
             </Col>
             <Col xl={10} lg={10} md={10} sm={10} xs={10}>
               <Descriptions
@@ -74,7 +84,7 @@ const Strategy = props => {
             <Line
               forceFit
               responsive
-              data={filter(data?.offlineChartData, { type: '支付笔数' })}
+              data={[]}
               padding='auto'
               xField='date'
               yField='value'

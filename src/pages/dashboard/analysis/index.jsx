@@ -12,10 +12,14 @@ import { fakeChartData } from './service'
 import PageLoading from './components/PageLoading'
 
 // === Services === //
-import { getVaultDailyData, getVaultHourlyData } from './../../../services/dashboard-service'
+import {
+  getVaultDailyData,
+  getVaultHourlyData,
+  getTransations,
+} from './../../../services/dashboard-service'
 
 // === Utils === //
-import { filter, map } from 'lodash'
+import { filter, map, isEmpty } from 'lodash'
 // === Styles === //
 import styles from './style.less'
 import moment from 'moment'
@@ -27,21 +31,22 @@ const Analysis = () => {
   const [currentTab4sp, setCurrentTab2] = useState(buttons[0])
   const [tvlArray, setTvlArray] = useState([])
   const [spArray, setSpArray] = useState([])
-
-  const { data } = useRequest(fakeChartData)
+  const [transations, setTransations] = useState([])
 
   const { dataSource, reload, loading } = useModel('useDashboardData')
-  console.log('dataSource=', dataSource, tvlArray, spArray)
+
+  const vaultAddress = dataSource?.vaultDetail?.id
+
+  console.log('dataSource=', dataSource, transations)
 
   useEffect(() => {
     if (currentTab4tvl === buttons[0]) {
       getVaultHourlyData(10)
-        .then(array => {
-          console.log('array', array)
-          return map(array, item => {
+        .then(array =>
+          map(array, item => {
             return { date: moment(3600 * item.id).format('HH:mm'), value: item.tvl }
-          })
-        })
+          }),
+        )
         .then(setTvlArray) //6400
     }
     // else if (currentTab4tvl === buttons[1]) {
@@ -72,16 +77,23 @@ const Analysis = () => {
     // getVaultDailyData(24).then(aa => console.log('aa=', aa)) //86400
   }, [currentTab4tvl])
 
-  // useEffect(() => {
-  //   getVaultHourlyData(1)
-  //     .then(array => {
-  //       console.log('array=', array)
-  //       return map(array, item => {
-  //         return { date: moment(3600 * item.id).format('HH:mm'), value: item.tvl }
-  //       })
-  //     })
-  //     .then(setSpArray) //6400
-  // }, [currentTab4sp])
+  useEffect(() => {
+    if (isEmpty(vaultAddress)) return
+    getTransations(vaultAddress).then(setTransations)
+  }, [vaultAddress])
+
+  useEffect(() => {
+    getVaultHourlyData(5)
+      .then(array =>
+        map(array, item => {
+          return {
+            date: moment(3600 * item.id).format('yyyy-MM-DD HH:mm'),
+            value: item.pricePerShare,
+          }
+        }),
+      )
+      .then(setSpArray) //6400
+  }, [currentTab4sp])
 
   return (
     <GridContent>
@@ -157,7 +169,7 @@ const Analysis = () => {
               forceFit
               responsive
               color={['#2ca02c']}
-              data={filter(data?.offlineChartData, { type: '支付笔数' })}
+              data={spArray}
               padding='auto'
               xField='date'
               yField='value'
@@ -188,7 +200,7 @@ const Analysis = () => {
         <StrategyTable loading={loading} searchData={dataSource?.vaultDetail?.strategies || []} />
       </Suspense>
       <Suspense fallback={null}>
-        <TransationsTable loading={loading} visitData={dataSource?.transations || []} />
+        <TransationsTable loading={loading} visitData={transations} />
       </Suspense>
     </GridContent>
   )
