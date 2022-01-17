@@ -1,15 +1,7 @@
-import {
-  client
-} from '../../src/apollo/client';
-import {
-  gql
-} from '@apollo/client';
-import {
-  request
-} from 'umi';
-import {
-  get
-} from 'lodash';
+import { client } from '../../src/apollo/client';
+import { gql } from '@apollo/client';
+import { request } from 'umi';
+import { get } from 'lodash';
 export const fetchData = async () => {
   const postBody = {
     query: `{
@@ -104,12 +96,14 @@ query($beginDayTimestamp: BigInt) {
 }
 `;
 export const getVaultDailyData = async (day) => {
-  return await client.query({
-    query: gql(VAULT_DAILY_QERY),
-    variables: {
-      beginDayTimestamp: getDaysAgoTimestamp(day),
-    },
-  }).then(resp => get(resp, 'data.vaultDailyDatas'));
+  return await client
+    .query({
+      query: gql(VAULT_DAILY_QERY),
+      variables: {
+        beginDayTimestamp: getDaysAgoTimestamp(day),
+      },
+    })
+    .then((resp) => get(resp, 'data.vaultDailyDatas'));
 };
 
 const VAULT_TODAY_QUERY = `
@@ -151,12 +145,14 @@ query($beginHourTimestamp: BigInt) {
 }
 `;
 export const getVaultHourlyData = async (day) => {
-  return await client.query({
-    query: gql(vaultHourlyData),
-    variables: {
-      beginHourTimestamp: getDaysAgoTimestamp(day),
-    },
-  }).then(resp => get(resp, 'data.vaultHourlyDatas'));
+  return await client
+    .query({
+      query: gql(vaultHourlyData),
+      variables: {
+        beginHourTimestamp: getDaysAgoTimestamp(day),
+      },
+    })
+    .then((resp) => get(resp, 'data.vaultHourlyDatas'));
 };
 
 export const getProtocols = async () => {
@@ -171,8 +167,26 @@ export const getStrategyById = async () => {
   return await request(url);
 };
 
-export const getTransations = async () => {
-  // TODO: 待实现
-  const url = '/api/txn-1';
-  return await request(url);
+const TXN_QUERY = `
+query($relatedContractAddress: Bytes) {
+  importantEvents(where: {address: $relatedContractAddress}) {
+    id
+    method
+    from
+    address
+    shares
+    tokenDetails {
+      usdtInUSD
+    }
+    timestamp
+  }
+}
+`;
+export const getTransations = async (relatedContractAddress) => {
+  return await client.query({
+    query: gql(TXN_QUERY),
+    variables: {
+      relatedContractAddress,
+    },
+  });
 };
