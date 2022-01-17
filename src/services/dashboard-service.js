@@ -1,6 +1,15 @@
-import { client } from '../../src/apollo/client';
-import { gql } from '@apollo/client';
-import { request } from 'umi';
+import {
+  client
+} from '../../src/apollo/client';
+import {
+  gql
+} from '@apollo/client';
+import {
+  request
+} from 'umi';
+import {
+  get
+} from 'lodash';
 export const fetchData = async () => {
   const postBody = {
     query: `{
@@ -57,17 +66,28 @@ query {
 }
 `;
 export const getVaultDetails = async () => {
-  const { data } = await client.query({
-    query: gql(VAULT_DETAIL_QUERY),
-  });
-  return {
-    data: data.vaults[0],
-  };
+  try {
+    const {
+      data
+    } = await client.query({
+      query: gql(VAULT_DETAIL_QUERY),
+    });
+    return {
+      data: data.vaults[0],
+    };
+  } catch (e) {
+    console.error('getVaultDetails error', e)
+    return {
+      data: {
+        strategies: []
+      }
+    }
+  }
 };
 
 const VAULT_DAILY_QERY = `
 query($beginDayTimestamp: Int) {
-  vaultHourlyDatas (where: {
+  vaultDailyDatas (where: {
     id_gt: $beginDayTimestamp
   }) {
     id
@@ -87,7 +107,7 @@ export const getVaultDailyData = async (day) => {
     variables: {
       beginDayTimestamp,
     },
-  });
+  }).then(resp => get(resp, 'data.vaultDailyDatas'));
 };
 
 const VAULT_TODAY_QUERY = `
@@ -103,17 +123,26 @@ query($todayTimestamp: Int) {
 }
 `;
 export const getVaultTodayData = async () => {
-  const currentTimestamp = Date.parse(new Date());
-  const todayTimestamp = Math.floor(currentTimestamp / 1000 / 86400);
-  const { data } = await client.query({
-    query: gql(VAULT_TODAY_QUERY),
-    variables: {
-      todayTimestamp,
-    },
-  });
-  return {
-    data: data.vaultDailyData,
-  };
+  try {
+    const currentTimestamp = Date.parse(new Date());
+    const todayTimestamp = Math.floor(currentTimestamp / 1000 / 86400);
+    const {
+      data
+    } = await client.query({
+      query: gql(VAULT_TODAY_QUERY),
+      variables: {
+        todayTimestamp,
+      },
+    });
+    return {
+      data: data.vaultDailyData,
+    };
+  } catch (error) {
+    console.error('getVaultTodayData Error=', error)
+    return {
+      data: {}
+    }
+  }
 };
 
 const vaultHourlyData = `
@@ -136,7 +165,7 @@ export const getVaultHourlyData = async (day) => {
     variables: {
       beginHourTimestamp,
     },
-  });
+  }).then(resp => get(resp, 'data.vaultHourlyDatas'));
 };
 
 export const getProtocols = async () => {

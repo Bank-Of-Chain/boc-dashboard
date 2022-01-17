@@ -5,18 +5,20 @@ import React from 'react';
 
 // === Utils === //
 import { sumBy, mapValues, groupBy, values } from 'lodash';
+
+// === Constants === //
+import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies';
+
 // === Styles === //
 import styles from '../style.less';
 
-const ProportionSales = ({ loading, visitData }) => {
-  const { strategies } = visitData;
-  const groupData = groupBy(strategies, 'protocol.id');
+const ProportionSales = ({ loading, visitData = {} }) => {
+  const { strategies = [] } = visitData
+  const groupData = groupBy(strategies, 'protocol.id')
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      console.log('o is ', o);
-      console.log('key is ', key);
-      const amount = sumBy(o, 'debt');
-      return { name: key, amount };
+      const amount = sumBy(o, 'debt')
+      return { name: MATIC_STRATEGIES_MAP[key], amount }
     }),
   );
   return (
