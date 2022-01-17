@@ -62,6 +62,7 @@ query($sevenDaysAgoTimestamp: BigInt) {
         timestamp_gt: $sevenDaysAgoTimestamp
       }) {
         profit
+        usdtPrice
       }
     }
   }
@@ -80,7 +81,7 @@ export const getVaultDetails = async () => {
 };
 
 const VAULT_DAILY_QERY = `
-query($beginDayTimestamp: Int) {
+query($beginDayTimestamp: BigInt) {
   vaultDailylyDatas (where: {
     id_gt: $beginDayTimestamp
   }) {
@@ -103,7 +104,7 @@ export const getVaultDailyData = async (day) => {
 };
 
 const VAULT_TODAY_QUERY = `
-query($todayTimestamp: Int) {
+query($todayTimestamp: BigInt) {
   vaultDailyData (id: $todayTimestamp) {
     id
     newHolderCount
@@ -129,7 +130,7 @@ export const getVaultTodayData = async () => {
 };
 
 const vaultHourlyData = `
-query($beginHourTimestamp: Int) {
+query($beginHourTimestamp: BigInt) {
   vaultHourlyDatas (where: {
     id_gt: $beginHourTimestamp
   }) {
