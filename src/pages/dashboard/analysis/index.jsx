@@ -7,8 +7,7 @@ import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
 import TopSearch from './components/TopSearch'
 import ProportionSales from './components/ProportionSales'
-import { useRequest, useModel } from 'umi'
-import { fakeChartData } from './service'
+import { useModel } from 'umi'
 import PageLoading from './components/PageLoading'
 
 // === Services === //
@@ -19,16 +18,24 @@ import {
 } from './../../../services/dashboard-service'
 
 // === Utils === //
-import { filter, map, isEmpty } from 'lodash'
+import numeral from 'numeral'
+import { map, isEmpty } from 'lodash'
+
 // === Styles === //
 import styles from './style.less'
 import moment from 'moment'
 
 const buttons = ['1D', '1W', '1M', '1Y']
+const calls = [
+  () => getVaultHourlyData(20),
+  () => getVaultDailyData(7),
+  () => getVaultDailyData(30),
+  () => getVaultDailyData(365),
+]
 
 const Analysis = () => {
-  const [currentTab4tvl, setCurrentTab1] = useState(buttons[0])
-  const [currentTab4sp, setCurrentTab2] = useState(buttons[0])
+  const [currentTab4tvl, setCurrentTab1] = useState(0)
+  const [currentTab4sp, setCurrentTab2] = useState(0)
   const [tvlArray, setTvlArray] = useState([])
   const [spArray, setSpArray] = useState([])
   const [transations, setTransations] = useState([])
@@ -37,44 +44,22 @@ const Analysis = () => {
 
   const vaultAddress = dataSource?.vaultDetail?.id
 
-  console.log('dataSource=', dataSource, transations)
+  console.log('dataSource=', dataSource)
+  console.log('tvlArray=', currentTab4tvl, tvlArray)
+  console.log('spArray=', currentTab4sp, spArray)
 
   useEffect(() => {
-    if (currentTab4tvl === buttons[0]) {
-      getVaultHourlyData(10)
-        .then(array =>
-          map(array, item => {
-            return { date: moment(3600 * item.id).format('HH:mm'), value: item.tvl }
-          }),
-        )
-        .then(setTvlArray) //6400
-    }
-    // else if (currentTab4tvl === buttons[1]) {
-    //   getVaultDailyData(7)
-    //     .then(array =>
-    //       map(array, item => {
-    //         return { date: moment(86400 * item.id).format('yyyy-MM-DD'), value: item.tvl }
-    //       }),
-    //     )
-    //     .then(setTvlArray) //6400
-    // } else if (currentTab4tvl === buttons[2]) {
-    //   getVaultDailyData(30)
-    //     .then(array =>
-    //       map(array, item => {
-    //         return { date: moment(86400 * item.id).format('yyyy-MM-DD'), value: item.tvl }
-    //       }),
-    //     )
-    //     .then(setTvlArray) //6400
-    // } else if (currentTab4tvl === buttons[3]) {
-    //   getVaultDailyData(365)
-    //     .then(array =>
-    //       map(array, item => {
-    //         return { date: moment(86400 * item.id).format('yyyy-MM-DD'), value: item.tvl }
-    //       }),
-    //     )
-    //     .then(setTvlArray) //6400
-    // }
-    // getVaultDailyData(24).then(aa => console.log('aa=', aa)) //86400
+    calls[currentTab4tvl]()
+      .then(array =>
+        map(array, item => {
+          return {
+            id: item.id,
+            date: 1000 * item.id,
+            value: item.tvl,
+          }
+        }),
+      )
+      .then(setTvlArray)
   }, [currentTab4tvl])
 
   useEffect(() => {
@@ -83,16 +68,17 @@ const Analysis = () => {
   }, [vaultAddress])
 
   useEffect(() => {
-    getVaultHourlyData(5)
+    calls[currentTab4sp]()
       .then(array =>
         map(array, item => {
           return {
-            date: moment(3600 * item.id).format('yyyy-MM-DD HH:mm'),
+            id: item.id,
+            date: 1000 * item.id,
             value: item.pricePerShare,
           }
         }),
       )
-      .then(setSpArray) //6400
+      .then(setSpArray)
   }, [currentTab4sp])
 
   return (
@@ -106,13 +92,13 @@ const Analysis = () => {
           title='TVL'
           className={styles.offlineCard}
           bordered={false}
-          extra={map(buttons, b => (
+          extra={map(buttons, (b, i) => (
             <Button
               key={b}
               ghost
               style={{ marginLeft: 10 }}
-              type={currentTab4tvl === b ? 'primary' : ''}
-              onClick={() => setCurrentTab1(b)}
+              type={currentTab4tvl === i ? 'primary' : ''}
+              onClick={() => setCurrentTab1(i)}
             >
               {b}
             </Button>
@@ -133,6 +119,20 @@ const Analysis = () => {
               padding='auto'
               xField='date'
               yField='value'
+              yAxis={{
+                label: {
+                  formatter: v => {
+                    return numeral(v).format('0,0')
+                  },
+                },
+              }}
+              xAxis={{
+                label: {
+                  formatter: v => {
+                    return moment(Number(v)).format('MM-DD HH:mm')
+                  },
+                },
+              }}
               height={400}
               smooth
             />
@@ -145,13 +145,13 @@ const Analysis = () => {
           title='Share Price'
           className={styles.offlineCard}
           bordered={false}
-          extra={map(buttons, b => (
+          extra={map(buttons, (b, i) => (
             <Button
               key={b}
               ghost
               style={{ marginLeft: 10 }}
-              type={currentTab4sp === b ? 'primary' : ''}
-              onClick={() => setCurrentTab2(b)}
+              type={currentTab4sp === i ? 'primary' : ''}
+              onClick={() => setCurrentTab2(i)}
             >
               {b}
             </Button>
@@ -174,6 +174,20 @@ const Analysis = () => {
               xField='date'
               yField='value'
               height={400}
+              yAxis={{
+                label: {
+                  formatter: v => {
+                    return numeral(v).format('0,0')
+                  },
+                },
+              }}
+              xAxis={{
+                label: {
+                  formatter: v => {
+                    return moment(Number(v)).format('MM-DD HH:mm')
+                  },
+                },
+              }}
               smooth
             />
           </div>
