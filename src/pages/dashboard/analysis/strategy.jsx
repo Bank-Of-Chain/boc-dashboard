@@ -18,19 +18,31 @@ import find from 'lodash/find'
 
 // === Services === //
 import { getStrategyById } from './../../../services/dashboard-service'
+import { getStrategyApysInChain } from './../../../services/api-service'
 
 // === Styles === //
 import styles from './style.less'
 import { filter, isEmpty, map } from 'lodash'
 import { useState } from 'react'
+import moment from 'moment'
 
 const Strategy = props => {
   const { id } = props?.match?.params
   const loading = false
   const [strategy, setStrategy] = useState({})
-  console.log('strategy=', strategy);
+  const [apys, setApys] = useState([])
   useEffect(() => {
     getStrategyById(id).then(setStrategy)
+    getStrategyApysInChain(id, 0, 100)
+      .then(rs =>
+        map(rs.content, i => {
+          return {
+            value: i.apy,
+            date: i.fetchTime.toFixed(),
+          }
+        }),
+      )
+      .then(setApys)
   }, [id])
 
   if (isEmpty(strategy)) return null
@@ -84,11 +96,25 @@ const Strategy = props => {
             <Line
               forceFit
               responsive
-              data={[]}
+              data={apys}
               padding='auto'
               xField='date'
               yField='value'
               height={400}
+              yAxis={{
+                label: {
+                  formatter: v => {
+                    return `${(100 * v).toFixed(2)}%`
+                  },
+                },
+              }}
+              xAxis={{
+                label: {
+                  formatter: v => {
+                    return moment(Number(v)).format('MM-DD HH:mm')
+                  },
+                },
+              }}
               smooth
             />
           </div>
