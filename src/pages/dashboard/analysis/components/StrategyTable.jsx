@@ -3,6 +3,7 @@ import React from 'react'
 import styles from '../style.less'
 import { history } from 'umi'
 import { map, sumBy } from 'lodash'
+import numeral from 'numeral'
 
 // === Constants === //
 import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
@@ -40,13 +41,13 @@ const columns = [
     title: 'Deposited',
     dataIndex: 'depositedAssets',
     key: 'depositedAssets',
-    render: text => <a>{text}</a>,
+    render: text => <a>{numeral(text).format('0,0')}</a>,
   },
   {
     title: 'Profit(week)',
     dataIndex: 'reports',
     key: 'reports',
-    render: value => `${sumBy(value, o => BigInt(o.profit))}`,
+    render: value => `${numeral(sumBy(value, o => BigInt(o.profit))).format('0,0')}`,
   },
   {
     title: '',

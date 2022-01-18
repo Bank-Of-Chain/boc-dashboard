@@ -2,6 +2,7 @@ import { Card, Table } from 'antd'
 import React from 'react'
 
 // === Utils === //
+import numeral from 'numeral'
 import moment from 'moment'
 
 // === Styles === //
@@ -21,16 +22,19 @@ const columns = [
     title: 'Amount',
     dataIndex: 'usdtPrice',
     key: 'usdtPrice',
+    render: text => <span>{numeral(text).format('0,0')}</span>
   },
   {
     title: 'Profit',
     dataIndex: 'profit',
     key: 'profit',
+    render: text => <span>{numeral(text).format('0,0')}</span>
   },
   {
     title: 'Price',
     dataIndex: 'usdtPrice',
     key: 'usdtPrice',
+    render: text => <span>{numeral(text).format('0,0')}</span>
   },
   {
     title: 'Date',

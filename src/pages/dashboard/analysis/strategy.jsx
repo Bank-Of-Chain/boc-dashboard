@@ -3,8 +3,7 @@ import { Col, Row, Card, Image, Descriptions } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import ReportTable from './components/ReportTable'
 import { Line } from '@ant-design/charts'
-import { useRequest, useModel, history } from 'umi'
-import { fakeChartData } from './service'
+import { history } from 'umi'
 import { LeftOutlined } from '@ant-design/icons'
 
 // === Constants === //
@@ -14,7 +13,7 @@ import { MATIC_STRATEGIES_MAP } from './../../../constants/strategies'
 import CoinSuperPosition from './components/CoinSuperPosition/index'
 
 // === Utils === //
-import find from 'lodash/find'
+import numeral from 'numeral'
 
 // === Services === //
 import { getStrategyById } from './../../../services/dashboard-service'
@@ -22,7 +21,7 @@ import { getStrategyApysInChain } from './../../../services/api-service'
 
 // === Styles === //
 import styles from './style.less'
-import { filter, isEmpty, map } from 'lodash'
+import { isEmpty, map } from 'lodash'
 import { useState } from 'react'
 import moment from 'moment'
 
@@ -71,7 +70,7 @@ const Strategy = props => {
                 <Descriptions.Item label='Underlying Token'>
                   <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                 </Descriptions.Item>
-                <Descriptions.Item label='Deposited'>{depositedAssets}</Descriptions.Item>
+                <Descriptions.Item label='Deposited'>{numeral(depositedAssets).format('0,0')}</Descriptions.Item>
                 <Descriptions.Item label='Status'>Active</Descriptions.Item>
               </Descriptions>
             </Col>

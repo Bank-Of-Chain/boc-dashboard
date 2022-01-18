@@ -8,7 +8,7 @@ import Dollar from '../utils/Dollar'
 import styles from '../style.less'
 
 // === Utils === //
-import { first, map, last } from 'lodash'
+import { map, get } from 'lodash'
 import moment from 'moment'
 const topColResponsiveProps = {
   xs: 24,
@@ -21,9 +21,9 @@ const topColResponsiveProps = {
 const IntroduceRow = ({ loading, visitData = {} }) => {
   const { vaultDailyData = [], vaultDetail = {} } = visitData
   // 一周前的锁仓量
-  const weekTvl = first(vaultDailyData).tvl
+  const weekTvl = get(vaultDailyData, `[${vaultDailyData.length - 7}].tvl`, 0)
   // 一天前的锁仓量
-  const dailyTvl = last(vaultDailyData).tvl
+  const dailyTvl = get(vaultDailyData, `[${vaultDailyData.length - 2}].tvl`, 0)
   const weekPercent = 100 - (100 * vaultDetail?.tvl) / weekTvl
   const dailyPercent = 100 - (100 * vaultDetail?.tvl) / dailyTvl
   return (

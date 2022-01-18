@@ -9,6 +9,7 @@ import styles from '../style.less'
 import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
 
 // === Utils === //
+import numeral from 'numeral'
 import groupBy from 'lodash/groupBy'
 import sumBy from 'lodash/sumBy'
 import { mapValues, values } from 'lodash'
@@ -36,12 +37,13 @@ const columns = [
     title: 'Percent',
     dataIndex: 'percent',
     key: 'percent',
+    render: text => <span>{text.toString() / 100}%</span>,
   },
   {
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
-    render: text => `${text}`,
+    render: text => numeral(text).format('0,0'),
   },
 ]
 
@@ -57,10 +59,13 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
       return {
         name: MATIC_STRATEGIES_MAP[key],
         amount,
-        percent: `${(100n * amount) / total}%`,
+        percent: (10000n * amount) / total,
       }
     }),
   )
+  const dailyApy = 0,
+    weeklyApy = 0,
+    yearApy = 0
   return (
     <Card
       loading={loading}
@@ -94,8 +99,8 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
             }
             gap={8}
             total={0}
-            // status='up'
-            // subTotal={17.1}
+            status='up'
+            subTotal={`${dailyApy.toFixed(2)}%`}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
         </Col>
@@ -120,8 +125,8 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             total={0}
-            // status='down'
-            // subTotal={26.2}
+            status='up'
+            subTotal={`${weeklyApy.toFixed(2)}%`}
             gap={8}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
@@ -147,8 +152,8 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             total={0}
-            // status='down'
-            // subTotal={26.2}
+            status='up'
+            subTotal={`${yearApy.toFixed(2)}%`}
             gap={8}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
