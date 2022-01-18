@@ -3,11 +3,10 @@ import { defineConfig } from 'umi';
 import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-const { REACT_APP_ENV, NODE_ENV } = process.env;
-const isDev = NODE_ENV === 'development';
+const { REACT_APP_ENV } = process.env;
 export default defineConfig({
-  base: isDev ? '/' : '/dashboard/',
-  publicPath: isDev ? '/' : '/dashboard/',
+  base: '/dashboard/',
+  publicPath: '/dashboard/',
   hash: true,
   antd: {
     dark: true
@@ -84,4 +83,7 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+  define:{
+    API_SERVER: 'http://locahost:8080'
+  }
 });
