@@ -1,85 +1,85 @@
-import { Suspense, useEffect, useState } from 'react'
-import { Col, Row, Card, Button } from 'antd'
-import { Line } from '@ant-design/charts'
-import { GridContent } from '@ant-design/pro-layout'
-import IntroduceRow from './components/IntroduceRow'
-import StrategyTable from './components/StrategyTable'
-import TransationsTable from './components/TransationsTable'
-import TopSearch from './components/TopSearch'
-import ProportionSales from './components/ProportionSales'
-import { useModel } from 'umi'
-import PageLoading from './components/PageLoading'
+import { Suspense, useEffect, useState } from 'react';
+import { Col, Row, Card, Button } from 'antd';
+import { Line } from '@ant-design/charts';
+import { GridContent } from '@ant-design/pro-layout';
+import IntroduceRow from './components/IntroduceRow';
+import StrategyTable from './components/StrategyTable';
+import TransationsTable from './components/TransationsTable';
+import TopSearch from './components/TopSearch';
+import ProportionSales from './components/ProportionSales';
+import { useModel } from 'umi';
+import PageLoading from './components/PageLoading';
 
 // === Services === //
 import {
   getVaultDailyData,
   getVaultHourlyData,
   getTransations,
-} from './../../../services/dashboard-service'
+} from './../../../services/dashboard-service';
 
 // === Utils === //
-import numeral from 'numeral'
-import { map, isEmpty } from 'lodash'
+import numeral from 'numeral';
+import { map, isEmpty } from 'lodash';
 
 // === Styles === //
-import styles from './style.less'
-import moment from 'moment'
+import styles from './style.less';
+import moment from 'moment';
 
-const buttons = ['1D', '1W', '1M', '1Y']
+const buttons = ['1D', '1W', '1M', '1Y'];
 const calls = [
   () => getVaultHourlyData(20),
   () => getVaultDailyData(7),
   () => getVaultDailyData(30),
   () => getVaultDailyData(365),
-]
+];
 
 const Analysis = () => {
-  const [currentTab4tvl, setCurrentTab1] = useState(0)
-  const [currentTab4sp, setCurrentTab2] = useState(0)
-  const [tvlArray, setTvlArray] = useState([])
-  const [spArray, setSpArray] = useState([])
-  const [transations, setTransations] = useState([])
+  const [currentTab4tvl, setCurrentTab1] = useState(0);
+  const [currentTab4sp, setCurrentTab2] = useState(0);
+  const [tvlArray, setTvlArray] = useState([]);
+  const [spArray, setSpArray] = useState([]);
+  const [transations, setTransations] = useState([]);
 
-  const { dataSource, reload, loading } = useModel('useDashboardData')
+  const { dataSource, reload, loading } = useModel('useDashboardData');
 
-  const vaultAddress = dataSource?.vaultDetail?.id
+  const vaultAddress = dataSource?.vaultDetail?.id;
 
-  console.log('dataSource=', dataSource)
-  console.log('tvlArray=', currentTab4tvl, tvlArray)
-  console.log('spArray=', currentTab4sp, spArray)
+  console.log('dataSource=', dataSource);
+  console.log('tvlArray=', currentTab4tvl, tvlArray);
+  console.log('spArray=', currentTab4sp, spArray);
 
   useEffect(() => {
     calls[currentTab4tvl]()
-      .then(array =>
-        map(array, item => {
+      .then((array) =>
+        map(array, (item) => {
           return {
             id: item.id,
             date: 1000 * item.id,
             value: item.tvl,
-          }
+          };
         }),
       )
-      .then(setTvlArray)
-  }, [currentTab4tvl])
+      .then(setTvlArray);
+  }, [currentTab4tvl]);
 
   useEffect(() => {
-    if (isEmpty(vaultAddress)) return
-    getTransations(vaultAddress).then(setTransations)
-  }, [vaultAddress])
+    if (isEmpty(vaultAddress)) return;
+    getTransations(vaultAddress).then(setTransations);
+  }, [vaultAddress]);
 
   useEffect(() => {
     calls[currentTab4sp]()
-      .then(array =>
-        map(array, item => {
+      .then((array) =>
+        map(array, (item) => {
           return {
             id: item.id,
             date: 1000 * item.id,
             value: item.pricePerShare,
-          }
+          };
         }),
       )
-      .then(setSpArray)
-  }, [currentTab4sp])
+      .then(setSpArray);
+  }, [currentTab4sp]);
 
   return (
     <GridContent>
@@ -89,7 +89,7 @@ const Analysis = () => {
       <Suspense fallback={null}>
         <Card
           loading={loading}
-          title='TVL'
+          title="TVL"
           className={styles.offlineCard}
           bordered={false}
           extra={map(buttons, (b, i) => (
@@ -116,23 +116,21 @@ const Analysis = () => {
               forceFit
               responsive
               data={tvlArray}
-              padding='auto'
-              xField='date'
-              yField='value'
-              yAxis={{
-                label: {
-                  formatter: v => {
-                    return numeral(v).format('0,0')
+              meta={{
+                date: {
+                  formatter: (v) => {
+                    return moment(Number(v)).format('MM-DD HH:mm');
+                  },
+                },
+                value: {
+                  formatter: (v) => {
+                    return numeral(v).format('0,0');
                   },
                 },
               }}
-              xAxis={{
-                label: {
-                  formatter: v => {
-                    return moment(Number(v)).format('MM-DD HH:mm')
-                  },
-                },
-              }}
+              padding="auto"
+              xField="date"
+              yField="value"
               height={400}
               smooth
             />
@@ -142,7 +140,7 @@ const Analysis = () => {
       <Suspense fallback={null}>
         <Card
           loading={loading}
-          title='Share Price'
+          title="Share Price"
           className={styles.offlineCard}
           bordered={false}
           extra={map(buttons, (b, i) => (
@@ -170,21 +168,19 @@ const Analysis = () => {
               responsive
               color={['#2ca02c']}
               data={spArray}
-              padding='auto'
-              xField='date'
-              yField='value'
+              padding="auto"
+              xField="date"
+              yField="value"
               height={400}
-              yAxis={{
-                label: {
-                  formatter: v => {
-                    return numeral(v).format('0,0')
+              meta={{
+                date: {
+                  formatter: (v) => {
+                    return moment(Number(v)).format('MM-DD HH:mm');
                   },
                 },
-              }}
-              xAxis={{
-                label: {
-                  formatter: v => {
-                    return moment(Number(v)).format('MM-DD HH:mm')
+                value: {
+                  formatter: (v) => {
+                    return numeral(v).format('0,0');
                   },
                 },
               }}
@@ -217,7 +213,7 @@ const Analysis = () => {
         <TransationsTable loading={loading} visitData={transations} />
       </Suspense>
     </GridContent>
-  )
-}
+  );
+};
 
-export default Analysis
+export default Analysis;

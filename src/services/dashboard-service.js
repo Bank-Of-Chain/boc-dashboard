@@ -180,9 +180,10 @@ query($strategyAddress: Bytes) {
     debt
     depositedAssets
     usdtPrice
-    reports {
+    reports (orderBy: timestamp, orderDirection: desc) {
       id
       profit
+      nowStrategyTotalDebt
       usdtPrice
       timestamp
     }
@@ -191,35 +192,42 @@ query($strategyAddress: Bytes) {
 }
 `;
 export const getStrategyById = async (strategyAddress) => {
-  return await client.query({
-    query: gql(STRATEGY_DETAIL_QUERY),
-    variables: {
-      strategyAddress,
-    },
-  }).then(data => data.data.strategy);
+  return await client
+    .query({
+      query: gql(STRATEGY_DETAIL_QUERY),
+      variables: {
+        strategyAddress,
+      },
+    })
+    .then((data) => data.data.strategy);
 };
 
 const TXN_QUERY = `
 query($relatedContractAddress: Bytes) {
-  importantEvents(where: {address: $relatedContractAddress}) {
+  importantEvents(
+    orderBy: timestamp,
+    orderDirection: desc,
+    where: {
+      address: $relatedContractAddress
+    }) {
     id
     method
     from
     address
     shares
-    tokenDetails {
-      usdtInUSD
-    }
+    shareValue
     timestamp
   }
 }
 `;
 export const getTransations = async (relatedContractAddress) => {
-  if(isEmpty(relatedContractAddress)) return
-  return await client.query({
-    query: gql(TXN_QUERY),
-    variables: {
-      relatedContractAddress,
-    },
-  }).then(data => data.data.importantEvents);
+  if (isEmpty(relatedContractAddress)) return;
+  return await client
+    .query({
+      query: gql(TXN_QUERY),
+      variables: {
+        relatedContractAddress,
+      },
+    })
+    .then((data) => data.data.importantEvents);
 };

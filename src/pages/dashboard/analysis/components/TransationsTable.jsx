@@ -1,11 +1,12 @@
-import { Card, Table } from 'antd'
-import React from 'react'
+import { Card, Table } from 'antd';
+import React from 'react';
 
 // === Styles === //
-import styles from '../style.less'
+import styles from '../style.less';
 
 // === Utils === //
-import moment from 'moment'
+import moment from 'moment';
+import numeral from 'numeral';
 
 const columns = [
   {
@@ -16,13 +17,13 @@ const columns = [
     ellipsis: {
       showTitle: false,
     },
-    render: text => <a title={text}>{text}</a>,
+    render: (text) => <a title={text}>{text}</a>,
   },
   {
     title: 'Method',
     dataIndex: 'method',
     key: 'method',
-    render: text => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
+    render: (text) => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
   },
   {
     title: 'Account',
@@ -32,7 +33,12 @@ const columns = [
     ellipsis: {
       showTitle: false,
     },
-    render: text => <a title={text}>{text}</a>,
+    render: (text) => <a title={text}>{text}</a>,
+  },
+  {
+    title: 'Shares(USDT Amount)',
+    render: (text, item) =>
+      `${numeral(item.shares).format('0,0')}(${numeral(item.shareValue).format('0,0')})`,
   },
   {
     title: 'From',
@@ -42,21 +48,21 @@ const columns = [
     ellipsis: {
       showTitle: false,
     },
-    render: text => <a title={text}>{text}</a>,
+    render: (text) => <a title={text}>{text}</a>,
   },
   {
     title: 'Date',
     dataIndex: 'timestamp',
     key: 'timestamp',
-    render: text => moment(1000 * text).fromNow(),
+    render: (text) => moment(1000 * text).fromNow(),
   },
-]
+];
 
 const TransationsTable = ({ loading, visitData, dropdownGroup }) => (
   <Card
     loading={loading}
     bordered={false}
-    title='Transations'
+    title="Transations"
     extra={dropdownGroup}
     style={{
       height: '100%',
@@ -64,8 +70,8 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => (
     }}
   >
     <Table
-      rowKey={record => record.id}
-      size='small'
+      rowKey={(record) => record.id}
+      size="small"
       columns={columns}
       dataSource={visitData}
       pagination={{
@@ -76,6 +82,6 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => (
       }}
     />
   </Card>
-)
+);
 
-export default TransationsTable
+export default TransationsTable;
