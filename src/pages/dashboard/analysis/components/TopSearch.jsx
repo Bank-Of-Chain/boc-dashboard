@@ -93,7 +93,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             gap={8}
-            total={12.33}
+            total={0}
             // status='up'
             // subTotal={17.1}
           />
@@ -119,7 +119,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
                 </Tooltip>
               </span>
             }
-            total={15.6}
+            total={0}
             // status='down'
             // subTotal={26.2}
             gap={8}
@@ -146,7 +146,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
                 </Tooltip>
               </span>
             }
-            total={12.7}
+            total={0}
             // status='down'
             // subTotal={26.2}
             gap={8}
