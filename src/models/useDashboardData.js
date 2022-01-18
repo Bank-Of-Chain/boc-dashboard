@@ -2,13 +2,8 @@ import {
   useRequest
 } from 'umi';
 import {
-  fetchData,
   getVaultDetails,
   getVaultDailyData,
-  getVaultHourlyData,
-  getProtocols,
-  getStrategyById,
-  getTransations,
   getVaultTodayData,
 } from '@/services/dashboard-service';
 
