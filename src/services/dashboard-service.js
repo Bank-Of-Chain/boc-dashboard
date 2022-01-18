@@ -97,7 +97,6 @@ query($beginDayTimestamp: BigInt) {
 }
 `;
 export const getVaultDailyData = async (day) => {
-  if(isEmpty(day)) return
   return await client
     .query({
       query: gql(VAULT_DAILY_QERY),
