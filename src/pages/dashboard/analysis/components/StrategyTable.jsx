@@ -1,22 +1,23 @@
-import { Card, Table, Image } from 'antd'
-import React from 'react'
-import styles from '../style.less'
-import { history, useModel } from 'umi'
-import { map, sumBy } from 'lodash'
+import { Card, Table, Image } from 'antd';
+import React from 'react';
+import styles from '../style.less';
+import { history, useModel } from 'umi';
+import { map, reduce } from 'lodash';
 
 // === Constants === //
-import STRATEGIES_MAP from './../../../../constants/strategies'
+import STRATEGIES_MAP from './../../../../constants/strategies';
 
 // === Components === //
-import CoinSuperPosition from './CoinSuperPosition/index'
+import CoinSuperPosition from './CoinSuperPosition/index';
 
 // === Utils === //
-import { toFixed } from './../../../../helper/number-format'
-import { getDecimals } from './../../../../apollo/client'
+import { toFixed } from './../../../../helper/number-format';
+import { getDecimals } from './../../../../apollo/client';
+import BN from 'bignumber.js';
 
 const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
-  const { initialState } = useModel('@@initialState')
-  if(!initialState.chain) return null
+  const { initialState } = useModel('@@initialState');
+  if (!initialState.chain) return null;
   const columns = [
     {
       title: 'Name',
@@ -41,21 +42,27 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Wants',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      render: text => <CoinSuperPosition array={map(text, 'token.id')} />,
+      render: (text) => <CoinSuperPosition array={map(text, 'token.id')} />,
     },
     {
       title: 'Deposited',
       dataIndex: 'depositedAssets',
       key: 'depositedAssets',
-      render: text => <a>{toFixed(text, getDecimals(), 2)}</a>,
+      render: (text) => <a>{toFixed(text, getDecimals(), 2)}</a>,
     },
     {
       title: 'Profit(week)',
       dataIndex: 'reports',
       key: 'reports',
-      render: value =>
+      render: (value) =>
         `${toFixed(
-          sumBy(value, o => BigInt(o.profit)).toString(),
+          reduce(
+            value,
+            (rs, o) => {
+              return rs.plus(o.profit);
+            },
+            BN(0),
+          ).toString(),
           getDecimals(),
           2,
         )}`,
@@ -64,32 +71,34 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: '',
       dataIndex: 'id',
       key: 'id',
-      render: text => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
+      render: (text) => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
     },
-  ]
-  return <Card
-  loading={loading}
-  bordered={false}
-  title='Strategies'
-  extra={dropdownGroup}
-  style={{
-    height: '100%',
-    marginTop: 32,
-  }}
->
-  <Table
-    rowKey={record => record.id}
-    size='small'
-    columns={columns}
-    dataSource={searchData}
-    pagination={{
-      style: {
-        marginBottom: 0,
-      },
-      pageSize: 100,
-    }}
-  />
-</Card>
-}
+  ];
+  return (
+    <Card
+      loading={loading}
+      bordered={false}
+      title="Strategies"
+      extra={dropdownGroup}
+      style={{
+        height: '100%',
+        marginTop: 32,
+      }}
+    >
+      <Table
+        rowKey={(record) => record.id}
+        size="small"
+        columns={columns}
+        dataSource={searchData}
+        pagination={{
+          style: {
+            marginBottom: 0,
+          },
+          pageSize: 100,
+        }}
+      />
+    </Card>
+  );
+};
 
-export default StrategyTable
+export default StrategyTable;

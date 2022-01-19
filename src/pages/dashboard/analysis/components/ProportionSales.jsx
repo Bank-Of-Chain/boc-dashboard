@@ -1,33 +1,37 @@
-import { Card } from 'antd'
-import { Donut } from '@ant-design/charts'
-import React from 'react'
+import { Card } from 'antd';
+import { Donut } from '@ant-design/charts';
+import React from 'react';
+import { useModel } from 'umi';
 
 // === Utils === //
-import { sumBy, mapValues, groupBy, values } from 'lodash'
-import { toFixed } from './../../../../helper/number-format'
-import { getDecimals } from './../../../../apollo/client'
+import { sumBy, mapValues, groupBy, values } from 'lodash';
+import { toFixed } from './../../../../helper/number-format';
+import { getDecimals } from './../../../../apollo/client';
+import BN from 'bignumber.js';
 
 // === Constants === //
-import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
+import STRATEGIES_MAP from './../../../../constants/strategies';
 
 // === Styles === //
-import styles from '../style.less'
+import styles from '../style.less';
 
 const ProportionSales = ({ loading, visitData = {} }) => {
-  const { strategies = [] } = visitData
-  const groupData = groupBy(strategies, 'protocol.id')
+  const { strategies = [] } = visitData;
+  const { initialState } = useModel('@@initialState');
+  if (!initialState.chain) return null;
+  const groupData = groupBy(strategies, 'protocol.id');
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      const amount = sumBy(o, o => Number(o.debt))
-      return { name: MATIC_STRATEGIES_MAP[key], amount }
+      const amount = sumBy(o, (o) => Number(o.debt));
+      return { name: STRATEGIES_MAP[initialState.chain][key], amount };
     }),
-  )
+  );
   return (
     <Card
       loading={loading}
       className={styles.salesCard}
       bordered={false}
-      title='Funding Ratio'
+      title="Funding Ratio"
       style={{
         height: '100%',
       }}
@@ -38,8 +42,8 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           height={340}
           radius={1}
           innerRadius={0.75}
-          angleField='amount'
-          colorField='name'
+          angleField="amount"
+          colorField="name"
           data={tableData}
           legend={{
             visible: false,
@@ -50,10 +54,10 @@ const ProportionSales = ({ loading, visitData = {} }) => {
             offset: 20,
             formatter: (text, item) => {
               return `${item._origin.name}: ${toFixed(
-                BigInt(item._origin.amount).toString(),
+                BN(item._origin.amount).toString(),
                 getDecimals(),
                 2,
-              )}`
+              )}`;
             },
           }}
           statistic={{
@@ -62,7 +66,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         />
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default ProportionSales
+export default ProportionSales;
