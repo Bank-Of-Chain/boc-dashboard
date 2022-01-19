@@ -20,6 +20,7 @@ import {
 // === Utils === //
 import numeral from 'numeral'
 import { map, isEmpty } from 'lodash'
+import { setClient } from './../../../apollo/client'
 
 // === Styles === //
 import styles from './style.less'
@@ -33,20 +34,29 @@ const calls = [
   () => getVaultDailyData(365),
 ]
 
-const Analysis = () => {
+const Analysis = props => {
   const [currentTab4tvl, setCurrentTab1] = useState(0)
   const [currentTab4sp, setCurrentTab2] = useState(0)
   const [tvlArray, setTvlArray] = useState([])
   const [spArray, setSpArray] = useState([])
   const [transations, setTransations] = useState([])
 
+  const { initialState, setInitialState } = useModel('@@initialState')
+
   const { dataSource, reload, loading } = useModel('useDashboardData')
 
-  const vaultAddress = dataSource?.vaultDetail?.id
+  const { chain } = props?.location?.query
 
-  console.log('dataSource=', dataSource)
-  console.log('tvlArray=', currentTab4tvl, tvlArray)
-  console.log('spArray=', currentTab4sp, spArray)
+  const vaultAddress = dataSource?.vaultDetail?.id
+  useEffect(() => {
+    if (!!chain && chain !== initialState.chain) {
+      setClient(chain)
+      setInitialState({
+        chain: chain,
+      })
+      reload()
+    }
+  }, [chain])
 
   useEffect(() => {
     calls[currentTab4tvl]()

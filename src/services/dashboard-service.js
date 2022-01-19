@@ -1,7 +1,16 @@
-import { client } from '../../src/apollo/client';
-import { gql } from '@apollo/client';
-import { request } from 'umi';
-import { get, isEmpty } from 'lodash';
+import {
+  getClient
+} from '../../src/apollo/client';
+import {
+  gql
+} from '@apollo/client';
+import {
+  request
+} from 'umi';
+import {
+  get,
+  isEmpty
+} from 'lodash';
 export const fetchData = async () => {
   const postBody = {
     query: `{
@@ -70,7 +79,9 @@ query($sevenDaysAgoTimestamp: BigInt) {
 }
 `;
 export const getVaultDetails = async () => {
-  const { data } = await client.query({
+  const {
+    data
+  } = await getClient().query({
     query: gql(VAULT_DETAIL_QUERY),
     variables: {
       sevenDaysAgoTimestamp: getDaysAgoTimestamp(7),
@@ -97,7 +108,7 @@ query($beginDayTimestamp: BigInt) {
 }
 `;
 export const getVaultDailyData = async (day) => {
-  return await client
+  return await getClient()
     .query({
       query: gql(VAULT_DAILY_QERY),
       variables: {
@@ -122,7 +133,9 @@ query($todayTimestamp: BigInt) {
 export const getVaultTodayData = async () => {
   const currentTimestamp = Math.floor(Date.parse(new Date()) / 1000);
   const todayTimestamp = currentTimestamp - (currentTimestamp % 86400);
-  const { data } = await client.query({
+  const {
+    data
+  } = await getClient().query({
     query: gql(VAULT_TODAY_QUERY),
     variables: {
       todayTimestamp,
@@ -146,7 +159,7 @@ query($beginHourTimestamp: BigInt) {
 }
 `;
 export const getVaultHourlyData = async (day) => {
-  return await client
+  return await getClient()
     .query({
       query: gql(vaultHourlyData),
       variables: {
@@ -191,7 +204,7 @@ query($strategyAddress: Bytes) {
 }
 `;
 export const getStrategyById = async (strategyAddress) => {
-  return await client.query({
+  return await getClient().query({
     query: gql(STRATEGY_DETAIL_QUERY),
     variables: {
       strategyAddress,
@@ -215,8 +228,8 @@ query($relatedContractAddress: Bytes) {
 }
 `;
 export const getTransations = async (relatedContractAddress) => {
-  if(isEmpty(relatedContractAddress)) return
-  return await client.query({
+  if (isEmpty(relatedContractAddress)) return
+  return await getClient().query({
     query: gql(TXN_QUERY),
     variables: {
       relatedContractAddress,

@@ -35,8 +35,7 @@ export default defineConfig({
     ie: 11,
   },
   // umi routes: https://umijs.org/docs/routing
-  routes: [
-    {
+  routes: [{
       path: '/',
       component: './dashboard/analysis'
     },
@@ -63,8 +62,7 @@ export default defineConfig({
   },
   // Fast Refresh 热更新
   fastRefresh: {},
-  openAPI: [
-    {
+  openAPI: [{
       requestLibPath: "import { request } from 'umi'",
       // 或者使用在线的版本
       // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
@@ -83,7 +81,12 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
-  define:{
-    API_SERVER: 'http://locahost:8080'
+  define: {
+    API_SERVER: 'http://locahost:8080',
+    SUB_GRAPH_URL: {
+      "1": "https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth",
+      "56": "https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc",
+      "137": "https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph"
+    }
   }
 });

@@ -1,6 +1,7 @@
 import { Space, Select } from 'antd'
+import { useModel, history } from 'umi'
 import React from 'react'
-import { SelectLang } from 'umi'
+// import { SelectLang } from 'umi'
 import styles from './index.less'
 
 // === Utils === //
@@ -13,10 +14,22 @@ const { Option } = Select
 
 const GlobalHeaderRight = () => {
   const className = `${styles.right}  ${styles.dark}`
+
+  const { initialState } = useModel('@@initialState')
+  const changeChain = value => {
+    history.push(`/?chain=${value}`)
+    location.reload()
+  }
+
   return (
     <Space className={className}>
-      <SelectLang className={styles.action} />
-      <Select value={ETH.id} style={{ width: 100 }}>
+      {/* <SelectLang className={styles.action} /> */}
+      <Select
+        value={initialState.chain}
+        defaultValue={ETH.id}
+        style={{ width: 100 }}
+        onChange={changeChain}
+      >
         {map(CHAINS, i => (
           <Option key={i.id} value={i.id}>
             {i.name}
