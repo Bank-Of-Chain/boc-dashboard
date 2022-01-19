@@ -8,7 +8,6 @@ import TransationsTable from './components/TransationsTable';
 import TopSearch from './components/TopSearch';
 import ProportionSales from './components/ProportionSales';
 import { useModel } from 'umi';
-import PageLoading from './components/PageLoading';
 
 // === Services === //
 import {
@@ -18,9 +17,9 @@ import {
 } from './../../../services/dashboard-service';
 
 // === Utils === //
-import numeral from 'numeral'
-import { map, isEmpty } from 'lodash'
-import { setClient } from './../../../apollo/client'
+import numeral from 'numeral';
+import { map, isEmpty } from 'lodash';
+import { setClient } from './../../../apollo/client';
 
 // === Styles === //
 import styles from './style.less';
@@ -34,29 +33,29 @@ const calls = [
   () => getVaultDailyData(365),
 ];
 
-const Analysis = props => {
-  const [currentTab4tvl, setCurrentTab1] = useState(0)
-  const [currentTab4sp, setCurrentTab2] = useState(0)
-  const [tvlArray, setTvlArray] = useState([])
-  const [spArray, setSpArray] = useState([])
-  const [transations, setTransations] = useState([])
+const Analysis = (props) => {
+  const [currentTab4tvl, setCurrentTab1] = useState(0);
+  const [currentTab4sp, setCurrentTab2] = useState(0);
+  const [tvlArray, setTvlArray] = useState([]);
+  const [spArray, setSpArray] = useState([]);
+  const [transations, setTransations] = useState([]);
 
-  const { initialState, setInitialState } = useModel('@@initialState')
+  const { initialState, setInitialState } = useModel('@@initialState');
 
-  const { dataSource, reload, loading } = useModel('useDashboardData')
+  const { dataSource, reload, loading } = useModel('useDashboardData');
 
-  const { chain } = props?.location?.query
+  const { chain } = props?.location?.query;
 
-  const vaultAddress = dataSource?.vaultDetail?.id
+  const vaultAddress = dataSource?.vaultDetail?.id;
   useEffect(() => {
     if (!!chain && chain !== initialState.chain) {
-      setClient(chain)
+      setClient(chain);
       setInitialState({
         chain: chain,
-      })
-      reload()
+      });
+      reload();
     }
-  }, [chain])
+  }, [chain]);
 
   useEffect(() => {
     calls[currentTab4tvl]()
@@ -93,7 +92,7 @@ const Analysis = props => {
 
   return (
     <GridContent>
-      <Suspense fallback={<PageLoading />}>
+      <Suspense fallback={null}>
         <IntroduceRow loading={loading} visitData={dataSource} />
       </Suspense>
       <Suspense fallback={null}>
