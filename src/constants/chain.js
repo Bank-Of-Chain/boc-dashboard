@@ -1,14 +1,18 @@
+import BN from 'bignumber.js'
 const ETH = {
   id: '1',
-  name: 'ETH'
+  name: 'ETH',
+  decimals: BN(1e6)
 }
 const BSC = {
   id: '56',
-  name: 'BSC'
+  name: 'BSC',
+  decimals: BN(1e18)
 }
 const MATIC = {
   id: '137',
-  name: 'MATIC'
+  name: 'MATIC',
+  decimals: BN(1e6)
 }
 const CHAINS = [ETH, BSC, MATIC]
 
