@@ -1,19 +1,17 @@
 import { Card, Table } from 'antd';
 import React from 'react';
 
-// === Styles === //
-import styles from '../style.less';
-
 // === Utils === //
 import moment from 'moment';
-import numeral from 'numeral';
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 const columns = [
   {
     title: 'Txn Hash',
     dataIndex: 'id',
     key: 'id',
-    width: 300,
+    width: 200,
     ellipsis: {
       showTitle: false,
     },
@@ -29,7 +27,7 @@ const columns = [
     title: 'Account',
     dataIndex: 'address',
     key: 'address',
-    width: 300,
+    width: 200,
     ellipsis: {
       showTitle: false,
     },
@@ -37,8 +35,9 @@ const columns = [
   },
   {
     title: 'Shares(USDT Amount)',
+    width: 200,
     render: (text, item) =>
-      `${numeral(item.shares).format('0,0')}(${numeral(item.shareValue).format('0,0')})`,
+      `${toFixed(item.shares, getDecimals(), 2)}(${toFixed(item.shareValue, getDecimals(), 2)})`,
   },
   {
     title: 'From',

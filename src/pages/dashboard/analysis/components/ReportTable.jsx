@@ -4,6 +4,8 @@ import React from 'react';
 // === Utils === //
 import numeral from 'numeral';
 import moment from 'moment';
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 // === Styles === //
 import styles from '../style.less';
@@ -22,13 +24,13 @@ const columns = [
     title: 'Amount',
     dataIndex: 'nowStrategyTotalDebt',
     key: 'nowStrategyTotalDebt',
-    render: (text) => <span>{numeral(text).format('0,0')}</span>,
+    render: (text) => <span>{toFixed(text, getDecimals(),2)}</span>,
   },
   {
     title: 'Profit',
     dataIndex: 'profit',
     key: 'profit',
-    render: (text) => <span>{numeral(text).format('0,0')}</span>,
+    render: (text) => <span>{toFixed(text, getDecimals(),2)}</span>,
   },
   {
     title: 'Date',

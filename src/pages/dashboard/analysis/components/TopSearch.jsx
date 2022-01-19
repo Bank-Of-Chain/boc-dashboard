@@ -4,15 +4,17 @@ import { TinyArea } from '@ant-design/charts'
 import React from 'react'
 import NumberInfo from './NumberInfo'
 import styles from '../style.less'
+import { useModel } from 'umi'
 
 // === Constants === //
-import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
+import STRATEGIES_MAP from './../../../../constants/strategies'
 
 // === Utils === //
-import numeral from 'numeral'
 import groupBy from 'lodash/groupBy'
 import sumBy from 'lodash/sumBy'
 import { mapValues, values } from 'lodash'
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 const columns = [
   {
@@ -43,11 +45,13 @@ const columns = [
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
-    render: text => numeral(text).format('0,0'),
+    render: text => toFixed(text.toString(), getDecimals(), 2),
   },
 ]
 
 const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
+  const { initialState } = useModel('@@initialState')
+  if(!initialState.chain) return null
   const visitData2 = []
   const { strategies = [] } = visitData
   const total = sumBy(strategies, o => BigInt(o.debt))
@@ -57,7 +61,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
     mapValues(groupData, (o, key) => {
       const amount = sumBy(o, o => BigInt(o.debt))
       return {
-        name: MATIC_STRATEGIES_MAP[key],
+        name: STRATEGIES_MAP[initialState.chain][key],
         amount,
         percent: (10000n * amount) / total,
       }

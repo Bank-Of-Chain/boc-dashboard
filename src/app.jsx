@@ -18,7 +18,7 @@ export const initialStateConfig = {
 
 export async function getInitialState() {
   return {
-    chain: '',
+    chain: ETH.id,
   };
 } // ProLayout 支持的api https://procomponents.ant.design/components/layout
 

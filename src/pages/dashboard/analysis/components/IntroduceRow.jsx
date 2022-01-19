@@ -10,6 +10,9 @@ import styles from '../style.less'
 // === Utils === //
 import { map, get } from 'lodash'
 import moment from 'moment'
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
+
 const topColResponsiveProps = {
   xs: 24,
   sm: 12,
@@ -38,7 +41,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
             </Tooltip>
           }
           loading={loading}
-          total={() => <Dollar>{vaultDetail?.tvl}</Dollar>}
+          total={() => toFixed(vaultDetail?.tvl, getDecimals(), 2)}
           contentHeight={100}
         >
           <Trend

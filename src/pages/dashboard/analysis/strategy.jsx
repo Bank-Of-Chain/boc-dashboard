@@ -13,7 +13,8 @@ import { MATIC_STRATEGIES_MAP } from './../../../constants/strategies'
 import CoinSuperPosition from './components/CoinSuperPosition/index'
 
 // === Utils === //
-import numeral from 'numeral'
+import { toFixed } from './../../../helper/number-format'
+import { getDecimals } from './../../../apollo/client'
 
 // === Services === //
 import { getStrategyById } from './../../../services/dashboard-service'
@@ -70,7 +71,9 @@ const Strategy = props => {
                 <Descriptions.Item label='Underlying Token'>
                   <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                 </Descriptions.Item>
-                <Descriptions.Item label='Deposited'>{numeral(depositedAssets).format('0,0')}</Descriptions.Item>
+                <Descriptions.Item label='Deposited'>
+                  {toFixed(depositedAssets, getDecimals(), 2)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Status'>Active</Descriptions.Item>
               </Descriptions>
             </Col>

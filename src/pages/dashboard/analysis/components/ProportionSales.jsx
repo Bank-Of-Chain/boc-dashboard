@@ -1,32 +1,33 @@
-import { Card } from 'antd';
-import { Donut } from '@ant-design/charts';
-import React from 'react';
-import numeral from 'numeral';
+import { Card } from 'antd'
+import { Donut } from '@ant-design/charts'
+import React from 'react'
 
 // === Utils === //
-import { sumBy, mapValues, groupBy, values } from 'lodash';
+import { sumBy, mapValues, groupBy, values } from 'lodash'
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 // === Constants === //
-import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies';
+import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
 
 // === Styles === //
-import styles from '../style.less';
+import styles from '../style.less'
 
 const ProportionSales = ({ loading, visitData = {} }) => {
-  const { strategies = [] } = visitData;
-  const groupData = groupBy(strategies, 'protocol.id');
+  const { strategies = [] } = visitData
+  const groupData = groupBy(strategies, 'protocol.id')
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      const amount = sumBy(o, (o) => Number(o.debt));
-      return { name: MATIC_STRATEGIES_MAP[key], amount };
+      const amount = sumBy(o, o => Number(o.debt))
+      return { name: MATIC_STRATEGIES_MAP[key], amount }
     }),
-  );
+  )
   return (
     <Card
       loading={loading}
       className={styles.salesCard}
       bordered={false}
-      title="Funding Ratio"
+      title='Funding Ratio'
       style={{
         height: '100%',
       }}
@@ -37,8 +38,8 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           height={340}
           radius={1}
           innerRadius={0.75}
-          angleField="amount"
-          colorField="name"
+          angleField='amount'
+          colorField='name'
           data={tableData}
           legend={{
             visible: false,
@@ -48,8 +49,11 @@ const ProportionSales = ({ loading, visitData = {} }) => {
             type: 'outer-center',
             offset: 20,
             formatter: (text, item) => {
-              // eslint-disable-next-line no-underscore-dangle
-              return `${item._origin.name}: ${numeral(item._origin.amount).format('0,0')}`;
+              return `${item._origin.name}: ${toFixed(
+                BigInt(item._origin.amount).toString(),
+                getDecimals(),
+                2,
+              )}`
             },
           }}
           statistic={{
@@ -58,7 +62,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         />
       </div>
     </Card>
-  );
-};
+  )
+}
 
-export default ProportionSales;
+export default ProportionSales
