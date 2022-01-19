@@ -2,27 +2,26 @@ import {
   useRequest
 } from 'umi';
 import {
-  fetchData,
   getVaultDetails,
   getVaultDailyData,
-  getVaultHourlyData,
-  getProtocols,
-  getStrategyById,
-  getTransations
+  getVaultTodayData,
 } from '@/services/dashboard-service';
 
 const dataMerge = () => {
-  return Promise.all([getVaultDetails(), getTransations()]).then((rs) => {
-    const [vaultDetail, transations] = rs
+  return Promise.all([getVaultDetails(), getVaultTodayData(), getVaultDailyData(100)]).then((rs) => {
+    const [vaultDetail = {}, vaultTodayData = {}, vaultDailyData = []] = rs;
     const nextData = {
-      vaultDetail: vaultDetail.data,
-      transations: transations.data
-    }
+      vaultDetail: vaultDetail?.data,
+      vaultTodayData: vaultTodayData?.data,
+      vaultDailyData,
+    };
     return {
-      data: nextData
-    }
-  })
-}
+      data: nextData,
+    };
+  }).catch(error => {
+    console.error('DashBoard数据初始化失败', error)
+  });
+};
 
 export default function useDashboardData() {
   const msg = useRequest(() => dataMerge());

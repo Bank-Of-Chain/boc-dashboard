@@ -4,11 +4,17 @@ import { TinyArea } from '@ant-design/charts'
 import React from 'react'
 import NumberInfo from './NumberInfo'
 import styles from '../style.less'
+import { useModel } from 'umi'
+
+// === Constants === //
+import STRATEGIES_MAP from './../../../../constants/strategies'
 
 // === Utils === //
 import groupBy from 'lodash/groupBy'
 import sumBy from 'lodash/sumBy'
 import { mapValues, values } from 'lodash'
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 const columns = [
   {
@@ -23,6 +29,7 @@ const columns = [
           src={`./images/${text}.webp`}
           placeholder={text}
           alt={text}
+          fallback={'./images/default.webp'}
         />
         <a className={styles.text}>{text}</a>
       </div>
@@ -32,55 +39,37 @@ const columns = [
     title: 'Percent',
     dataIndex: 'percent',
     key: 'percent',
+    render: text => <span>{text.toString() / 100}%</span>,
   },
   {
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
+    render: text => toFixed(text.toString(), getDecimals(), 2),
   },
 ]
 
-const TopSearch = ({ loading, visitData, dropdownGroup }) => {
-  const visitData2 = [
-    {
-      x: '2022-01-13',
-      y: 1,
-    },
-    {
-      x: '2022-01-14',
-      y: 6,
-    },
-    {
-      x: '2022-01-15',
-      y: 4,
-    },
-    {
-      x: '2022-01-16',
-      y: 8,
-    },
-    {
-      x: '2022-01-17',
-      y: 3,
-    },
-    {
-      x: '2022-01-18',
-      y: 7,
-    },
-    {
-      x: '2022-01-19',
-      y: 2,
-    },
-  ]
-  const { strategies } = visitData
-  const total = sumBy(strategies, 'debt.amount')
+const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
+  const { initialState } = useModel('@@initialState')
+  if(!initialState.chain) return null
+  const visitData2 = []
+  const { strategies = [] } = visitData
+  const total = sumBy(strategies, o => BigInt(o.debt))
 
   const groupData = groupBy(strategies, 'protocol.id')
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      const amount = sumBy(o, 'debt.amount')
-      return { name: key, amount, percent: `${((100 * amount) / total).toFixed(2)}%` }
+      const amount = sumBy(o, o => BigInt(o.debt))
+      return {
+        name: STRATEGIES_MAP[initialState.chain][key],
+        amount,
+        percent: (10000n * amount) / total,
+      }
     }),
   )
+  const dailyApy = 0,
+    weeklyApy = 0,
+    yearApy = 0
   return (
     <Card
       loading={loading}
@@ -113,9 +102,9 @@ const TopSearch = ({ loading, visitData, dropdownGroup }) => {
               </span>
             }
             gap={8}
-            total={12.33}
+            total={0}
             status='up'
-            subTotal={17.1}
+            subTotal={`${dailyApy.toFixed(2)}%`}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
         </Col>
@@ -139,9 +128,9 @@ const TopSearch = ({ loading, visitData, dropdownGroup }) => {
                 </Tooltip>
               </span>
             }
-            total={15.6}
-            status='down'
-            subTotal={26.2}
+            total={0}
+            status='up'
+            subTotal={`${weeklyApy.toFixed(2)}%`}
             gap={8}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
@@ -166,9 +155,9 @@ const TopSearch = ({ loading, visitData, dropdownGroup }) => {
                 </Tooltip>
               </span>
             }
-            total={12.7}
-            status='down'
-            subTotal={26.2}
+            total={0}
+            status='up'
+            subTotal={`${yearApy.toFixed(2)}%`}
             gap={8}
           />
           <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />

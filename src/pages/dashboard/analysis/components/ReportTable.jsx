@@ -1,46 +1,50 @@
-import { Card, Table } from 'antd'
-import React from 'react'
+import { Card, Table } from 'antd';
+import React from 'react';
 
 // === Utils === //
-import moment from 'moment'
+import numeral from 'numeral';
+import moment from 'moment';
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 // === Styles === //
-import styles from '../style.less'
+import styles from '../style.less';
 const columns = [
   {
     title: 'Txn Hash',
     dataIndex: 'id',
     key: 'id',
-    render: text => <a>{text}</a>,
+    width: 550,
+    ellipsis: {
+      showTitle: false,
+    },
+    render: (text) => <a title={text}>{text}</a>,
   },
   {
     title: 'Amount',
-    dataIndex: ['profit', 'amount'],
-    key: 'amount',
+    dataIndex: 'nowStrategyTotalDebt',
+    key: 'nowStrategyTotalDebt',
+    render: (text) => <span>{toFixed(text, getDecimals(),2)}</span>,
   },
   {
     title: 'Profit',
-    dataIndex: ['profit', 'usdtAmount'],
+    dataIndex: 'profit',
     key: 'profit',
-  },
-  {
-    title: 'Price',
-    dataIndex: ['profit', 'usdtPrice', 'price'],
-    key: 'price',
+    render: (text) => <span>{toFixed(text, getDecimals(),2)}</span>,
   },
   {
     title: 'Date',
     dataIndex: 'timestamp',
     key: 'timestamp',
-    render: text => moment(Number(text)).fromNow(),
+    render: (text) => moment(1000 * text).fromNow(),
   },
-]
+];
 
 const ReportTable = ({ loading, visitData, dropdownGroup }) => (
   <Card
     loading={loading}
     bordered={false}
-    title='Reports'
+    title="Reports"
     extra={dropdownGroup}
     style={{
       height: '100%',
@@ -48,8 +52,8 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => (
     }}
   >
     <Table
-      rowKey={record => record.id}
-      size='small'
+      rowKey={(record) => record.id}
+      size="small"
       columns={columns}
       dataSource={visitData}
       pagination={{
@@ -60,6 +64,6 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => (
       }}
     />
   </Card>
-)
+);
 
-export default ReportTable
+export default ReportTable;

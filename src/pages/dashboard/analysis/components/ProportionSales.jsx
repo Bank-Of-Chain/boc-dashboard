@@ -1,20 +1,25 @@
 import { Card } from 'antd'
-import numeral from 'numeral'
 import { Donut } from '@ant-design/charts'
 import React from 'react'
 
 // === Utils === //
 import { sumBy, mapValues, groupBy, values } from 'lodash'
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
+
+// === Constants === //
+import { MATIC_STRATEGIES_MAP } from './../../../../constants/strategies'
+
 // === Styles === //
 import styles from '../style.less'
 
-const ProportionSales = ({ loading, visitData }) => {
-  const { strategies } = visitData
+const ProportionSales = ({ loading, visitData = {} }) => {
+  const { strategies = [] } = visitData
   const groupData = groupBy(strategies, 'protocol.id')
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      const amount = sumBy(o, 'debt.amount')
-      return { name: key, amount }
+      const amount = sumBy(o, o => Number(o.debt))
+      return { name: MATIC_STRATEGIES_MAP[key], amount }
     }),
   )
   return (
@@ -31,7 +36,8 @@ const ProportionSales = ({ loading, visitData }) => {
         <Donut
           forceFit
           height={340}
-          radius={0.9}
+          radius={1}
+          innerRadius={0.75}
           angleField='amount'
           colorField='name'
           data={tableData}
@@ -40,10 +46,14 @@ const ProportionSales = ({ loading, visitData }) => {
           }}
           label={{
             visible: true,
-            type: 'spider',
+            type: 'outer-center',
+            offset: 20,
             formatter: (text, item) => {
-              // eslint-disable-next-line no-underscore-dangle
-              return `${item._origin.x}: ${numeral(item._origin.y).format('0,0')}`
+              return `${item._origin.name}: ${toFixed(
+                BigInt(item._origin.amount).toString(),
+                getDecimals(),
+                2,
+              )}`
             },
           }}
           statistic={{

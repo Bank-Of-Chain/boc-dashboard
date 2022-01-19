@@ -1,32 +1,51 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Col, Row, Card, Image, Descriptions } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import ReportTable from './components/ReportTable'
 import { Line } from '@ant-design/charts'
-import { useRequest, useModel, history } from 'umi'
-import { fakeChartData } from './service'
+import { history } from 'umi'
 import { LeftOutlined } from '@ant-design/icons'
+
+// === Constants === //
+import { MATIC_STRATEGIES_MAP } from './../../../constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from './components/CoinSuperPosition/index'
 
 // === Utils === //
-import find from 'lodash/find'
+import { toFixed } from './../../../helper/number-format'
+import { getDecimals } from './../../../apollo/client'
+
+// === Services === //
+import { getStrategyById } from './../../../services/dashboard-service'
+import { getStrategyApysInChain } from './../../../services/api-service'
 
 // === Styles === //
 import styles from './style.less'
-import { filter, map } from 'lodash'
+import { isEmpty, map } from 'lodash'
+import { useState } from 'react'
+import moment from 'moment'
 
 const Strategy = props => {
   const { id } = props?.match?.params
-  const { data } = useRequest(fakeChartData)
+  const loading = false
+  const [strategy, setStrategy] = useState({})
+  const [apys, setApys] = useState([])
+  useEffect(() => {
+    getStrategyById(id).then(setStrategy)
+    getStrategyApysInChain(id, 0, 100)
+      .then(rs =>
+        map(rs.content, i => {
+          return {
+            value: i.apy,
+            date: i.fetchTime.toFixed(),
+          }
+        }),
+      )
+      .then(setApys)
+  }, [id])
 
-  const { dataSource, reload, loading } = useModel('useDashboardData')
-  console.log('dataSource=', dataSource)
-  const { vaultDetail } = dataSource
-  //TODO:  默认选中第一个
-  const strategy = find(vaultDetail.strategies, { id }) || vaultDetail.strategies[0]
-
+  if (isEmpty(strategy)) return null
   const { underlyingTokens, depositedAssets } = strategy
   return (
     <GridContent>
@@ -34,7 +53,12 @@ const Strategy = props => {
         <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false}>
           <Row justify='space-around'>
             <Col xl={8} lg={8} md={8} sm={8} xs={8}>
-              <Image preview={false} width={300} src={`/images/${strategy?.protocol.id}.webp`} />
+              <Image
+                preview={false}
+                width={300}
+                src={`/images/${MATIC_STRATEGIES_MAP[strategy?.protocol.id]}.webp`}
+                fallback={'/images/default.webp'}
+              />
             </Col>
             <Col xl={10} lg={10} md={10} sm={10} xs={10}>
               <Descriptions
@@ -45,9 +69,11 @@ const Strategy = props => {
                 }}
               >
                 <Descriptions.Item label='Underlying Token'>
-                  <CoinSuperPosition array={map(underlyingTokens, 'id')} />
+                  <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                 </Descriptions.Item>
-                <Descriptions.Item label='Deposited'>{depositedAssets?.amount}</Descriptions.Item>
+                <Descriptions.Item label='Deposited'>
+                  {toFixed(depositedAssets, getDecimals(), 2)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Status'>Active</Descriptions.Item>
               </Descriptions>
             </Col>
@@ -72,11 +98,25 @@ const Strategy = props => {
             <Line
               forceFit
               responsive
-              data={filter(data?.offlineChartData, { type: '支付笔数' })}
+              data={apys}
               padding='auto'
               xField='date'
               yField='value'
               height={400}
+              yAxis={{
+                label: {
+                  formatter: v => {
+                    return `${(100 * v).toFixed(2)}%`
+                  },
+                },
+              }}
+              xAxis={{
+                label: {
+                  formatter: v => {
+                    return moment(Number(v)).format('MM-DD HH:mm')
+                  },
+                },
+              }}
               smooth
             />
           </div>
