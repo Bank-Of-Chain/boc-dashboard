@@ -24,9 +24,9 @@ const topColResponsiveProps = {
 const IntroduceRow = ({ loading, visitData = {} }) => {
   const { vaultDailyData = [], vaultDetail = {} } = visitData
   // 一周前的锁仓量
-  const weekTvl = get(vaultDailyData, `[${vaultDailyData.length - 7}].tvl`, 0)
+  const weekTvl = get(vaultDailyData, `[${vaultDailyData.length - 7}].tvl`, 1)
   // 一天前的锁仓量
-  const dailyTvl = get(vaultDailyData, `[${vaultDailyData.length - 2}].tvl`, 0)
+  const dailyTvl = get(vaultDailyData, `[${vaultDailyData.length - 2}].tvl`, 1)
   const weekPercent = 100 - (100 * vaultDetail?.tvl) / weekTvl
   const dailyPercent = 100 - (100 * vaultDetail?.tvl) / dailyTvl
   return (

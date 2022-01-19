@@ -55,8 +55,8 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       key: 'reports',
       render: value =>
         `${toFixed(
-          sumBy(value, o => BigInt(o.profit)),
-          getDecimals,
+          sumBy(value, o => BigInt(o.profit)).toString(),
+          getDecimals(),
           2,
         )}`,
     },
