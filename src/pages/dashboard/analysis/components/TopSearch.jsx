@@ -115,9 +115,10 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             gap={8}
-            total={0}
+            total={'-'}
             status="up"
-            subTotal={`${dailyApy.toFixed(2)}%`}
+            // subTotal={`${dailyApy.toFixed(2)}%`}
+            subTotal={'-%'}
           />
           <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
         </Col>
@@ -141,9 +142,10 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
                 </Tooltip>
               </span>
             }
-            total={0}
+            total={'-'}
             status="up"
-            subTotal={`${weeklyApy.toFixed(2)}%`}
+            // subTotal={`${weeklyApy.toFixed(2)}%`}
+            subTotal={'-%'}
             gap={8}
           />
           <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
@@ -168,9 +170,10 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
                 </Tooltip>
               </span>
             }
-            total={0}
+            total={'-'}
             status="up"
-            subTotal={`${yearApy.toFixed(2)}%`}
+            subTotal={'-%'}
+            // subTotal={`${yearApy.toFixed(2)}%`}
             gap={8}
           />
           <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
