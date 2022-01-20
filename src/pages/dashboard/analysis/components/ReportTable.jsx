@@ -1,4 +1,4 @@
-import { Card, Table } from 'antd'
+import { Card, Table, Tooltip } from 'antd'
 import React from 'react'
 import { useModel } from 'umi'
 
@@ -45,7 +45,7 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      render: text => moment(1000 * text).fromNow(),
+      render: text => <Tooltip title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}>{moment(1000 * text).fromNow()}</Tooltip>,
     },
   ]
   return (

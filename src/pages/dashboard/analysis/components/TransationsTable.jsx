@@ -1,4 +1,4 @@
-import { Card, Table } from 'antd'
+import { Card, Table, Tooltip } from 'antd'
 import React from 'react'
 import { useModel } from 'umi'
 
@@ -14,13 +14,13 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      render: text => moment(1000 * text).fromNow(),
+      render: text => <Tooltip title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}>{moment(1000 * text).fromNow()}</Tooltip>,
     },
     {
       title: 'Account',
-      dataIndex: 'address',
-      key: 'address',
-      width: 200,
+      dataIndex: 'from',
+      key: 'from',
+      width: 400,
       ellipsis: {
         showTitle: false,
       },
@@ -39,7 +39,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Method',
       dataIndex: 'method',
       key: 'method',
-      render: text => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
+      render: text => <span style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</span>,
     },
 
     {
@@ -49,29 +49,10 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
         `${toFixed(item.shares, getDecimals(), 2)}(${toFixed(item.shareValue, getDecimals(), 2)})`,
     },
     {
-      title: 'From',
-      dataIndex: 'from',
-      key: 'from',
-      width: 200,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: text => (
-        <a
-          target={'_blank'}
-          rel='noreferrer'
-          href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${text}`}
-          title={text}
-        >
-          {text}
-        </a>
-      ),
-    },
-    {
       title: 'Txn Hash',
       dataIndex: 'id',
       key: 'id',
-      width: 200,
+      width: 300,
       ellipsis: {
         showTitle: false,
       },
@@ -91,7 +72,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
     <Card
       loading={loading}
       bordered={false}
-      title='Deposits'
+      title='Transactions'
       extra={dropdownGroup}
       style={{
         height: '100%',

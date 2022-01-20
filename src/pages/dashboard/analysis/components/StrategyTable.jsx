@@ -53,9 +53,9 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
     },
     {
       title: 'Asset(USDT)',
-      dataIndex: 'depositedAssets',
-      key: 'depositedAssets',
-      render: text => <a>{toFixed(text, getDecimals(), 2)}</a>,
+      dataIndex: 'debt',
+      key: 'debt',
+      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Week Profit(USDT)',
@@ -101,7 +101,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
           style: {
             marginBottom: 0,
           },
-          pageSize: 100,
+          pageSize: 10,
         }}
       />
     </Card>
