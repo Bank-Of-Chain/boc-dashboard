@@ -23,14 +23,12 @@ const topColResponsiveProps = {
 
 const IntroduceRow = ({ loading, visitData = {} }) => {
   const { vaultDailyData = [], vaultDetail = {} } = visitData;
-  // // 一周前的锁仓量
-  // const weekTvl = get(vaultDailyData, `[${vaultDailyData.length - 7}].tvl`, 1)
-  // // 一天前的锁仓量
-  // const dailyTvl = get(vaultDailyData, `[${vaultDailyData.length - 2}].tvl`, 1)
-  // const weekPercent = 100 - (100 * vaultDetail?.tvl) / weekTvl
-  // const dailyPercent = 100 - (100 * vaultDetail?.tvl) / dailyTvl
-  const weekPercent = 0,
-    dailyPercent = 0;
+  // 一周前的锁仓量
+  const weekTvl = get(vaultDailyData, `[${vaultDailyData.length - 7}].tvl`, 1)
+  // 一天前的锁仓量
+  const dailyTvl = get(vaultDailyData, `[${vaultDailyData.length - 2}].tvl`, 1)
+  const weekPercent = 100 - (100 * vaultDetail?.tvl) / weekTvl
+  const dailyPercent = 100 - (100 * vaultDetail?.tvl) / dailyTvl
   return (
     <Row gutter={24}>
       <Col {...topColResponsiveProps}>
@@ -53,11 +51,17 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
             }}
           >
             周同比
-            <span className={styles.trendText}>{`${Math.abs(weekPercent).toFixed(2)}%`}</span>
+            <span className={styles.trendText}>
+              {/* {`${Math.abs(weekPercent).toFixed(2)}%`} */}
+              {'-%'}
+            </span>
           </Trend>
           <Trend flag={dailyPercent > 0 ? 'up' : 'down'}>
             日同比
-            <span className={styles.trendText}>{`${Math.abs(dailyPercent).toFixed(2)}%`}</span>
+            <span className={styles.trendText}>
+              {/* {`${Math.abs(dailyPercent).toFixed(2)}%`} */}
+              {'-%'}
+            </span>
           </Trend>
         </ChartCard>
       </Col>

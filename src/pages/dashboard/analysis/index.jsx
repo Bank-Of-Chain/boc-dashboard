@@ -20,7 +20,7 @@ import {
 import numeral from 'numeral';
 import { map, isEmpty } from 'lodash';
 import { getDecimals, setClient } from './../../../apollo/client';
-import { arrayAppendOfDay, arrayAppendOfHour, usePreValue } from './../../../helper/array-append';
+import { arrayAppendOfDay, arrayAppendOfHour, usedPreValue } from './../../../helper/array-append';
 
 // === Styles === //
 import styles from './style.less';
@@ -66,11 +66,11 @@ const Analysis = (props) => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            value: item.tvl,
+            value: toFixed(item.tvl, getDecimals(), 2),
           };
         }),
       )
-      .then(usePreValue)
+      .then(a => usedPreValue(a, 'value', 0))
       .then(setTvlArray);
   }, [currentTab4tvl]);
 
@@ -86,11 +86,11 @@ const Analysis = (props) => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            value: item.pricePerShare,
+            value: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
           };
         }),
       )
-      .then(usePreValue)
+      .then(a => usedPreValue(a, 'value', 1))
       .then(setSpArray);
   }, [currentTab4sp]);
 
@@ -142,7 +142,7 @@ const Analysis = (props) => {
                 },
                 value: {
                   formatter: (v) => {
-                    return toFixed(v, getDecimals(), 6);
+                    return v
                   },
                 },
               }}
@@ -189,7 +189,7 @@ const Analysis = (props) => {
                 },
                 value: {
                   formatter: (v) => {
-                    return toFixed(v, getDecimals(), 2);
+                    return v
                   },
                 },
               }}
