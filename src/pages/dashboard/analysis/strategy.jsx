@@ -18,7 +18,7 @@ import { getDecimals } from './../../../apollo/client';
 
 // === Services === //
 import { getStrategyById } from './../../../services/dashboard-service';
-import { getStrategyApysInChain } from './../../../services/api-service';
+import { getStrategyApysInChain, getStrategyApysOffChain } from './../../../services/api-service';
 
 // === Styles === //
 import styles from './style.less';
@@ -31,6 +31,7 @@ const Strategy = (props) => {
   const loading = false;
   const [strategy, setStrategy] = useState({});
   const [apys, setApys] = useState([]);
+  const [offChainApys, setOffChainApys] = useState([]);
   const { initialState } = useModel('@@initialState');
   useEffect(() => {
     getStrategyById(id).then(setStrategy);
@@ -39,13 +40,22 @@ const Strategy = (props) => {
         map(rs.content, (i) => {
           return {
             value: i.apy,
-            date: i.fetchTime.toFixed(),
+            date: i.apyValidateTime,
           };
         }),
       )
       .then(setApys);
+    getStrategyApysOffChain(id, 0, 100)
+      .then((rs) =>
+        map(rs.content, (i) => {
+          return {
+            value: i.apy,
+            date: i.apyValidateTime,
+          };
+        }),
+      )
+      .then(setOffChainApys);
   }, [id]);
-
   if (!initialState.chain || isEmpty(strategy)) return null;
   const { underlyingTokens, depositedAssets } = strategy;
   return (
@@ -69,6 +79,9 @@ const Strategy = (props) => {
                   marginBottom: 32,
                 }}
               >
+                <Descriptions.Item label="name">
+                  <a>{strategy.name}</a>
+                </Descriptions.Item>
                 <Descriptions.Item label="Underlying Token">
                   <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                 </Descriptions.Item>
@@ -99,26 +112,40 @@ const Strategy = (props) => {
             <Line
               forceFit
               responsive
-              data={apys}
+              data={[
+                ...map(apys, i => {
+                  return {
+                    ...i,
+                    type: '链内',
+                  }
+                }),
+                ...map(offChainApys, i => {
+                  return {
+                    ...i,
+                    type: '链外',
+                  }
+                }),
+              ]}
               padding="auto"
               xField="date"
               yField="value"
+              seriesField="type"
               height={400}
+              meta={{
+                value: {
+                  formatter: (v) => {
+                    return `${(100 * v).toFixed(2)}%`
+                  },
+                }
+              }}
               yAxis={{
                 label: {
                   formatter: (v) => {
-                    return `${(100 * v).toFixed(2)}%`;
+                    return v
                   },
                 },
               }}
-              xAxis={{
-                label: {
-                  formatter: (v) => {
-                    return moment(Number(v)).format('MM-DD HH:mm');
-                  },
-                },
-              }}
-              smooth
+              // smooth
             />
           </div>
         </Card>
