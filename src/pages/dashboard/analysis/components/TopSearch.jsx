@@ -1,27 +1,28 @@
-import { InfoCircleOutlined } from '@ant-design/icons'
-import { Card, Col, Row, Table, Tooltip, Image } from 'antd'
-import { TinyArea } from '@ant-design/charts'
-import React from 'react'
-import NumberInfo from './NumberInfo'
-import styles from '../style.less'
-import { useModel } from 'umi'
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Table, Tooltip, Image } from 'antd';
+import { TinyArea } from '@ant-design/charts';
+import React from 'react';
+import NumberInfo from './NumberInfo';
+import styles from '../style.less';
+import { useModel } from 'umi';
 
 // === Constants === //
-import STRATEGIES_MAP from './../../../../constants/strategies'
+import STRATEGIES_MAP from './../../../../constants/strategies';
 
 // === Utils === //
-import groupBy from 'lodash/groupBy'
-import sumBy from 'lodash/sumBy'
-import { mapValues, values } from 'lodash'
-import { toFixed } from './../../../../helper/number-format'
-import { getDecimals } from './../../../../apollo/client'
+import groupBy from 'lodash/groupBy';
+import reduce from 'lodash/reduce';
+import { mapValues, values } from 'lodash';
+import { toFixed } from './../../../../helper/number-format';
+import { getDecimals } from './../../../../apollo/client';
+import BN from 'bignumber.js';
 
 const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    render: text => (
+    render: (text) => (
       <div className={styles.tableCell}>
         <Image
           width={30}
@@ -39,42 +40,54 @@ const columns = [
     title: 'Percent',
     dataIndex: 'percent',
     key: 'percent',
-    render: text => <span>{text.toString() / 100}%</span>,
+    render: (text) => <span>{toFixed(text, 1e-2, 2)}%</span>,
   },
   {
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
-    render: text => toFixed(text.toString(), getDecimals(), 2),
+    render: (text) => toFixed(text.toString(), getDecimals(), 2),
   },
-]
+];
 
 const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
-  const { initialState } = useModel('@@initialState')
-  if(!initialState.chain) return null
-  const visitData2 = []
-  const { strategies = [] } = visitData
-  const total = sumBy(strategies, o => BigInt(o.debt))
+  const { initialState } = useModel('@@initialState');
+  if (!initialState.chain) return null;
+  const visitData2 = [];
+  const { strategies = [] } = visitData;
+  const total = reduce(
+    strategies,
+    (rs, o) => {
+      return rs.plus(o.debt);
+    },
+    BN(0),
+  );
 
-  const groupData = groupBy(strategies, 'protocol.id')
+  const groupData = groupBy(strategies, 'protocol.id');
   const tableData = values(
     mapValues(groupData, (o, key) => {
-      const amount = sumBy(o, o => BigInt(o.debt))
+      const amount = reduce(
+        o,
+        (rs, ob) => {
+          return rs.plus(ob.debt);
+        },
+        BN(0),
+      );
       return {
         name: STRATEGIES_MAP[initialState.chain][key],
         amount,
-        percent: (10000n * amount) / total,
-      }
+        percent: amount.div(total),
+      };
     }),
-  )
+  );
   const dailyApy = 0,
     weeklyApy = 0,
-    yearApy = 0
+    yearApy = 0;
   return (
     <Card
       loading={loading}
       bordered={false}
-      title='Group'
+      title="Group"
       extra={dropdownGroup}
       style={{
         height: '100%',
@@ -92,7 +105,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
             subTitle={
               <span>
                 日收益率
-                <Tooltip title='昨日收益率'>
+                <Tooltip title="昨日收益率">
                   <InfoCircleOutlined
                     style={{
                       marginLeft: 8,
@@ -103,10 +116,10 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
             }
             gap={8}
             total={0}
-            status='up'
+            status="up"
             subTotal={`${dailyApy.toFixed(2)}%`}
           />
-          <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
+          <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
         </Col>
         <Col
           sm={8}
@@ -119,7 +132,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
             subTitle={
               <span>
                 周收益率
-                <Tooltip title='过去7日平均收益'>
+                <Tooltip title="过去7日平均收益">
                   <InfoCircleOutlined
                     style={{
                       marginLeft: 8,
@@ -129,11 +142,11 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             total={0}
-            status='up'
+            status="up"
             subTotal={`${weeklyApy.toFixed(2)}%`}
             gap={8}
           />
-          <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
+          <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
         </Col>
         <Col
           sm={8}
@@ -146,7 +159,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
             subTitle={
               <span>
                 年收益率
-                <Tooltip title='365天平均收益'>
+                <Tooltip title="365天平均收益">
                   <InfoCircleOutlined
                     style={{
                       marginLeft: 8,
@@ -156,16 +169,16 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
               </span>
             }
             total={0}
-            status='up'
+            status="up"
             subTotal={`${yearApy.toFixed(2)}%`}
             gap={8}
           />
-          <TinyArea xField='x' height={45} forceFit yField='y' smooth data={visitData2} />
+          <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
         </Col>
       </Row>
       <Table
-        rowKey={record => record.name}
-        size='small'
+        rowKey={(record) => record.name}
+        size="small"
         columns={columns}
         dataSource={tableData}
         pagination={{
@@ -176,7 +189,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
         }}
       />
     </Card>
-  )
-}
+  );
+};
 
-export default TopSearch
+export default TopSearch;

@@ -2,7 +2,7 @@ import { Card, Table, Image } from 'antd'
 import React from 'react'
 import styles from '../style.less'
 import { history, useModel } from 'umi'
-import { map, sumBy } from 'lodash'
+import { map, reduce } from 'lodash'
 
 // === Constants === //
 import STRATEGIES_MAP from './../../../../constants/strategies'
@@ -13,10 +13,11 @@ import CoinSuperPosition from './CoinSuperPosition/index'
 // === Utils === //
 import { toFixed } from './../../../../helper/number-format'
 import { getDecimals } from './../../../../apollo/client'
+import BN from 'bignumber.js'
 
 const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState')
-  if(!initialState.chain) return null
+  if (!initialState.chain) return null
   const columns = [
     {
       title: 'Name',
@@ -33,7 +34,14 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
             alt={STRATEGIES_MAP[initialState.chain][item.protocol.id]}
             fallback={'./images/default.webp'}
           />
-          <a className={styles.text}>{text}</a>
+          <a
+            target={'_blank'}
+            rel='noreferrer'
+            href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.id}`}
+            className={styles.text}
+          >
+            {text}
+          </a>
         </div>
       ),
     },
@@ -55,7 +63,13 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       key: 'reports',
       render: value =>
         `${toFixed(
-          sumBy(value, o => BigInt(o.profit)).toString(),
+          reduce(
+            value,
+            (rs, o) => {
+              return rs.plus(o.profit)
+            },
+            BN(0),
+          ).toString(),
           getDecimals(),
           2,
         )}`,
@@ -67,29 +81,31 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       render: text => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
     },
   ]
-  return <Card
-  loading={loading}
-  bordered={false}
-  title='Strategies'
-  extra={dropdownGroup}
-  style={{
-    height: '100%',
-    marginTop: 32,
-  }}
->
-  <Table
-    rowKey={record => record.id}
-    size='small'
-    columns={columns}
-    dataSource={searchData}
-    pagination={{
-      style: {
-        marginBottom: 0,
-      },
-      pageSize: 100,
-    }}
-  />
-</Card>
+  return (
+    <Card
+      loading={loading}
+      bordered={false}
+      title='Strategies'
+      extra={dropdownGroup}
+      style={{
+        height: '100%',
+        marginTop: 32,
+      }}
+    >
+      <Table
+        rowKey={record => record.id}
+        size='small'
+        columns={columns}
+        dataSource={searchData}
+        pagination={{
+          style: {
+            marginBottom: 0,
+          },
+          pageSize: 100,
+        }}
+      />
+    </Card>
+  )
 }
 
 export default StrategyTable
