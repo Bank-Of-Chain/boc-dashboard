@@ -86,7 +86,7 @@ const Analysis = (props) => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            value: item.pricePerShare,
+            value: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
           };
         }),
       )
@@ -189,7 +189,7 @@ const Analysis = (props) => {
                 },
                 value: {
                   formatter: (v) => {
-                    return toFixed(v, getDecimals(), 2);
+                    return v
                   },
                 },
               }}
