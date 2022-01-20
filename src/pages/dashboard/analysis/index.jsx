@@ -102,57 +102,6 @@ const Analysis = (props) => {
       <Suspense fallback={null}>
         <Card
           loading={loading}
-          title="TVL"
-          className={styles.offlineCard}
-          bordered={false}
-          extra={map(buttons, (b, i) => (
-            <Button
-              key={b}
-              ghost
-              style={{ marginLeft: 10 }}
-              type={currentTab4tvl === i ? 'primary' : ''}
-              onClick={() => setCurrentTab1(i)}
-            >
-              {b}
-            </Button>
-          ))}
-          style={{
-            marginTop: 32,
-          }}
-        >
-          <div
-            style={{
-              padding: '0 24px',
-            }}
-          >
-            <Line
-              forceFit
-              responsive
-              data={tvlArray}
-              meta={{
-                date: {
-                  formatter: (v) => {
-                    return moment(Number(v)).format('MM-DD HH:mm');
-                  },
-                },
-                value: {
-                  formatter: (v) => {
-                    return v
-                  },
-                },
-              }}
-              padding="auto"
-              xField="date"
-              yField="value"
-              height={400}
-              // smooth
-            />
-          </div>
-        </Card>
-      </Suspense>
-      <Suspense fallback={null}>
-        <Card
-          loading={loading}
           title="Share Price"
           className={styles.offlineCard}
           bordered={false}
@@ -193,10 +142,61 @@ const Analysis = (props) => {
                 },
                 value: {
                   formatter: (v) => {
-                    return toFixed(v, getDecimals(), 6);
+                    return v
                   },
                 },
               }}
+              // smooth
+            />
+          </div>
+        </Card>
+      </Suspense>
+      <Suspense fallback={null}>
+        <Card
+          loading={loading}
+          title="TVL"
+          className={styles.offlineCard}
+          bordered={false}
+          extra={map(buttons, (b, i) => (
+            <Button
+              key={b}
+              ghost
+              style={{ marginLeft: 10 }}
+              type={currentTab4tvl === i ? 'primary' : ''}
+              onClick={() => setCurrentTab1(i)}
+            >
+              {b}
+            </Button>
+          ))}
+          style={{
+            marginTop: 32,
+          }}
+        >
+          <div
+            style={{
+              padding: '0 24px',
+            }}
+          >
+            <Line
+              forceFit
+              responsive
+              data={tvlArray}
+              meta={{
+                date: {
+                  formatter: (v) => {
+                    return moment(Number(v)).format('MM-DD HH:mm');
+                  },
+                },
+                value: {
+                  formatter: (v) => {
+                    return toFixed(v, getDecimals(), 2);
+                  },
+                },
+              }}
+              padding="auto"
+              xField="date"
+              yField="value"
+              height={400}
               // smooth
             />
           </div>

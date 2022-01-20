@@ -37,16 +37,16 @@ const columns = [
     ),
   },
   {
-    title: 'Percent',
-    dataIndex: 'percent',
-    key: 'percent',
-    render: (text) => <span>{toFixed(text, 1e-2, 2)}%</span>,
-  },
-  {
-    title: 'Amount',
+    title: 'Asset(USDT)',
     dataIndex: 'amount',
     key: 'amount',
     render: (text) => toFixed(text.toString(), getDecimals(), 2),
+  },
+  {
+    title: 'Asset Ratio',
+    dataIndex: 'percent',
+    key: 'percent',
+    render: (text) => <span>{toFixed(text, 1e-2, 2)}%</span>,
   },
 ];
 
