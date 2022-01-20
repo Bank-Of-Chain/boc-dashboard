@@ -1,14 +1,14 @@
-import { Card, Table } from 'antd';
-import React from 'react';
-import { useModel } from 'umi';
+import { Card, Table } from 'antd'
+import React from 'react'
+import { useModel } from 'umi'
 
 // === Utils === //
-import moment from 'moment';
-import { toFixed } from './../../../../helper/number-format';
-import { getDecimals } from './../../../../apollo/client';
+import moment from 'moment'
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
-  const { initialState } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState')
   const columns = [
     {
       title: 'Txn Hash',
@@ -18,8 +18,13 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       ellipsis: {
         showTitle: false,
       },
-      render: (text) => (
-        <a href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`} title={text}>
+      render: text => (
+        <a
+          target={'_blank'}
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          title={text}
+          rel='noreferrer'
+        >
           {text}
         </a>
       ),
@@ -28,7 +33,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Method',
       dataIndex: 'method',
       key: 'method',
-      render: (text) => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
+      render: text => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
     },
     {
       title: 'Account',
@@ -38,8 +43,13 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       ellipsis: {
         showTitle: false,
       },
-      render: (text) => (
-        <a href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${text}`} title={text}>
+      render: text => (
+        <a
+          target={'_blank'}
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${text}`}
+          title={text}
+          rel='noreferrer'
+        >
           {text}
         </a>
       ),
@@ -58,8 +68,13 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       ellipsis: {
         showTitle: false,
       },
-      render: (text) => (
-        <a href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${text}`} title={text}>
+      render: text => (
+        <a
+          target={'_blank'}
+          rel='noreferrer'
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${text}`}
+          title={text}
+        >
           {text}
         </a>
       ),
@@ -68,14 +83,14 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      render: (text) => moment(1000 * text).fromNow(),
+      render: text => moment(1000 * text).fromNow(),
     },
-  ];
+  ]
   return (
     <Card
       loading={loading}
       bordered={false}
-      title="Transations"
+      title='Transations'
       extra={dropdownGroup}
       style={{
         height: '100%',
@@ -83,8 +98,8 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       }}
     >
       <Table
-        rowKey={(record) => record.id}
-        size="small"
+        rowKey={record => record.id}
+        size='small'
         columns={columns}
         dataSource={visitData}
         pagination={{
@@ -95,7 +110,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
         }}
       />
     </Card>
-  );
-};
+  )
+}
 
-export default TransationsTable;
+export default TransationsTable

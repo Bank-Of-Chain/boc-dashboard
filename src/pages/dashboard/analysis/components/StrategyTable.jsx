@@ -1,23 +1,23 @@
-import { Card, Table, Image } from 'antd';
-import React from 'react';
-import styles from '../style.less';
-import { history, useModel } from 'umi';
-import { map, reduce } from 'lodash';
+import { Card, Table, Image } from 'antd'
+import React from 'react'
+import styles from '../style.less'
+import { history, useModel } from 'umi'
+import { map, reduce } from 'lodash'
 
 // === Constants === //
-import STRATEGIES_MAP from './../../../../constants/strategies';
+import STRATEGIES_MAP from './../../../../constants/strategies'
 
 // === Components === //
-import CoinSuperPosition from './CoinSuperPosition/index';
+import CoinSuperPosition from './CoinSuperPosition/index'
 
 // === Utils === //
-import { toFixed } from './../../../../helper/number-format';
-import { getDecimals } from './../../../../apollo/client';
-import BN from 'bignumber.js';
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
+import BN from 'bignumber.js'
 
 const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
-  const { initialState } = useModel('@@initialState');
-  if (!initialState.chain) return null;
+  const { initialState } = useModel('@@initialState')
+  if (!initialState.chain) return null
   const columns = [
     {
       title: 'Name',
@@ -34,7 +34,14 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
             alt={STRATEGIES_MAP[initialState.chain][item.protocol.id]}
             fallback={'./images/default.webp'}
           />
-          <a className={styles.text}>{text}</a>
+          <a
+            target={'_blank'}
+            rel='noreferrer'
+            href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.id}`}
+            className={styles.text}
+          >
+            {text}
+          </a>
         </div>
       ),
     },
@@ -42,24 +49,24 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Wants',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      render: (text) => <CoinSuperPosition array={map(text, 'token.id')} />,
+      render: text => <CoinSuperPosition array={map(text, 'token.id')} />,
     },
     {
       title: 'Deposited',
       dataIndex: 'depositedAssets',
       key: 'depositedAssets',
-      render: (text) => <a>{toFixed(text, getDecimals(), 2)}</a>,
+      render: text => <a>{toFixed(text, getDecimals(), 2)}</a>,
     },
     {
       title: 'Profit(week)',
       dataIndex: 'reports',
       key: 'reports',
-      render: (value) =>
+      render: value =>
         `${toFixed(
           reduce(
             value,
             (rs, o) => {
-              return rs.plus(o.profit);
+              return rs.plus(o.profit)
             },
             BN(0),
           ).toString(),
@@ -71,14 +78,14 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: '',
       dataIndex: 'id',
       key: 'id',
-      render: (text) => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
+      render: text => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
     },
-  ];
+  ]
   return (
     <Card
       loading={loading}
       bordered={false}
-      title="Strategies"
+      title='Strategies'
       extra={dropdownGroup}
       style={{
         height: '100%',
@@ -86,8 +93,8 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       }}
     >
       <Table
-        rowKey={(record) => record.id}
-        size="small"
+        rowKey={record => record.id}
+        size='small'
         columns={columns}
         dataSource={searchData}
         pagination={{
@@ -98,7 +105,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
         }}
       />
     </Card>
-  );
-};
+  )
+}
 
-export default StrategyTable;
+export default StrategyTable

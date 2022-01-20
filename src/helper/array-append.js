@@ -2,7 +2,8 @@ import moment from 'moment';
 import find from 'lodash/find';
 import isEmpty from 'lodash/isEmpty';
 import last from 'lodash/last';
-import { map } from 'lodash';
+import map from 'lodash/map';
+import get from 'lodash/get';
 
 export const arrayAppendOfDay = (array = [], size, key = 'id', valueKey = 'value') => {
   const offset = 86400;
@@ -18,7 +19,7 @@ export const arrayAppendOfDay = (array = [], size, key = 'id', valueKey = 'value
     if (isEmpty(todayItem)) {
       rs.push({
         [key]: firstSecond,
-        [valueKey]: last(array)[valueKey],
+        [valueKey]: get(last(array), valueKey),
       });
     } else {
       rs.push({
@@ -44,7 +45,7 @@ export const arrayAppendOfHour = (array = [], size, key = 'id', valueKey = 'valu
     if (isEmpty(todayItem)) {
       rs.push({
         [key]: firstSecond,
-        [valueKey]: last(array)[valueKey],
+        [valueKey]: get(last(array), valueKey),
       });
     } else {
       rs.push({

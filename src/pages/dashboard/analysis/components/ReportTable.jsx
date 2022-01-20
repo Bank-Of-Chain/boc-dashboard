@@ -1,14 +1,14 @@
-import { Card, Table } from 'antd';
-import React from 'react';
-import { useModel } from 'umi';
+import { Card, Table } from 'antd'
+import React from 'react'
+import { useModel } from 'umi'
 
 // === Utils === //
-import moment from 'moment';
-import { toFixed } from './../../../../helper/number-format';
-import { getDecimals } from './../../../../apollo/client';
+import moment from 'moment'
+import { toFixed } from './../../../../helper/number-format'
+import { getDecimals } from './../../../../apollo/client'
 
 const ReportTable = ({ loading, visitData, dropdownGroup }) => {
-  const { initialState } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState')
   const columns = [
     {
       title: 'Txn Hash',
@@ -18,8 +18,13 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       ellipsis: {
         showTitle: false,
       },
-      render: (text) => (
-        <a href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`} title={text}>
+      render: text => (
+        <a
+          target={'_blank'}
+          rel='noreferrer'
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          title={text}
+        >
           {text}
         </a>
       ),
@@ -28,26 +33,26 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Amount',
       dataIndex: 'nowStrategyTotalDebt',
       key: 'nowStrategyTotalDebt',
-      render: (text) => <span>{toFixed(text, getDecimals(), 2)}</span>,
+      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Profit',
       dataIndex: 'profit',
       key: 'profit',
-      render: (text) => <span>{toFixed(text, getDecimals(), 2)}</span>,
+      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      render: (text) => moment(1000 * text).fromNow(),
+      render: text => moment(1000 * text).fromNow(),
     },
-  ];
+  ]
   return (
     <Card
       loading={loading}
       bordered={false}
-      title="Reports"
+      title='Reports'
       extra={dropdownGroup}
       style={{
         height: '100%',
@@ -55,8 +60,8 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       }}
     >
       <Table
-        rowKey={(record) => record.id}
-        size="small"
+        rowKey={record => record.id}
+        size='small'
         columns={columns}
         dataSource={visitData}
         pagination={{
@@ -67,7 +72,7 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
         }}
       />
     </Card>
-  );
-};
+  )
+}
 
-export default ReportTable;
+export default ReportTable
