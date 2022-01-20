@@ -1,16 +1,7 @@
-import {
-  getClient
-} from '../../src/apollo/client';
-import {
-  gql
-} from '@apollo/client';
-import {
-  request
-} from 'umi';
-import {
-  get,
-  isEmpty
-} from 'lodash';
+import { getClient } from '../../src/apollo/client';
+import { gql } from '@apollo/client';
+import { request } from 'umi';
+import { get, isEmpty } from 'lodash';
 export const fetchData = async () => {
   const postBody = {
     query: `{
@@ -79,9 +70,7 @@ query($sevenDaysAgoTimestamp: BigInt) {
 }
 `;
 export const getVaultDetails = async () => {
-  const {
-    data
-  } = await getClient().query({
+  const { data } = await getClient().query({
     query: gql(VAULT_DETAIL_QUERY),
     variables: {
       sevenDaysAgoTimestamp: getDaysAgoTimestamp(7),
@@ -133,9 +122,7 @@ query($todayTimestamp: BigInt) {
 export const getVaultTodayData = async () => {
   const currentTimestamp = Math.floor(Date.parse(new Date()) / 1000);
   const todayTimestamp = currentTimestamp - (currentTimestamp % 86400);
-  const {
-    data
-  } = await getClient().query({
+  const { data } = await getClient().query({
     query: gql(VAULT_TODAY_QUERY),
     variables: {
       todayTimestamp,
@@ -243,4 +230,31 @@ export const getTransations = async (relatedContractAddress) => {
       },
     })
     .then((data) => data.data.importantEvents);
+};
+
+const PAST_LATEST_VAULT_DAILY_DATA = `
+query($endDayTimestamp: ID) {
+  vaultDailyDatas(
+    first: 1,
+    orderBy: id,
+    orderDirection: desc,
+    where: {
+    	id_lt: $endDayTimestamp
+  }) {
+    id
+    holderCount
+    newHolderCount
+    tvl
+    pricePerShare
+    totalProfit
+    usdtPrice
+  }
+}`;
+export const getPastLatestVaultDailyData = async (endDayTimestamp) => {
+  return getClient().query({
+    query: gql(PAST_LATEST_VAULT_DAILY_DATA),
+    variables: {
+      endDayTimestamp,
+    },
+  });
 };
