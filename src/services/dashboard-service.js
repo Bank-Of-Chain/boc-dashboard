@@ -166,6 +166,53 @@ export const getProtocols = async () => {
   return await request(url);
 };
 
+const STRATEGY__PAGINATION_QUERY = `
+query($sevenDaysAgoTimestamp: BigInt, $pageSize: Int, $skipNumber: Int) {
+  strategies(
+    orderBy: debt,
+    orderDirection: desc,
+    where: {addToVault: true},
+    first: $pageSize,
+    skip: $skipNumber
+  ) {
+    id
+    name
+    protocol {
+      id
+      totalDebt
+      usdtPrice
+    }
+    underlyingTokens {
+      token {
+        id
+        symbol
+      }
+    }
+    addToVault
+    debt
+    depositedAssets
+    usdtPrice
+    reports(where: {
+      timestamp_gt: $sevenDaysAgoTimestamp
+    }) {
+      profit
+      usdtPrice
+    }
+  }
+}
+`
+export const queryStrategies = async (pageNumber, pageSize) => {
+  const skipNumber = (pageNumber - 1) * pageSize
+  return getClient().query({
+    query: gql(STRATEGY__PAGINATION_QUERY),
+    variables: {
+      beginHourTimestamp: getDaysAgoTimestamp(day),
+      pageSize,
+      skipNumber
+    }
+  })
+}
+
 const STRATEGY_DETAIL_QUERY = `
 query($strategyAddress: Bytes) {
   strategy(id: $strategyAddress) {
@@ -236,6 +283,39 @@ export const getTransations = async (relatedContractAddress) => {
     .then((data) => data.data.importantEvents);
 };
 
+const TXN_PAGINATION_QUERY = `
+query($relatedContractAddress: Bytes, $pageSize: Int, $skipNumber: Int) {
+  importantEvents(
+    orderBy: timestamp,
+    orderDirection: desc,
+    where: {
+      address: $relatedContractAddress
+    },
+    first: $pageSize,
+    skip: $skipNumber) {
+    id
+    method
+    from
+    address
+    shares
+    shareValue
+    timestamp
+  }
+}
+`;
+export const queryTransactions = async (relatedContractAddress, pageNumber, pageSize) => {
+  const skipNumber = (pageNumber - 1) * pageSize
+  return await getClient()
+    .query({
+      query: gql(TXN_PAGINATION_QUERY),
+      variables: {
+        relatedContractAddress,
+        skipNumber,
+        pageSize
+      }
+    })
+}
+
 const PAST_LATEST_VAULT_DAILY_DATA = `
 query($endDayTimestamp: ID) {
   vaultDailyDatas(
@@ -262,3 +342,30 @@ export const getPastLatestVaultDailyData = async (endDayTimestamp) => {
     },
   });
 };
+
+const REPORT_PAGINATION_QUERY =`
+query($pageSize: Int, $skipNumber: Int) {
+  reports (
+    orderBy: timestamp,
+    orderDirection: desc,
+    first: $pageSize,
+    skip: $skipNumber
+  ) {
+    id
+    profit
+    nowStrategyTotalDebt
+    usdtPrice
+    timestamp
+  }
+}
+`
+export const queryReports = async (pageNumber, pageSize) => {
+  const skipNumber = (pageNumber - 1) * pageSize
+  return getClient().query({
+    query: gql(REPORT_PAGINATION_QUERY),
+    variables: {
+      pageSize,
+      skipNumber
+    }
+  })
+}
