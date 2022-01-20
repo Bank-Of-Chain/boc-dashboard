@@ -41,7 +41,11 @@ query($sevenDaysAgoTimestamp: BigInt) {
     tvl
     usdtPrice
     holderCount
-    strategies(where: {debt_gt: 0, addToVault: true}) {
+    strategies(
+      orderBy: debt,
+      orderDirection: desc
+      where: {addToVault: true}
+    ) {
       id
       name
       protocol {
@@ -81,7 +85,7 @@ export const getVaultDetails = async () => {
   };
 };
 
-const VAULT_DAILY_QERY = `
+const VAULT_DAILY_QUERY = `
 query($beginDayTimestamp: BigInt) {
   vaultDailyDatas (where: {
     id_gt: $beginDayTimestamp
@@ -99,7 +103,7 @@ query($beginDayTimestamp: BigInt) {
 export const getVaultDailyData = async (day) => {
   return await getClient()
     .query({
-      query: gql(VAULT_DAILY_QERY),
+      query: gql(VAULT_DAILY_QUERY),
       variables: {
         beginDayTimestamp: getDaysAgoTimestamp(day),
       },
@@ -133,7 +137,7 @@ export const getVaultTodayData = async () => {
   };
 };
 
-const vaultHourlyData = `
+const VAULT_HOURLY_QUERY = `
 query($beginHourTimestamp: BigInt) {
   vaultHourlyDatas (where: {
     id_gt: $beginHourTimestamp
@@ -148,7 +152,7 @@ query($beginHourTimestamp: BigInt) {
 export const getVaultHourlyData = async (day) => {
   return await getClient()
     .query({
-      query: gql(vaultHourlyData),
+      query: gql(VAULT_HOURLY_QUERY),
       variables: {
         beginHourTimestamp: getDaysAgoTimestamp(day),
       },
