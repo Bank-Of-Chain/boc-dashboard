@@ -19,18 +19,20 @@ import {
 // === Utils === //
 import numeral from 'numeral';
 import { map, isEmpty } from 'lodash';
-import { setClient } from './../../../apollo/client';
+import { getDecimals, setClient } from './../../../apollo/client';
+import { arrayAppendOfDay, arrayAppendOfHour, usePreValue } from './../../../helper/array-append';
 
 // === Styles === //
 import styles from './style.less';
 import moment from 'moment';
+import { toFixed } from '@/helper/number-format';
 
 const buttons = ['1D', '1W', '1M', '1Y'];
 const calls = [
-  () => getVaultHourlyData(20),
-  () => getVaultDailyData(7),
-  () => getVaultDailyData(30),
-  () => getVaultDailyData(365),
+  () => getVaultHourlyData(1).then((array) => arrayAppendOfHour(array, 24)),
+  () => getVaultDailyData(7).then((array) => arrayAppendOfDay(array, 7)),
+  () => getVaultDailyData(30).then((array) => arrayAppendOfDay(array, 30)),
+  () => getVaultDailyData(365).then((array) => arrayAppendOfDay(array, 356)),
 ];
 
 const Analysis = (props) => {
@@ -68,6 +70,7 @@ const Analysis = (props) => {
           };
         }),
       )
+      .then(usePreValue)
       .then(setTvlArray);
   }, [currentTab4tvl]);
 
@@ -87,6 +90,7 @@ const Analysis = (props) => {
           };
         }),
       )
+      .then(usePreValue)
       .then(setSpArray);
   }, [currentTab4sp]);
 
@@ -133,7 +137,7 @@ const Analysis = (props) => {
                 },
                 value: {
                   formatter: (v) => {
-                    return numeral(v).format('0,0');
+                    return toFixed(v, getDecimals(), 2);
                   },
                 },
               }}
@@ -141,7 +145,7 @@ const Analysis = (props) => {
               xField="date"
               yField="value"
               height={400}
-              smooth
+              // smooth
             />
           </div>
         </Card>
@@ -189,11 +193,11 @@ const Analysis = (props) => {
                 },
                 value: {
                   formatter: (v) => {
-                    return numeral(v).format('0,0');
+                    return toFixed(v, getDecimals(), 6);
                   },
                 },
               }}
-              smooth
+              // smooth
             />
           </div>
         </Card>
