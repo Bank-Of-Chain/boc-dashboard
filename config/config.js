@@ -84,7 +84,7 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   define: {
-    API_SERVER: 'http://locahost:8080',
+    API_SERVER: 'http://localhost:8080',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',
