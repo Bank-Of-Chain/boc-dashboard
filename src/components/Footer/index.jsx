@@ -5,12 +5,12 @@ export default () => {
   const intl = useIntl();
   const defaultMessage = intl.formatMessage({
     id: 'app.copyright.produced',
-    defaultMessage: 'BOC区块链团队',
+    defaultMessage: 'Bank Of Chain',
   });
   const currentYear = new Date().getFullYear();
   return (
     <DefaultFooter
-      copyright={`${currentYear} ${defaultMessage}`}
+      copyright={`${defaultMessage} ${currentYear}`}
       links={[
         {
           key: 'BOC Dashboard',

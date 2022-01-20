@@ -11,29 +11,10 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState')
   const columns = [
     {
-      title: 'Txn Hash',
-      dataIndex: 'id',
-      key: 'id',
-      width: 200,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: text => (
-        <a
-          target={'_blank'}
-          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
-          title={text}
-          rel='noreferrer'
-        >
-          {text}
-        </a>
-      ),
-    },
-    {
-      title: 'Method',
-      dataIndex: 'method',
-      key: 'method',
-      render: text => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
+      title: 'Date',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+      render: text => moment(1000 * text).fromNow(),
     },
     {
       title: 'Account',
@@ -54,6 +35,13 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
         </a>
       ),
     },
+    {
+      title: 'Method',
+      dataIndex: 'method',
+      key: 'method',
+      render: text => <a style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</a>,
+    },
+
     {
       title: 'Shares(USDT Amount)',
       width: 200,
@@ -80,17 +68,30 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       ),
     },
     {
-      title: 'Date',
-      dataIndex: 'timestamp',
-      key: 'timestamp',
-      render: text => moment(1000 * text).fromNow(),
+      title: 'Txn Hash',
+      dataIndex: 'id',
+      key: 'id',
+      width: 200,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: text => (
+        <a
+          target={'_blank'}
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          title={text}
+          rel='noreferrer'
+        >
+          {text}
+        </a>
+      ),
     },
   ]
   return (
     <Card
       loading={loading}
       bordered={false}
-      title='Transations'
+      title='Deposits'
       extra={dropdownGroup}
       style={{
         height: '100%',

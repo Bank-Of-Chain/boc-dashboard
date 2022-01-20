@@ -36,7 +36,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
-          title="TVL"
+          title="TVL (USDT)"
           action={
             <Tooltip title="总锁仓量">
               <InfoCircleOutlined />

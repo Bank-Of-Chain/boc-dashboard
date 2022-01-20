@@ -52,13 +52,13 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       render: text => <CoinSuperPosition array={map(text, 'token.id')} />,
     },
     {
-      title: 'Deposited',
+      title: 'Asset(USDT)',
       dataIndex: 'depositedAssets',
       key: 'depositedAssets',
       render: text => <a>{toFixed(text, getDecimals(), 2)}</a>,
     },
     {
-      title: 'Profit(week)',
+      title: 'Week Profit(USDT)',
       dataIndex: 'reports',
       key: 'reports',
       render: value =>
@@ -75,7 +75,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
         )}`,
     },
     {
-      title: '',
+      title: 'Detail',
       dataIndex: 'id',
       key: 'id',
       render: text => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
