@@ -83,7 +83,7 @@ const Strategy = (props) => {
                   <a>{strategy.name}</a>
                 </Descriptions.Item>
                 <Descriptions.Item label="Underlying Token">
-                  <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
+                  &nbsp;&nbsp;<CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                 </Descriptions.Item>
                 <Descriptions.Item label="Deposited">
                   {toFixed(depositedAssets, getDecimals(), 2)}
