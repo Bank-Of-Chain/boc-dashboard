@@ -57,8 +57,8 @@ export const arrayAppendOfHour = (array = [], size, key = 'id', valueKey = 'valu
   return rs;
 };
 
-export const usePreValue = (array, valueKey = 'value') => {
-  let preValue = '';
+export const usedPreValue = (array, valueKey = 'value', defaultValue) => {
+  let preValue = defaultValue;
   return map(array, (item) => {
     const value = item[valueKey];
     if (!value) {
