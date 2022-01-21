@@ -42,22 +42,15 @@ const Analysis = (props) => {
   const [spArray, setSpArray] = useState([]);
   const [transations, setTransations] = useState([]);
 
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState');
 
   const { dataSource, reload, loading } = useModel('useDashboardData');
 
-  const { chain } = props?.location?.query;
-
   const vaultAddress = dataSource?.vaultDetail?.id;
+
   useEffect(() => {
-    if (!!chain && chain !== initialState.chain) {
-      setClient(chain);
-      setInitialState({
-        chain: chain,
-      });
       reload();
-    }
-  }, [chain]);
+  }, [initialState.chain]);
 
   useEffect(() => {
     calls[currentTab4tvl]()
@@ -93,6 +86,8 @@ const Analysis = (props) => {
       .then(a => usedPreValue(a, 'value', 1))
       .then(setSpArray);
   }, [currentTab4sp]);
+
+  if(isEmpty(initialState.chain)) return null
 
   return (
     <GridContent>
