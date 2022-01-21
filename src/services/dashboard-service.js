@@ -74,7 +74,9 @@ query($sevenDaysAgoTimestamp: BigInt) {
 }
 `;
 export const getVaultDetails = async () => {
-  const { data } = await getClient().query({
+  const client = getClient()
+  if (isEmpty(client)) return
+  const { data } = await client.query({
     query: gql(VAULT_DETAIL_QUERY),
     variables: {
       sevenDaysAgoTimestamp: getDaysAgoTimestamp(7),
@@ -101,7 +103,9 @@ query($beginDayTimestamp: BigInt) {
 }
 `;
 export const getVaultDailyData = async (day) => {
-  return await getClient()
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client
     .query({
       query: gql(VAULT_DAILY_QUERY),
       variables: {
@@ -124,9 +128,11 @@ query($todayTimestamp: BigInt) {
 }
 `;
 export const getVaultTodayData = async () => {
+  const client = getClient()
+  if (isEmpty(client)) return
   const currentTimestamp = Math.floor(Date.parse(new Date()) / 1000);
   const todayTimestamp = currentTimestamp - (currentTimestamp % 86400);
-  const { data } = await getClient().query({
+  const { data } = await client.query({
     query: gql(VAULT_TODAY_QUERY),
     variables: {
       todayTimestamp,
@@ -150,7 +156,9 @@ query($beginHourTimestamp: BigInt) {
 }
 `;
 export const getVaultHourlyData = async (day) => {
-  return await getClient()
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client
     .query({
       query: gql(VAULT_HOURLY_QUERY),
       variables: {
@@ -203,7 +211,9 @@ query($sevenDaysAgoTimestamp: BigInt, $pageSize: Int, $skipNumber: Int) {
 `
 export const queryStrategies = async (pageNumber, pageSize) => {
   const skipNumber = (pageNumber - 1) * pageSize
-  return getClient().query({
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client.query({
     query: gql(STRATEGY__PAGINATION_QUERY),
     variables: {
       beginHourTimestamp: getDaysAgoTimestamp(day),
@@ -243,7 +253,9 @@ query($strategyAddress: Bytes) {
 }
 `;
 export const getStrategyById = async (strategyAddress) => {
-  return await getClient()
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client
     .query({
       query: gql(STRATEGY_DETAIL_QUERY),
       variables: {
@@ -273,7 +285,9 @@ query($relatedContractAddress: Bytes) {
 `;
 export const getTransations = async (relatedContractAddress) => {
   if (isEmpty(relatedContractAddress)) return;
-  return await getClient()
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client
     .query({
       query: gql(TXN_QUERY),
       variables: {
@@ -305,7 +319,9 @@ query($relatedContractAddress: Bytes, $pageSize: Int, $skipNumber: Int) {
 `;
 export const queryTransactions = async (relatedContractAddress, pageNumber, pageSize) => {
   const skipNumber = (pageNumber - 1) * pageSize
-  return await getClient()
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client
     .query({
       query: gql(TXN_PAGINATION_QUERY),
       variables: {
@@ -335,7 +351,9 @@ query($endDayTimestamp: ID) {
   }
 }`;
 export const getPastLatestVaultDailyData = async (endDayTimestamp) => {
-  return getClient().query({
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client.query({
     query: gql(PAST_LATEST_VAULT_DAILY_DATA),
     variables: {
       endDayTimestamp,
@@ -361,7 +379,9 @@ query($pageSize: Int, $skipNumber: Int) {
 `
 export const queryReports = async (pageNumber, pageSize) => {
   const skipNumber = (pageNumber - 1) * pageSize
-  return getClient().query({
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client.query({
     query: gql(REPORT_PAGINATION_QUERY),
     variables: {
       pageSize,

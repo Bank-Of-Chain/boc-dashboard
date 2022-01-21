@@ -29,7 +29,7 @@ const CLIENT = {
   [BSC.id]: bscClient,
   [ETH.id]: ethClient
 }
-let CHAIN_ID = ETH.id
+let CHAIN_ID = ''
 
 export const setClient = chain => {
   CHAIN_ID = chain

@@ -78,7 +78,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Detail',
       dataIndex: 'id',
       key: 'id',
-      render: text => <a onClick={() => history.push(`/strategy/${text}`)}>Details</a>,
+      render: text => <a onClick={() => history.push(`/strategy/${text}?chain=${initialState.chain}`)}>Details</a>,
     },
   ]
   return (

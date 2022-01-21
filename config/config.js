@@ -8,6 +8,9 @@ export default defineConfig({
   base: '/dashboard/',
   publicPath: '/dashboard/',
   hash: true,
+  history:{
+    type: 'hash',
+  },
   antd: {
     dark: true,
   },
