@@ -19,7 +19,7 @@ import BN from 'bignumber.js';
 
 const columns = [
   {
-    title: 'Name',
+    title: 'Protocol Name',
     dataIndex: 'name',
     key: 'name',
     render: (text) => (
@@ -37,7 +37,7 @@ const columns = [
     ),
   },
   {
-    title: 'Asset(USDT)',
+    title: 'Asset (USDT)',
     dataIndex: 'amount',
     key: 'amount',
     render: (text) => toFixed(text.toString(), getDecimals(), 2),
@@ -80,118 +80,19 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
       };
     }),
   );
-  const dailyApy = 0,
-    weeklyApy = 0,
-    yearApy = 0;
   return (
-    <Card
-      loading={loading}
-      bordered={false}
-      title="Group"
-      extra={dropdownGroup}
-      style={{
-        height: '100%',
+    <Table
+      rowKey={(record) => record.name}
+      size="large"
+      columns={columns}
+      dataSource={tableData}
+      pagination={{
+        style: {
+          marginBottom: 0,
+        },
+        pageSize: 10,
       }}
-    >
-      <Row gutter={68}>
-        <Col
-          sm={8}
-          xs={24}
-          style={{
-            marginBottom: 24,
-          }}
-        >
-          <NumberInfo
-            subTitle={
-              <span>
-                日收益率
-                <Tooltip title="昨日收益率">
-                  <InfoCircleOutlined
-                    style={{
-                      marginLeft: 8,
-                    }}
-                  />
-                </Tooltip>
-              </span>
-            }
-            gap={8}
-            total={'-'}
-            status="up"
-            // subTotal={`${dailyApy.toFixed(2)}%`}
-            subTotal={'-%'}
-          />
-          <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
-        </Col>
-        <Col
-          sm={8}
-          xs={24}
-          style={{
-            marginBottom: 24,
-          }}
-        >
-          <NumberInfo
-            subTitle={
-              <span>
-                周收益率
-                <Tooltip title="过去7日平均收益">
-                  <InfoCircleOutlined
-                    style={{
-                      marginLeft: 8,
-                    }}
-                  />
-                </Tooltip>
-              </span>
-            }
-            total={'-'}
-            status="up"
-            // subTotal={`${weeklyApy.toFixed(2)}%`}
-            subTotal={'-%'}
-            gap={8}
-          />
-          <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
-        </Col>
-        <Col
-          sm={8}
-          xs={24}
-          style={{
-            marginBottom: 24,
-          }}
-        >
-          <NumberInfo
-            subTitle={
-              <span>
-                年收益率
-                <Tooltip title="365天平均收益">
-                  <InfoCircleOutlined
-                    style={{
-                      marginLeft: 8,
-                    }}
-                  />
-                </Tooltip>
-              </span>
-            }
-            total={'-'}
-            status="up"
-            subTotal={'-%'}
-            // subTotal={`${yearApy.toFixed(2)}%`}
-            gap={8}
-          />
-          <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
-        </Col>
-      </Row>
-      <Table
-        rowKey={(record) => record.name}
-        size="small"
-        columns={columns}
-        dataSource={tableData}
-        pagination={{
-          style: {
-            marginBottom: 0,
-          },
-          pageSize: 5,
-        }}
-      />
-    </Card>
+    />
   );
 };
 

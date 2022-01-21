@@ -1,6 +1,7 @@
-import { Card, Table, Tooltip } from 'antd'
+import { Card, Table, Tooltip,Button } from 'antd'
 import React from 'react'
 import { useModel } from 'umi'
+import { MoreOutlined } from '@ant-design/icons';
 
 // === Utils === //
 import moment from 'moment'
@@ -41,30 +42,32 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       key: 'method',
       render: text => <span style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</span>,
     },
-
     {
-      title: 'Shares(USDT Amount)',
-      width: 200,
+      title: 'Shares',
+      width: 100,
       render: (text, item) =>
-        `${toFixed(item.shares, getDecimals(), 2)}(${toFixed(item.shareValue, getDecimals(), 2)})`,
+        `${toFixed(item.shares, getDecimals(), 2)}`,
     },
     {
-      title: 'Txn Hash',
+      title: 'Share Price (USDT)',
+      width: 200,
+      render: (text, item) =>
+        `${toFixed(item.shareValue, getDecimals(), 2)}`,
+    },
+    {
+      title: 'Detail',
       dataIndex: 'id',
       key: 'id',
-      width: 300,
+      width: 100,
       ellipsis: {
         showTitle: false,
       },
       render: text => (
-        <a
-          target={'_blank'}
-          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
-          title={text}
-          rel='noreferrer'
-        >
-          {text}
-        </a>
+        <Button type="dashed" icon={<MoreOutlined />} size={'Default'}
+                target={'_blank'}
+                href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+                rel='noreferrer'
+        />
       ),
     },
   ]

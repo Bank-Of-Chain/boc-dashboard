@@ -34,14 +34,14 @@ import lineOnly from "@/components/echarts/options/line/lineOnly";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
 
 const {TabPane} = Tabs;
-const buttons = ['1W', '1M', '1Y'];
+const buttons = ['2W', '1M', '1Y'];
 const calls = [
-  () => getVaultDailyData(7).then((array) => arrayAppendOfDay(array, 7)),
+  () => getVaultDailyData(14).then((array) => arrayAppendOfDay(array, 14)),
   () => getVaultDailyData(30).then((array) => arrayAppendOfDay(array, 30)),
   () => getVaultDailyData(365).then((array) => arrayAppendOfDay(array, 356)),
 ];
 
-const getLineEchartOpt = (data, seriesName) => {
+const getLineEchartOpt = (data) => {
   const xAxisData = [];
   const seriesData = [];
   data.forEach((o) => {
@@ -51,7 +51,7 @@ const getLineEchartOpt = (data, seriesName) => {
   const option = lineSimple(
     {
       xAxisData,
-      seriesName: seriesName,
+      seriesName: "USDT",
       seriesData
     }
   );
@@ -66,8 +66,6 @@ const getLineEchartOpt = (data, seriesName) => {
   option.yAxis.max = maxBy(data, function (o) {
     return o.value;
   }).value;
-  console.log('-----data------',JSON.stringify(data));
-  console.log('-----max------',option.yAxis.max);
   return option;
 };
 
@@ -100,7 +98,7 @@ const Analysis = (props) => {
       )
       .then(a => usedPreValue(a, 'value', 0))
       .then(array => {
-        setTvlEchartOpt(getLineEchartOpt(array, "USDT"));
+        setTvlEchartOpt(getLineEchartOpt(array));
       });
   }, [calDateRange]);
 
@@ -122,7 +120,7 @@ const Analysis = (props) => {
       )
       .then(a => usedPreValue(a, 'value', 1))
       .then(array => {
-        setSharePriceEchartOpt(getLineEchartOpt(array, "USDT Per Share"));
+        setSharePriceEchartOpt(getLineEchartOpt(array));
       });
   }, [calDateRange]);
 
@@ -169,23 +167,45 @@ const Analysis = (props) => {
       <Suspense fallback={null}>
         <IntroduceRow loading={loading} visitData={dataSource}/>
       </Suspense>
-      <Row
-        gutter={24}
-        style={{
-          marginTop: 24,
-        }}
-      >
-        <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-          <Suspense fallback={null}>
-            <ProportionSales loading={loading} visitData={dataSource?.vaultDetail}/>
-          </Suspense>
-        </Col>
-        <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-          <Suspense fallback={null}>
-            <TopSearch loading={loading} visitData={dataSource?.vaultDetail}/>
-          </Suspense>
-        </Col>
-      </Row>
+      <Suspense fallback={null}>
+        <Row
+          gutter={24}
+          style={{
+            marginTop: 24,
+          }}
+        >
+        </Row>
+      </Suspense>
+      <Suspense fallback={null}>
+        <Card
+          loading={loading}
+          className={styles.salesCard}
+          bordered={false}
+          title="Funding Ratio"
+          style={{
+            height: '100%',
+          }}
+        >
+          <Row
+            gutter={24}
+            style={{
+              marginTop: 24,
+            }}
+          >
+            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+              <Suspense fallback={null}>
+                <ProportionSales loading={loading} visitData={dataSource?.vaultDetail}/>
+              </Suspense>
+            </Col>
+            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+              <Suspense fallback={null}>
+                <TopSearch loading={loading} visitData={dataSource?.vaultDetail}/>
+              </Suspense>
+            </Col>
+          </Row>
+        </Card>
+      </Suspense>
+
       <Suspense fallback={null}>
         <StrategyTable loading={loading} searchData={dataSource?.vaultDetail?.strategies || []}/>
       </Suspense>

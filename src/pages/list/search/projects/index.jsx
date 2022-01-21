@@ -14,7 +14,6 @@ const getKey = (id, index) => `${id}-${index}`;
 
 const Projects = () => {
   const { data, loading, run } = useRequest((values) => {
-    console.log('form data', values);
     return queryFakeList({
       count: 8,
     });

@@ -1,8 +1,9 @@
-import { Card, Table, Image } from 'antd'
+import {Card, Table, Image, Button} from 'antd'
 import React from 'react'
 import styles from '../style.less'
 import { history, useModel } from 'umi'
 import { map, reduce } from 'lodash'
+import { Link } from 'umi';
 
 // === Constants === //
 import STRATEGIES_MAP from './../../../../constants/strategies'
@@ -14,6 +15,7 @@ import CoinSuperPosition from './CoinSuperPosition/index'
 import { toFixed } from './../../../../helper/number-format'
 import { getDecimals } from './../../../../apollo/client'
 import BN from 'bignumber.js'
+import {MoreOutlined} from "@ant-design/icons";
 
 const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState')
@@ -52,7 +54,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       render: text => <CoinSuperPosition array={map(text, 'token.id')} />,
     },
     {
-      title: 'Asset(USDT)',
+      title: 'Asset (USDT)',
       dataIndex: 'debt',
       key: 'debt',
       render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
@@ -78,7 +80,13 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Detail',
       dataIndex: 'id',
       key: 'id',
-      render: text => <a onClick={() => history.push(`/strategy/${text}?chain=${initialState.chain}`)}>Details</a>,
+      render: text => (
+        <Button type="dashed" icon={<MoreOutlined />} size={'Default'}
+                target={'_blank'}
+                href={`/#/strategy/${text}?chain=${initialState.chain}`}
+                rel='noreferrer'
+        />
+      )
     },
   ]
   return (

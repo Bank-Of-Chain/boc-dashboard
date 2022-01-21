@@ -15,20 +15,37 @@ import { getDecimals } from './../../../../apollo/client';
 
 const topColResponsiveProps = {
   xs: 24,
-  sm: 12,
-  md: 12,
-  lg: 12,
-  xl: 12,
+  sm: 8,
+  md: 8,
+  lg: 8,
+  xl: 8,
 };
+
+const calVaultAPY = (vaultDailyData) => {
+  let beginPricePerShare = 1;
+  let beginTime=0;
+  for(let i=0;i<vaultDailyData.length;i++){
+    if(vaultDailyData[i].pricePerShare){
+      beginPricePerShare = Number(vaultDailyData[i].pricePerShare);
+      beginTime=  Number(vaultDailyData[i].id);
+      break;
+    }
+  }
+  let endPricePerShare = 1;
+  let endTime=0;
+  for(let i=vaultDailyData.length-1;i>0;i--){
+    if(vaultDailyData[i].pricePerShare){
+      endPricePerShare = Number(vaultDailyData[i].pricePerShare);
+      endTime=  Number(vaultDailyData[i].id);
+      break;
+    }
+  }
+  return Math.pow(1 + Number(endPricePerShare - beginPricePerShare) / Number(beginPricePerShare),365 * 24 * 60 * 60 / (endTime-beginTime)) - 1;
+}
 
 const IntroduceRow = ({ loading, visitData = {} }) => {
   const { vaultDailyData = [], vaultDetail = {} } = visitData;
-  // 一周前的锁仓量
-  const weekTvl = get(vaultDailyData, `[${vaultDailyData.length - 7}].tvl`, 1)
-  // 一天前的锁仓量
-  const dailyTvl = get(vaultDailyData, `[${vaultDailyData.length - 2}].tvl`, 1)
-  const weekPercent = 100 - (100 * vaultDetail?.tvl) / weekTvl
-  const dailyPercent = 100 - (100 * vaultDetail?.tvl) / dailyTvl
+
   return (
     <Row gutter={24} style={{marginTop: 24}}>
       <Col {...topColResponsiveProps}>
@@ -36,7 +53,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
           bordered={false}
           title="TVL (USDT)"
           action={
-            <Tooltip title="总锁仓量">
+            <Tooltip title="Total Value Locked">
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -44,25 +61,6 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
           total={() => toFixed(vaultDetail?.tvl, getDecimals(), 2)}
           contentHeight={100}
         >
-          <Trend
-            flag={weekPercent > 0 ? 'up' : 'down'}
-            style={{
-              marginRight: 16,
-            }}
-          >
-            周同比
-            <span className={styles.trendText}>
-              {/* {`${Math.abs(weekPercent).toFixed(2)}%`} */}
-              {'-%'}
-            </span>
-          </Trend>
-          <Trend flag={dailyPercent > 0 ? 'up' : 'down'}>
-            日同比
-            <span className={styles.trendText}>
-              {/* {`${Math.abs(dailyPercent).toFixed(2)}%`} */}
-              {'-%'}
-            </span>
-          </Trend>
         </ChartCard>
       </Col>
 
@@ -70,30 +68,31 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
         <ChartCard
           bordered={false}
           loading={loading}
-          title="Holders"
+          title="APY Past 1M"
           action={
-            <Tooltip title="持仓人数">
+            <Tooltip title="Yield over the past 1 month">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
+          total={() => numeral(calVaultAPY(vaultDailyData)* 100).format('0,0.00') +'%'}
+          contentHeight={70}
+        >
+        </ChartCard>
+      </Col>
+
+      <Col {...topColResponsiveProps}>
+        <ChartCard
+          bordered={false}
+          loading={loading}
+          title="Depositors"
+          action={
+            <Tooltip title="Number Of Holders">
               <InfoCircleOutlined />
             </Tooltip>
           }
           total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
-          footer={
-            <Field
-              label="当日新增"
-              value={numeral(visitData?.vaultTodayData?.newHolderCount).format('0,0')}
-            />
-          }
           contentHeight={70}
         >
-          <TinyColumn
-            xField="x"
-            height={70}
-            forceFit
-            yField="y"
-            data={map(vaultDailyData, (i) => {
-              return { x: moment(1000 * i.id).format('yyyy-MM-DD'), y: 1 * i.holderCount };
-            })}
-          />
         </ChartCard>
       </Col>
     </Row>

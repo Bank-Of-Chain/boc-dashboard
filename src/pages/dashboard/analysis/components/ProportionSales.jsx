@@ -1,12 +1,11 @@
-import { Card } from 'antd';
-import { Donut } from '@ant-design/charts';
+import {Donut} from '@ant-design/charts';
 import React from 'react';
-import { useModel } from 'umi';
+import {useModel} from 'umi';
 
 // === Utils === //
-import { reduce, mapValues, groupBy, values } from 'lodash';
-import { toFixed } from './../../../../helper/number-format';
-import { getDecimals } from './../../../../apollo/client';
+import {reduce, mapValues, groupBy, values} from 'lodash';
+import {toFixed} from './../../../../helper/number-format';
+import {getDecimals} from './../../../../apollo/client';
 import BN from 'bignumber.js';
 
 // === Constants === //
@@ -15,9 +14,9 @@ import STRATEGIES_MAP from './../../../../constants/strategies';
 // === Styles === //
 import styles from '../style.less';
 
-const ProportionSales = ({ loading, visitData = {} }) => {
-  const { strategies = [] } = visitData;
-  const { initialState } = useModel('@@initialState');
+const ProportionSales = ({loading, visitData = {}}) => {
+  const {strategies = []} = visitData;
+  const {initialState} = useModel('@@initialState');
   if (!initialState.chain) return null;
 
   const total = reduce(
@@ -44,45 +43,42 @@ const ProportionSales = ({ loading, visitData = {} }) => {
     }),
   );
   return (
-    <Card
-      loading={loading}
-      className={styles.salesCard}
-      bordered={false}
-      title="Funding Ratio"
-      style={{
-        height: '100%',
-      }}
-    >
-      <div>
-        <Donut
-          forceFit
-          height={340}
-          radius={1}
-          innerRadius={0.75}
-          angleField="amount"
-          colorField="name"
-          data={tableData}
-          legend={{
-            visible: true,
-          }}
-          label={{
-            visible: true,
-            type: 'spider',
-            offset: 20,
-            formatter: (text, item) => {
-              return `${item._origin.name}: ${item._origin.amount}`;
-            },
-          }}
-          statistic={{
-            visible: true,
-            content: {
-              value: toFixed(total, getDecimals(), 2),
-              name: 'TVL',
-            },
-          }}
-        />
-      </div>
-    </Card>
+    <div>
+      <Donut
+        forceFit
+        height={340}
+        radius={1}
+        innerRadius={0.75}
+        angleField="amount"
+        colorField="name"
+        data={tableData}
+        legend={{
+          visible: true,
+        }}
+        label={{
+          visible: false,
+          type: 'spider',
+          offset: 20,
+          formatter: (text, item) => {
+            return `${item._origin.name}: ${item._origin.amount}`;
+          }
+        }}
+        tooltip={{
+          formatter: (data) =>{
+            console.log('----------',data);
+            // `${(v.percent * 100).toFixed(0)}%`
+          },
+        }}
+        interactions={[{type: 'element-selected'}, {type: 'element-active'}]}
+        statistic={{
+          visible: true,
+          content: {
+            value: toFixed(total, getDecimals(), 2),
+            name: 'TVL',
+          },
+        }}
+      />
+    </div>
   );
 };
 

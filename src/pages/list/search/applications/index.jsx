@@ -65,7 +65,6 @@ const CardInfo = ({ activeUser, newUser }) => (
 
 export const Applications = () => {
   const { data, loading, run } = useRequest((values) => {
-    console.log('form data', values);
     return queryFakeList({
       count: 8,
     });

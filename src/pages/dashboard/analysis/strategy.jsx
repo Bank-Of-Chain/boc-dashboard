@@ -80,13 +80,15 @@ const Strategy = (props) => {
                 }}
               >
                 <Descriptions.Item label="name">
-                  <a>{strategy.name}</a>
+                  <a target={'_blank'}
+                     rel='noreferrer'
+                     href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.id}`}>{strategy.name}</a>
                 </Descriptions.Item>
                 <Descriptions.Item label="Underlying Token">
                   &nbsp;&nbsp;<CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                 </Descriptions.Item>
-                <Descriptions.Item label="Deposited">
-                  {toFixed(depositedAssets, getDecimals(), 2)}
+                <Descriptions.Item label="Asset Value">
+                  {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
                 </Descriptions.Item>
                 <Descriptions.Item label="Status">Active</Descriptions.Item>
               </Descriptions>
@@ -116,13 +118,13 @@ const Strategy = (props) => {
                 ...map(apys, i => {
                   return {
                     ...i,
-                    type: '链内',
+                    type: 'Boc APY',
                   }
                 }),
                 ...map(offChainApys, i => {
                   return {
                     ...i,
-                    type: '链外',
+                    type: 'Official APY',
                   }
                 }),
               ]}
