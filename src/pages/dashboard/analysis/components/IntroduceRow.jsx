@@ -30,7 +30,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
   const weekPercent = 100 - (100 * vaultDetail?.tvl) / weekTvl
   const dailyPercent = 100 - (100 * vaultDetail?.tvl) / dailyTvl
   return (
-    <Row gutter={24}>
+    <Row gutter={24} style={{marginTop: 24}}>
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
