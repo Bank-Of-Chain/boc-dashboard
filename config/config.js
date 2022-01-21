@@ -85,6 +85,7 @@ export default defineConfig({
   exportStatic: {},
   define: {
     API_SERVER: 'http://localhost:8080',
+    IMAGE_ROOT: 'https://bankofchain.io/dashboard',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',

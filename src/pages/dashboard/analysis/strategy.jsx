@@ -67,8 +67,8 @@ const Strategy = (props) => {
               <Image
                 preview={false}
                 width={300}
-                src={`/images/${STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]}.webp`}
-                fallback={'/images/default.webp'}
+                src={`${IMAGE_ROOT}/images/${STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]}.webp`}
+                fallback={`${IMAGE_ROOT}/images/default.webp`}
               />
             </Col>
             <Col xl={10} lg={10} md={10} sm={10} xs={10}>
@@ -83,7 +83,7 @@ const Strategy = (props) => {
                   <a>{strategy.name}</a>
                 </Descriptions.Item>
                 <Descriptions.Item label="Underlying Token">
-                  <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
+                  &nbsp;&nbsp;<CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                 </Descriptions.Item>
                 <Descriptions.Item label="Deposited">
                   {toFixed(depositedAssets, getDecimals(), 2)}

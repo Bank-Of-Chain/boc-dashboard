@@ -29,10 +29,10 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
           <Image
             preview={false}
             width={30}
-            src={`./images/${STRATEGIES_MAP[initialState.chain][item.protocol.id]}.webp`}
+            src={`${IMAGE_ROOT}/images/${STRATEGIES_MAP[initialState.chain][item.protocol.id]}.webp`}
             placeholder={item.protocol.id}
             alt={STRATEGIES_MAP[initialState.chain][item.protocol.id]}
-            fallback={'./images/default.webp'}
+            fallback={`${IMAGE_ROOT}/images/default.webp`}
           />
           <a
             target={'_blank'}

@@ -27,10 +27,10 @@ const columns = [
         <Image
           width={30}
           preview={false}
-          src={`./images/${text}.webp`}
+          src={`${IMAGE_ROOT}/images/${text}.webp`}
           placeholder={text}
           alt={text}
-          fallback={'./images/default.webp'}
+          fallback={`${IMAGE_ROOT}/images/default.webp`}
         />
         <a className={styles.text}>{text}</a>
       </div>
