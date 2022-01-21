@@ -1,15 +1,9 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { TinyColumn } from '@ant-design/charts';
 import { Col, Row, Tooltip } from 'antd';
 import numeral from 'numeral';
-import { ChartCard, Field } from './Charts';
-import Trend from './Trend';
-import Dollar from '../utils/Dollar';
-import styles from '../style.less';
+import { ChartCard } from './Charts';
 
 // === Utils === //
-import { map, get } from 'lodash';
-import moment from 'moment';
 import { toFixed } from './../../../../helper/number-format';
 import { getDecimals } from './../../../../apollo/client';
 
@@ -45,9 +39,8 @@ const calVaultAPY = (vaultDailyData) => {
 
 const IntroduceRow = ({ loading, visitData = {} }) => {
   const { vaultDailyData = [], vaultDetail = {} } = visitData;
-
   return (
-    <Row gutter={24} style={{marginTop: 24}}>
+    <Row gutter={24}>
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
@@ -68,6 +61,22 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
         <ChartCard
           bordered={false}
           loading={loading}
+          title="Depositors"
+          action={
+            <Tooltip title="Number Of Holders">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
+          total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
+          contentHeight={70}
+        >
+        </ChartCard>
+      </Col>
+
+      <Col {...topColResponsiveProps}>
+        <ChartCard
+          bordered={false}
+          loading={loading}
           title="APY Past 1M"
           action={
             <Tooltip title="Yield over the past 1 month">
@@ -80,21 +89,6 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
         </ChartCard>
       </Col>
 
-      <Col {...topColResponsiveProps}>
-        <ChartCard
-          bordered={false}
-          loading={loading}
-          title="Depositors"
-          action={
-            <Tooltip title="Number Of Holders">
-              <InfoCircleOutlined />
-            </Tooltip>
-          }
-          total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
-          contentHeight={70}
-        >
-        </ChartCard>
-      </Col>
     </Row>
   );
 };
