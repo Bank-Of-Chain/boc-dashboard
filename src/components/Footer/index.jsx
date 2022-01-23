@@ -13,23 +13,17 @@ export default () => {
       copyright={`${defaultMessage} ${currentYear}`}
       links={[
         {
+          key: 'BOC Homepage',
+          title: 'BOC Homepage',
+          href: 'https://bankofchain.io/',
+          blankTarget: true,
+        },
+        {
           key: 'BOC Dashboard',
           title: 'BOC Dashboard',
           href: 'https://bankofchain.io/dashboard',
           blankTarget: true,
-        },
-        {
-          key: 'github',
-          title: <GithubOutlined />,
-          href: 'https://github.com/ant-design/ant-design-pro',
-          blankTarget: true,
-        },
-        {
-          key: 'BOC Vault',
-          title: 'BOC Vault',
-          href: 'https://bankofchain.io/',
-          blankTarget: true,
-        },
+        }
       ]}
     />
   );

@@ -34,14 +34,14 @@ import lineOnly from "@/components/echarts/options/line/lineOnly";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
 
 const {TabPane} = Tabs;
-const buttons = ['1W', '1M', '1Y'];
+const buttons = ['2W', '1M', '1Y'];
 const calls = [
-  () => getVaultDailyData(7).then((array) => arrayAppendOfDay(array, 7)),
+  () => getVaultDailyData(14).then((array) => arrayAppendOfDay(array, 14)),
   () => getVaultDailyData(30).then((array) => arrayAppendOfDay(array, 30)),
   () => getVaultDailyData(365).then((array) => arrayAppendOfDay(array, 356)),
 ];
 
-const getLineEchartOpt = (data, seriesName) => {
+const getLineEchartOpt = (data) => {
   const xAxisData = [];
   const seriesData = [];
   data.forEach((o) => {
@@ -51,7 +51,7 @@ const getLineEchartOpt = (data, seriesName) => {
   const option = lineSimple(
     {
       xAxisData,
-      seriesName: seriesName,
+      seriesName: "USDT",
       seriesData
     }
   );
@@ -66,8 +66,7 @@ const getLineEchartOpt = (data, seriesName) => {
   option.yAxis.max = maxBy(data, function (o) {
     return o.value;
   }).value;
-  console.log('-----data------',JSON.stringify(data));
-  console.log('-----max------',option.yAxis.max);
+  option.series[0].connectNulls = true;
   return option;
 };
 
@@ -75,6 +74,7 @@ const Analysis = (props) => {
   const [calDateRange, setCalDateRange] = useState(0);
   const [tvlEchartOpt, setTvlEchartOpt] = useState({});
   const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({});
+  // const [apyEchartOpt, setApyEchartOpt] = useState({});
   const [transations, setTransations] = useState([]);
 
   const {initialState} = useModel('@@initialState');
@@ -98,9 +98,9 @@ const Analysis = (props) => {
           };
         }),
       )
-      .then(a => usedPreValue(a, 'value', 0))
+      .then(a => usedPreValue(a, 'value', undefined))
       .then(array => {
-        setTvlEchartOpt(getLineEchartOpt(array, "USDT"));
+        setTvlEchartOpt(getLineEchartOpt(array));
       });
   }, [calDateRange]);
 
@@ -120,18 +120,37 @@ const Analysis = (props) => {
           };
         }),
       )
-      .then(a => usedPreValue(a, 'value', 1))
+      .then(a => usedPreValue(a, 'value', undefined))
       .then(array => {
-        setSharePriceEchartOpt(getLineEchartOpt(array, "USDT Per Share"));
+        setSharePriceEchartOpt(getLineEchartOpt(array));
       });
   }, [calDateRange]);
+
+  // useEffect(() => {
+  //   calls[calDateRange]()
+  //     .then((array) =>
+  //       map(array, (item) => {
+  //         return {
+  //           id: item.id,
+  //           date: 1000 * item.id,
+  //           value: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+  //         };
+  //       }),
+  //     )
+  //     .then(array => {
+  //       setApyEchartOpt(getLineEchartOpt(array));
+  //     });
+  // }, [calDateRange]);
 
   if (isEmpty(initialState.chain)) return null
 
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Card loading={loading} bordered={false} bodyStyle={{padding: 0}}>
+        <IntroduceRow loading={loading} visitData={dataSource}/>
+      </Suspense>
+      <Suspense fallback={null}>
+        <Card loading={loading} bordered={false} bodyStyle={{padding: 0}} style={{marginTop: 24}}>
           <div className={styles.vaultKeyCard}>
             <Tabs
               tabBarExtraContent={
@@ -152,11 +171,17 @@ const Analysis = (props) => {
               }
               size="large"
             >
+              {/*<TabPane tab="APY" key="apy">*/}
+              {/*  <div className={styles.chartDiv}>*/}
+              {/*    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
+              {/*  </div>*/}
+              {/*</TabPane>*/}
               <TabPane tab="Share Price" key="sharePrice">
                 <div className={styles.chartDiv}>
                   <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
                 </div>
               </TabPane>
+
               <TabPane tab="TVL" key="tvl">
                 <div className={styles.chartDiv}>
                   <LineEchart option={tvlEchartOpt} style={{height: '100%', width: '100%'}}/>
@@ -167,25 +192,44 @@ const Analysis = (props) => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <IntroduceRow loading={loading} visitData={dataSource}/>
+        <Row
+          gutter={24}
+          style={{
+            marginTop: 24,
+          }}
+        >
+        </Row>
       </Suspense>
-      <Row
-        gutter={24}
-        style={{
-          marginTop: 24,
-        }}
-      >
-        <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-          <Suspense fallback={null}>
-            <ProportionSales loading={loading} visitData={dataSource?.vaultDetail}/>
-          </Suspense>
-        </Col>
-        <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-          <Suspense fallback={null}>
-            <TopSearch loading={loading} visitData={dataSource?.vaultDetail}/>
-          </Suspense>
-        </Col>
-      </Row>
+      <Suspense fallback={null}>
+        <Card
+          loading={loading}
+          className={styles.salesCard}
+          bordered={false}
+          title="Funding Ratio"
+          style={{
+            height: '100%',
+          }}
+        >
+          <Row
+            gutter={24}
+            style={{
+              marginTop: 24,
+            }}
+          >
+            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+              <Suspense fallback={null}>
+                <ProportionSales loading={loading} visitData={dataSource?.vaultDetail}/>
+              </Suspense>
+            </Col>
+            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+              <Suspense fallback={null}>
+                <TopSearch loading={loading} visitData={dataSource?.vaultDetail}/>
+              </Suspense>
+            </Col>
+          </Row>
+        </Card>
+      </Suspense>
+
       <Suspense fallback={null}>
         <StrategyTable loading={loading} searchData={dataSource?.vaultDetail?.strategies || []}/>
       </Suspense>
