@@ -1,6 +1,5 @@
 import {Suspense, useEffect, useState} from 'react';
 import {Col, Row, Card, Button, Tabs} from 'antd';
-import {Line} from '@ant-design/charts';
 import {GridContent} from '@ant-design/pro-layout';
 import IntroduceRow from './components/IntroduceRow';
 import StrategyTable from './components/StrategyTable';
@@ -14,15 +13,13 @@ import _max from 'lodash/max';
 // === Services === //
 import {
   getVaultDailyData,
-  getVaultHourlyData,
   getTransations,
 } from './../../../services/dashboard-service';
 
 // === Utils === //
-import numeral from 'numeral';
 import {map, isEmpty} from 'lodash';
-import {getDecimals, setClient} from './../../../apollo/client';
-import {arrayAppendOfDay, arrayAppendOfHour, usedPreValue} from './../../../helper/array-append';
+import {getDecimals} from './../../../apollo/client';
+import {arrayAppendOfDay} from './../../../helper/array-append';
 
 // === Styles === //
 import styles from './style.less';
@@ -30,12 +27,13 @@ import moment from 'moment';
 import {toFixed} from '@/helper/number-format';
 
 import {LineEchart} from "@/components/echarts";
-import lineOnly from "@/components/echarts/options/line/lineOnly";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
+import {calVaultAPY, calVaultDailyAPY} from "@/utils/Apy";
+import numeral from "numeral";
 
 const {TabPane} = Tabs;
 
-const getLineEchartOpt = (data, dataValueKey, seriesName) => {
+const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true) => {
   const xAxisData = [];
   const seriesData = [];
   data.forEach((o) => {
@@ -54,18 +52,24 @@ const getLineEchartOpt = (data, dataValueKey, seriesName) => {
       color: 'black'
     }
   };
-  const filterValueArray = data.filter(o=>{return o[dataValueKey]}).map(o=>{return o[dataValueKey]});
-  option.yAxis.min = _min(filterValueArray);
-  option.yAxis.max = _max(filterValueArray);
+  const filterValueArray = data.filter(o => {
+    return o[dataValueKey]
+  }).map(o => {
+    return o[dataValueKey]
+  });
+  if (needMinMax) {
+    option.yAxis.min = _min(filterValueArray);
+    option.yAxis.max = _max(filterValueArray);
+  }
   option.series[0].connectNulls = true;
   return option;
 };
 
 const Analysis = (props) => {
-  const [calDateRange, setCalDateRange] = useState(14);
+  const [calDateRange, setCalDateRange] = useState(30);
   const [tvlEchartOpt, setTvlEchartOpt] = useState({});
   const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({});
-  // const [apyEchartOpt, setApyEchartOpt] = useState({});
+  const [apyEchartOpt, setApyEchartOpt] = useState({});
   const [transations, setTransations] = useState([]);
 
   const {initialState} = useModel('@@initialState');
@@ -92,12 +96,21 @@ const Analysis = (props) => {
             date: 1000 * item.id,
             pricePerShare: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
             tvl: Number(toFixed(item.tvl, getDecimals(), 2)),
+            totalShares: item.totalShares
           };
         }),
       )
       .then(array => {
-        setSharePriceEchartOpt(getLineEchartOpt(array, 'pricePerShare','USDT'));
-        setTvlEchartOpt(getLineEchartOpt(array, 'tvl','USDT'));
+        setSharePriceEchartOpt(getLineEchartOpt(array, 'pricePerShare', 'USDT'));
+        setTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT'));
+        let result = calVaultDailyAPY(array);
+        result = result.map(item=>{
+          if(item.apy){
+            item.apy = numeral(item.apy * 100).format('0,0.00');
+          }
+          return item;
+        });
+        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'APY(%)', false));
       });
   }, [calDateRange]);
 
@@ -124,20 +137,19 @@ const Analysis = (props) => {
               }
               size="large"
             >
-              {/*<TabPane tab="APY" key="apy">*/}
-              {/*  <div className={styles.chartDiv}>*/}
-              {/*    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
-              {/*  </div>*/}
-              {/*</TabPane>*/}
-              <TabPane tab="Share Price" key="sharePrice">
+              <TabPane tab="APY" key="apy">
                 <div className={styles.chartDiv}>
-                  <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
+                  <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
                 </div>
               </TabPane>
-
               <TabPane tab="TVL" key="tvl">
                 <div className={styles.chartDiv}>
                   <LineEchart option={tvlEchartOpt} style={{height: '100%', width: '100%'}}/>
+                </div>
+              </TabPane>
+              <TabPane tab="Share Price" key="sharePrice">
+                <div className={styles.chartDiv}>
+                  <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
                 </div>
               </TabPane>
             </Tabs>
