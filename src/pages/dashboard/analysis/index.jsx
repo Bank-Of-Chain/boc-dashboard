@@ -8,8 +8,8 @@ import TransationsTable from './components/TransationsTable';
 import TopSearch from './components/TopSearch';
 import ProportionSales from './components/ProportionSales';
 import {useModel} from 'umi';
-import minBy from 'lodash/minBy';
-import maxBy from 'lodash/maxBy';
+import _min from 'lodash/min';
+import _max from 'lodash/max';
 
 // === Services === //
 import {
@@ -34,24 +34,18 @@ import lineOnly from "@/components/echarts/options/line/lineOnly";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
 
 const {TabPane} = Tabs;
-const buttons = ['2W', '1M', '1Y'];
-const calls = [
-  () => getVaultDailyData(14).then((array) => arrayAppendOfDay(array, 14)),
-  () => getVaultDailyData(30).then((array) => arrayAppendOfDay(array, 30)),
-  () => getVaultDailyData(365).then((array) => arrayAppendOfDay(array, 356)),
-];
 
-const getLineEchartOpt = (data) => {
+const getLineEchartOpt = (data, dataValueKey, seriesName) => {
   const xAxisData = [];
   const seriesData = [];
   data.forEach((o) => {
     xAxisData.push(moment(Number(o.date)).format('MM-DD HH:mm'));
-    seriesData.push(o.value);
+    seriesData.push(o[dataValueKey]);
   });
   const option = lineSimple(
     {
       xAxisData,
-      seriesName: "USDT",
+      seriesName: seriesName,
       seriesData
     }
   );
@@ -60,18 +54,15 @@ const getLineEchartOpt = (data) => {
       color: 'black'
     }
   };
-  option.yAxis.min = minBy(data, function (o) {
-    return o.value;
-  }).value;
-  option.yAxis.max = maxBy(data, function (o) {
-    return o.value;
-  }).value;
+  const filterValueArray = data.filter(o=>{return o[dataValueKey]}).map(o=>{return o[dataValueKey]});
+  option.yAxis.min = _min(filterValueArray);
+  option.yAxis.max = _max(filterValueArray);
   option.series[0].connectNulls = true;
   return option;
 };
 
 const Analysis = (props) => {
-  const [calDateRange, setCalDateRange] = useState(0);
+  const [calDateRange, setCalDateRange] = useState(14);
   const [tvlEchartOpt, setTvlEchartOpt] = useState({});
   const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({});
   // const [apyEchartOpt, setApyEchartOpt] = useState({});
@@ -88,59 +79,27 @@ const Analysis = (props) => {
   }, [initialState.chain]);
 
   useEffect(() => {
-    calls[calDateRange]()
-      .then((array) =>
-        map(array, (item) => {
-          return {
-            id: item.id,
-            date: 1000 * item.id,
-            value: Number(toFixed(item.tvl, getDecimals(), 2)),
-          };
-        }),
-      )
-      .then(a => usedPreValue(a, 'value', undefined))
-      .then(array => {
-        setTvlEchartOpt(getLineEchartOpt(array));
-      });
-  }, [calDateRange]);
-
-  useEffect(() => {
     if (isEmpty(vaultAddress)) return;
     getTransations(vaultAddress).then(setTransations);
   }, [vaultAddress]);
 
   useEffect(() => {
-    calls[calDateRange]()
+    getVaultDailyData(calDateRange).then((array) => arrayAppendOfDay(array, calDateRange))
       .then((array) =>
         map(array, (item) => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            value: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+            pricePerShare: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+            tvl: Number(toFixed(item.tvl, getDecimals(), 2)),
           };
         }),
       )
-      .then(a => usedPreValue(a, 'value', undefined))
       .then(array => {
-        setSharePriceEchartOpt(getLineEchartOpt(array));
+        setSharePriceEchartOpt(getLineEchartOpt(array, 'pricePerShare','USDT'));
+        setTvlEchartOpt(getLineEchartOpt(array, 'tvl','USDT'));
       });
   }, [calDateRange]);
-
-  // useEffect(() => {
-  //   calls[calDateRange]()
-  //     .then((array) =>
-  //       map(array, (item) => {
-  //         return {
-  //           id: item.id,
-  //           date: 1000 * item.id,
-  //           value: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
-  //         };
-  //       }),
-  //     )
-  //     .then(array => {
-  //       setApyEchartOpt(getLineEchartOpt(array));
-  //     });
-  // }, [calDateRange]);
 
   if (isEmpty(initialState.chain)) return null
 
@@ -154,19 +113,13 @@ const Analysis = (props) => {
           <div className={styles.vaultKeyCard}>
             <Tabs
               tabBarExtraContent={
-                <div>{
-                  map(buttons, (b, i) => (
-                    <Button
-                      key={b}
-                      ghost
-                      style={{marginLeft: 10}}
-                      type={calDateRange === i ? 'primary' : ''}
-                      onClick={() => setCalDateRange(i)}
-                    >
-                      {b}
-                    </Button>
-                  ))
-                }
+                <div>
+                  <Button ghost type={calDateRange === 14 ? 'primary' : ''}
+                          onClick={() => setCalDateRange(14)}>2W</Button>
+                  <Button ghost type={calDateRange === 30 ? 'primary' : ''}
+                          onClick={() => setCalDateRange(30)}>1M</Button>
+                  <Button ghost type={calDateRange === 365 ? 'primary' : ''}
+                          onClick={() => setCalDateRange(365)}>1Y</Button>
                 </div>
               }
               size="large"
