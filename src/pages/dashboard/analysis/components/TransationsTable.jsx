@@ -49,7 +49,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
         `${toFixed(item.shares, getDecimals(), 2)}`,
     },
     {
-      title: 'Share Price (USDT)',
+      title: 'Shares Value (USDT)',
       width: 200,
       render: (text, item) =>
         `${toFixed(item.shareValue, getDecimals(), 2)}`,
