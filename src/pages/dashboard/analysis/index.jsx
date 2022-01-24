@@ -1,6 +1,5 @@
 import {Suspense, useEffect, useState} from 'react';
 import {Col, Row, Card, Button, Tabs} from 'antd';
-import {Line} from '@ant-design/charts';
 import {GridContent} from '@ant-design/pro-layout';
 import IntroduceRow from './components/IntroduceRow';
 import StrategyTable from './components/StrategyTable';
@@ -8,21 +7,19 @@ import TransationsTable from './components/TransationsTable';
 import TopSearch from './components/TopSearch';
 import ProportionSales from './components/ProportionSales';
 import {useModel} from 'umi';
-import minBy from 'lodash/minBy';
-import maxBy from 'lodash/maxBy';
+import _min from 'lodash/min';
+import _max from 'lodash/max';
 
 // === Services === //
 import {
   getVaultDailyData,
-  getVaultHourlyData,
   getTransations,
 } from './../../../services/dashboard-service';
 
 // === Utils === //
-import numeral from 'numeral';
 import {map, isEmpty} from 'lodash';
-import {getDecimals, setClient} from './../../../apollo/client';
-import {arrayAppendOfDay, arrayAppendOfHour, usedPreValue} from './../../../helper/array-append';
+import {getDecimals} from './../../../apollo/client';
+import {arrayAppendOfDay} from './../../../helper/array-append';
 
 // === Styles === //
 import styles from './style.less';
@@ -30,28 +27,23 @@ import moment from 'moment';
 import {toFixed} from '@/helper/number-format';
 
 import {LineEchart} from "@/components/echarts";
-import lineOnly from "@/components/echarts/options/line/lineOnly";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
+import {calVaultAPY, calVaultDailyAPY} from "@/utils/Apy";
+import numeral from "numeral";
 
 const {TabPane} = Tabs;
-const buttons = ['2W', '1M', '1Y'];
-const calls = [
-  () => getVaultDailyData(14).then((array) => arrayAppendOfDay(array, 14)),
-  () => getVaultDailyData(30).then((array) => arrayAppendOfDay(array, 30)),
-  () => getVaultDailyData(365).then((array) => arrayAppendOfDay(array, 356)),
-];
 
-const getLineEchartOpt = (data) => {
+const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true) => {
   const xAxisData = [];
   const seriesData = [];
   data.forEach((o) => {
     xAxisData.push(moment(Number(o.date)).format('MM-DD HH:mm'));
-    seriesData.push(o.value);
+    seriesData.push(o[dataValueKey]);
   });
   const option = lineSimple(
     {
       xAxisData,
-      seriesName: "USDT",
+      seriesName: seriesName,
       seriesData
     }
   );
@@ -60,21 +52,24 @@ const getLineEchartOpt = (data) => {
       color: 'black'
     }
   };
-  option.yAxis.min = minBy(data, function (o) {
-    return o.value;
-  }).value;
-  option.yAxis.max = maxBy(data, function (o) {
-    return o.value;
-  }).value;
+  const filterValueArray = data.filter(o => {
+    return o[dataValueKey]
+  }).map(o => {
+    return o[dataValueKey]
+  });
+  if (needMinMax) {
+    option.yAxis.min = _min(filterValueArray);
+    option.yAxis.max = _max(filterValueArray);
+  }
   option.series[0].connectNulls = true;
   return option;
 };
 
 const Analysis = (props) => {
-  const [calDateRange, setCalDateRange] = useState(0);
+  const [calDateRange, setCalDateRange] = useState(30);
   const [tvlEchartOpt, setTvlEchartOpt] = useState({});
   const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({});
-  // const [apyEchartOpt, setApyEchartOpt] = useState({});
+  const [apyEchartOpt, setApyEchartOpt] = useState({});
   const [transations, setTransations] = useState([]);
 
   const {initialState} = useModel('@@initialState');
@@ -88,59 +83,36 @@ const Analysis = (props) => {
   }, [initialState.chain]);
 
   useEffect(() => {
-    calls[calDateRange]()
-      .then((array) =>
-        map(array, (item) => {
-          return {
-            id: item.id,
-            date: 1000 * item.id,
-            value: Number(toFixed(item.tvl, getDecimals(), 2)),
-          };
-        }),
-      )
-      .then(a => usedPreValue(a, 'value', undefined))
-      .then(array => {
-        setTvlEchartOpt(getLineEchartOpt(array));
-      });
-  }, [calDateRange]);
-
-  useEffect(() => {
     if (isEmpty(vaultAddress)) return;
     getTransations(vaultAddress).then(setTransations);
   }, [vaultAddress]);
 
   useEffect(() => {
-    calls[calDateRange]()
+    getVaultDailyData(calDateRange).then((array) => arrayAppendOfDay(array, calDateRange))
       .then((array) =>
         map(array, (item) => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            value: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+            pricePerShare: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+            tvl: Number(toFixed(item.tvl, getDecimals(), 2)),
+            totalShares: item.totalShares
           };
         }),
       )
-      .then(a => usedPreValue(a, 'value', undefined))
       .then(array => {
-        setSharePriceEchartOpt(getLineEchartOpt(array));
+        setSharePriceEchartOpt(getLineEchartOpt(array, 'pricePerShare', 'USDT'));
+        setTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT'));
+        let result = calVaultDailyAPY(array);
+        result = result.map(item=>{
+          if(item.apy){
+            item.apy = numeral(item.apy * 100).format('0,0.00');
+          }
+          return item;
+        });
+        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'APY(%)', false));
       });
   }, [calDateRange]);
-
-  // useEffect(() => {
-  //   calls[calDateRange]()
-  //     .then((array) =>
-  //       map(array, (item) => {
-  //         return {
-  //           id: item.id,
-  //           date: 1000 * item.id,
-  //           value: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
-  //         };
-  //       }),
-  //     )
-  //     .then(array => {
-  //       setApyEchartOpt(getLineEchartOpt(array));
-  //     });
-  // }, [calDateRange]);
 
   if (isEmpty(initialState.chain)) return null
 
@@ -154,37 +126,30 @@ const Analysis = (props) => {
           <div className={styles.vaultKeyCard}>
             <Tabs
               tabBarExtraContent={
-                <div>{
-                  map(buttons, (b, i) => (
-                    <Button
-                      key={b}
-                      ghost
-                      style={{marginLeft: 10}}
-                      type={calDateRange === i ? 'primary' : ''}
-                      onClick={() => setCalDateRange(i)}
-                    >
-                      {b}
-                    </Button>
-                  ))
-                }
+                <div>
+                  <Button ghost type={calDateRange === 14 ? 'primary' : ''}
+                          onClick={() => setCalDateRange(14)}>2W</Button>
+                  <Button ghost type={calDateRange === 30 ? 'primary' : ''}
+                          onClick={() => setCalDateRange(30)}>1M</Button>
+                  <Button ghost type={calDateRange === 365 ? 'primary' : ''}
+                          onClick={() => setCalDateRange(365)}>1Y</Button>
                 </div>
               }
               size="large"
             >
-              {/*<TabPane tab="APY" key="apy">*/}
-              {/*  <div className={styles.chartDiv}>*/}
-              {/*    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
-              {/*  </div>*/}
-              {/*</TabPane>*/}
-              <TabPane tab="Share Price" key="sharePrice">
+              <TabPane tab="APY" key="apy">
                 <div className={styles.chartDiv}>
-                  <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
+                  <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
                 </div>
               </TabPane>
-
               <TabPane tab="TVL" key="tvl">
                 <div className={styles.chartDiv}>
                   <LineEchart option={tvlEchartOpt} style={{height: '100%', width: '100%'}}/>
+                </div>
+              </TabPane>
+              <TabPane tab="Share Price" key="sharePrice">
+                <div className={styles.chartDiv}>
+                  <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
                 </div>
               </TabPane>
             </Tabs>

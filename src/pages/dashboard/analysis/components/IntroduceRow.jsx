@@ -6,6 +6,7 @@ import { ChartCard } from './Charts';
 // === Utils === //
 import { toFixed } from './../../../../helper/number-format';
 import { getDecimals } from './../../../../apollo/client';
+import {calVaultAPY} from "@/utils/Apy";
 
 const topColResponsiveProps = {
   xs: 24,
@@ -15,27 +16,7 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
-const calVaultAPY = (vaultDailyData) => {
-  let beginPricePerShare = 1;
-  let beginTime=0;
-  for(let i=0;i<vaultDailyData.length;i++){
-    if(vaultDailyData[i].pricePerShare){
-      beginPricePerShare = Number(vaultDailyData[i].pricePerShare);
-      beginTime=  Number(vaultDailyData[i].id);
-      break;
-    }
-  }
-  let endPricePerShare = 1;
-  let endTime=0;
-  for(let i=vaultDailyData.length-1;i>0;i--){
-    if(vaultDailyData[i].pricePerShare){
-      endPricePerShare = Number(vaultDailyData[i].pricePerShare);
-      endTime=  Number(vaultDailyData[i].id);
-      break;
-    }
-  }
-  return Math.pow(1 + Number(endPricePerShare - beginPricePerShare) / Number(beginPricePerShare),365 * 24 * 60 * 60 / (endTime-beginTime)) - 1;
-}
+
 
 const IntroduceRow = ({ loading, visitData = {} }) => {
   const { vaultDailyData = [], vaultDetail = {} } = visitData;

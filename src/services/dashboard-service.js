@@ -39,6 +39,7 @@ query($sevenDaysAgoTimestamp: BigInt) {
     adjustPosition
     pricePerShare
     tvl
+    totalShares
     usdtPrice
     holderCount
     strategies(
@@ -96,6 +97,7 @@ query($beginDayTimestamp: BigInt) {
     holderCount
     newHolderCount
     tvl
+    totalShares
     pricePerShare
     totalProfit
     usdtPrice
@@ -121,6 +123,7 @@ query($todayTimestamp: BigInt) {
     id
     newHolderCount
     tvl
+    totalShares
     pricePerShare
     totalProfit
     usdtPrice
@@ -150,6 +153,7 @@ query($beginHourTimestamp: BigInt) {
   }) {
     id
     tvl
+    totalShares
     pricePerShare
     usdtPrice
   }
