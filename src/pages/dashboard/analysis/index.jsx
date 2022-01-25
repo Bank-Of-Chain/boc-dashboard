@@ -28,7 +28,7 @@ import {toFixed} from '@/helper/number-format';
 
 import {LineEchart} from "@/components/echarts";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
-import {calVaultAPY, calVaultDailyAPY} from "@/utils/Apy";
+import {calVaultDailyAPY} from "@/utils/Apy";
 import numeral from "numeral";
 
 const {TabPane} = Tabs;

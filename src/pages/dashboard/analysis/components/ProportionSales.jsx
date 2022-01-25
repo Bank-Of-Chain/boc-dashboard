@@ -74,7 +74,7 @@ const ProportionSales = ({loading, visitData = {}}) => {
           visible: true,
           content: {
             value: toFixed(total, getDecimals(), 2),
-            name: 'TVL',
+            name: 'Strategy TVL',
           },
         }}
       />

@@ -1,9 +1,6 @@
 /**
- * Created by daunwenlong on 2018/12/29.
  * 多条平滑曲线图
  */
-
-
 export default function (obj) {
 
   let data = [];
@@ -15,27 +12,15 @@ export default function (obj) {
       let dataFormat = {
         name: element.seriesName ? element.seriesName : "",
         data: element.seriesData,
-        type: 'line',
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 10,
-        showSymbol: false,
-        color: element.color ? element.color : 'rgb(166, 192, 252)',
-        lineStyle: {
-          width: element.width ? element.width :'2',
-        }
+        type: 'line'
       };
       data.push(dataFormat);
     })
   }
 
-
   let option = {
     tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'none'
-      }
+      trigger: 'axis'
     },
     legend: {
       data:obj.legend
@@ -43,17 +28,8 @@ export default function (obj) {
     xAxis: {
       type: 'category',
       data: obj.xAxisData,
-      boundaryGap: false,
-      axisTick: {
-        alignWithLabel: true,
-        show: false,
-      },
-      axisLine: {
-        show: false
-      },
     },
     yAxis: {
-      show: false,
       type: 'value'
     },
     series: data
