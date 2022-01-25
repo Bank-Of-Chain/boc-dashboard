@@ -30,10 +30,15 @@ export const calVaultDailyAPY = (vaultDailyData) => {
   let lastTime = undefined;
   for (let i = 0; i < vaultDailyData.length; i++) {
     if (vaultDailyData[i].totalShares) {
+
       const currentPricePerShare = Number(vaultDailyData[i].tvl / vaultDailyData[i].totalShares);
       const currentBeginTime = Number(vaultDailyData[i].id);
       if (lastPricePerShare) {
         vaultDailyData[i].apy = calAPY(lastPricePerShare, currentPricePerShare, currentBeginTime - lastTime);
+      }
+      if(vaultDailyData[i].apy > 10){
+        console.warn('apy more than 1000%',JSON.stringify(vaultDailyData[i]));
+        vaultDailyData[i].apy =null;
       }
       lastPricePerShare = currentPricePerShare;
       lastTime = currentBeginTime;
