@@ -83,7 +83,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       render: text => (
         <Button type="dashed" icon={<MoreOutlined />} size={'Default'}
                 target={'_blank'}
-                href={`/#/strategy/${text}?chain=${initialState.chain}`}
+                href={`${IMAGE_ROOT}/#/strategy/${text}?chain=${initialState.chain}`}
                 rel='noreferrer'
         />
       )
