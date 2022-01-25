@@ -1,3 +1,5 @@
+import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
+
 /**
  * Created by duanwenlong on 2019/1/7.
  */
@@ -98,5 +100,8 @@ export default function (obj) {
     option.tooltip.formatter= obj.tooltipFormatter;
   }
 
-  return option;
+  return {
+    ...getNoDataGraphic(obj.seriesData.length > 0),
+    ...option
+  };
 }

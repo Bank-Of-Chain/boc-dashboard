@@ -1,3 +1,5 @@
+import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
+
 /**
  * Created by linyu on 2018/6/22.
  */
@@ -38,5 +40,8 @@ export default function (obj) {
       },
     });
   });
-  return option;
+  return {
+    ...getNoDataGraphic(obj.seriesData.length > 0),
+    ...option
+  };
 }

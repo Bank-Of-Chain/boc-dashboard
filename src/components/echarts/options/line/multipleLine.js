@@ -1,10 +1,12 @@
+import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
+
 /**
  * 多条平滑曲线图
  */
 export default function (obj) {
 
   let data = [];
-
+  let dataCount =0;
   let dataArray = [];
   dataArray = obj.data;
   if (dataArray.length > 0) {
@@ -14,6 +16,7 @@ export default function (obj) {
         data: element.seriesData,
         type: 'line'
       };
+      dataCount += element.seriesData.length;
       data.push(dataFormat);
     })
   }
@@ -39,5 +42,8 @@ export default function (obj) {
     option.tooltip.formatter= obj.tooltipFormatter;
   }
 
-  return option;
+  return {
+    ...getNoDataGraphic(dataCount > 0),
+    ...option
+  };
 }

@@ -1,11 +1,13 @@
+import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
+
 /**
  * Created by linyu on 2018/6/22.
  */
 
 export default function (obj) {
   let option = {
-    grid: {left: '20', right: '20', top: '60', bottom: '10',containLabel:true},
-    tooltip : {
+    grid: {left: '20', right: '20', top: '60', bottom: '10', containLabel: true},
+    tooltip: {
       trigger: 'axis',
     },
     xAxis: {
@@ -24,7 +26,8 @@ export default function (obj) {
   let color = obj.seriesColor;
   if (obj.legends) {
     option = {
-      ...option, ...{
+      ...option,
+      ...{
         legend: {
           data: obj.legends
         },
@@ -45,5 +48,8 @@ export default function (obj) {
       color: color[key]
     });
   });
-  return option;
+  return {
+    ...getNoDataGraphic(obj.seriesData.length > 0),
+    ...option
+  };
 }

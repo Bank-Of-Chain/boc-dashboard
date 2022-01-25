@@ -1,13 +1,13 @@
-import React, { memo, useEffect, useState } from "react";
+import React, {memo, useEffect, useState} from "react";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import * as echarts from "echarts/core";
-import { BarChart } from "echarts/charts";
-import { TooltipComponent, GridComponent } from "echarts/components";
-import { CanvasRenderer } from "echarts/renderers";
+import {BarChart} from "echarts/charts";
+import {GraphicComponent, TooltipComponent, GridComponent} from "echarts/components";
+import {CanvasRenderer} from "echarts/renderers";
 
-echarts.use([TooltipComponent, GridComponent, BarChart, CanvasRenderer]);
+echarts.use([GraphicComponent, TooltipComponent, GridComponent, BarChart, CanvasRenderer]);
 
-function Line({ theme = "light", style = {}, option = {} }) {
+function Line({theme = "light", style = {}, option = {}}) {
   const [echartRef, setRef] = useState(null);
   useEffect(() => {
     if (echartRef) {
