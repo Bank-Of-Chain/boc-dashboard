@@ -33,6 +33,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
             width={30}
             src={`${IMAGE_ROOT}/images/${STRATEGIES_MAP[initialState.chain][item.protocol.id]}.webp`}
             placeholder={item.protocol.id}
+            style={{ backgroundColor: '#fff', borderRadius: '50%' }}
             alt={STRATEGIES_MAP[initialState.chain][item.protocol.id]}
             fallback={`${IMAGE_ROOT}/images/default.webp`}
           />

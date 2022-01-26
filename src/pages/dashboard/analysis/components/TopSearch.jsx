@@ -30,6 +30,7 @@ const columns = [
           src={`${IMAGE_ROOT}/images/${text}.webp`}
           placeholder={text}
           alt={text}
+          style={{ backgroundColor: '#fff', borderRadius: '50%' }}
           fallback={`${IMAGE_ROOT}/images/default.webp`}
         />
         <a className={styles.text}>{text}</a>
