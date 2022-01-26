@@ -110,7 +110,7 @@ const Analysis = (props) => {
           }
           return item;
         });
-        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'APY(%)', false));
+        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false));
       });
   }, [calDateRange]);
 
