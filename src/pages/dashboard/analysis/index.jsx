@@ -28,7 +28,7 @@ import {toFixed} from '@/helper/number-format';
 
 import {LineEchart} from "@/components/echarts";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
-import {calVaultDailyAPY} from "@/utils/Apy";
+import {calVaultMonthlyAPY} from "@/utils/Apy";
 import numeral from "numeral";
 
 const {TabPane} = Tabs;
@@ -103,7 +103,7 @@ const Analysis = (props) => {
       .then(array => {
         setSharePriceEchartOpt(getLineEchartOpt(array, 'pricePerShare', 'USDT'));
         setTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT'));
-        let result = calVaultDailyAPY(array);
+        let result = calVaultMonthlyAPY(array);
         result = result.map(item=>{
           if(item.apy){
             item.apy = numeral(item.apy * 100).format('0,0.00');
