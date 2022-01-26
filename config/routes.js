@@ -4,7 +4,7 @@ export default [
     component: './dashboard/analysis',
   },
   {
-    path: '/strategy/:id',
+    path: '/strategy',
     component: './dashboard/analysis/strategy',
   },
   {

@@ -27,11 +27,9 @@ import {getStrategyApysInChain, getStrategyApysOffChain} from './../../../servic
 import styles from './style.less';
 import {isEmpty, map} from 'lodash';
 import {useState} from 'react';
-import moment from 'moment';
-import numeral from "numeral";
 
 const Strategy = (props) => {
-  const {id} = props?.match?.params;
+  const {id} = props?.location?.query;
   const loading = false;
   const [strategy, setStrategy] = useState({});
   const [apysEchartOpt, setApysEchartOpt] = useState({});
