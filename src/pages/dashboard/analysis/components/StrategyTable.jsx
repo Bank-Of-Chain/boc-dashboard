@@ -31,11 +31,11 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
           <Image
             preview={false}
             width={30}
-            src={`${IMAGE_ROOT}/images/${STRATEGIES_MAP[initialState.chain][item.protocol.id]}.webp`}
+            src={`https://bankofchain.io/images/amms/${STRATEGIES_MAP[initialState.chain][item.protocol.id]}.png`}
             placeholder={item.protocol.id}
             style={{ backgroundColor: '#fff', borderRadius: '50%' }}
             alt={STRATEGIES_MAP[initialState.chain][item.protocol.id]}
-            fallback={`${IMAGE_ROOT}/images/default.webp`}
+            fallback={`https://bankofchain.io/default.webp`}
           />
           <a
             target={'_blank'}
