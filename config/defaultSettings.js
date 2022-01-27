@@ -8,9 +8,9 @@ const Settings = {
   fixSiderbar: true,
   splitMenus: false,
   colorWeak: false,
-  title: 'Bank Of Chain',
+  title: 'BOC DashBoard',
   pwa: false,
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+  logo: '/logo.png',
   iconfontUrl: '',
 };
 export default Settings;

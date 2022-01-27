@@ -1,64 +1,84 @@
-import { Card, Radio, Typography } from 'antd';
-import numeral from 'numeral';
-import { Donut } from '@ant-design/charts';
+import {Donut} from '@ant-design/charts';
+import {Empty} from 'antd';
 import React from 'react';
-import styles from '../style.less';
-const { Text } = Typography;
+import {useModel} from 'umi';
 
-const ProportionSales = ({
-  dropdownGroup,
-  salesType,
-  loading,
-  salesPieData,
-  handleChangeSalesType,
-}) => (
-  <Card
-    loading={loading}
-    className={styles.salesCard}
-    bordered={false}
-    title="销售额类别占比"
-    style={{
-      height: '100%',
-    }}
-    extra={
-      <div className={styles.salesCardExtra}>
-        {dropdownGroup}
-        <div className={styles.salesTypeRadio}>
-          <Radio.Group value={salesType} onChange={handleChangeSalesType}>
-            <Radio.Button value="all">全部渠道</Radio.Button>
-            <Radio.Button value="online">线上</Radio.Button>
-            <Radio.Button value="stores">门店</Radio.Button>
-          </Radio.Group>
-        </div>
-      </div>
-    }
-  >
+// === Utils === //
+import {reduce, mapValues, groupBy, values, filter, isEmpty} from 'lodash';
+import {toFixed} from './../../../../helper/number-format';
+import {getDecimals} from './../../../../apollo/client';
+import BN from 'bignumber.js';
+
+// === Constants === //
+import STRATEGIES_MAP from './../../../../constants/strategies';
+
+const ProportionSales = ({loading, visitData = {}}) => {
+  const {strategies = []} = visitData;
+  const {initialState} = useModel('@@initialState');
+  if (!initialState.chain) return null;
+
+  const total = reduce(
+    strategies,
+    (rs, o) => {
+      return rs.plus(o.debt);
+    },
+    BN(0),
+  );
+  const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
+  if(isEmpty(groupData)) return <Empty />
+  const tableData = values(
+    mapValues(groupData, (o, key) => {
+      const amount = reduce(
+        o,
+        (rs, ob) => {
+          return rs.plus(ob.debt);
+        },
+        BN(0),
+      );
+      return {
+        name: STRATEGIES_MAP[initialState.chain][key],
+        amount: toFixed(amount, getDecimals(), 2),
+      };
+    }),
+  );
+  return (
     <div>
-      <Text>销售额</Text>
       <Donut
         forceFit
         height={340}
-        radius={0.8}
-        angleField="y"
-        colorField="x"
-        data={salesPieData}
+        radius={1}
+        innerRadius={0.75}
+        angleField="amount"
+        colorField="name"
+        data={tableData}
         legend={{
-          visible: false,
+          visible: true,
         }}
         label={{
-          visible: true,
+          visible: false,
           type: 'spider',
+          offset: 20,
           formatter: (text, item) => {
-            // eslint-disable-next-line no-underscore-dangle
-            return `${item._origin.x}: ${numeral(item._origin.y).format('0,0')}`;
+            return `${item._origin.name}: ${item._origin.amount}`;
+          }
+        }}
+        tooltip={{
+          formatter: (data) =>{
+            console.log('----------',data);
+            // `${(v.percent * 100).toFixed(0)}%`
           },
         }}
+        interactions={[{type: 'element-selected'}, {type: 'element-active'}]}
         statistic={{
-          totalLabel: '销售额',
+          visible: true,
+          content: {
+            value: toFixed(total, getDecimals(), 2),
+            name: 'Strategy TVL',
+          },
         }}
       />
     </div>
-  </Card>
-);
+  );
+};
 
 export default ProportionSales;

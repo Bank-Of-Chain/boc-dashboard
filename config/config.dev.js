@@ -1,6 +1,8 @@
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
 export default defineConfig({
+  base: '/',
+  publicPath: '/',
   plugins: [
     // https://github.com/zthxxx/react-dev-inspector
     'react-dev-inspector/plugins/umi/react-inspector',
@@ -11,4 +13,8 @@ export default defineConfig({
     babelPlugins: [],
     babelOptions: {},
   },
+  define:{
+    API_SERVER: 'http://192.168.60.12:8080',
+    IMAGE_ROOT: '.'
+  }
 });

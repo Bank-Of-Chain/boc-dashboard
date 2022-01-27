@@ -145,9 +145,43 @@
   }
 }
 
+.vaultKeyCard{
+  .chartDiv {
+    height: 300px;
+    padding: 0 20px 20px 20px;
+  }
+  :global {
+    .ant-tabs-nav {
+      padding: 0 20px 0 20px;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.tableCell {
+  :global {
+    .ant-image {
+      vertical-align: middle;
+    }
+  }
+  .text {
+    padding-left: 10px;
+  }
+}
+
 .trendText {
   margin-left: 8px;
   color: @heading-color;
+}
+
+:global {
+  .ring-guide-name {
+    color: #fff !important;
+  }
+  .ring-guide-value {
+    color: #fff !important;
+    font-size: 24px !important;
+  }
 }
 
 @media screen and (max-width: @screen-lg) {

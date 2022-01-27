@@ -1,30 +1,43 @@
-import { Space } from 'antd';
-import React from 'react';
-import { useModel, SelectLang } from 'umi';
-import Avatar from './AvatarDropdown';
-import styles from './index.less';
-import NoticeIconView from '../NoticeIcon';
+import { Space, Select } from 'antd'
+import { useModel, history } from 'umi'
+import React from 'react'
+// import { SelectLang } from 'umi'
+import styles from './index.less'
+
+// === Utils === //
+import map from 'lodash/map'
+
+// === Contansts === //
+import CHAINS, { ETH } from './../../constants/chain'
+
+const { Option } = Select
 
 const GlobalHeaderRight = () => {
-  const { initialState } = useModel('@@initialState');
+  const className = `${styles.right}  ${styles.dark}`
 
-  if (!initialState || !initialState.settings) {
-    return null;
-  }
-
-  const { navTheme, layout } = initialState.settings;
-  let className = styles.right;
-
-  if ((navTheme === 'dark' && layout === 'top') || layout === 'mix') {
-    className = `${styles.right}  ${styles.dark}`;
+  const { initialState } = useModel('@@initialState')
+  const changeChain = value => {
+    history.push(`/?chain=${value}`)
+    location.reload()
   }
 
   return (
     <Space className={className}>
-      <NoticeIconView />
-      <SelectLang className={styles.action} />
+      {/* <SelectLang className={styles.action} /> */}
+      <Select
+        value={initialState.chain}
+        defaultValue={ETH.id}
+        style={{ width: 100 }}
+        onChange={changeChain}
+      >
+        {map(CHAINS, i => (
+          <Option key={i.id} value={i.id}>
+            {i.name}
+          </Option>
+        ))}
+      </Select>
     </Space>
-  );
-};
+  )
+}
 
-export default GlobalHeaderRight;
+export default GlobalHeaderRight

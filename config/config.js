@@ -3,14 +3,18 @@ import { defineConfig } from 'umi';
 import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-const { REACT_APP_ENV, NODE_ENV } = process.env;
-const isDev = NODE_ENV === 'development';
+import routes from './routes';
+
+const { REACT_APP_ENV } = process.env;
 export default defineConfig({
-  base: isDev ? '/' : '/dashboard/',
-  publicPath: isDev ? '/' : '/dashboard/',
+  base: '/dashboard/',
+  publicPath: '/dashboard/',
   hash: true,
+  history:{
+    type: 'hash',
+  },
   antd: {
-    dark: true
+    dark: true,
   },
   dva: {
     hmr: true,
@@ -36,15 +40,7 @@ export default defineConfig({
     ie: 11,
   },
   // umi routes: https://umijs.org/docs/routing
-  routes: [
-    {
-      path: '/',
-      component: './dashboard/analysis'
-    },
-    {
-      component: '404',
-    },
-  ],
+  routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,
@@ -80,4 +76,18 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+  define: {
+    API_SERVER: 'http://localhost:8080',
+    IMAGE_ROOT: 'https://bankofchain.io/dashboard',
+    SUB_GRAPH_URL: {
+      1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
+      56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
+      137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-matic',
+    },
+    CHAIN_BROWSER_URL: {
+      1: 'https://etherscan.io',
+      56: 'https://bscscan.com',
+      137: 'https://polygonscan.com',
+    },
+  },
 });

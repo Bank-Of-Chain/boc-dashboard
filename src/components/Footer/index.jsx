@@ -5,31 +5,25 @@ export default () => {
   const intl = useIntl();
   const defaultMessage = intl.formatMessage({
     id: 'app.copyright.produced',
-    defaultMessage: 'BOC区块链团队',
+    defaultMessage: 'Bank Of Chain',
   });
   const currentYear = new Date().getFullYear();
   return (
     <DefaultFooter
-      copyright={`${currentYear} ${defaultMessage}`}
+      copyright={`${defaultMessage} ${currentYear}`}
       links={[
+        {
+          key: 'BOC Homepage',
+          title: 'BOC Homepage',
+          href: 'https://bankofchain.io/',
+          blankTarget: true,
+        },
         {
           key: 'BOC Dashboard',
           title: 'BOC Dashboard',
           href: 'https://bankofchain.io/dashboard',
           blankTarget: true,
-        },
-        {
-          key: 'github',
-          title: <GithubOutlined />,
-          href: 'https://github.com/ant-design/ant-design-pro',
-          blankTarget: true,
-        },
-        {
-          key: 'BOC Vault',
-          title: 'BOC Vault',
-          href: 'https://bankofchain.io/',
-          blankTarget: true,
-        },
+        }
       ]}
     />
   );

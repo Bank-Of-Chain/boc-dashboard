@@ -1,128 +1,100 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Card, Col, Row, Table, Tooltip } from 'antd';
+import { Card, Col, Row, Table, Tooltip, Image } from 'antd';
 import { TinyArea } from '@ant-design/charts';
 import React from 'react';
-import numeral from 'numeral';
 import NumberInfo from './NumberInfo';
-import Trend from './Trend';
 import styles from '../style.less';
+import { useModel } from 'umi';
+
+// === Constants === //
+import STRATEGIES_MAP from './../../../../constants/strategies';
+
+// === Utils === //
+import groupBy from 'lodash/groupBy';
+import reduce from 'lodash/reduce';
+import filter from 'lodash/filter';
+import { mapValues, values } from 'lodash';
+import { toFixed } from './../../../../helper/number-format';
+import { getDecimals } from './../../../../apollo/client';
+import BN from 'bignumber.js';
+
 const columns = [
   {
-    title: '排名',
-    dataIndex: 'index',
-    key: 'index',
-  },
-  {
-    title: '搜索关键词',
-    dataIndex: 'keyword',
-    key: 'keyword',
-    render: (text) => <a href="/">{text}</a>,
-  },
-  {
-    title: '用户数',
-    dataIndex: 'count',
-    key: 'count',
-    sorter: (a, b) => a.count - b.count,
-    className: styles.alignRight,
-  },
-  {
-    title: '周涨幅',
-    dataIndex: 'range',
-    key: 'range',
-    sorter: (a, b) => a.range - b.range,
-    render: (text, record) => (
-      <Trend flag={record.status === 1 ? 'down' : 'up'}>
-        <span
-          style={{
-            marginRight: 4,
-          }}
-        >
-          {text}%
-        </span>
-      </Trend>
+    title: 'Protocol Name',
+    dataIndex: 'name',
+    key: 'name',
+    render: (text) => (
+      <div className={styles.tableCell}>
+        <Image
+          width={30}
+          preview={false}
+          src={`https://bankofchain.io/images/amms/${text}.png`}
+          placeholder={text}
+          alt={text}
+          style={{ backgroundColor: '#fff', borderRadius: '50%' }}
+          fallback={'https://bankofchain.io/default.webp'}
+        />
+        <a className={styles.text}>{text}</a>
+      </div>
     ),
+  },
+  {
+    title: 'Asset (USDT)',
+    dataIndex: 'amount',
+    key: 'amount',
+    render: (text) => toFixed(text.toString(), getDecimals(), 2),
+  },
+  {
+    title: 'Asset Ratio',
+    dataIndex: 'percent',
+    key: 'percent',
+    render: (text) => <span>{toFixed(text, 1e-2, 2)}%</span>,
   },
 ];
 
-const TopSearch = ({ loading, visitData2, searchData, dropdownGroup }) => (
-  <Card
-    loading={loading}
-    bordered={false}
-    title="线上热门搜索"
-    extra={dropdownGroup}
-    style={{
-      height: '100%',
-    }}
-  >
-    <Row gutter={68}>
-      <Col
-        sm={12}
-        xs={24}
-        style={{
-          marginBottom: 24,
-        }}
-      >
-        <NumberInfo
-          subTitle={
-            <span>
-              搜索用户数
-              <Tooltip title="指标说明">
-                <InfoCircleOutlined
-                  style={{
-                    marginLeft: 8,
-                  }}
-                />
-              </Tooltip>
-            </span>
-          }
-          gap={8}
-          total={numeral(12321).format('0,0')}
-          status="up"
-          subTotal={17.1}
-        />
-        <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
-      </Col>
-      <Col
-        sm={12}
-        xs={24}
-        style={{
-          marginBottom: 24,
-        }}
-      >
-        <NumberInfo
-          subTitle={
-            <span>
-              人均搜索次数
-              <Tooltip title="指标说明">
-                <InfoCircleOutlined
-                  style={{
-                    marginLeft: 8,
-                  }}
-                />
-              </Tooltip>
-            </span>
-          }
-          total={2.7}
-          status="down"
-          subTotal={26.2}
-          gap={8}
-        />
-        <TinyArea xField="x" height={45} forceFit yField="y" smooth data={visitData2} />
-      </Col>
-    </Row>
+const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
+  const { initialState } = useModel('@@initialState');
+  if (!initialState.chain) return null;
+  const { strategies = [] } = visitData;
+  const total = reduce(
+    strategies,
+    (rs, o) => {
+      return rs.plus(o.debt);
+    },
+    BN(0),
+  );
+
+  const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
+  const tableData = values(
+    mapValues(groupData, (o, key) => {
+      const amount = reduce(
+        o,
+        (rs, ob) => {
+          return rs.plus(ob.debt);
+        },
+        BN(0),
+      );
+      return {
+        name: STRATEGIES_MAP[initialState.chain][key],
+        amount,
+        percent: amount.div(total),
+      };
+    }),
+  );
+  return (
     <Table
-      rowKey={(record) => record.index}
-      size="small"
+      rowKey={(record) => record.name}
+      size="large"
       columns={columns}
-      dataSource={searchData}
+      dataSource={tableData}
       pagination={{
         style: {
           marginBottom: 0,
         },
-        pageSize: 5,
+        pageSize: 10,
       }}
     />
-  </Card>
-);
+  );
+};
 
 export default TopSearch;

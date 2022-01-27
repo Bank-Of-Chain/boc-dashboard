@@ -1,9 +1,13 @@
 export default [
   {
     path: '/',
-    redirect: '/welcome',
+    component: './dashboard/analysis',
   },
   {
-    component: './404',
+    path: '/strategy',
+    component: './dashboard/analysis/strategy',
+  },
+  {
+    component: '404',
   },
 ];
