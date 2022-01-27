@@ -80,9 +80,9 @@ export default defineConfig({
     API_SERVER: 'http://localhost:8080',
     IMAGE_ROOT: 'https://bankofchain.io/dashboard',
     SUB_GRAPH_URL: {
-      1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
-      56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',
-      137: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph',
+      1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
+      56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
+      137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-matic',
     },
     CHAIN_BROWSER_URL: {
       1: 'https://etherscan.io',

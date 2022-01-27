@@ -1,9 +1,10 @@
 import {Donut} from '@ant-design/charts';
+import {Empty} from 'antd';
 import React from 'react';
 import {useModel} from 'umi';
 
 // === Utils === //
-import {reduce, mapValues, groupBy, values, filter} from 'lodash';
+import {reduce, mapValues, groupBy, values, filter, isEmpty} from 'lodash';
 import {toFixed} from './../../../../helper/number-format';
 import {getDecimals} from './../../../../apollo/client';
 import BN from 'bignumber.js';
@@ -24,6 +25,7 @@ const ProportionSales = ({loading, visitData = {}}) => {
     BN(0),
   );
   const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
+  if(isEmpty(groupData)) return <Empty />
   const tableData = values(
     mapValues(groupData, (o, key) => {
       const amount = reduce(
