@@ -124,8 +124,8 @@ const Strategy = (props) => {
               <Image
                 preview={false}
                 width={300}
-                src={`${IMAGE_ROOT}/images/${STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]}.webp`}
-                fallback={`${IMAGE_ROOT}/images/default.webp`}
+                src={`https://bankofchain.io/images/amms/${STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]}.png`}
+                fallback={'https://bankofchain.io/default.webp'}
               />
             </Col>
             <Col xl={10} lg={10} md={10} sm={10} xs={10}>

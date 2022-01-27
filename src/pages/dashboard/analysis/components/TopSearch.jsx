@@ -12,6 +12,7 @@ import STRATEGIES_MAP from './../../../../constants/strategies';
 // === Utils === //
 import groupBy from 'lodash/groupBy';
 import reduce from 'lodash/reduce';
+import filter from 'lodash/filter';
 import { mapValues, values } from 'lodash';
 import { toFixed } from './../../../../helper/number-format';
 import { getDecimals } from './../../../../apollo/client';
@@ -27,11 +28,11 @@ const columns = [
         <Image
           width={30}
           preview={false}
-          src={`${IMAGE_ROOT}/images/${text}.webp`}
+          src={`https://bankofchain.io/images/amms/${text}.png`}
           placeholder={text}
           alt={text}
           style={{ backgroundColor: '#fff', borderRadius: '50%' }}
-          fallback={`${IMAGE_ROOT}/images/default.webp`}
+          fallback={'https://bankofchain.io/default.webp'}
         />
         <a className={styles.text}>{text}</a>
       </div>
@@ -54,7 +55,6 @@ const columns = [
 const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState');
   if (!initialState.chain) return null;
-  const visitData2 = [];
   const { strategies = [] } = visitData;
   const total = reduce(
     strategies,
@@ -64,7 +64,7 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
     BN(0),
   );
 
-  const groupData = groupBy(strategies, 'protocol.id');
+  const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
   const tableData = values(
     mapValues(groupData, (o, key) => {
       const amount = reduce(

@@ -3,16 +3,13 @@ import React from 'react';
 import {useModel} from 'umi';
 
 // === Utils === //
-import {reduce, mapValues, groupBy, values} from 'lodash';
+import {reduce, mapValues, groupBy, values, filter} from 'lodash';
 import {toFixed} from './../../../../helper/number-format';
 import {getDecimals} from './../../../../apollo/client';
 import BN from 'bignumber.js';
 
 // === Constants === //
 import STRATEGIES_MAP from './../../../../constants/strategies';
-
-// === Styles === //
-import styles from '../style.less';
 
 const ProportionSales = ({loading, visitData = {}}) => {
   const {strategies = []} = visitData;
@@ -26,7 +23,7 @@ const ProportionSales = ({loading, visitData = {}}) => {
     },
     BN(0),
   );
-  const groupData = groupBy(strategies, 'protocol.id');
+  const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
   const tableData = values(
     mapValues(groupData, (o, key) => {
       const amount = reduce(

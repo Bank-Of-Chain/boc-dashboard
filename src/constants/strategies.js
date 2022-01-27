@@ -9,7 +9,8 @@ const ETH_STRATEGIES_MAP = [
   'UniswapV3',
   'YearnEarn',
   'YearnV2',
-  'GUni'
+  'YearnIron',
+  'GUni',
 ]
 
 const BSC_STRATEGIES_MAP = [
