@@ -13,7 +13,7 @@ import _max from 'lodash/max';
 // === Services === //
 import {
   getVaultDailyData,
-  getTransations,
+  getTransations, getDaysAgoTimestamp,
 } from './../../../services/dashboard-service';
 
 // === Utils === //
@@ -88,7 +88,7 @@ const Analysis = (props) => {
   }, [vaultAddress]);
 
   useEffect(() => {
-    getVaultDailyData(calDateRange).then((array) => arrayAppendOfDay(array, calDateRange))
+    getVaultDailyData(calDateRange + 30).then((array) => arrayAppendOfDay(array, calDateRange+30))
       .then((array) =>
         map(array, (item) => {
           return {
@@ -101,16 +101,18 @@ const Analysis = (props) => {
         }),
       )
       .then(array => {
-        setSharePriceEchartOpt(getLineEchartOpt(array, 'pricePerShare', 'USDT'));
-        setTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT'));
+        let minId = getDaysAgoTimestamp(calDateRange);
         let result = calVaultMonthlyAPY(array);
-        result = result.map(item=>{
-          if(item.apy){
+        result = result.map(item => {
+          if (item.apy) {
             item.apy = numeral(item.apy * 100).format('0,0.00');
           }
           return item;
-        });
+        }).filter(item=> item.id >= minId);
         setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false));
+        const rangeArray = array.filter(item=> item.id >= minId);
+        setSharePriceEchartOpt(getLineEchartOpt(rangeArray, 'pricePerShare', 'USDT'));
+        setTvlEchartOpt(getLineEchartOpt(rangeArray, 'tvl', 'USDT'));
       });
   }, [calDateRange]);
 
