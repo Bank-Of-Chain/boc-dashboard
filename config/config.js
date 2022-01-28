@@ -88,6 +88,6 @@ export default defineConfig({
       1: 'https://etherscan.io',
       56: 'https://bscscan.com',
       137: 'https://polygonscan.com',
-    },
+    }
   },
 });
