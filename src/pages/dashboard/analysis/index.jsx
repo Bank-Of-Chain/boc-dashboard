@@ -129,10 +129,10 @@ const Analysis = (props) => {
             <Tabs
               tabBarExtraContent={
                 <div>
-                  <Button ghost type={calDateRange === 14 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(14)}>2W</Button>
                   <Button ghost type={calDateRange === 30 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(30)}>1M</Button>
+                          onClick={() => setCalDateRange(14)}>1M</Button>
+                  <Button ghost type={calDateRange === 180 ? 'primary' : ''}
+                          onClick={() => setCalDateRange(30)}>6M</Button>
                   <Button ghost type={calDateRange === 365 ? 'primary' : ''}
                           onClick={() => setCalDateRange(365)}>1Y</Button>
                 </div>
