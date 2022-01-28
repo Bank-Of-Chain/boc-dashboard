@@ -42,6 +42,7 @@ query($sevenDaysAgoTimestamp: BigInt) {
     totalShares
     usdtPrice
     holderCount
+    totalProfit
     strategies(
       orderBy: debt,
       orderDirection: desc
