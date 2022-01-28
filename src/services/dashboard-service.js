@@ -394,3 +394,24 @@ export const queryReports = async (pageNumber, pageSize) => {
     }
   })
 }
+
+const ACCOUNT_DETAIL_QUERY = `
+query($userAddress: ID!) {
+  account(id: $userAddress) {
+    id
+    shares
+    depositedUSDT
+    accumulatedProfit
+  }
+}
+`;
+export const getAccountDetail = async (userAddress) => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client.query({
+    query: gql(ACCOUNT_DETAIL_QUERY),
+    variables: {
+      userAddress,
+    }
+  })
+}

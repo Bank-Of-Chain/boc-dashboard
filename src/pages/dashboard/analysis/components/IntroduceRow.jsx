@@ -33,7 +33,6 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
     }
     return parseInt(o.totalProfit)
   })
-  console.log('earningsPastOneMonth', earningsPastOneMonth);
   return (
     <Row gutter={[24,24]}>
       <Col {...topColResponsiveProps}>
