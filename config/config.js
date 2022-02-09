@@ -7,8 +7,8 @@ import routes from './routes';
 
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
-  base: '/dashboard/',
-  publicPath: '/dashboard/',
+  base: '/',
+  publicPath: '/',
   hash: true,
   history:{
     type: 'hash',
