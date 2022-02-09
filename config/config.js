@@ -77,8 +77,8 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   define: {
-    API_SERVER: 'https://bankofchain.io/server',
-    IMAGE_ROOT: 'https://bankofchain.io/dashboard',
+    API_SERVER: 'https://service.bankofchain.io',
+    IMAGE_ROOT: 'https://dashboard.bankofchain.io',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
