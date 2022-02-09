@@ -25,7 +25,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      width: 350,
+      width: 320,
       render: (text, item) => (
         <div className={styles.tableCell}>
           <Image
@@ -52,6 +52,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Wants',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
+      width: 120,
       render: text => <CoinSuperPosition array={map(text, 'token.id')} />,
     },
     {

@@ -33,19 +33,28 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Amount',
       dataIndex: 'nowStrategyTotalDebt',
       key: 'nowStrategyTotalDebt',
+      width: 200,
       render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Profit',
       dataIndex: 'profit',
       key: 'profit',
+      width: 200,
       render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      render: text => <Tooltip title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}>{moment(1000 * text).fromNow()}</Tooltip>,
+      width: 200,
+      render: text => (
+        <Tooltip
+          title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}
+        >
+          {moment(1000 * text).locale('en').fromNow()}
+        </Tooltip>
+      ),
     },
   ]
   return (
@@ -62,6 +71,7 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       <Table
         rowKey={record => record.id}
         size='small'
+        scroll={{ x: 1500 }}
         columns={columns}
         dataSource={visitData}
         pagination={{

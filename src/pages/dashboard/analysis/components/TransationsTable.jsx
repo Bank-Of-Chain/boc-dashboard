@@ -15,7 +15,14 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      render: text => <Tooltip title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}>{moment(1000 * text).fromNow()}</Tooltip>,
+      width: 200,
+      render: text => (
+        <Tooltip
+          title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}
+        >
+          {moment(1000 * text).locale('en').fromNow()}
+        </Tooltip>
+      ),
     },
     {
       title: 'Account',
@@ -40,6 +47,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Method',
       dataIndex: 'method',
       key: 'method',
+      width: 100,
       render: text => <span style={{ color: text === 'Deposit' ? '#80FF80' : '#FF8080' }}>{text}</span>,
     },
     {
@@ -79,12 +87,14 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       extra={dropdownGroup}
       style={{
         height: '100%',
+        width:'100%',
         marginTop: 32,
       }}
     >
       <Table
         rowKey={record => record.id}
         size='small'
+        scroll={{ x: 1500 }}
         columns={columns}
         dataSource={visitData}
         pagination={{

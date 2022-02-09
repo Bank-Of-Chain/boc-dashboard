@@ -120,16 +120,16 @@ const Strategy = (props) => {
       <Suspense fallback={null}>
         <Card title={<LeftOutlined onClick={() => history.push('/')}/>} bordered={false}>
           <Row justify="space-around">
-            <Col xl={8} lg={8} md={8} sm={8} xs={8}>
+            <Col xl={8} lg={8} md={8} sm={22} xs={22}>
               <Image
                 preview={false}
-                width={300}
+                width="100%"
                 style={{ backgroundColor: '#fff', borderRadius: '50%' }}
                 src={`https://bankofchain.io/images/amms/${STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]}.png`}
                 fallback={'https://bankofchain.io/default.webp'}
               />
             </Col>
-            <Col xl={10} lg={10} md={10} sm={10} xs={10}>
+            <Col xl={10} lg={10} md={10} sm={22} xs={22}>
               <Descriptions
                 column={1}
                 title="Base Info"

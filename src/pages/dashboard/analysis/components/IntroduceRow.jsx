@@ -7,7 +7,6 @@ import { ChartCard } from './Charts';
 import { toFixed } from './../../../../helper/number-format';
 import { getDecimals } from './../../../../apollo/client';
 import {calVaultAPY} from "@/utils/Apy";
-import { isEmpty, sumBy } from 'lodash';
 
 const topColResponsiveProps = {
   xs: 24,
@@ -17,22 +16,8 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
-const secondRowColResponsiveProps = {
-  xs: 24,
-  sm: 12,
-  md: 12,
-  lg: 12,
-  xl: 12,
-};
-
 const IntroduceRow = ({ loading, visitData = {} }) => {
   const { vaultDailyData = [], vaultDetail = {} } = visitData;
-  const earningsPastOneMonth = sumBy(vaultDailyData, o => {
-    if (isEmpty(o.totalProfit)) {
-      return 0
-    }
-    return parseInt(o.totalProfit)
-  })
   return (
     <Row gutter={[24,24]}>
       <Col {...topColResponsiveProps}>
@@ -78,38 +63,6 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
             </Tooltip>
           }
           total={() => numeral(calVaultAPY(vaultDailyData)* 100).format('0,0.00') +'%'}
-          contentHeight={70}
-        >
-        </ChartCard>
-      </Col>
-
-      <Col {...secondRowColResponsiveProps}>
-        <ChartCard
-          bordered={false}
-          loading={loading}
-          title="Earnings Total (USDT)"
-          action={
-            <Tooltip title="Earnings Total (USDT)">
-              <InfoCircleOutlined />
-            </Tooltip>
-          }
-          total={() => toFixed(vaultDetail?.totalProfit, getDecimals(), 2)}
-          contentHeight={70}
-        >
-        </ChartCard>
-      </Col>
-
-      <Col {...secondRowColResponsiveProps}>
-        <ChartCard
-          bordered={false}
-          loading={loading}
-          title="Earnings(1 Month)"
-          action={
-            <Tooltip title="Earnings over the past 1 month">
-              <InfoCircleOutlined />
-            </Tooltip>
-          }
-          total={() => toFixed(earningsPastOneMonth.toFixed(), getDecimals(), 2)}
           contentHeight={70}
         >
         </ChartCard>
