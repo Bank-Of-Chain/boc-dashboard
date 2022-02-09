@@ -49,7 +49,7 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       key: 'timestamp',
       width: 200,
       render: text => (
-        <Tooltip 
+        <Tooltip
           title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}
         >
           {moment(1000 * text).locale('en').fromNow()}
@@ -71,6 +71,7 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       <Table
         rowKey={record => record.id}
         size='small'
+        scroll={{ x: 1500 }}
         columns={columns}
         dataSource={visitData}
         pagination={{

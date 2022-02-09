@@ -159,15 +159,6 @@ const Analysis = (props) => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <Row
-          gutter={24}
-          style={{
-            marginTop: 24,
-          }}
-        >
-        </Row>
-      </Suspense>
-      <Suspense fallback={null}>
         <Card
           loading={loading}
           className={styles.salesCard}
