@@ -1,14 +1,16 @@
-import { Space, Select } from 'antd'
+import { Space, Select, Button } from 'antd'
 import { useModel, history } from 'umi'
 import React from 'react'
-// import { SelectLang } from 'umi'
-import styles from './index.less'
+// === Components === //
+import Avatar from './AvatarDropdown'
 
 // === Utils === //
 import map from 'lodash/map'
 
 // === Contansts === //
 import CHAINS, { ETH } from './../../constants/chain'
+
+import styles from './index.less'
 
 const { Option } = Select
 
@@ -23,7 +25,6 @@ const GlobalHeaderRight = () => {
 
   return (
     <Space className={className}>
-      {/* <SelectLang className={styles.action} /> */}
       <Select
         value={initialState.chain}
         defaultValue={ETH.id}
@@ -36,6 +37,10 @@ const GlobalHeaderRight = () => {
           </Option>
         ))}
       </Select>
+      <Button type='primary' onClick={() => history.push('/mine')}>
+        Connect
+      </Button>
+      <Avatar menu />
     </Space>
   )
 }
