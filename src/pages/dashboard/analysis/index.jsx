@@ -166,6 +166,7 @@ const Analysis = (props) => {
           title="Funding Ratio"
           style={{
             height: '100%',
+            marginTop: 24
           }}
         >
           <Row
