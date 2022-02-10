@@ -8,6 +8,10 @@ export default [
     component: './dashboard/analysis/strategy',
   },
   {
+    path: '/mine',
+    component: './dashboard/analysis/Personal',
+  },
+  {
     component: '404',
   },
 ];
