@@ -9,10 +9,10 @@ import { BarEchart } from '@/components/echarts'
 
 const topColResponsiveProps = {
   xs: 24,
-  sm: 6,
-  md: 6,
-  lg: 6,
-  xl: 6,
+  sm: 8,
+  md: 8,
+  lg: 8,
+  xl: 8,
 }
 
 const Personal = props => {
@@ -47,9 +47,6 @@ const Personal = props => {
     tooltip: {
       trigger: 'axis',
     },
-    legend: {
-      data: ['TVL', 'Profit'],
-    },
     calculable: true,
     xAxis: [
       {
@@ -79,14 +76,10 @@ const Personal = props => {
       {
         name: 'TVL',
         type: 'bar',
-        data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-      },
-      {
-        name: 'Profit',
-        type: 'bar',
-        data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+        data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 232.6, 320.0, 346.4, 423.3],
       },
     ],
+    color: '#fac858',
   }
 
   if (!hasConnect) {
@@ -130,35 +123,6 @@ const Personal = props => {
               loading={false}
               total='132000.13'
               contentHeight={100}
-            />
-          </Col>
-
-          <Col {...topColResponsiveProps}>
-            <ChartCard
-              bordered={false}
-              loading={false}
-              title='Deposit-1W (USDT)'
-              action={
-                <Tooltip title='How much USDT was Deposited in the last week'>
-                  <InfoCircleOutlined />
-                </Tooltip>
-              }
-              total='1500'
-              contentHeight={70}
-            />
-          </Col>
-          <Col {...topColResponsiveProps}>
-            <ChartCard
-              bordered={false}
-              loading={false}
-              title='Withdraw-1W'
-              action={
-                <Tooltip title='How much Shares was Withdraw in the last week'>
-                  <InfoCircleOutlined />
-                </Tooltip>
-              }
-              total='2000'
-              contentHeight={70}
             />
           </Col>
           <Col {...topColResponsiveProps}>
@@ -239,7 +203,7 @@ const Personal = props => {
           bordered={false}
           bodyStyle={{ paddingLeft: 0, paddingRight: 0, height: '600px' }}
           style={{ marginTop: 24 }}
-          title='Daily Profit & TVL'
+          title='Daily TVL'
         >
           <BarEchart option={option1} style={{ height: '100%' }} />
         </Card>
