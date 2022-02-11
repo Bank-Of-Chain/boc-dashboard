@@ -13,20 +13,21 @@ import BN from 'bignumber.js';
 import STRATEGIES_MAP from './../../../../constants/strategies';
 
 const ProportionSales = ({loading, visitData = {}}) => {
-  const {strategies = []} = visitData;
+  const {strategies = [], trackedAssetsValue} = visitData;
   const {initialState} = useModel('@@initialState');
   if (!initialState.chain) return null;
 
+  const vaultPoolValue = BN(trackedAssetsValue)
   const total = reduce(
     strategies,
     (rs, o) => {
       return rs.plus(o.debt);
     },
-    BN(0),
+    vaultPoolValue,
   );
   const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
   if(isEmpty(groupData)) return <Empty />
-  const tableData = values(
+  const tableData = [...values(
     mapValues(groupData, (o, key) => {
       const amount = reduce(
         o,
@@ -40,7 +41,10 @@ const ProportionSales = ({loading, visitData = {}}) => {
         amount: toFixed(amount, getDecimals(), 2),
       };
     }),
-  );
+  ), {
+    name:'Vault',
+    amount: toFixed(vaultPoolValue, getDecimals(), 2)
+  }];
   return (
     <div>
       <Donut
