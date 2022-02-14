@@ -5,7 +5,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import { GridContent } from '@ant-design/pro-layout'
 import { Col, Row, Tooltip, Result, Button, Card } from 'antd'
 import { ChartCard } from './components/Charts'
-import { BarEchart } from '@/components/echarts'
+import { BarEchart, LineEchart } from '@/components/echarts'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -40,46 +40,35 @@ const Personal = props => {
     ],
   }
   const option1 = {
-    title: {
-      text: '',
-      subtext: '',
+    color: '#fac858',
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: [
+        '2-1',
+        '2-2',
+        '2-3',
+        '2-4',
+        '2-5',
+        '2-6',
+        '2-7',
+        '2-8',
+        '2-9',
+        '2-10',
+        '2-11',
+        '2-12',
+      ]
     },
-    tooltip: {
-      trigger: 'axis',
+    yAxis: {
+      type: 'value'
     },
-    calculable: true,
-    xAxis: [
-      {
-        type: 'category',
-        data: [
-          '2-1',
-          '2-2',
-          '2-3',
-          '2-4',
-          '2-5',
-          '2-6',
-          '2-7',
-          '2-8',
-          '2-9',
-          '2-10',
-          '2-11',
-          '2-12',
-        ],
-      },
-    ],
-    yAxis: [
-      {
-        type: 'value',
-      },
-    ],
     series: [
       {
-        name: 'TVL',
-        type: 'bar',
         data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 232.6, 320.0, 346.4, 423.3],
-      },
-    ],
-    color: '#fac858',
+        type: 'line',
+        areaStyle: {}
+      }
+    ]
   }
 
   if (!hasConnect) {
@@ -129,13 +118,13 @@ const Personal = props => {
             <ChartCard
               bordered={false}
               loading={false}
-              title='USDT Balance (USDT)'
+              title='APY'
               action={
                 <Tooltip title='The amount of USDT'>
                   <InfoCircleOutlined />
                 </Tooltip>
               }
-              total='51511.2132'
+              total='15.53%'
               contentHeight={70}
             />
           </Col>
@@ -205,7 +194,7 @@ const Personal = props => {
           style={{ marginTop: 24 }}
           title='Daily TVL'
         >
-          <BarEchart option={option1} style={{ height: '100%' }} />
+          <LineEchart option={option1} style={{ height: '100%' }} />
         </Card>
       </Suspense>
     </GridContent>
