@@ -55,17 +55,19 @@ const columns = [
 const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState');
   if (!initialState.chain) return null;
-  const { strategies = [] } = visitData;
+  const { strategies = [], trackedAssetsValue } = visitData;
+  const vaultPoolValue = BN(trackedAssetsValue)
   const total = reduce(
     strategies,
     (rs, o) => {
       return rs.plus(o.debt);
     },
-    BN(0),
+    vaultPoolValue,
   );
 
   const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
-  const tableData = values(
+
+  const tableData = [...values(
     mapValues(groupData, (o, key) => {
       const amount = reduce(
         o,
@@ -80,7 +82,11 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
         percent: amount.div(total),
       };
     }),
-  );
+  ), {
+    name:'Vault',
+    amount: vaultPoolValue,
+    percent: vaultPoolValue.div(total)
+  }];
   return (
     <Table
       rowKey={(record) => record.name}

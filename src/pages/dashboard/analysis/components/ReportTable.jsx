@@ -71,7 +71,6 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       <Table
         rowKey={record => record.id}
         size='small'
-        scroll={{ x: 1500 }}
         columns={columns}
         dataSource={visitData}
         pagination={{

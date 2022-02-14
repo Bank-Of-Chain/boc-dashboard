@@ -43,6 +43,7 @@ query($sevenDaysAgoTimestamp: BigInt) {
     usdtPrice
     holderCount
     totalProfit
+    trackedAssetsValue
     strategies(
       orderBy: debt,
       orderDirection: desc
