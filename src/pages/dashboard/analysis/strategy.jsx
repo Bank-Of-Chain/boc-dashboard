@@ -39,16 +39,16 @@ const Strategy = (props) => {
 
   useEffect(() => {
     getStrategyById(id).then(setStrategy);
-    getStrategyApysInChain(id, 0, 100)
-      .then((rs) =>
-        map(rs.content, (i) => {
-          return {
-            value: i.apy,
-            date: i.apyValidateTime,
-          };
-        }),
-      )
-      .then(setApys);
+    // getStrategyApysInChain(id, 0, 100)
+    //   .then((rs) =>
+    //     map(rs.content, (i) => {
+    //       return {
+    //         value: i.apy,
+    //         date: i.apyValidateTime,
+    //       };
+    //     }),
+    //   )
+    //   .then(setApys);
     getStrategyApysOffChain(id, 0, 100)
       .then((rs) =>
         map(rs.content, (i) => {
@@ -63,23 +63,23 @@ const Strategy = (props) => {
 
   useEffect(() => {
     let dates = _union(
-      apys.map(o => {
-        return o.date;
-      }),
+      // apys.map(o => {
+      //   return o.date;
+      // }),
       offChainApys.map(o => {
         return o.date;
       })
     ).sort();
-    let bocApy = [];
+    // let bocApy = [];
     let officialApy = [];
     for (let i = 0; i < dates.length; i++) {
-      let apy = _find(apys, {'date': dates[i]});
-      if(apy && apy.value){
-        apy = Number(apy.value * 100).toFixed(2);
-      }else{
-        apy = null;
-      }
-      bocApy.push(apy);
+    //   let apy = _find(apys, {'date': dates[i]});
+    //   if(apy && apy.value){
+    //     apy = Number(apy.value * 100).toFixed(2);
+    //   }else{
+    //     apy = null;
+    //   }
+    //   bocApy.push(apy);
       let offChainApy = _find(offChainApys, {'date': dates[i]});
       if(offChainApy && offChainApy.value){
         offChainApy = Number(offChainApy.value * 100).toFixed(2);
@@ -89,13 +89,15 @@ const Strategy = (props) => {
       officialApy.push(offChainApy);
     }
     let obj = {
-      'legend': ['Boc APY', 'Official APY'],
+      'legend': ['Official APY'],
       "xAxisData": dates,
-      "data": [{
-        "seriesName":'Boc APY',
-        "seriesData": bocApy,
-        "color": 'rgba(169, 204, 245, 1)'
-      },{
+      "data": [
+      //   {
+      //   "seriesName":'Boc APY',
+      //   "seriesData": bocApy,
+      //   "color": 'rgba(169, 204, 245, 1)'
+      // },
+        {
         "seriesName":'Official APY',
         "seriesData": officialApy,
         "color": 'rgba(86, 122, 246, 1)'
@@ -111,7 +113,7 @@ const Strategy = (props) => {
       }
     };
     setApysEchartOpt(option);
-  }, [apys, offChainApys]);
+  }, [offChainApys]);
 
   if (!initialState.chain || isEmpty(strategy)) return null;
   const {underlyingTokens, depositedAssets} = strategy;
