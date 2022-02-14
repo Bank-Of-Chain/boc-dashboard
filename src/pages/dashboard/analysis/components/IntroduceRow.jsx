@@ -1,11 +1,11 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Col, Row, Tooltip } from 'antd';
+import {InfoCircleOutlined} from '@ant-design/icons';
+import {Col, Row, Tooltip} from 'antd';
 import numeral from 'numeral';
-import { ChartCard } from './Charts';
+import {ChartCard} from './Charts';
 
 // === Utils === //
-import { toFixed } from './../../../../helper/number-format';
-import { getDecimals } from './../../../../apollo/client';
+import {toFixed} from './../../../../helper/number-format';
+import {getDecimals} from './../../../../apollo/client';
 import {calVaultAPY} from "@/utils/Apy";
 
 const topColResponsiveProps = {
@@ -16,17 +16,19 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
-const IntroduceRow = ({ loading, visitData = {} }) => {
-  const { vaultDailyData = [], vaultDetail = {} } = visitData;
+const IntroduceRow = ({loading, visitData = {}}) => {
+  const {vaultDailyData = [], vaultDetail = {}} = visitData;
+  // const last7DaysTime = vaultDailyData.length > 0 ? Number(vaultDailyData[vaultDailyData.length - 1].id) - 7 * 24 * 3600 : 0;
+  // const vaultWeeklyData = vaultDailyData.filter(x => x.id >= last7DaysTime);
   return (
-    <Row gutter={[24,24]}>
+    <Row gutter={[24, 24]}>
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
           title="TVL (USDT)"
           action={
             <Tooltip title="Total Value Locked">
-              <InfoCircleOutlined />
+              <InfoCircleOutlined/>
             </Tooltip>
           }
           loading={loading}
@@ -43,7 +45,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
           title="Depositors"
           action={
             <Tooltip title="Number Of Holders">
-              <InfoCircleOutlined />
+              <InfoCircleOutlined/>
             </Tooltip>
           }
           total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
