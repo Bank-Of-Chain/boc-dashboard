@@ -48,7 +48,6 @@ const ProportionSales = ({loading, visitData = {}}) => {
   return (
     <div>
       <Donut
-        theme="dark"
         forceFit
         height={340}
         style={{
@@ -61,6 +60,11 @@ const ProportionSales = ({loading, visitData = {}}) => {
         data={tableData}
         legend={{
           visible: true,
+          text:{
+            style:{
+              fill: '#fff'
+            },
+          }
         }}
         label={{
           visible: false,
