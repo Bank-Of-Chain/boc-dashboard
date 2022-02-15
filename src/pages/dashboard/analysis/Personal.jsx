@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -6,6 +6,10 @@ import { GridContent } from '@ant-design/pro-layout'
 import { Col, Row, Tooltip, Result, Button, Card } from 'antd'
 import { ChartCard } from './components/Charts'
 import { BarEchart, LineEchart } from '@/components/echarts'
+import {useModel} from 'umi'
+import { isEmpty } from 'lodash'
+import { toFixed } from '@/helper/number-format'
+import { getDecimals } from '@/apollo/client'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -17,6 +21,63 @@ const topColResponsiveProps = {
 
 const Personal = props => {
   const [hasConnect, setHasConnect] = useState(true)
+  const [totalAssets, setTotalAssets] = useState(0)
+  const [bocBalance, setBOCBalance] = useState(0)
+  const [profit, setProfit] = useState(0)
+  const [totalProfit, setTotalProfit] = useState(0)
+  const [depositedPercent, setDepositedPercent] = useState(0)
+  const [dailyTVLs, setDailyTVLs] = useState([])
+  const {dataSource, reload, loading} = useModel('usePersonalData')
+
+  const {initialState} = useModel('@@initialState')
+
+  const decimals = dataSource?.vaultSummary?.decimals
+  const sharePrice = dataSource?.vaultSummary?.pricePerShare
+  const totalShares = dataSource?.vaultSummary?.totalShares
+  const shares = dataSource?.accountDetail?.shares
+  const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
+  const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
+  const accountDailyDatas = dataSource?.accountDetail?.accountDailyDatas
+
+  useEffect(() => {
+    reload();
+  }, [initialState.chain])
+
+  useEffect(() => {
+    if (!sharePrice || !shares || !decimals) return
+    setTotalAssets(sharePrice * shares / (10 ** decimals))
+  }, [sharePrice, shares, decimals])
+
+  useEffect(() => {
+    if (!shares) return
+    setBOCBalance(shares)
+  }, [shares])
+
+  useEffect(() => {
+    if (!totalAssets || totalAssets === 0) return
+    setProfit(+totalAssets - depositedUSDT)
+  }, [totalAssets, depositedUSDT])
+
+  useEffect(() => {
+    if ((!profit || profit === 0) || !accumulatedProfit) return
+    setTotalProfit(+profit + +accumulatedProfit)
+  }, [profit, accumulatedProfit])
+
+  useEffect(() => {
+    if (!shares || !totalShares) return
+    setDepositedPercent(shares * 100 / totalShares)
+  }, [shares, totalShares])
+
+  useEffect(() => {
+    if (isEmpty(accountDailyDatas)) return
+    setDailyTVLs(accountDailyDatas.map(accountDailyData => {
+      return {
+        date: accountDailyData.dayTimestamp,
+        tvl: accountDailyData.currentShares,
+      }
+    }))
+    console.log('dailyTVLs=', dailyTVLs);
+  }, [accountDailyDatas])
 
   const option = {
     xAxis: {
@@ -96,7 +157,7 @@ const Personal = props => {
                 </Tooltip>
               }
               loading={false}
-              total='132000.13'
+              total={() => toFixed(totalAssets.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
@@ -110,7 +171,7 @@ const Personal = props => {
                 </Tooltip>
               }
               loading={false}
-              total='132000.13'
+              total={() => toFixed(bocBalance.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
@@ -139,7 +200,7 @@ const Personal = props => {
                 </Tooltip>
               }
               loading={false}
-              total='12.12'
+              total={() => toFixed(profit.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
@@ -154,7 +215,7 @@ const Personal = props => {
                 </Tooltip>
               }
               loading={false}
-              total='123.12'
+              total={() => toFixed(totalProfit.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
@@ -169,7 +230,7 @@ const Personal = props => {
                 </Tooltip>
               }
               loading={false}
-              total='2.52%'
+              total={() => depositedPercent.toFixed(2) + '%'}
               contentHeight={100}
             />
           </Col>

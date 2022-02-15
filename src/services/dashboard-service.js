@@ -90,6 +90,28 @@ export const getVaultDetails = async () => {
   };
 };
 
+const VAULT_SUMMARY_DATA = `
+query {
+  vaults {
+    id
+    decimals
+    tvl
+    totalShares
+    pricePerShare
+  }
+}
+`
+export const getVaultSummaryData = async () => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  const { data } = await client.query({
+    query: gql(VAULT_SUMMARY_DATA),
+  })
+  return {
+    data: data.vaults[0],
+  }
+}
+
 const VAULT_DAILY_QUERY = `
 query($beginDayTimestamp: BigInt) {
   vaultDailyDatas (where: {
@@ -397,12 +419,17 @@ export const queryReports = async (pageNumber, pageSize) => {
 }
 
 const ACCOUNT_DETAIL_QUERY = `
-query($userAddress: ID!) {
+query($userAddress: ID, $beginDayTimestamp: BigInt) {
   account(id: $userAddress) {
     id
     shares
     depositedUSDT
     accumulatedProfit
+    accountDailyDatas(where: {
+      dayTimestamp_gt: $beginDayTimestamp
+    }) {
+      currentShares
+    }
   }
 }
 `;
@@ -413,6 +440,7 @@ export const getAccountDetail = async (userAddress) => {
     query: gql(ACCOUNT_DETAIL_QUERY),
     variables: {
       userAddress,
+      beginDayTimestamp: getDaysAgoTimestamp(30)
     }
   })
 }
