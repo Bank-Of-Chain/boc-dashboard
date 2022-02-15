@@ -34,8 +34,7 @@ const IntroduceRow = ({loading, visitData = {}}) => {
           loading={loading}
           total={() => toFixed(vaultDetail?.tvl, getDecimals(), 2)}
           contentHeight={100}
-        >
-        </ChartCard>
+         />
       </Col>
 
       <Col {...topColResponsiveProps}>
@@ -50,24 +49,22 @@ const IntroduceRow = ({loading, visitData = {}}) => {
           }
           total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
           contentHeight={70}
-        >
-        </ChartCard>
+         />
       </Col>
 
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
           loading={loading}
-          title="APY Past 1M"
+          title="APY (last 30 days)"
           action={
-            <Tooltip title="Yield over the past 1 month">
+            <Tooltip title="Yield over the past 1 month (From Feb. 8)">
               <InfoCircleOutlined />
             </Tooltip>
           }
           total={() => numeral(calVaultAPY(vaultDailyData)* 100).format('0,0.00') +'%'}
           contentHeight={70}
-        >
-        </ChartCard>
+         />
       </Col>
 
     </Row>

@@ -48,6 +48,7 @@ const ProportionSales = ({loading, visitData = {}}) => {
   return (
     <div>
       <Donut
+        theme="dark"
         forceFit
         height={340}
         radius={1}

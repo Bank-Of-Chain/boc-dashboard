@@ -22,6 +22,9 @@ export default function (obj) {
   }
 
   let option = {
+    textStyle:{
+      color: '#fff'
+    },
     tooltip: {
       trigger: 'axis'
     },
