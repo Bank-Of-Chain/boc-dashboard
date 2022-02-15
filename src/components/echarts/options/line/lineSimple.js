@@ -6,6 +6,9 @@ import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 
 export default function (obj) {
   const option = {
+    textStyle:{
+      color: '#fff'
+    },
     grid: {
       left: '0%',
       right: '0%',

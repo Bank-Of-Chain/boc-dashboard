@@ -118,7 +118,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
     <Card
       loading={loading}
       bordered={false}
-      title='Strategies'
+      title='Strategies Allocations'
       extra={<div>
         <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
         <Tooltip title="show all strategies added in vault">

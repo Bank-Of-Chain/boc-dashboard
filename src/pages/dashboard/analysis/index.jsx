@@ -166,7 +166,7 @@ const Analysis = (props) => {
           loading={loading}
           className={styles.salesCard}
           bordered={false}
-          title="Funding Ratio"
+          title="Protocol Allocations"
           style={{
             marginTop: 24,
             height: '100%',
