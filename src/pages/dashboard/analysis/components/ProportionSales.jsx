@@ -51,6 +51,9 @@ const ProportionSales = ({loading, visitData = {}}) => {
         theme="dark"
         forceFit
         height={340}
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.1)'
+        }}
         radius={1}
         innerRadius={0.75}
         angleField="amount"
