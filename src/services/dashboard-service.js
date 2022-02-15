@@ -107,7 +107,7 @@ query($beginDayTimestamp: BigInt) {
 }
 `;
 // 2月8日 0点时间戳
-const timeStart = 1644278400;
+const timeStart = 1644249600;
 export const getVaultDailyData = async (day) => {
   const client = getClient()
   if (isEmpty(client)) return
