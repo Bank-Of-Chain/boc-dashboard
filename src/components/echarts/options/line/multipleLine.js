@@ -25,9 +25,7 @@ export default function (obj) {
     tooltip: {
       trigger: 'axis'
     },
-    legend: {
-      data:obj.legend
-    },
+    legend: obj.legend,
     xAxis: {
       type: 'category',
       data: obj.xAxisData,
