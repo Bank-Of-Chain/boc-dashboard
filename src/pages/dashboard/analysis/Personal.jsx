@@ -1,21 +1,25 @@
 import React, { Suspense, useEffect, useState } from 'react'
+import {useModel} from 'umi'
+import { getDecimals } from '@/apollo/client'
+import { getDaysAgoTimestamp } from '@/services/dashboard-service'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { GridContent } from '@ant-design/pro-layout'
 import { Col, Row, Tooltip, Result, Button, Card } from 'antd'
+
+// === Components === //
 import { ChartCard } from './components/Charts'
 import { BarEchart, LineEchart } from '@/components/echarts'
-import {useModel} from 'umi'
-import { isEmpty } from 'lodash'
-import { toFixed } from '@/helper/number-format'
-import { getDecimals } from '@/apollo/client'
-import { getDaysAgoTimestamp } from '@/services/dashboard-service'
-
-import moment from 'moment';
 import lineSimple from '@/components/echarts/options/line/lineSimple';
+
+// === Utils === //
+import moment from 'moment';
 import _min from 'lodash/min';
 import _max from 'lodash/max';
+import keyBy from 'lodash/keyBy';
+import isEmpty from 'lodash/isEmpty'
+import { toFixed } from '@/helper/number-format'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -110,15 +114,12 @@ const Personal = props => {
   }, [shares, totalShares])
 
   const fillAccountDailyDatas = (accountDailyDatas) => {
-    const accountDailyDataMap = new Map()
-    for (const accountDailyData of accountDailyDatas) {
-      accountDailyDataMap.set(accountDailyData.dayTimestamp, accountDailyData)
-    }
+    const accountDailyDataMap = keyBy(accountDailyDatas, 'id')
     const thirtyDaysDailyDatas = []
 
     const offset = 86400
     let correctTimestamp = getDaysAgoTimestamp(30) + offset
-    if (isEmpty(accountDailyDatas) || !accountDailyDataMap.get(correctTimestamp)) {
+    if (isEmpty(accountDailyDatas) || !accountDailyDataMap[correctTimestamp]) {
       thirtyDaysDailyDatas.push({
         id: pastLatestAccountDailyData.id,
         currentShares: pastLatestAccountDailyData.currentShares,
@@ -127,11 +128,11 @@ const Personal = props => {
         dayTimestamp: correctTimestamp,
       })
     }
-    
+
     // fill 30 days
     for (let index = 1; index < 30; index++) {
       correctTimestamp += offset
-      const accountTodayData = accountDailyDataMap.get(correctTimestamp.toString())
+      const accountTodayData = accountDailyDataMap[correctTimestamp.toString()]
       if (accountTodayData) {
         thirtyDaysDailyDatas.push(accountTodayData)
       } else {
@@ -148,31 +149,28 @@ const Personal = props => {
   }
 
   const fillVaultDailyDatas = (vaultDailyDatas) => {
-    const vaultDailyDataMap = new Map()
-    for (const vaultDailyData of vaultDailyDatas) {
-      vaultDailyDataMap.set(vaultDailyData.id, vaultDailyData)
-    }
+    const vaultDailyDataMap = keyBy(vaultDailyDatas, 'id')
     const thirtyDaysDailyDatas = []
 
     const offset = 86400
     let correctTimestamp = getDaysAgoTimestamp(30) + offset
-    if (isEmpty(vaultDailyDatas) || !vaultDailyDataMap.get(correctTimestamp)) {
+    if (isEmpty(vaultDailyDatas) || !vaultDailyDataMap[correctTimestamp]) {
       thirtyDaysDailyDatas.push({
         pricePerShare: pastLatestVaultDailyData.pricePerShare,
       })
     }
-    
+
     // fill 30 days
     for (let index = 1; index < 30; index++) {
       correctTimestamp += offset
-      const vaultTodayData = vaultDailyDataMap.get(correctTimestamp.toString())
+      const vaultTodayData = vaultDailyDataMap[correctTimestamp.toString()]
       if (vaultTodayData) {
         thirtyDaysDailyDatas.push(vaultTodayData)
         const dayTimestamp = vaultTodayData.lockedProfitDegradationTimestamp - vaultTodayData.lockedProfitDegradationTimestamp % 86400
-        if (!vaultDailyDataMap.get(dayTimestamp) && dayTimestamp !== 0) {
-          vaultDailyDataMap.set(dayTimestamp.toString(), {
+        if (!vaultDailyDataMap[dayTimestamp] && dayTimestamp !== 0) {
+          vaultDailyDataMap[dayTimestamp.toString()] = {
             pricePerShare: vaultTodayData.unlockedPricePerShare
-          })
+          }
         }
       } else {
         thirtyDaysDailyDatas.push(thirtyDaysDailyDatas[index - 1])
@@ -180,7 +178,7 @@ const Personal = props => {
     }
     return thirtyDaysDailyDatas
   }
-  
+
   useEffect(() => {
     if (!accountDailyDatas || !pastLatestAccountDailyData) return
     if (!vaultDailyDatas || !pastLatestVaultDailyData) return
