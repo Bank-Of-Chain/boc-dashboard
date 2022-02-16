@@ -1,8 +1,8 @@
-import {Card, Table, Image, Button} from 'antd'
-import React from 'react'
+import {Card, Table, Image, Button, Switch, Tooltip} from 'antd'
+import React, { useState } from 'react'
 import styles from '../style.less'
 import { history, useModel } from 'umi'
-import { map, reduce } from 'lodash'
+import { filter, map, reduce } from 'lodash'
 import { Link } from 'umi';
 
 // === Constants === //
@@ -18,6 +18,7 @@ import BN from 'bignumber.js'
 import {MoreOutlined} from "@ant-design/icons";
 
 const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
+  const [showAll, setShowAll] = useState(false)
   const { initialState } = useModel('@@initialState')
   if (!initialState.chain) return null
   const columns = [
@@ -59,12 +60,33 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Asset (USDT)',
       dataIndex: 'debt',
       key: 'debt',
+      width: 300,
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => {
+        return BN(a.debt).minus(BN(b.debt))
+      },
       render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Week Profit(USDT)',
       dataIndex: 'reports',
       key: 'reports',
+      sorter: (a, b) => {
+        return BN(reduce(
+          a.reports,
+          (rs, o) => {
+            return rs.plus(o.profit)
+          },
+          BN(0),
+        )).minus(reduce(
+          b.reports,
+          (rs, o) => {
+            return rs.plus(o.profit)
+          },
+          BN(0),
+        ))
+      },
+      width: 300,
       render: value =>
         `${toFixed(
           reduce(
@@ -91,12 +113,18 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       )
     },
   ]
+  const data = showAll ? searchData : filter(searchData, i => i.debt !== '0')
   return (
     <Card
       loading={loading}
       bordered={false}
-      title='Strategies'
-      extra={dropdownGroup}
+      title='Strategies Allocations'
+      extra={<div>
+        <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
+        <Tooltip title="show all strategies added in vault">
+          <span style={{ padding: 10 }}>Show All</span>
+        </Tooltip>
+      </div>}
       style={{
         height: '100%',
         marginTop: 32,
@@ -106,7 +134,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
         rowKey={record => record.id}
         size='small'
         columns={columns}
-        dataSource={searchData}
+        dataSource={data}
         pagination={{
           style: {
             marginBottom: 0,

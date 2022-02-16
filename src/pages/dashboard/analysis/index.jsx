@@ -1,5 +1,5 @@
 import {Suspense, useEffect, useState} from 'react';
-import {Col, Row, Card, Button, Tabs} from 'antd';
+import {Col, Row, Card, Button, Tabs, Tooltip} from 'antd';
 import {GridContent} from '@ant-design/pro-layout';
 import IntroduceRow from './components/IntroduceRow';
 import StrategyTable from './components/StrategyTable';
@@ -129,12 +129,15 @@ const Analysis = (props) => {
             <Tabs
               tabBarExtraContent={
                 <div>
-                  <Button ghost type={calDateRange === 7 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(7)}>WEEK</Button>
-                  <Button ghost type={calDateRange === 30 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(30)}>MONTH</Button>
-                  <Button ghost type={calDateRange === 365 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(365)}>YEAR</Button>
+                  <Tooltip title="last 7 days">
+                    <Button ghost type={calDateRange === 7 ? 'primary' : ''} onClick={() => setCalDateRange(7)}>WEEK</Button>
+                  </Tooltip>
+                  <Tooltip title="last 30 days">
+                    <Button ghost type={calDateRange === 30 ? 'primary' : ''} onClick={() => setCalDateRange(30)}>MONTH</Button>
+                  </Tooltip>
+                  <Tooltip title="last 365 days">
+                    <Button ghost type={calDateRange === 365 ? 'primary' : ''} onClick={() => setCalDateRange(365)}>YEAR</Button>
+                  </Tooltip>
                 </div>
               }
               size="large"
@@ -163,8 +166,9 @@ const Analysis = (props) => {
           loading={loading}
           className={styles.salesCard}
           bordered={false}
-          title="Funding Ratio"
+          title="Protocol Allocations"
           style={{
+            marginTop: 24,
             height: '100%',
             marginTop: 24
           }}

@@ -25,7 +25,7 @@ import {getStrategyApysInChain, getStrategyApysOffChain} from './../../../servic
 
 // === Styles === //
 import styles from './style.less';
-import {isEmpty, map} from 'lodash';
+import {isEmpty, map, noop} from 'lodash';
 import {useState} from 'react';
 
 const Strategy = (props) => {
@@ -38,7 +38,7 @@ const Strategy = (props) => {
   const {initialState} = useModel('@@initialState');
 
   useEffect(() => {
-    getStrategyById(id).then(setStrategy);
+    getStrategyById(id).then(setStrategy).catch(noop);
     // getStrategyApysInChain(id, 0, 100)
     //   .then((rs) =>
     //     map(rs.content, (i) => {
@@ -58,7 +58,7 @@ const Strategy = (props) => {
           };
         }),
       )
-      .then(setOffChainApys);
+      .then(setOffChainApys).catch(noop);
   }, [id]);
 
   useEffect(() => {
@@ -89,7 +89,7 @@ const Strategy = (props) => {
       officialApy.push(offChainApy);
     }
     let obj = {
-      'legend': ['Official APY'],
+      legend: { data: ['Official APY'], textStyle: { color: '#fff' } },
       "xAxisData": dates,
       "data": [
       //   {

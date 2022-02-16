@@ -2,6 +2,7 @@ import {InfoCircleOutlined} from '@ant-design/icons';
 import {Col, Row, Tooltip} from 'antd';
 import numeral from 'numeral';
 import {ChartCard} from './Charts';
+import {useModel} from 'umi';
 
 // === Utils === //
 import {toFixed} from './../../../../helper/number-format';
@@ -18,6 +19,7 @@ const topColResponsiveProps = {
 
 const IntroduceRow = ({loading, visitData = {}}) => {
   const {vaultDailyData = [], vaultDetail = {}} = visitData;
+  const {initialState} = useModel('@@initialState');
   // const last7DaysTime = vaultDailyData.length > 0 ? Number(vaultDailyData[vaultDailyData.length - 1].id) - 7 * 24 * 3600 : 0;
   // const vaultWeeklyData = vaultDailyData.filter(x => x.id >= last7DaysTime);
   return (
@@ -34,8 +36,7 @@ const IntroduceRow = ({loading, visitData = {}}) => {
           loading={loading}
           total={() => toFixed(vaultDetail?.tvl, getDecimals(), 2)}
           contentHeight={100}
-        >
-        </ChartCard>
+         />
       </Col>
 
       <Col {...topColResponsiveProps}>
@@ -50,24 +51,22 @@ const IntroduceRow = ({loading, visitData = {}}) => {
           }
           total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
           contentHeight={70}
-        >
-        </ChartCard>
+         />
       </Col>
 
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
           loading={loading}
-          title="APY Past 1M"
+          title="APY (last 30 days)"
           action={
-            <Tooltip title="Yield over the past 1 month">
+            <Tooltip title={`Yield over the past 1 month ${initialState.chain === '1' ? '(From Feb. 8)' : ''}`}>
               <InfoCircleOutlined />
             </Tooltip>
           }
           total={() => numeral(calVaultAPY(vaultDailyData)* 100).format('0,0.00') +'%'}
           contentHeight={70}
-        >
-        </ChartCard>
+         />
       </Col>
 
     </Row>

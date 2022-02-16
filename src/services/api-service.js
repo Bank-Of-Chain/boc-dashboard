@@ -35,3 +35,22 @@ export const getStrategyApysOffChain = (address, offset = 0, limit = 20) => {
     }
   }
 }
+
+/**
+ * 分页获取调仓报告
+ * @param {*} params
+ * @param {*} offset
+ * @param {*} limit
+ * @returns
+ */
+export const getReports = (params, offset = 0, limit = 20) => {
+  const nextParams = {
+    sort: 'fetch_time desc',
+    offset,
+    limit,
+    ...params,
+  }
+  return request(`${API_SERVER}/v1/allocation/report`, {
+    params: nextParams,
+  });
+}
