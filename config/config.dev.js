@@ -14,7 +14,7 @@ export default defineConfig({
     babelOptions: {},
   },
   define:{
-    API_SERVER: 'http://192.168.60.12:8080',
+    API_SERVER: 'http://192.168.60.12/server',
     IMAGE_ROOT: '.',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',

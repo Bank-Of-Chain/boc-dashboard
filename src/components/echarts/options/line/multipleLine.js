@@ -22,12 +22,13 @@ export default function (obj) {
   }
 
   let option = {
+    textStyle:{
+      color: '#fff'
+    },
     tooltip: {
       trigger: 'axis'
     },
-    legend: {
-      data:obj.legend
-    },
+    legend: obj.legend,
     xAxis: {
       type: 'category',
       data: obj.xAxisData,
