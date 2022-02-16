@@ -1,3 +1,9 @@
+import moment from 'moment'
+import lineSimple from '@/components/echarts/options/line/lineSimple';
+
+import _min from 'lodash/min';
+import _max from 'lodash/max';
+
 const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true) => {
   const xAxisData = [];
   const seriesData = [];
