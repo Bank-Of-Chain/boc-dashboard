@@ -13,7 +13,7 @@ import BN from 'bignumber.js';
 import STRATEGIES_MAP from './../../../../constants/strategies';
 
 const ProportionSales = ({loading, visitData = {}}) => {
-  const {strategies = []} = visitData;
+  const {strategies = [], tvl} = visitData;
   const {initialState} = useModel('@@initialState');
   if (!initialState.chain) return null;
 
@@ -23,10 +23,11 @@ const ProportionSales = ({loading, visitData = {}}) => {
       return rs.plus(o.debt);
     },
     BN(0),
-  );
+    );
+  const vaultPoolValue = BN(tvl).minus(total)
   const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
   if(isEmpty(groupData)) return <Empty />
-  const tableData = values(
+  const tableData = [...values(
     mapValues(groupData, (o, key) => {
       const amount = reduce(
         o,
@@ -40,12 +41,18 @@ const ProportionSales = ({loading, visitData = {}}) => {
         amount: toFixed(amount, getDecimals(), 2),
       };
     }),
-  );
+  ), {
+    name:'Vault',
+    amount: toFixed(vaultPoolValue, getDecimals(), 2)
+  }];
   return (
     <div>
       <Donut
         forceFit
         height={340}
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.1)'
+        }}
         radius={1}
         innerRadius={0.75}
         angleField="amount"
@@ -53,6 +60,11 @@ const ProportionSales = ({loading, visitData = {}}) => {
         data={tableData}
         legend={{
           visible: true,
+          text:{
+            style:{
+              fill: '#fff'
+            },
+          }
         }}
         label={{
           visible: false,
@@ -72,8 +84,8 @@ const ProportionSales = ({loading, visitData = {}}) => {
         statistic={{
           visible: true,
           content: {
-            value: toFixed(total, getDecimals(), 2),
-            name: 'Strategy TVL',
+            value: toFixed(tvl, getDecimals(), 2),
+            name: 'TVL',
           },
         }}
       />

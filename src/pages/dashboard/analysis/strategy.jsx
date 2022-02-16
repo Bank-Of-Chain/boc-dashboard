@@ -25,7 +25,7 @@ import {getStrategyApysInChain, getStrategyApysOffChain} from './../../../servic
 
 // === Styles === //
 import styles from './style.less';
-import {isEmpty, map} from 'lodash';
+import {isEmpty, map, noop} from 'lodash';
 import {useState} from 'react';
 
 const Strategy = (props) => {
@@ -38,17 +38,17 @@ const Strategy = (props) => {
   const {initialState} = useModel('@@initialState');
 
   useEffect(() => {
-    getStrategyById(id).then(setStrategy);
-    getStrategyApysInChain(id, 0, 100)
-      .then((rs) =>
-        map(rs.content, (i) => {
-          return {
-            value: i.apy,
-            date: i.apyValidateTime,
-          };
-        }),
-      )
-      .then(setApys);
+    getStrategyById(id).then(setStrategy).catch(noop);
+    // getStrategyApysInChain(id, 0, 100)
+    //   .then((rs) =>
+    //     map(rs.content, (i) => {
+    //       return {
+    //         value: i.apy,
+    //         date: i.apyValidateTime,
+    //       };
+    //     }),
+    //   )
+    //   .then(setApys);
     getStrategyApysOffChain(id, 0, 100)
       .then((rs) =>
         map(rs.content, (i) => {
@@ -58,28 +58,28 @@ const Strategy = (props) => {
           };
         }),
       )
-      .then(setOffChainApys);
+      .then(setOffChainApys).catch(noop);
   }, [id]);
 
   useEffect(() => {
     let dates = _union(
-      apys.map(o => {
-        return o.date;
-      }),
+      // apys.map(o => {
+      //   return o.date;
+      // }),
       offChainApys.map(o => {
         return o.date;
       })
     ).sort();
-    let bocApy = [];
+    // let bocApy = [];
     let officialApy = [];
     for (let i = 0; i < dates.length; i++) {
-      let apy = _find(apys, {'date': dates[i]});
-      if(apy && apy.value){
-        apy = Number(apy.value * 100).toFixed(2);
-      }else{
-        apy = null;
-      }
-      bocApy.push(apy);
+    //   let apy = _find(apys, {'date': dates[i]});
+    //   if(apy && apy.value){
+    //     apy = Number(apy.value * 100).toFixed(2);
+    //   }else{
+    //     apy = null;
+    //   }
+    //   bocApy.push(apy);
       let offChainApy = _find(offChainApys, {'date': dates[i]});
       if(offChainApy && offChainApy.value){
         offChainApy = Number(offChainApy.value * 100).toFixed(2);
@@ -89,13 +89,15 @@ const Strategy = (props) => {
       officialApy.push(offChainApy);
     }
     let obj = {
-      'legend': ['Boc APY', 'Official APY'],
+      legend: { data: ['Official APY'], textStyle: { color: '#fff' } },
       "xAxisData": dates,
-      "data": [{
-        "seriesName":'Boc APY',
-        "seriesData": bocApy,
-        "color": 'rgba(169, 204, 245, 1)'
-      },{
+      "data": [
+      //   {
+      //   "seriesName":'Boc APY',
+      //   "seriesData": bocApy,
+      //   "color": 'rgba(169, 204, 245, 1)'
+      // },
+        {
         "seriesName":'Official APY',
         "seriesData": officialApy,
         "color": 'rgba(86, 122, 246, 1)'
@@ -111,7 +113,7 @@ const Strategy = (props) => {
       }
     };
     setApysEchartOpt(option);
-  }, [apys, offChainApys]);
+  }, [offChainApys]);
 
   if (!initialState.chain || isEmpty(strategy)) return null;
   const {underlyingTokens, depositedAssets} = strategy;
@@ -120,15 +122,16 @@ const Strategy = (props) => {
       <Suspense fallback={null}>
         <Card title={<LeftOutlined onClick={() => history.push('/')}/>} bordered={false}>
           <Row justify="space-around">
-            <Col xl={8} lg={8} md={8} sm={8} xs={8}>
+            <Col xl={8} lg={8} md={8} sm={22} xs={22}>
               <Image
                 preview={false}
-                width={300}
+                width="100%"
+                style={{ backgroundColor: '#fff', borderRadius: '50%' }}
                 src={`https://bankofchain.io/images/amms/${STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]}.png`}
                 fallback={'https://bankofchain.io/default.webp'}
               />
             </Col>
-            <Col xl={10} lg={10} md={10} sm={10} xs={10}>
+            <Col xl={10} lg={10} md={10} sm={22} xs={22}>
               <Descriptions
                 column={1}
                 title="Base Info"

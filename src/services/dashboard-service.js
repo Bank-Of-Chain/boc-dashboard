@@ -1,4 +1,4 @@
-import { getClient } from '../../src/apollo/client';
+import { getClient, ethClient } from '../../src/apollo/client';
 import { gql } from '@apollo/client';
 import { request } from 'umi';
 import { get, isEmpty } from 'lodash';
@@ -42,6 +42,8 @@ query($sevenDaysAgoTimestamp: BigInt) {
     totalShares
     usdtPrice
     holderCount
+    totalProfit
+    trackedAssetsValue
     strategies(
       orderBy: debt,
       orderDirection: desc
@@ -104,14 +106,24 @@ query($beginDayTimestamp: BigInt) {
   }
 }
 `;
+// 2月8日 0点时间戳
+const timeStart = 1644249600;
 export const getVaultDailyData = async (day) => {
   const client = getClient()
   if (isEmpty(client)) return
+
+  let nextStartTimestamp = getDaysAgoTimestamp(day)
+  if(client === ethClient) {
+    // eth链 不统计2月7日前的数据
+    if(nextStartTimestamp < timeStart){
+      nextStartTimestamp = timeStart
+    }
+  }
   return await client
     .query({
       query: gql(VAULT_DAILY_QUERY),
       variables: {
-        beginDayTimestamp: getDaysAgoTimestamp(day),
+        beginDayTimestamp: nextStartTimestamp,
       },
     })
     .then((resp) => get(resp, 'data.vaultDailyDatas'));
@@ -390,6 +402,27 @@ export const queryReports = async (pageNumber, pageSize) => {
     variables: {
       pageSize,
       skipNumber
+    }
+  })
+}
+
+const ACCOUNT_DETAIL_QUERY = `
+query($userAddress: ID!) {
+  account(id: $userAddress) {
+    id
+    shares
+    depositedUSDT
+    accumulatedProfit
+  }
+}
+`;
+export const getAccountDetail = async (userAddress) => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client.query({
+    query: gql(ACCOUNT_DETAIL_QUERY),
+    variables: {
+      userAddress,
     }
   })
 }

@@ -1,5 +1,5 @@
 import {Suspense, useEffect, useState} from 'react';
-import {Col, Row, Card, Button, Tabs} from 'antd';
+import {Col, Row, Card, Button, Tabs, Tooltip} from 'antd';
 import {GridContent} from '@ant-design/pro-layout';
 import IntroduceRow from './components/IntroduceRow';
 import StrategyTable from './components/StrategyTable';
@@ -28,7 +28,7 @@ import {toFixed} from '@/helper/number-format';
 
 import {LineEchart} from "@/components/echarts";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
-import {calVaultMonthlyAPY} from "@/utils/Apy";
+import {calVaultApyByRange} from "@/utils/Apy";
 import numeral from "numeral";
 
 const {TabPane} = Tabs;
@@ -88,13 +88,13 @@ const Analysis = (props) => {
   }, [vaultAddress]);
 
   useEffect(() => {
-    getVaultDailyData(calDateRange + 30).then((array) => arrayAppendOfDay(array, calDateRange+30))
+    getVaultDailyData(calDateRange + 30).then((array) => arrayAppendOfDay(array, calDateRange + 30))
       .then((array) =>
         map(array, (item) => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            pricePerShare: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+            pricePerShare: item.totalShares ? (item.totalShares === 0 ? 1 : numeral(item.tvl / item.totalShares).format('0,0.000000')) : undefined, //Number(toFixed(item.pricePerShare, getDecimals(), 6)),
             tvl: Number(toFixed(item.tvl, getDecimals(), 2)),
             totalShares: item.totalShares
           };
@@ -102,15 +102,15 @@ const Analysis = (props) => {
       )
       .then(array => {
         let minId = getDaysAgoTimestamp(calDateRange);
-        let result = calVaultMonthlyAPY(array);
-        result = result.map(item => {
-          if (item.apy) {
-            item.apy = numeral(item.apy * 100).format('0,0.00');
-          }
-          return item;
-        }).filter(item=> item.id >= minId);
-        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false));
-        const rangeArray = array.filter(item=> item.id >= minId);
+        // let result = calVaultApyByRange(array, 7);
+        // result = result.map(item => {
+        //   if (item.apy) {
+        //     item.apy = numeral(item.apy * 100).format('0,0.00');
+        //   }
+        //   return item;
+        // }).filter(item => item.id >= minId);
+        // setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 7-day APY(%)', false));
+        const rangeArray = array.filter(item => item.id >= minId);
         setSharePriceEchartOpt(getLineEchartOpt(rangeArray, 'pricePerShare', 'USDT'));
         setTvlEchartOpt(getLineEchartOpt(rangeArray, 'tvl', 'USDT'));
       });
@@ -129,19 +129,27 @@ const Analysis = (props) => {
             <Tabs
               tabBarExtraContent={
                 <div>
-                  <Button ghost type={calDateRange === 30 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(30)}>1M</Button>
-                  <Button ghost type={calDateRange === 180 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(180)}>6M</Button>
-                  <Button ghost type={calDateRange === 365 ? 'primary' : ''}
-                          onClick={() => setCalDateRange(365)}>1Y</Button>
+                  <Tooltip title="last 7 days">
+                    <Button ghost type={calDateRange === 7 ? 'primary' : ''} onClick={() => setCalDateRange(7)}>WEEK</Button>
+                  </Tooltip>
+                  <Tooltip title="last 30 days">
+                    <Button ghost type={calDateRange === 30 ? 'primary' : ''} onClick={() => setCalDateRange(30)}>MONTH</Button>
+                  </Tooltip>
+                  <Tooltip title="last 365 days">
+                    <Button ghost type={calDateRange === 365 ? 'primary' : ''} onClick={() => setCalDateRange(365)}>YEAR</Button>
+                  </Tooltip>
                 </div>
               }
               size="large"
             >
-              <TabPane tab="APY" key="apy">
+              {/*<TabPane tab="APY" key="apy">*/}
+              {/*  <div className={styles.chartDiv}>*/}
+              {/*    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
+              {/*  </div>*/}
+              {/*</TabPane>*/}
+              <TabPane tab="Share Price" key="sharePrice">
                 <div className={styles.chartDiv}>
-                  <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
+                  <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
                 </div>
               </TabPane>
               <TabPane tab="TVL" key="tvl">
@@ -149,31 +157,18 @@ const Analysis = (props) => {
                   <LineEchart option={tvlEchartOpt} style={{height: '100%', width: '100%'}}/>
                 </div>
               </TabPane>
-              <TabPane tab="Share Price" key="sharePrice">
-                <div className={styles.chartDiv}>
-                  <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
-                </div>
-              </TabPane>
             </Tabs>
           </div>
         </Card>
-      </Suspense>
-      <Suspense fallback={null}>
-        <Row
-          gutter={24}
-          style={{
-            marginTop: 24,
-          }}
-        >
-        </Row>
       </Suspense>
       <Suspense fallback={null}>
         <Card
           loading={loading}
           className={styles.salesCard}
           bordered={false}
-          title="Funding Ratio"
+          title="Protocol Allocations"
           style={{
+            marginTop: 24,
             height: '100%',
           }}
         >

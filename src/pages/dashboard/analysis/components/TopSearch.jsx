@@ -42,12 +42,19 @@ const columns = [
     title: 'Asset (USDT)',
     dataIndex: 'amount',
     key: 'amount',
+    sorter: (a, b) => {
+      return a.amount.minus(b.amount)
+    },
     render: (text) => toFixed(text.toString(), getDecimals(), 2),
   },
   {
     title: 'Asset Ratio',
     dataIndex: 'percent',
     key: 'percent',
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => {
+      return a.percent.minus(b.percent)
+    },
     render: (text) => <span>{toFixed(text, 1e-2, 2)}%</span>,
   },
 ];
@@ -55,7 +62,7 @@ const columns = [
 const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState');
   if (!initialState.chain) return null;
-  const { strategies = [] } = visitData;
+  const { strategies = [], tvl } = visitData;
   const total = reduce(
     strategies,
     (rs, o) => {
@@ -63,9 +70,11 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
     },
     BN(0),
   );
+  const vaultPoolValue = BN(tvl).minus(total)
 
   const groupData = groupBy(filter(strategies, i => i.debt > 0), 'protocol.id');
-  const tableData = values(
+
+  const tableData = [...values(
     mapValues(groupData, (o, key) => {
       const amount = reduce(
         o,
@@ -77,10 +86,14 @@ const TopSearch = ({ loading, visitData = {}, dropdownGroup }) => {
       return {
         name: STRATEGIES_MAP[initialState.chain][key],
         amount,
-        percent: amount.div(total),
+        percent: amount.div(tvl),
       };
     }),
-  );
+  ), {
+    name:'Vault',
+    amount: vaultPoolValue,
+    percent: vaultPoolValue.div(tvl)
+  }];
   return (
     <Table
       rowKey={(record) => record.name}
