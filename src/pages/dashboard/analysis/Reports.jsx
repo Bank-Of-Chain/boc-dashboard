@@ -35,7 +35,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Total Debt(B.C.)',
+    title: 'Total Debt (Before)',
     dataIndex: 'originalAmount',
     key: 'originalAmount',
     fixed: 'left',
@@ -45,7 +45,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Total Debt(A.D.)',
+    title: 'Total Debt (After)',
     dataIndex: 'totalAmount',
     key: 'totalAmount',
     fixed: 'left',
@@ -71,23 +71,23 @@ const detailsColumns = [
     },
   },
   {
-    title: 'APY(B.C.)',
+    title: 'APY (Before)',
     dataIndex: 'originalApr',
     key: 'originalApr',
     render: value => {
-      return <span>{(100 * value).toFixed(4)}%</span>
+      return <span>{(100 * value).toFixed(2)}%</span>
     },
   },
   {
-    title: 'APY(A.D.)',
+    title: 'APY (After)',
     dataIndex: 'newApr',
     key: 'newApr',
     render: value => {
-      return <span>{(100 * value).toFixed(4)}%</span>
+      return <span>{(100 * value).toFixed(2)}%</span>
     },
   },
   {
-    title: 'Profit(B.C.)',
+    title: 'Profit (Before)',
     dataIndex: 'originalGain',
     key: 'originalGain',
     render: value => {
@@ -95,7 +95,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Profit(A.D.)',
+    title: 'Profit (After)',
     dataIndex: 'newGain',
     key: 'newGain',
     render: value => {
@@ -281,10 +281,10 @@ const Reports = () => {
               </Descriptions.Item>
               <Descriptions.Item label='Allocation Profit'>{(-1 * fun).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label='Period'>{durationDays} days</Descriptions.Item>
-              <Descriptions.Item label='Total Profit(B.C.)'>
+              <Descriptions.Item label='Total Profit(Before)'>
                 {sum(originalGain).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Total Profit(A.D.)'>
+              <Descriptions.Item label='Total Profit(After)'>
                 {sum(newGain).toFixed(6)}
               </Descriptions.Item>
               <Descriptions.Item label='Profits'>
