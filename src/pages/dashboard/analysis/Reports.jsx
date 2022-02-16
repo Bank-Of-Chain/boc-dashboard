@@ -165,7 +165,7 @@ const Reports = () => {
       title: 'Name',
       dataIndex: 'id',
       key: 'id',
-      render: text => <a>Report-{text}</a>,
+      render: (text, item, index) => <a onClick={() => setShowIndex(index)}>Report-{text}</a>,
     },
     {
       title: 'Generate Time',
@@ -213,7 +213,6 @@ const Reports = () => {
   ]
   const currentReport = get(data.list, showIndex, {})
   const { optimizeResult = {}, investStrategies = {} } = currentReport
-  console.log('currentReport=', optimizeResult)
   const {
     address,
     name,
@@ -298,7 +297,7 @@ const Reports = () => {
               <Descriptions.Item label='Total Exhange Loss'>
                 {sum(exchangeLoss).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='报告生成时间'>2022-02-02</Descriptions.Item>
+              <Descriptions.Item label='Report Time'>{moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}</Descriptions.Item>
             </Descriptions>
           </Col>
 
