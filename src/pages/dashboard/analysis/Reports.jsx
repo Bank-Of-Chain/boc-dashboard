@@ -274,13 +274,13 @@ const Reports = () => {
           <Col span={24}>
             <Descriptions title='Report Details'>
               <Descriptions.Item
-                label='建议操作'
+                label='Recommended'
                 contentStyle={{ color: fun > 0 ? 'red' : 'green' }}
               >
-                {fun > 0 ? '不调仓' : '调仓'}
+                {fun > 0 ? 'UnDo' : 'Do'}
               </Descriptions.Item>
-              <Descriptions.Item label='执行调仓收益'>{(-1 * fun).toFixed(6)}</Descriptions.Item>
-              <Descriptions.Item label='调仓计算周期'>{durationDays}天</Descriptions.Item>
+              <Descriptions.Item label='Allocation Profit'>{(-1 * fun).toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label='Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Total Profit(B.C.)'>
                 {sum(originalGain).toFixed(6)}
               </Descriptions.Item>
