@@ -123,8 +123,10 @@ query($beginDayTimestamp: BigInt) {
     tvl
     totalShares
     pricePerShare
+    unlockedPricePerShare
     totalProfit
     usdtPrice
+    lockedProfitDegradationTimestamp
   }
 }
 `;
@@ -367,15 +369,17 @@ query($endDayTimestamp: ID) {
     orderBy: id,
     orderDirection: desc,
     where: {
-    	id_lt: $endDayTimestamp
+    	id_lte: $endDayTimestamp
   }) {
     id
     holderCount
     newHolderCount
     tvl
     pricePerShare
+    unlockedPricePerShare
     totalProfit
     usdtPrice
+    lockedProfitDegradationTimestamp
   }
 }`;
 export const getPastLatestVaultDailyData = async (endDayTimestamp) => {

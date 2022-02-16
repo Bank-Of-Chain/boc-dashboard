@@ -12,12 +12,49 @@ import { toFixed } from '@/helper/number-format'
 import { getDecimals } from '@/apollo/client'
 import { getDaysAgoTimestamp } from '@/services/dashboard-service'
 
+import moment from 'moment';
+import lineSimple from '@/components/echarts/options/line/lineSimple';
+import _min from 'lodash/min';
+import _max from 'lodash/max';
+
 const topColResponsiveProps = {
   xs: 24,
   sm: 8,
   md: 8,
   lg: 8,
   xl: 8,
+}
+
+const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true) => {
+  const xAxisData = [];
+  const seriesData = [];
+  data.forEach((o) => {
+    xAxisData.push(moment(Number(o.date)).format('MM-DD HH:mm'));
+    seriesData.push(o[dataValueKey]);
+  });
+  const option = lineSimple(
+    {
+      xAxisData,
+      seriesName: seriesName,
+      seriesData
+    }
+  );
+  option.yAxis.splitLine = {
+    lineStyle: {
+      color: 'black'
+    }
+  };
+  const filterValueArray = data.filter(o => {
+    return o[dataValueKey]
+  }).map(o => {
+    return o[dataValueKey]
+  });
+  if (needMinMax) {
+    option.yAxis.min = _min(filterValueArray);
+    option.yAxis.max = _max(filterValueArray);
+  }
+  option.series[0].connectNulls = true;
+  return option;
 }
 
 const Personal = props => {
@@ -27,7 +64,7 @@ const Personal = props => {
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
-  const [dailyTVLs, setDailyTVLs] = useState([])
+  const [dailyTvlEchartOpt, setDailyTvlEchartOpt] = useState({})
   const {dataSource, reload, loading} = useModel('usePersonalData')
 
   const {initialState} = useModel('@@initialState')
@@ -40,6 +77,8 @@ const Personal = props => {
   const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
   const accountDailyDatas = dataSource?.accountDetail?.accountDailyDatas
   const pastLatestAccountDailyData = dataSource?.pastLatestAccountDailyData
+  const vaultDailyDatas = dataSource?.vaultDailyDatas
+  const pastLatestVaultDailyData = dataSource?.pastLatestVaultDailyData
 
   useEffect(() => {
     reload();
@@ -57,7 +96,7 @@ const Personal = props => {
 
   useEffect(() => {
     if (!totalAssets || totalAssets === 0) return
-    setProfit(+totalAssets - depositedUSDT)
+    setProfit(+totalAssets - +depositedUSDT)
   }, [totalAssets, depositedUSDT])
 
   useEffect(() => {
@@ -70,29 +109,95 @@ const Personal = props => {
     setDepositedPercent(shares * 100 / totalShares)
   }, [shares, totalShares])
 
+  const fillAccountDailyDatas = (accountDailyDatas) => {
+    const accountDailyDataMap = new Map()
+    for (const accountDailyData of accountDailyDatas) {
+      accountDailyDataMap.set(accountDailyData.dayTimestamp, accountDailyData)
+    }
+    const thirtyDaysDailyDatas = []
+
+    const offset = 86400
+    let correctTimestamp = getDaysAgoTimestamp(30) + offset
+    if (isEmpty(accountDailyDatas) || !accountDailyDataMap.get(correctTimestamp)) {
+      thirtyDaysDailyDatas.push({
+        id: pastLatestAccountDailyData.id,
+        currentShares: pastLatestAccountDailyData.currentShares,
+        currentDepositedUSDT: pastLatestAccountDailyData.currentDepositedUSDT,
+        accumulatedProfit: pastLatestAccountDailyData.accumulatedProfit,
+        dayTimestamp: correctTimestamp,
+      })
+    }
+    
+    // fill 30 days
+    for (let index = 1; index < 30; index++) {
+      correctTimestamp += offset
+      const accountTodayData = accountDailyDataMap.get(correctTimestamp.toString())
+      if (accountTodayData) {
+        thirtyDaysDailyDatas.push(accountTodayData)
+      } else {
+        thirtyDaysDailyDatas.push({
+          id: thirtyDaysDailyDatas[index - 1].id,
+          currentShares: thirtyDaysDailyDatas[index - 1].currentShares,
+          currentDepositedUSDT: thirtyDaysDailyDatas[index - 1].currentDepositedUSDT,
+          accumulatedProfit: thirtyDaysDailyDatas[index - 1].accumulatedProfit,
+          dayTimestamp: correctTimestamp,
+        })
+      }
+    }
+    return thirtyDaysDailyDatas
+  }
+
+  const fillVaultDailyDatas = (vaultDailyDatas) => {
+    const vaultDailyDataMap = new Map()
+    for (const vaultDailyData of vaultDailyDatas) {
+      vaultDailyDataMap.set(vaultDailyData.id, vaultDailyData)
+    }
+    const thirtyDaysDailyDatas = []
+
+    const offset = 86400
+    let correctTimestamp = getDaysAgoTimestamp(30) + offset
+    if (isEmpty(vaultDailyDatas) || !vaultDailyDataMap.get(correctTimestamp)) {
+      thirtyDaysDailyDatas.push({
+        pricePerShare: pastLatestVaultDailyData.pricePerShare,
+      })
+    }
+    
+    // fill 30 days
+    for (let index = 1; index < 30; index++) {
+      correctTimestamp += offset
+      const vaultTodayData = vaultDailyDataMap.get(correctTimestamp.toString())
+      if (vaultTodayData) {
+        thirtyDaysDailyDatas.push(vaultTodayData)
+        const dayTimestamp = vaultTodayData.lockedProfitDegradationTimestamp - vaultTodayData.lockedProfitDegradationTimestamp % 86400
+        if (!vaultDailyDataMap.get(dayTimestamp)) {
+          vaultDailyDataMap.set(dayTimestamp, {
+            pricePerShare: vaultTodayData.unlockedPricePerShare
+          })
+        }
+      } else {
+        thirtyDaysDailyDatas.push(thirtyDaysDailyDatas[index - 1])
+      }
+    }
+    return thirtyDaysDailyDatas
+  }
   
   useEffect(() => {
     if (!accountDailyDatas || !pastLatestAccountDailyData) return
-    let correctTimestamp = getDaysAgoTimestamp(30)
-    if (isEmpty(accountDailyDatas) || accountDailyDatas[0]?.dayTimestamp > correctTimestamp) {
-      pastLatestAccountDailyData.dayTimestamp = correctTimestamp
-      console.log(dataSource?.pastLatestAccountDailyData)
-      accountDailyDatas.unshift(dataSource?.pastLatestAccountDailyData)
+    if (!vaultDailyDatas || !pastLatestVaultDailyData) return
+    const fullAccountDailyDatas = fillAccountDailyDatas(accountDailyDatas)
+    const fullVaultDailyDatas = fillVaultDailyDatas(vaultDailyDatas)
+    let array = []
+    let decimals = getDecimals()
+    for (let index = 0; index < 30; index++) {
+      const accountDailyData = fullAccountDailyDatas[index]
+      const vaultDailyData = fullVaultDailyDatas[index]
+      array.push({
+        date: accountDailyData.dayTimestamp * 1000,
+        tvl: accountDailyData.currentShares * vaultDailyData.pricePerShare / (decimals ** 2),
+      })
     }
-    // fill 30 days
-    let index = 0
-    const offset = 86400
-    while (index < accountDailyDatas.length - 1) {
-      let accountDailyData = accountDailyDatas[index]
-      correctTimestamp += offset
-      if (accountDailyDatas[index + 1].dayTimestamp > correctTimestamp) {
-        accountDailyDatas.splice(index + 1, accountDailyData)
-      }
-      index++
-    }
-    dailyTVLs = accountDailyDatas
-    console.log('dailyTVLs=', dailyTVLs);
-  }, [accountDailyDatas, pastLatestAccountDailyData])
+    setDailyTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT'))
+  }, [accountDailyDatas, pastLatestAccountDailyData, vaultDailyDatas, pastLatestVaultDailyData])
 
   const option = {
     xAxis: {
@@ -114,37 +219,6 @@ const Personal = props => {
         type: 'bar',
       },
     ],
-  }
-  const option1 = {
-    color: '#fac858',
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: [
-        '2-1',
-        '2-2',
-        '2-3',
-        '2-4',
-        '2-5',
-        '2-6',
-        '2-7',
-        '2-8',
-        '2-9',
-        '2-10',
-        '2-11',
-        '2-12',
-      ]
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 232.6, 320.0, 346.4, 423.3],
-        type: 'line',
-        areaStyle: {}
-      }
-    ]
   }
 
   if (!hasConnect) {
@@ -270,7 +344,7 @@ const Personal = props => {
           style={{ marginTop: 24 }}
           title='Daily TVL'
         >
-          <LineEchart option={option1} style={{ height: '100%' }} />
+          <LineEchart option={dailyTvlEchartOpt} style={{ height: '100%' }} />
         </Card>
       </Suspense>
     </GridContent>

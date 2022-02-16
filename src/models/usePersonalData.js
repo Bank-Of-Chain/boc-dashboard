@@ -3,27 +3,35 @@ import {
     getAccountDetail,
     getDaysAgoTimestamp,
     getPastLatestAccountDailyData,
+    getPastLatestVaultDailyData,
+    getVaultDailyData,
     getVaultSummaryData,
 } from '@/services/dashboard-service';
-import { noop } from 'lodash';
 
 const dataMerge = () => {
   const account = '0x2346c6b1024e97c50370c783a66d80f577fe991d'
+  const thirtyDaysAgoTimestamp = getDaysAgoTimestamp(30)
   return Promise.all([
     getVaultSummaryData(),
     getAccountDetail(account),
-    getPastLatestAccountDailyData(account, getDaysAgoTimestamp(30))
-      .then(data => {
-        return data?.accountDailyDatas[0]
-      })
-      .catch(noop)
+    getPastLatestAccountDailyData(account, thirtyDaysAgoTimestamp),
+    getVaultDailyData(30),
+    getPastLatestVaultDailyData(thirtyDaysAgoTimestamp)
   ])
     .then((rs) => {
-      const [vaultSummary = {}, accountDetail = {}, pastLatestAccountDailyData = {}] = rs;
+      const [
+          vaultSummary = {},
+          accountDetail = {},
+          pastLatestAccountDailyData = {}, 
+          vaultDailyDatas = [],
+          pastLatestVaultDailyData = {},
+        ] = rs;
       const nextData = {
         vaultSummary: vaultSummary?.data,
         accountDetail: accountDetail?.data?.account,
-        pastLatestAccountDailyData,
+        pastLatestAccountDailyData: pastLatestAccountDailyData?.data?.accountDailyDatas[0],
+        vaultDailyDatas,
+        pastLatestVaultDailyData: pastLatestVaultDailyData?.data?.vaultDailyDatas[0],
       };
       console.log('nextData=', nextData);
       return {
