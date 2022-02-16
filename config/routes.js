@@ -8,6 +8,10 @@ export default [
     component: './dashboard/analysis/strategy',
   },
   {
+    path: '/reports',
+    component: './dashboard/analysis/Reports',
+  },
+  {
     component: '404',
   },
 ];
