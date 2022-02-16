@@ -20,6 +20,7 @@ import {
 import {map, isEmpty} from 'lodash';
 import {getDecimals} from './../../../apollo/client';
 import {arrayAppendOfDay} from './../../../helper/array-append';
+import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 
 // === Styles === //
 import styles from './style.less';
@@ -32,38 +33,6 @@ import {calVaultApyByRange} from "@/utils/Apy";
 import numeral from "numeral";
 
 const {TabPane} = Tabs;
-
-const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true) => {
-  const xAxisData = [];
-  const seriesData = [];
-  data.forEach((o) => {
-    xAxisData.push(moment(Number(o.date)).format('MM-DD HH:mm'));
-    seriesData.push(o[dataValueKey]);
-  });
-  const option = lineSimple(
-    {
-      xAxisData,
-      seriesName: seriesName,
-      seriesData
-    }
-  );
-  option.yAxis.splitLine = {
-    lineStyle: {
-      color: 'black'
-    }
-  };
-  const filterValueArray = data.filter(o => {
-    return o[dataValueKey]
-  }).map(o => {
-    return o[dataValueKey]
-  });
-  if (needMinMax) {
-    option.yAxis.min = _min(filterValueArray);
-    option.yAxis.max = _max(filterValueArray);
-  }
-  option.series[0].connectNulls = true;
-  return option;
-};
 
 const Analysis = (props) => {
   const [calDateRange, setCalDateRange] = useState(30);
