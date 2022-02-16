@@ -428,7 +428,11 @@ query($userAddress: ID, $beginDayTimestamp: BigInt) {
     accountDailyDatas(where: {
       dayTimestamp_gt: $beginDayTimestamp
     }) {
+      id
       currentShares
+      currentDepositedUSDT
+      accumulatedProfit
+      dayTimestamp
     }
   }
 }
@@ -441,6 +445,32 @@ export const getAccountDetail = async (userAddress) => {
     variables: {
       userAddress,
       beginDayTimestamp: getDaysAgoTimestamp(30)
+    }
+  });
+}
+
+const PAST_LATEST_ACCOUNT_DAILY_QUERY = `
+query($userAddress: String, $endDayTimestamp: BigInt) {
+  accountDailyDatas(where: {
+    account: $userAddress,
+    dayTimestamp_lte: $endDayTimestamp
+  }, orderBy: dayTimestamp, orderDirection: desc, first: 1) {
+    id
+    currentShares
+    currentDepositedUSDT
+    accumulatedProfit
+    dayTimestamp
+  }
+}
+`
+export const getPastLatestAccountDailyData = async (userAddress, endDayTimestamp) => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client.query({
+    query: gql(PAST_LATEST_ACCOUNT_DAILY_QUERY),
+    variables: {
+      userAddress,
+      endDayTimestamp,
     }
   })
 }

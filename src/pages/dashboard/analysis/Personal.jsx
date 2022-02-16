@@ -10,6 +10,7 @@ import {useModel} from 'umi'
 import { isEmpty } from 'lodash'
 import { toFixed } from '@/helper/number-format'
 import { getDecimals } from '@/apollo/client'
+import { getDaysAgoTimestamp } from '@/services/dashboard-service'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -38,6 +39,7 @@ const Personal = props => {
   const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
   const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
   const accountDailyDatas = dataSource?.accountDetail?.accountDailyDatas
+  const pastLatestAccountDailyData = dataSource?.pastLatestAccountDailyData
 
   useEffect(() => {
     reload();
@@ -68,16 +70,29 @@ const Personal = props => {
     setDepositedPercent(shares * 100 / totalShares)
   }, [shares, totalShares])
 
+  
   useEffect(() => {
-    if (isEmpty(accountDailyDatas)) return
-    setDailyTVLs(accountDailyDatas.map(accountDailyData => {
-      return {
-        date: accountDailyData.dayTimestamp,
-        tvl: accountDailyData.currentShares,
+    if (!accountDailyDatas || !pastLatestAccountDailyData) return
+    let correctTimestamp = getDaysAgoTimestamp(30)
+    if (isEmpty(accountDailyDatas) || accountDailyDatas[0]?.dayTimestamp > correctTimestamp) {
+      pastLatestAccountDailyData.dayTimestamp = correctTimestamp
+      console.log(dataSource?.pastLatestAccountDailyData)
+      accountDailyDatas.unshift(dataSource?.pastLatestAccountDailyData)
+    }
+    // fill 30 days
+    let index = 0
+    const offset = 86400
+    while (index < accountDailyDatas.length - 1) {
+      let accountDailyData = accountDailyDatas[index]
+      correctTimestamp += offset
+      if (accountDailyDatas[index + 1].dayTimestamp > correctTimestamp) {
+        accountDailyDatas.splice(index + 1, accountDailyData)
       }
-    }))
+      index++
+    }
+    dailyTVLs = accountDailyDatas
     console.log('dailyTVLs=', dailyTVLs);
-  }, [accountDailyDatas])
+  }, [accountDailyDatas, pastLatestAccountDailyData])
 
   const option = {
     xAxis: {
