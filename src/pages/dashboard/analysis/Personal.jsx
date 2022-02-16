@@ -169,8 +169,8 @@ const Personal = props => {
       if (vaultTodayData) {
         thirtyDaysDailyDatas.push(vaultTodayData)
         const dayTimestamp = vaultTodayData.lockedProfitDegradationTimestamp - vaultTodayData.lockedProfitDegradationTimestamp % 86400
-        if (!vaultDailyDataMap.get(dayTimestamp)) {
-          vaultDailyDataMap.set(dayTimestamp, {
+        if (!vaultDailyDataMap.get(dayTimestamp) && dayTimestamp !== 0) {
+          vaultDailyDataMap.set(dayTimestamp.toString(), {
             pricePerShare: vaultTodayData.unlockedPricePerShare
           })
         }
