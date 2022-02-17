@@ -193,6 +193,15 @@ const Reports = () => {
       },
     },
     {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+      render: text => {
+        if (text === 0) return <a key={text}>Estimate</a>
+        if (text === 1) return <a key={text}>Done</a>
+      },
+    },
+    {
       title: 'Created Time',
       key: 'fetchTime',
       dataIndex: 'fetchTime',
@@ -212,7 +221,7 @@ const Reports = () => {
     },
   ]
   const currentReport = get(data.list, showIndex, {})
-  const { optimizeResult = {}, investStrategies = {} } = currentReport
+  const { optimizeResult = {}, investStrategies = {}, isExec } = currentReport
   const {
     address,
     name,
@@ -275,11 +284,14 @@ const Reports = () => {
             <Descriptions title='Report Details'>
               <Descriptions.Item
                 label='Recommended'
-                contentStyle={{ color: fun > 0 ? 'red' : 'green' }}
+                contentStyle={{ color: isExec === 0 ? 'red' : 'green' }}
               >
-                {fun > 0 ? 'UnDo' : 'Do'}
+                {isExec === 0 && 'UnDo'}
+                {isExec === 1 && 'Do'}
               </Descriptions.Item>
-              <Descriptions.Item label='Allocation Profit'>{(-1 * fun).toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label='Allocation Profit'>
+                {(-1 * fun).toFixed(6)}
+              </Descriptions.Item>
               <Descriptions.Item label='Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Total Profit(Before)'>
                 {sum(originalGain).toFixed(6)}
@@ -297,7 +309,9 @@ const Reports = () => {
               <Descriptions.Item label='Total Exhange Loss'>
                 {sum(exchangeLoss).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Report Time'>{moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}</Descriptions.Item>
+              <Descriptions.Item label='Report Time'>
+                {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
+              </Descriptions.Item>
             </Descriptions>
           </Col>
 
