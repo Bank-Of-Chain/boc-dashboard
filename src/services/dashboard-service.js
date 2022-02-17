@@ -79,7 +79,9 @@ query($sevenDaysAgoTimestamp: BigInt) {
 export const getVaultDetails = async () => {
   const client = getClient()
   if (isEmpty(client)) return
-  const { data } = await client.query({
+  const {
+    data
+  } = await client.query({
     query: gql(VAULT_DETAIL_QUERY),
     variables: {
       sevenDaysAgoTimestamp: getDaysAgoTimestamp(7),
@@ -104,7 +106,9 @@ query {
 export const getVaultSummaryData = async () => {
   const client = getClient()
   if (isEmpty(client)) return
-  const { data } = await client.query({
+  const {
+    data
+  } = await client.query({
     query: gql(VAULT_SUMMARY_DATA),
   })
   return {
@@ -137,9 +141,9 @@ export const getVaultDailyData = async (day) => {
   if (isEmpty(client)) return
 
   let nextStartTimestamp = getDaysAgoTimestamp(day)
-  if(client === ethClient) {
+  if (client === ethClient) {
     // eth链 不统计2月7日前的数据
-    if(nextStartTimestamp < timeStart){
+    if (nextStartTimestamp < timeStart) {
       nextStartTimestamp = timeStart
     }
   }
@@ -171,7 +175,9 @@ export const getVaultTodayData = async () => {
   if (isEmpty(client)) return
   const currentTimestamp = Math.floor(Date.parse(new Date()) / 1000);
   const todayTimestamp = currentTimestamp - (currentTimestamp % 86400);
-  const { data } = await client.query({
+  const {
+    data
+  } = await client.query({
     query: gql(VAULT_TODAY_QUERY),
     variables: {
       todayTimestamp,
@@ -403,7 +409,7 @@ export const getPastLatestVaultDailyData = async (endDayTimestamp) => {
   });
 };
 
-const REPORT_PAGINATION_QUERY =`
+const REPORT_PAGINATION_QUERY = `
 query($pageSize: Int, $skipNumber: Int) {
   reports (
     orderBy: timestamp,
@@ -485,6 +491,41 @@ export const getPastLatestAccountDailyData = async (userAddress, endDayTimestamp
     variables: {
       userAddress,
       endDayTimestamp,
+    }
+  })
+}
+
+
+/**
+ * 获取用户详情信息，
+ * @param {string} userAddress 用户地址
+ * @param {number} beginDayTimestamp 起始的时间，毫秒数
+ * @returns
+ */
+export const getAccountDetailByDays = async (userAddress, beginDayTimestamp) => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  const query = `
+    query($account: String, $beginTimestamp: BigInt) {
+      accountDailyDatas(where: {
+          account: $account,
+          dayTimestamp_gt: $beginTimestamp
+      }, orderBy: dayTimestamp, orderDirection: desc) {
+          account {
+              id
+          }
+          currentShares
+          currentDepositedUSDT
+        accumulatedProfit
+        dayTimestamp
+      }
+    }
+  `
+  return await client.query({
+    query: gql(query),
+    variables: {
+      account: userAddress,
+      beginTimestamp: beginDayTimestamp,
     }
   })
 }

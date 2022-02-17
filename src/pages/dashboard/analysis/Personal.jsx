@@ -15,10 +15,13 @@ import lineSimple from '@/components/echarts/options/line/lineSimple';
 
 // === Utils === //
 import moment from 'moment';
+import sumBy from 'lodash/sumBy';
 import _min from 'lodash/min';
 import _max from 'lodash/max';
 import keyBy from 'lodash/keyBy';
-import isEmpty from 'lodash/isEmpty'
+import map from 'lodash/map';
+import groupBy from 'lodash/groupBy';
+import isEmpty from 'lodash/isEmpty';
 import { toFixed } from '@/helper/number-format'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 
@@ -39,6 +42,7 @@ const Personal = props => {
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
   const [dailyTvlEchartOpt, setDailyTvlEchartOpt] = useState({})
+  const [monthProfitEchartOpt, setMonthProfitEchartOpt] = useState({})
   const {dataSource, reload, loading} = useModel('usePersonalData')
 
   const {initialState} = useModel('@@initialState')
@@ -53,6 +57,12 @@ const Personal = props => {
   const pastLatestAccountDailyData = dataSource?.pastLatestAccountDailyData
   const vaultDailyDatas = dataSource?.vaultDailyDatas
   const pastLatestVaultDailyData = dataSource?.pastLatestVaultDailyData
+
+  // 计算apy
+  const { accountDailyDatasInYear } = dataSource
+  const totalAccumulatedProfit = sumBy(accountDailyDatasInYear, 'accumulatedProfit')
+  const totalCurrentDepositedUSDT = sumBy(accountDailyDatasInYear, 'currentDepositedUSDT')
+  const accountApyInYear = 365 * 100 * totalAccumulatedProfit / totalCurrentDepositedUSDT
 
   useEffect(() => {
     reload();
@@ -82,6 +92,42 @@ const Personal = props => {
     if (!shares || !totalShares) return
     setDepositedPercent(shares * 100 / totalShares)
   }, [shares, totalShares])
+
+  useEffect(() => {
+    // 当前月份的偏移量
+    const monthOffset = moment().month() + 1;
+    const groupByMonth = groupBy(accountDailyDatasInYear, i=> moment(1000*i.dayTimestamp).locale('en').format('MMM'))
+    console.log('groupByMonth=', groupByMonth)
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const array = months.slice(monthOffset)
+    const array1 = months.splice(0, monthOffset)
+    const nextMonths = [...array, ...array1]
+    const option = {
+      textStyle:{
+        color: '#fff'
+      },
+      xAxis: {
+        type: 'category',
+        data: nextMonths,
+      },
+      yAxis: {
+        type: 'value',
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+      },
+      series: [
+        {
+          data: map(nextMonths, i => toFixed(`${sumBy(groupByMonth[i], 'accumulatedProfit')}`, getDecimals(), 4)),
+          type: 'bar',
+        },
+      ],
+    }
+    setMonthProfitEchartOpt(option)
+  }, [accountDailyDatasInYear])
 
   const fillAccountDailyDatas = (accountDailyDatas) => {
     const accountDailyDataMap = keyBy(accountDailyDatas, 'id')
@@ -167,27 +213,6 @@ const Personal = props => {
     setDailyTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT'))
   }, [accountDailyDatas, pastLatestAccountDailyData, vaultDailyDatas, pastLatestVaultDailyData])
 
-  const option = {
-    xAxis: {
-      type: 'category',
-      data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow',
-      },
-    },
-    series: [
-      {
-        data: [120, 200, 150, 80, 70, 110, 130, 120, 200, 150, 80, 70],
-        type: 'bar',
-      },
-    ],
-  }
 
   if (!hasConnect) {
     return (
@@ -242,7 +267,7 @@ const Personal = props => {
                   <InfoCircleOutlined />
                 </Tooltip>
               }
-              total='15.53%'
+              total={`${accountApyInYear.toFixed(2)}%`}
               contentHeight={70}
             />
           </Col>
@@ -301,7 +326,7 @@ const Personal = props => {
           style={{ marginTop: 24 }}
           title='Month Profit'
         >
-          <BarEchart option={option} style={{ height: '100%' }} />
+          <BarEchart option={monthProfitEchartOpt} style={{ height: '100%' }} />
         </Card>
       </Suspense>
       <Suspense fallback={null}>
