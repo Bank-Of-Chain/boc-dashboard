@@ -202,7 +202,7 @@ const Personal = props => {
         tvl: accountDailyData.currentShares * vaultDailyData.pricePerShare / (decimals ** 2),
       })
     }
-    setDailyTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT'))
+    setDailyTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT', true, { format: 'MM-DD' }))
   }, [accountDailyDatas, pastLatestAccountDailyData, vaultDailyDatas, pastLatestVaultDailyData])
 
 
