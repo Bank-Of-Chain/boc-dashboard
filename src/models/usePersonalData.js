@@ -79,9 +79,7 @@ const dataMerge = (account) => {
         accountDailyDatasInYear: appendAccountDailyDatas(accountDailyDatasInYear)
       };
       console.log('nextData=', nextData);
-      return {
-        data: nextData,
-      };
+      return nextData;
     })
     .catch((error) => {
       console.error('Personal数据初始化失败', error);
