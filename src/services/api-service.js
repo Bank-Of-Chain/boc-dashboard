@@ -45,7 +45,7 @@ export const getStrategyApysOffChain = (address, offset = 0, limit = 20) => {
  */
 export const getReports = (params, offset = 0, limit = 20) => {
   const nextParams = {
-    sort: 'fetch_time desc',
+    sort: 'gene_time desc',
     offset,
     limit,
     ...params,

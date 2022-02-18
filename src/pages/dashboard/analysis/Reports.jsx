@@ -75,7 +75,7 @@ const detailsColumns = [
     dataIndex: 'originalApr',
     key: 'originalApr',
     render: value => {
-      return <span>{(100 * value).toFixed(2)}%</span>
+      return <span>{(100 * value).toFixed(4)}%</span>
     },
   },
   {
@@ -83,7 +83,7 @@ const detailsColumns = [
     dataIndex: 'newApr',
     key: 'newApr',
     render: value => {
-      return <span>{(100 * value).toFixed(2)}%</span>
+      return <span>{(100 * value).toFixed(4)}%</span>
     },
   },
   {

@@ -79,7 +79,9 @@ query($sevenDaysAgoTimestamp: BigInt) {
 export const getVaultDetails = async () => {
   const client = getClient()
   if (isEmpty(client)) return
-  const { data } = await client.query({
+  const {
+    data
+  } = await client.query({
     query: gql(VAULT_DETAIL_QUERY),
     variables: {
       sevenDaysAgoTimestamp: getDaysAgoTimestamp(7),
@@ -89,6 +91,30 @@ export const getVaultDetails = async () => {
     data: data.vaults[0],
   };
 };
+
+const VAULT_SUMMARY_DATA = `
+query {
+  vaults {
+    id
+    decimals
+    tvl
+    totalShares
+    pricePerShare
+  }
+}
+`
+export const getVaultSummaryData = async () => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  const {
+    data
+  } = await client.query({
+    query: gql(VAULT_SUMMARY_DATA),
+  })
+  return {
+    data: data.vaults[0],
+  }
+}
 
 const VAULT_DAILY_QUERY = `
 query($beginDayTimestamp: BigInt) {
@@ -101,8 +127,10 @@ query($beginDayTimestamp: BigInt) {
     tvl
     totalShares
     pricePerShare
+    unlockedPricePerShare
     totalProfit
     usdtPrice
+    lockedProfitDegradationTimestamp
   }
 }
 `;
@@ -113,9 +141,9 @@ export const getVaultDailyData = async (day) => {
   if (isEmpty(client)) return
 
   let nextStartTimestamp = getDaysAgoTimestamp(day)
-  if(client === ethClient) {
+  if (client === ethClient) {
     // eth链 不统计2月7日前的数据
-    if(nextStartTimestamp < timeStart){
+    if (nextStartTimestamp < timeStart) {
       nextStartTimestamp = timeStart
     }
   }
@@ -147,7 +175,9 @@ export const getVaultTodayData = async () => {
   if (isEmpty(client)) return
   const currentTimestamp = Math.floor(Date.parse(new Date()) / 1000);
   const todayTimestamp = currentTimestamp - (currentTimestamp % 86400);
-  const { data } = await client.query({
+  const {
+    data
+  } = await client.query({
     query: gql(VAULT_TODAY_QUERY),
     variables: {
       todayTimestamp,
@@ -355,15 +385,17 @@ query($endDayTimestamp: ID) {
     orderBy: id,
     orderDirection: desc,
     where: {
-    	id_lt: $endDayTimestamp
+    	id_lte: $endDayTimestamp
   }) {
     id
     holderCount
     newHolderCount
     tvl
     pricePerShare
+    unlockedPricePerShare
     totalProfit
     usdtPrice
+    lockedProfitDegradationTimestamp
   }
 }`;
 export const getPastLatestVaultDailyData = async (endDayTimestamp) => {
@@ -377,7 +409,7 @@ export const getPastLatestVaultDailyData = async (endDayTimestamp) => {
   });
 };
 
-const REPORT_PAGINATION_QUERY =`
+const REPORT_PAGINATION_QUERY = `
 query($pageSize: Int, $skipNumber: Int) {
   reports (
     orderBy: timestamp,
@@ -407,12 +439,21 @@ export const queryReports = async (pageNumber, pageSize) => {
 }
 
 const ACCOUNT_DETAIL_QUERY = `
-query($userAddress: ID!) {
+query($userAddress: ID, $beginDayTimestamp: BigInt) {
   account(id: $userAddress) {
     id
     shares
     depositedUSDT
     accumulatedProfit
+    accountDailyDatas(where: {
+      dayTimestamp_gt: $beginDayTimestamp
+    }) {
+      id
+      currentShares
+      currentDepositedUSDT
+      accumulatedProfit
+      dayTimestamp
+    }
   }
 }
 `;
@@ -423,6 +464,68 @@ export const getAccountDetail = async (userAddress) => {
     query: gql(ACCOUNT_DETAIL_QUERY),
     variables: {
       userAddress,
+      beginDayTimestamp: getDaysAgoTimestamp(30)
+    }
+  });
+}
+
+const PAST_LATEST_ACCOUNT_DAILY_QUERY = `
+query($userAddress: String, $endDayTimestamp: BigInt) {
+  accountDailyDatas(where: {
+    account: $userAddress,
+    dayTimestamp_lte: $endDayTimestamp
+  }, orderBy: dayTimestamp, orderDirection: desc, first: 1) {
+    id
+    currentShares
+    currentDepositedUSDT
+    accumulatedProfit
+    dayTimestamp
+  }
+}
+`
+export const getPastLatestAccountDailyData = async (userAddress, endDayTimestamp) => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  return await client.query({
+    query: gql(PAST_LATEST_ACCOUNT_DAILY_QUERY),
+    variables: {
+      userAddress,
+      endDayTimestamp,
+    }
+  })
+}
+
+
+/**
+ * 获取用户详情信息，
+ * @param {string} userAddress 用户地址
+ * @param {number} beginDayTimestamp 起始的时间，毫秒数
+ * @returns
+ */
+export const getAccountDetailByDays = async (userAddress, beginDayTimestamp) => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  const query = `
+    query($account: String, $beginTimestamp: BigInt) {
+      accountDailyDatas(where: {
+          account: $account,
+          dayTimestamp_gt: $beginTimestamp
+      }, orderBy: dayTimestamp, orderDirection: desc) {
+          account {
+              id
+          }
+          currentShares
+          currentDepositedUSDT
+        accumulatedProfit
+        dayTimestamp
+      }
+    }
+  `
+  return await client.query({
+    query: gql(query),
+    variables: {
+      account: userAddress,
+      beginTimestamp: beginDayTimestamp,
     }
   })
 }
