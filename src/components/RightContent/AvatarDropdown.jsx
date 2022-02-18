@@ -9,7 +9,7 @@ import Address from './../Address'
 
 import styles from './index.less'
 
-const AvatarDropdown = ({ logoutOfWeb3Modal }) => {
+const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
   const { initialState } = useModel('@@initialState')
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
@@ -45,7 +45,7 @@ const AvatarDropdown = ({ logoutOfWeb3Modal }) => {
         <Address
           size='short'
           wrapClassName={`${styles.name} anticon`}
-          address={initialState.address}
+          address={address}
         />
         <Avatar
           size='small'

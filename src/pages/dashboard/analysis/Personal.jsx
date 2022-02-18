@@ -6,7 +6,7 @@ import { getDaysAgoTimestamp } from '@/services/dashboard-service'
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { GridContent } from '@ant-design/pro-layout'
-import { Col, Row, Tooltip, Result, Button, Card } from 'antd'
+import { Col, Row, Tooltip, Result, Card } from 'antd'
 
 // === Components === //
 import { ChartCard } from './components/Charts'
@@ -35,7 +35,6 @@ const topColResponsiveProps = {
 
 
 const Personal = props => {
-  const [hasConnect, setHasConnect] = useState(true)
   const [totalAssets, setTotalAssets] = useState(0)
   const [bocBalance, setBOCBalance] = useState(0)
   const [profit, setProfit] = useState(0)
@@ -43,8 +42,7 @@ const Personal = props => {
   const [depositedPercent, setDepositedPercent] = useState(0)
   const [dailyTvlEchartOpt, setDailyTvlEchartOpt] = useState({})
   const [monthProfitEchartOpt, setMonthProfitEchartOpt] = useState({})
-  const {dataSource, reload, loading} = useModel('usePersonalData')
-
+  const {dataSource, loading} = useModel('usePersonalData')
   const {initialState} = useModel('@@initialState')
 
   const decimals = dataSource?.vaultSummary?.decimals
@@ -62,12 +60,7 @@ const Personal = props => {
   const { accountDailyDatasInYear } = dataSource
   const totalAccumulatedProfit = sumBy(accountDailyDatasInYear, 'accumulatedProfit')
   const totalCurrentDepositedUSDT = sumBy(accountDailyDatasInYear, 'currentDepositedUSDT')
-  const accountApyInYear = 365 * 100 * totalAccumulatedProfit / totalCurrentDepositedUSDT
-
-  useEffect(() => {
-    reload();
-  }, [initialState.chain])
-
+  const accountApyInYear = totalCurrentDepositedUSDT === 0 ? 0 : (365 * 100 * totalAccumulatedProfit / totalCurrentDepositedUSDT)
   useEffect(() => {
     if (!sharePrice || !shares || !decimals) return
     setTotalAssets(sharePrice * shares / (10 ** decimals))
@@ -96,8 +89,7 @@ const Personal = props => {
   useEffect(() => {
     // 当前月份的偏移量
     const monthOffset = moment().month() + 1;
-    const groupByMonth = groupBy(accountDailyDatasInYear, i=> moment(1000*i.dayTimestamp).locale('en').format('MMM'))
-    console.log('groupByMonth=', groupByMonth)
+    const groupByMonth = groupBy(accountDailyDatasInYear, i=> moment(1000 * i.dayTimestamp).locale('en').format('MMM'))
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     const array = months.slice(monthOffset)
     const array1 = months.splice(0, monthOffset)
@@ -214,13 +206,12 @@ const Personal = props => {
   }, [accountDailyDatas, pastLatestAccountDailyData, vaultDailyDatas, pastLatestVaultDailyData])
 
 
-  if (!hasConnect) {
+  if (isEmpty(initialState.address)) {
     return (
       <Result
         status='500'
         title='un connect'
         subTitle='connect metamask firstly'
-        extra={<Button type='primary'>Connect</Button>}
       />
     )
   }
@@ -238,7 +229,7 @@ const Personal = props => {
                   <InfoCircleOutlined />
                 </Tooltip>
               }
-              loading={false}
+              loading={loading}
               total={() => toFixed(totalAssets.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
@@ -252,7 +243,7 @@ const Personal = props => {
                   <InfoCircleOutlined />
                 </Tooltip>
               }
-              loading={false}
+              loading={loading}
               total={() => toFixed(bocBalance.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
@@ -260,7 +251,7 @@ const Personal = props => {
           <Col {...topColResponsiveProps}>
             <ChartCard
               bordered={false}
-              loading={false}
+              loading={loading}
               title='APY'
               action={
                 <Tooltip title='The amount of USDT'>
@@ -281,7 +272,7 @@ const Personal = props => {
                   <InfoCircleOutlined />
                 </Tooltip>
               }
-              loading={false}
+              loading={loading}
               total={() => toFixed(profit.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
@@ -296,7 +287,7 @@ const Personal = props => {
                   <InfoCircleOutlined />
                 </Tooltip>
               }
-              loading={false}
+              loading={loading}
               total={() => toFixed(totalProfit.toString(), getDecimals(), 2)}
               contentHeight={100}
             />
@@ -311,7 +302,7 @@ const Personal = props => {
                   <InfoCircleOutlined />
                 </Tooltip>
               }
-              loading={false}
+              loading={loading}
               total={() => depositedPercent.toFixed(2) + '%'}
               contentHeight={100}
             />
@@ -320,7 +311,7 @@ const Personal = props => {
       </Suspense>
       <Suspense fallback={null}>
         <Card
-          loading={false}
+          loading={loading}
           bordered={false}
           bodyStyle={{ paddingLeft: 0, paddingRight: 0, height: '600px' }}
           style={{ marginTop: 24 }}
@@ -331,7 +322,7 @@ const Personal = props => {
       </Suspense>
       <Suspense fallback={null}>
         <Card
-          loading={false}
+          loading={loading}
           bordered={false}
           bodyStyle={{ paddingLeft: 0, paddingRight: 0, height: '600px' }}
           style={{ marginTop: 24 }}

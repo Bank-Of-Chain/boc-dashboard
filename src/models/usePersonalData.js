@@ -1,4 +1,4 @@
-import { useRequest } from 'umi';
+import { useModel } from 'umi';
 import {
   getAccountDetail,
   getDaysAgoTimestamp,
@@ -16,6 +16,7 @@ import filter from 'lodash/filter';
 import pick from 'lodash/pick';
 import map from 'lodash/map';
 import { arrayAppendOfDay, usedPreValue } from '@/helper/array-append'
+import { useEffect, useState } from 'react';
 
 /**
  * 预处理数据
@@ -48,8 +49,8 @@ const appendAccountDailyDatas = (rs) => {
   return result
 }
 
-const dataMerge = () => {
-  const account = '0x2346c6b1024e97c50370c783a66d80f577fe991d'
+const dataMerge = (account) => {
+  if(isEmpty(account)) return Promise.resolve({})
   const thirtyDaysAgoTimestamp = getDaysAgoTimestamp(30)
   return Promise.all([
     getVaultSummaryData(),
@@ -88,10 +89,22 @@ const dataMerge = () => {
 };
 
 export default function usePersonalData() {
-  const msg = useRequest(() => dataMerge());
+  const [data, setData] = useState({})
+  const [loading, setLoading] = useState(false)
+  const {
+    initialState
+  } = useModel('@@initialState')
+
+  useEffect(() => {
+    setLoading(true)
+    dataMerge(initialState?.address).then(r => {
+      setData(r)
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [initialState?.address])
+
   return {
-    dataSource: msg.data,
-    reload: msg.run,
-    loading: msg.loading,
+    dataSource: data,
+    loading: loading,
   };
 }

@@ -4,9 +4,11 @@ import React, { useCallback, useState, useEffect } from 'react'
 
 // === Components === //
 import Avatar from './AvatarDropdown'
+import { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import map from 'lodash/map'
+import isEmpty from 'lodash/isEmpty'
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
 import { Web3Provider } from '@ethersproject/providers'
 
@@ -30,12 +32,16 @@ const web3Modal = new SafeAppWeb3Modal({
 const GlobalHeaderRight = () => {
   const className = `${styles.right}  ${styles.dark}`
 
+  const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
 
   const [userProvider, setUserProvider] = useState()
   const address = useUserAddress(userProvider)
 
-  const changeChain = () => {}
+  const changeChain = value => {
+    history.push(`/?chain=${value}`)
+    location.reload()
+  }
 
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.requestProvider()
@@ -47,7 +53,6 @@ const GlobalHeaderRight = () => {
     updateProvider(new Web3Provider(provider))
     provider.on('chainChanged', chainId => {
       console.log(`chain changed to ${chainId}! updating providers`)
-      localStorage.REACT_APP_NETWORK_TYPE = parseInt(chainId)
       updateProvider(new Web3Provider(provider))
     })
 
@@ -59,7 +64,6 @@ const GlobalHeaderRight = () => {
     // Subscribe to session disconnection
     provider.on('disconnect', (code, reason) => {
       console.log('disconnect', code, reason)
-      localStorage.REACT_APP_NETWORK_TYPE = ''
     })
   }, [setUserProvider])
 
@@ -77,14 +81,15 @@ const GlobalHeaderRight = () => {
   }, [loadWeb3Modal])
 
   useEffect(() => {
-    userProvider &&
-      userProvider._networkPromise &&
-      userProvider._networkPromise.then(v => {
-        setTimeout(() => {
-          setInitialState({ ...initialState, address, walletChainId: `${v.chainId}` })
-        }, 200)
-      })
-  }, [userProvider, address])
+    if (isEmpty(userProvider)) return
+    setIsLoading(true)
+    userProvider._networkPromise.then(v => {
+      setTimeout(() => {
+        setIsLoading(false)
+        setInitialState({ ...initialState, address, walletChainId: `${v.chainId}` })
+      }, 200)
+    })
+  }, [userProvider, address, history.location.pathname])
 
   return (
     <Space className={className}>
@@ -100,8 +105,10 @@ const GlobalHeaderRight = () => {
           </Option>
         ))}
       </Select>
-      {initialState.address ? (
-        <Avatar menu logoutOfWeb3Modal={logoutOfWeb3Modal} />
+      {isLoading ? (
+        <LoadingOutlined style={{ fontSize: 24 }} spin />
+      ) : !isEmpty(address) ? (
+        <Avatar menu address={address} logoutOfWeb3Modal={logoutOfWeb3Modal} />
       ) : (
         <Button type='primary' onClick={loadWeb3Modal}>
           Connect
