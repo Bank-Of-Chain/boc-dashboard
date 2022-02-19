@@ -61,7 +61,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       dataIndex: 'debt',
       key: 'debt',
       width: 300,
-      defaultSortOrder: 'descend',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         return BN(a.debt).minus(BN(b.debt))
       },
@@ -71,6 +71,7 @@ const StrategyTable = ({ loading, searchData, dropdownGroup }) => {
       title: 'Week Profit(USDT)',
       dataIndex: 'reports',
       key: 'reports',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         return BN(reduce(
           a.reports,
