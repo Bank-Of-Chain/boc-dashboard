@@ -15,13 +15,17 @@ import lineSimple from '@/components/echarts/options/line/lineSimple';
 
 // === Utils === //
 import moment from 'moment';
+import filter from 'lodash/filter';
+import first from 'lodash/first';
+import last from 'lodash/last';
 import sumBy from 'lodash/sumBy';
 import _min from 'lodash/min';
 import _max from 'lodash/max';
-import keyBy from 'lodash/keyBy';
+import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
+import compact from 'lodash/compact';
 import { toFixed } from '@/helper/number-format'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 
@@ -57,10 +61,19 @@ const Personal = props => {
   const pastLatestVaultDailyData = dataSource?.pastLatestVaultDailyData
 
   // 计算apy
-  const { accountDailyDatasInYear } = dataSource
-  const totalAccumulatedProfit = sumBy(accountDailyDatasInYear, 'accumulatedProfit')
-  const totalCurrentDepositedUSDT = sumBy(accountDailyDatasInYear, 'currentDepositedUSDT')
-  const accountApyInYear = totalCurrentDepositedUSDT === 0 ? 0 : (365 * 100 * totalAccumulatedProfit / totalCurrentDepositedUSDT)
+  const { accountDailyDatasInYear, vaultDailyDatesInYear } = dataSource
+  const yearData = map(accountDailyDatasInYear, (i, index) => {
+    return {
+      ...i,
+      ...vaultDailyDatesInYear[index]
+    }
+  })
+  const totalAccumulatedProfit = sumBy(yearData, 'accumulatedProfit')
+  const totalTvl = sumBy(yearData, i => {
+    if(isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return 0
+    return i.currentShares * i.pricePerShare
+  })
+  const accountApyInYear = totalTvl === 0 ? 0 : (365 * 100 * totalAccumulatedProfit * 10 ** decimals / totalTvl)
   useEffect(() => {
     if (!sharePrice || !shares || !decimals) return
     setTotalAssets(sharePrice * shares / (10 ** decimals))
@@ -86,126 +99,78 @@ const Personal = props => {
     setDepositedPercent(shares * 100 / totalShares)
   }, [shares, totalShares])
 
-  useEffect(() => {
-    // 当前月份的偏移量
-    const monthOffset = moment().month() + 1;
-    const groupByMonth = groupBy(accountDailyDatasInYear, i=> moment(1000 * i.dayTimestamp).locale('en').format('MMM'))
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    const array = months.slice(monthOffset)
-    const array1 = months.splice(0, monthOffset)
-    const nextMonths = [...array, ...array1]
-    const option = {
-      textStyle:{
+  const monthOffset = moment().month() + 1;
+  const groupByMonth = groupBy(filter(yearData, i=> i.currentShares > 0 && i.pricePerShare > 0 && i.currentDepositedUSDT > 0), i=> moment(1000 * i.id).locale('en').format('MMM'))
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const array = months.slice(monthOffset)
+  const array1 = months.splice(0, monthOffset)
+  const nextMonths = [...array, ...array1]
+  const ObtainedProfitArray = map(nextMonths, i => toFixed(`${sumBy(groupByMonth[i] || [], 'accumulatedProfit')}`, 10 ** decimals, 4))
+  const totalProfitArray = map(nextMonths, (i, index) => {
+    const monthArray =  groupByMonth[i]
+    if(isEmpty(monthArray)) return '0';
+    if(monthArray.length < 2) return '0';
+    const firstItem = first(monthArray)
+    const lastItem = last(monthArray)
+    // 当前份额估值 减去 成本
+    const lastDayProfit = ((lastItem.currentShares * lastItem.pricePerShare / 10 ** decimals) - lastItem.currentDepositedUSDT) / 10 ** decimals
+    const firstDayProfit = ((firstItem.currentShares * firstItem.pricePerShare / 10 ** decimals) - firstItem.currentDepositedUSDT) / 10 ** decimals
+    return toFixed(`${lastDayProfit - firstDayProfit + 1 * ObtainedProfitArray[index]}`, 1, 4)
+  })
+  const option = {
+    textStyle:{
+      color: '#fff'
+    },
+    color:['#5470c6', '#91cc75'],
+    legend: {
+      data: ['Total', 'Obtained'],
+      align: 'auto',
+      textStyle: {
         color: '#fff'
-      },
-      xAxis: {
-        type: 'category',
-        data: nextMonths,
-      },
-      yAxis: {
-        type: 'value',
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow',
-        },
-      },
-      series: [
-        {
-          data: map(nextMonths, i => toFixed(`${sumBy(groupByMonth[i], 'accumulatedProfit')}`, getDecimals(), 4)),
-          type: 'bar',
-        },
-      ],
-    }
-    setMonthProfitEchartOpt(option)
-  }, [accountDailyDatasInYear])
-
-  const fillAccountDailyDatas = (accountDailyDatas) => {
-    const accountDailyDataMap = keyBy(accountDailyDatas, 'id')
-    const thirtyDaysDailyDatas = []
-
-    const offset = 86400
-    let correctTimestamp = getDaysAgoTimestamp(30) + offset
-    if (isEmpty(accountDailyDatas) || !accountDailyDataMap[correctTimestamp]) {
-      thirtyDaysDailyDatas.push({
-        id: pastLatestAccountDailyData.id,
-        currentShares: pastLatestAccountDailyData.currentShares,
-        currentDepositedUSDT: pastLatestAccountDailyData.currentDepositedUSDT,
-        accumulatedProfit: pastLatestAccountDailyData.accumulatedProfit,
-        dayTimestamp: correctTimestamp,
-      })
-    }
-
-    // fill 30 days
-    for (let index = 1; index < 30; index++) {
-      correctTimestamp += offset
-      const accountTodayData = accountDailyDataMap[correctTimestamp.toString()]
-      if (accountTodayData) {
-        thirtyDaysDailyDatas.push(accountTodayData)
-      } else {
-        thirtyDaysDailyDatas.push({
-          id: thirtyDaysDailyDatas[index - 1].id,
-          currentShares: thirtyDaysDailyDatas[index - 1].currentShares,
-          currentDepositedUSDT: thirtyDaysDailyDatas[index - 1].currentDepositedUSDT,
-          accumulatedProfit: thirtyDaysDailyDatas[index - 1].accumulatedProfit,
-          dayTimestamp: correctTimestamp,
-        })
       }
-    }
-    return thirtyDaysDailyDatas
+    },
+    toolbox: {
+      feature: {
+        magicType: {
+          type: ['stack']
+        },
+        dataView: {}
+      }
+    },
+    tooltip: {},
+    xAxis: {
+      data: nextMonths,
+      axisLine: { onZero: true },
+      splitLine: { show: false },
+      splitArea: { show: false }
+    },
+    yAxis: {},
+    grid: {
+      bottom: 100
+    },
+    series: [
+      {
+        name: 'Total',
+        type: 'bar',
+        stack: 'one',
+        data:  totalProfitArray,
+      },
+      {
+        name: 'Obtained',
+        type: 'bar',
+        stack: 'two',
+        data: ObtainedProfitArray
+      },
+    ]
   }
 
-  const fillVaultDailyDatas = (vaultDailyDatas) => {
-    const vaultDailyDataMap = keyBy(vaultDailyDatas, 'id')
-    const thirtyDaysDailyDatas = []
-
-    const offset = 86400
-    let correctTimestamp = getDaysAgoTimestamp(30) + offset
-    if (isEmpty(vaultDailyDatas) || !vaultDailyDataMap[correctTimestamp]) {
-      thirtyDaysDailyDatas.push({
-        pricePerShare: pastLatestVaultDailyData.pricePerShare,
-      })
+  const option1 = getLineEchartOpt(compact(map(yearData, i => {
+    if(isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
+    return {
+      date: 1000 * i.dayTimestamp,
+      tvl: toFixed(`${i.currentShares * i.pricePerShare}` , 10 ** (decimals * 2), 4)
     }
-
-    // fill 30 days
-    for (let index = 1; index < 30; index++) {
-      correctTimestamp += offset
-      const vaultTodayData = vaultDailyDataMap[correctTimestamp.toString()]
-      if (vaultTodayData) {
-        thirtyDaysDailyDatas.push(vaultTodayData)
-        const dayTimestamp = vaultTodayData.lockedProfitDegradationTimestamp - vaultTodayData.lockedProfitDegradationTimestamp % 86400
-        if (!vaultDailyDataMap[dayTimestamp] && dayTimestamp !== 0) {
-          vaultDailyDataMap[dayTimestamp.toString()] = {
-            pricePerShare: vaultTodayData.unlockedPricePerShare
-          }
-        }
-      } else {
-        thirtyDaysDailyDatas.push(thirtyDaysDailyDatas[index - 1])
-      }
-    }
-    return thirtyDaysDailyDatas
-  }
-
-  useEffect(() => {
-    if (!accountDailyDatas || !pastLatestAccountDailyData) return
-    if (!vaultDailyDatas || !pastLatestVaultDailyData) return
-    const fullAccountDailyDatas = fillAccountDailyDatas(accountDailyDatas)
-    const fullVaultDailyDatas = fillVaultDailyDatas(vaultDailyDatas)
-    let array = []
-    let decimals = getDecimals()
-    for (let index = 0; index < 30; index++) {
-      const accountDailyData = fullAccountDailyDatas[index]
-      const vaultDailyData = fullVaultDailyDatas[index]
-      array.push({
-        date: accountDailyData.dayTimestamp * 1000,
-        tvl: accountDailyData.currentShares * vaultDailyData.pricePerShare / (decimals ** 2),
-      })
-    }
-    setDailyTvlEchartOpt(getLineEchartOpt(array, 'tvl', 'USDT', true, { format: 'MM-DD' }))
-  }, [accountDailyDatas, pastLatestAccountDailyData, vaultDailyDatas, pastLatestVaultDailyData])
-
-
+  })), 'tvl', 'USDT', true, { format: 'MM-DD' })
   if (isEmpty(initialState.address)) {
     return (
       <Result
@@ -317,7 +282,7 @@ const Personal = props => {
           style={{ marginTop: 24 }}
           title='Month Profit'
         >
-          <BarEchart option={monthProfitEchartOpt} style={{ height: '100%' }} />
+          <BarEchart option={option} style={{ height: '100%' }} />
         </Card>
       </Suspense>
       <Suspense fallback={null}>
@@ -328,7 +293,7 @@ const Personal = props => {
           style={{ marginTop: 24 }}
           title='Daily TVL'
         >
-          <LineEchart option={dailyTvlEchartOpt} style={{ height: '100%' }} />
+          <LineEchart option={option1} style={{ height: '100%' }} />
         </Card>
       </Suspense>
     </GridContent>
