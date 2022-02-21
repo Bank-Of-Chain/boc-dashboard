@@ -1,7 +1,6 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import {useModel} from 'umi'
 import { getDecimals } from '@/apollo/client'
-import { getDaysAgoTimestamp } from '@/services/dashboard-service'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -11,7 +10,6 @@ import { Col, Row, Tooltip, Result, Card } from 'antd'
 // === Components === //
 import { ChartCard } from './components/Charts'
 import { BarEchart, LineEchart } from '@/components/echarts'
-import lineSimple from '@/components/echarts/options/line/lineSimple';
 
 // === Utils === //
 import moment from 'moment';
@@ -38,14 +36,12 @@ const topColResponsiveProps = {
 }
 
 
-const Personal = props => {
+const Personal = () => {
   const [totalAssets, setTotalAssets] = useState(0)
   const [bocBalance, setBOCBalance] = useState(0)
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
-  const [dailyTvlEchartOpt, setDailyTvlEchartOpt] = useState({})
-  const [monthProfitEchartOpt, setMonthProfitEchartOpt] = useState({})
   const {dataSource, loading} = useModel('usePersonalData')
   const {initialState} = useModel('@@initialState')
 
@@ -55,10 +51,6 @@ const Personal = props => {
   const shares = dataSource?.accountDetail?.shares
   const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
   const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
-  const accountDailyDatas = dataSource?.accountDetail?.accountDailyDatas
-  const pastLatestAccountDailyData = dataSource?.pastLatestAccountDailyData
-  const vaultDailyDatas = dataSource?.vaultDailyDatas
-  const pastLatestVaultDailyData = dataSource?.pastLatestVaultDailyData
 
   // 计算apy
   const { accountDailyDatasInYear, vaultDailyDatesInYear } = dataSource
@@ -121,7 +113,7 @@ const Personal = props => {
     textStyle:{
       color: '#fff'
     },
-    color:['#5470c6', '#91cc75'],
+    color:['#91cc75', '#5470c6'],
     legend: {
       data: ['Total', 'Obtained'],
       align: 'auto',
@@ -150,16 +142,16 @@ const Personal = props => {
     },
     series: [
       {
-        name: 'Total',
-        type: 'bar',
-        stack: 'one',
-        data:  totalProfitArray,
-      },
-      {
         name: 'Obtained',
         type: 'bar',
         stack: 'two',
         data: ObtainedProfitArray
+      },
+      {
+        name: 'Total',
+        type: 'bar',
+        stack: 'one',
+        data:  totalProfitArray
       },
     ]
   }
