@@ -197,8 +197,8 @@ const Reports = () => {
       dataIndex: 'type',
       key: 'type',
       render: text => {
-        if (text === 0) return <a key={text}>Estimate</a>
-        if (text === 1) return <a key={text}>Done</a>
+        if (text === 0) return <span key={text}>Estimate</span>
+        if (text === 1) return <span key={text}>Done</span>
       },
     },
     {
@@ -268,7 +268,10 @@ const Reports = () => {
             rowKey={record => record.id}
             columns={columns}
             dataSource={data.list}
-            pagination={pagination}
+            pagination={{
+              ...pagination,
+              showSizeChanger: false
+            }}
           />
         </Card>
       </Suspense>
