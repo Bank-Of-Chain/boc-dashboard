@@ -281,7 +281,7 @@ const Reports = () => {
         visible={showIndex !== -1}
         footer={null}
         onCancel={() => setShowIndex(-1)}
-        width='1000px'
+        width='1200px'
       >
         <Row>
           <Col span={24}>
@@ -324,7 +324,7 @@ const Reports = () => {
               bordered
               columns={detailsColumns}
               dataSource={displayData}
-              scroll={{ x: 1300 }}
+              scroll={{ x: 1300, y: 500 }}
               pagination={false}
             />
           </Col>
