@@ -221,6 +221,7 @@ const Reports = () => {
     },
   ]
   const currentReport = get(data.list, showIndex, {})
+  console.log('currentReport=', currentReport)
   const { optimizeResult = {}, investStrategies = {}, isExec } = currentReport
   const {
     address,
@@ -284,10 +285,10 @@ const Reports = () => {
             <Descriptions title='Report Details'>
               <Descriptions.Item
                 label='Recommended'
-                contentStyle={{ color: isExec === 0 ? 'red' : 'green' }}
+                contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
               >
                 {isExec === 0 && 'UnDo'}
-                {isExec === 1 && 'Do'}
+                {isExec === 1 || isExec === 2 && 'Do'}
               </Descriptions.Item>
               <Descriptions.Item label='Allocation Profit'>
                 {(-1 * fun).toFixed(6)}
