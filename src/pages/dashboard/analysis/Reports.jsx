@@ -103,6 +103,14 @@ const detailsColumns = [
     },
   },
   {
+    title: 'Harvest Fee',
+    dataIndex: 'harvestFee',
+    key: 'harvestFee',
+    render: value => {
+      return <span>{value.toFixed(2)}</span>
+    },
+  },
+  {
     title: 'Fee',
     dataIndex: 'operateFee',
     key: 'operateFee',
@@ -238,6 +246,8 @@ const Reports = () => {
     originalGain,
     fun,
     durationDays,
+    harvestFee,
+    totalAssets,
   } = optimizeResult
 
   let displayData = map(address, (strategy, index) => {
@@ -258,6 +268,7 @@ const Reports = () => {
       totalAmount: get(investStrategies, `${strategy}.totalAmount`, '0'),
       originalAmount: get(investStrategies, `${strategy}.originalAmount`, '0'),
       apy: get(investStrategies, `${strategy}.apy`, 0),
+      harvestFee: harvestFee[index]
     }
   })
   return (
@@ -291,17 +302,17 @@ const Reports = () => {
                 contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
               >
                 {isExec === 0 && 'UnDo'}
-                {isExec === 1 || isExec === 2 && 'Do'}
+                {(isExec === 1 || isExec === 2) && 'Do'}
               </Descriptions.Item>
               <Descriptions.Item label='Allocation Profit'>
                 {(-1 * fun).toFixed(6)}
               </Descriptions.Item>
               <Descriptions.Item label='Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Total Profit(Before)'>
-                {sum(originalGain).toFixed(6)}
+                {sum(originalGain).toFixed(6)} ({((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
               <Descriptions.Item label='Total Profit(After)'>
-                {sum(newGain).toFixed(6)}
+                {sum(newGain).toFixed(6)} ({((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
               <Descriptions.Item label='Profits'>
                 {(sum(newGain) - sum(originalGain)).toFixed(6)}
