@@ -54,3 +54,20 @@ export const getReports = (params, offset = 0, limit = 20) => {
     params: nextParams,
   });
 }
+
+/**
+ * 按分页查询策略详情
+ * @param {String} chainId 链ID
+ * @param {number} offset
+ * @param {number} limit
+ * @returns
+ */
+export const getStrategyDetails = (chainId, offset = 0, limit = 20) => {
+  const nextParams = {
+    offset,
+    limit,
+  }
+  return request(`${API_SERVER}/v1/strategy/apy/list/${chainId}`, {
+    params: nextParams,
+  });
+}
