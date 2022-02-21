@@ -25,6 +25,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import compact from 'lodash/compact';
 import { toFixed } from '@/helper/number-format'
+import BN from 'bignumber.js';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 
 const topColResponsiveProps = {
@@ -160,7 +161,7 @@ const Personal = () => {
     if(isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
     return {
       date: 1000 * i.dayTimestamp,
-      tvl: toFixed(`${i.currentShares * i.pricePerShare}` , 10 ** (decimals * 2), 4)
+      tvl: parseFloat(BN(i.currentShares).multipliedBy(BN(i.pricePerShare)).div(BN(10).pow(decimals * 2)).toFixed(4))
     }
   })), 'tvl', 'USDT', true, { format: 'MM-DD' })
   if (isEmpty(initialState.address)) {

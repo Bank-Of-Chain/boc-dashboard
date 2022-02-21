@@ -27,27 +27,11 @@ import { useEffect, useState } from 'react';
 const appendAccountDailyDatas = (rs) => {
   if(isEmpty(rs)||rs.loading) return []
   const { data: { accountDailyDatas }} = rs
-  // 格式化数据
-  const list = map(accountDailyDatas, i => {
-    return {
-      ...i,
-      // 时间戳
-      dayTimestamp: 1 * i.dayTimestamp,
-      // 用户当前的成本
-      currentDepositedUSDT: 1 * i.currentDepositedUSDT,
-      // 用户这一天的盈利
-      accumulatedProfit: 1 * i.accumulatedProfit,
-      // 当前持有的share数量
-      currentShares: 1 * i.currentShares
-    }
-  })
   // 补齐到365条
-  const appendArray = arrayAppendOfDay(list, 365, 'dayTimestamp')
+  const appendArray = arrayAppendOfDay(accountDailyDatas, 365, 'dayTimestamp')
   // 补齐字段数据
   const setDefaultValueArray = usedPreValue(appendArray, 'currentDepositedUSDT')
   const setDefaultShareArray = usedPreValue(setDefaultValueArray, 'currentShares')
-  // 将无用的数据过滤
-  // const filterArray = filter(setDefaultValueArray, i => i.currentDepositedUSDT > 0 || i.accumulatedProfit > 0)
   // 选取里面有用的字段
   const result = map(setDefaultShareArray, i => pick(i, ['dayTimestamp', 'currentDepositedUSDT', 'accumulatedProfit', 'currentShares']))
   return result
@@ -56,22 +40,10 @@ const appendAccountDailyDatas = (rs) => {
 const appendVaultDailyDatas  = rs => {
   if(isEmpty(rs) || rs.loading) return []
   const { data: { vaultDailyDatas }} = rs
-  // 格式化数据
-  const list = map(vaultDailyDatas, i => {
-    return {
-      ...i,
-      // 时间戳
-      id: 1 * i.id,
-      // 当前shareprice
-      pricePerShare: 1 * i.pricePerShare,
-    }
-  })
   // 补齐到365条
-  const appendArray = arrayAppendOfDay(list, 365, 'id')
+  const appendArray = arrayAppendOfDay(vaultDailyDatas, 365, 'id')
   // 补齐字段数据
   const setDefaultValueArray = usedPreValue(appendArray, 'pricePerShare')
-  // // 将无用的数据过滤
-  // const filterArray = filter(setDefaultValueArray, i => i.currentDepositedUSDT > 0 || i.accumulatedProfit > 0)
   // 选取里面有用的字段
   const result = map(setDefaultValueArray, i => pick(i, ['id', 'pricePerShare']))
   return result
@@ -130,7 +102,7 @@ export default function usePersonalData() {
     setLoading(true)
     // TODO: 发布时，需要删除
     // 先固定使用特定的地址
-    dataMerge('0x2346c6b1024e97c50370c783a66d80f577fe991d').then(r => {
+    dataMerge('0x375d80da4271f5dcdf821802f981a765a0f11763').then(r => {
       setData(r)
       setLoading(false)
     }).catch(() => setLoading(false))

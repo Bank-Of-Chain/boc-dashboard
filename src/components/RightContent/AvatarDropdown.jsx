@@ -29,7 +29,7 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
 
   const menuHeaderDropdown = (
     <Menu className={styles.menu}>
-      <Menu.Item key='mine' onClick={() => history.push('/mine')}>
+      <Menu.Item key='mine' onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
         <AreaChartOutlined />
         Mine
       </Menu.Item>
