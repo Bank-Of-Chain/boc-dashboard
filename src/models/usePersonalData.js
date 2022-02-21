@@ -6,7 +6,8 @@ import {
   getPastLatestVaultDailyData,
   getVaultDailyData,
   getVaultSummaryData,
-  getAccountDetailByDays
+  getAccountDetailByDays,
+  getVaultDailyByDays
 } from '@/services/dashboard-service';
 
 // === Utils === //
@@ -32,26 +33,55 @@ const appendAccountDailyDatas = (rs) => {
       ...i,
       // 时间戳
       dayTimestamp: 1 * i.dayTimestamp,
-      // 用户当前的tvl
+      // 用户当前的成本
       currentDepositedUSDT: 1 * i.currentDepositedUSDT,
       // 用户这一天的盈利
-      accumulatedProfit: 1 * i.accumulatedProfit
+      accumulatedProfit: 1 * i.accumulatedProfit,
+      // 当前持有的share数量
+      currentShares: 1 * i.currentShares
     }
   })
   // 补齐到365条
   const appendArray = arrayAppendOfDay(list, 365, 'dayTimestamp')
   // 补齐字段数据
   const setDefaultValueArray = usedPreValue(appendArray, 'currentDepositedUSDT')
+  const setDefaultShareArray = usedPreValue(setDefaultValueArray, 'currentShares')
   // 将无用的数据过滤
-  const filterArray = filter(setDefaultValueArray, i => i.currentDepositedUSDT > 0 || i.accumulatedProfit > 0)
+  // const filterArray = filter(setDefaultValueArray, i => i.currentDepositedUSDT > 0 || i.accumulatedProfit > 0)
   // 选取里面有用的字段
-  const result = map(filterArray, i => pick(i, ['dayTimestamp', 'currentDepositedUSDT', 'accumulatedProfit']))
+  const result = map(setDefaultShareArray, i => pick(i, ['dayTimestamp', 'currentDepositedUSDT', 'accumulatedProfit', 'currentShares']))
+  return result
+}
+
+const appendVaultDailyDatas  = rs => {
+  if(isEmpty(rs) || rs.loading) return []
+  const { data: { vaultDailyDatas }} = rs
+  // 格式化数据
+  const list = map(vaultDailyDatas, i => {
+    return {
+      ...i,
+      // 时间戳
+      id: 1 * i.id,
+      // 当前shareprice
+      pricePerShare: 1 * i.pricePerShare,
+    }
+  })
+  // 补齐到365条
+  const appendArray = arrayAppendOfDay(list, 365, 'id')
+  // 补齐字段数据
+  const setDefaultValueArray = usedPreValue(appendArray, 'pricePerShare')
+  // // 将无用的数据过滤
+  // const filterArray = filter(setDefaultValueArray, i => i.currentDepositedUSDT > 0 || i.accumulatedProfit > 0)
+  // 选取里面有用的字段
+  const result = map(setDefaultValueArray, i => pick(i, ['id', 'pricePerShare']))
   return result
 }
 
 const dataMerge = (account) => {
   if(isEmpty(account)) return Promise.resolve({})
   const thirtyDaysAgoTimestamp = getDaysAgoTimestamp(30)
+  // 一年前的秒数
+  const time = moment().subtract(1, 'year').startOf('day').valueOf() / 1000
   return Promise.all([
     getVaultSummaryData(),
     getAccountDetail(account),
@@ -59,7 +89,8 @@ const dataMerge = (account) => {
     getVaultDailyData(30),
     getPastLatestVaultDailyData(thirtyDaysAgoTimestamp),
     // 获取过去一年的数据
-    getAccountDetailByDays(account, moment().subtract(1, 'year').startOf('day').valueOf() / 1000)
+    getAccountDetailByDays(account, time).then(appendAccountDailyDatas),
+    getVaultDailyByDays(time).then(appendVaultDailyDatas)
   ])
     .then((rs) => {
       const [
@@ -68,7 +99,8 @@ const dataMerge = (account) => {
           pastLatestAccountDailyData = {},
           vaultDailyDatas = [],
           pastLatestVaultDailyData = {},
-          accountDailyDatasInYear = {}
+          accountDailyDatasInYear = {},
+          vaultDailyDatesInYear = {}
         ] = rs;
       const nextData = {
         vaultSummary: vaultSummary?.data,
@@ -76,7 +108,8 @@ const dataMerge = (account) => {
         pastLatestAccountDailyData: pastLatestAccountDailyData?.data?.accountDailyDatas[0],
         vaultDailyDatas,
         pastLatestVaultDailyData: pastLatestVaultDailyData?.data?.vaultDailyDatas[0],
-        accountDailyDatasInYear: appendAccountDailyDatas(accountDailyDatasInYear)
+        accountDailyDatasInYear,
+        vaultDailyDatesInYear
       };
       console.log('nextData=', nextData);
       return nextData;
@@ -95,7 +128,9 @@ export default function usePersonalData() {
 
   useEffect(() => {
     setLoading(true)
-    dataMerge(initialState?.address).then(r => {
+    // TODO: 发布时，需要删除
+    // 先固定使用特定的地址
+    dataMerge('0x2346c6b1024e97c50370c783a66d80f577fe991d').then(r => {
       setData(r)
       setLoading(false)
     }).catch(() => setLoading(false))

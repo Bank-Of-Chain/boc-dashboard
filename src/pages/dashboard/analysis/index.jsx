@@ -80,8 +80,8 @@ const Analysis = (props) => {
         // }).filter(item => item.id >= minId);
         // setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 7-day APY(%)', false));
         const rangeArray = array.filter(item => item.id >= minId);
-        setSharePriceEchartOpt(getLineEchartOpt(rangeArray, 'pricePerShare', 'USDT'));
-        setTvlEchartOpt(getLineEchartOpt(rangeArray, 'tvl', 'USDT'));
+        setSharePriceEchartOpt(getLineEchartOpt(rangeArray, 'pricePerShare', 'USDT', true, calDateRange > 7 ? { format: 'MM-DD' } : undefined));
+        setTvlEchartOpt(getLineEchartOpt(rangeArray, 'tvl', 'USDT', true, calDateRange > 7 ? { format: 'MM-DD' } : undefined));
       });
   }, [calDateRange]);
 

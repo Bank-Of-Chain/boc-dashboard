@@ -529,3 +529,37 @@ export const getAccountDetailByDays = async (userAddress, beginDayTimestamp) => 
     }
   })
 }
+/**
+ * 获取vault详情信息，
+ * @param {number} beginDayTimestamp 起始的时间，毫秒数
+ * @returns
+ */
+export const getVaultDailyByDays = async (beginDayTimestamp) => {
+  const client = getClient()
+  if (isEmpty(client)) return
+  const query = `
+    query($beginDayTimestamp: BigInt) {
+      vaultDailyDatas (where: {
+        id_gt: $beginDayTimestamp
+      }) {
+        id
+        holderCount
+        newHolderCount
+        tvl
+        totalShares
+        pricePerShare
+        unlockedPricePerShare
+        totalProfit
+        usdtPrice
+        lockedProfitDegradationTimestamp
+      }
+    }
+  `;
+  return await client
+    .query({
+      query: gql(query),
+      variables: {
+        beginDayTimestamp,
+      },
+    })
+}

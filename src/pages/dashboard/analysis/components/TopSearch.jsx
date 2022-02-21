@@ -42,6 +42,7 @@ const columns = [
     title: 'Asset (USDT)',
     dataIndex: 'amount',
     key: 'amount',
+    showSorterTooltip: false,
     sorter: (a, b) => {
       return a.amount.minus(b.amount)
     },
@@ -52,6 +53,7 @@ const columns = [
     dataIndex: 'percent',
     key: 'percent',
     defaultSortOrder: 'descend',
+    showSorterTooltip: false,
     sorter: (a, b) => {
       return a.percent.minus(b.percent)
     },
