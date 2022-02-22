@@ -103,6 +103,14 @@ const detailsColumns = [
     },
   },
   {
+    title: 'Harvest Fee',
+    dataIndex: 'harvestFee',
+    key: 'harvestFee',
+    render: value => {
+      return <span>{value.toFixed(2)}</span>
+    },
+  },
+  {
     title: 'Fee',
     dataIndex: 'operateFee',
     key: 'operateFee',
@@ -197,8 +205,8 @@ const Reports = () => {
       dataIndex: 'type',
       key: 'type',
       render: text => {
-        if (text === 0) return <a key={text}>Estimate</a>
-        if (text === 1) return <a key={text}>Done</a>
+        if (text === 0) return <span key={text}>Estimate</span>
+        if (text === 1) return <span key={text}>Done</span>
       },
     },
     {
@@ -221,6 +229,7 @@ const Reports = () => {
     },
   ]
   const currentReport = get(data.list, showIndex, {})
+  console.log('currentReport=', currentReport)
   const { optimizeResult = {}, investStrategies = {}, isExec } = currentReport
   const {
     address,
@@ -237,6 +246,8 @@ const Reports = () => {
     originalGain,
     fun,
     durationDays,
+    harvestFee,
+    totalAssets,
   } = optimizeResult
 
   let displayData = map(address, (strategy, index) => {
@@ -257,6 +268,7 @@ const Reports = () => {
       totalAmount: get(investStrategies, `${strategy}.totalAmount`, '0'),
       originalAmount: get(investStrategies, `${strategy}.originalAmount`, '0'),
       apy: get(investStrategies, `${strategy}.apy`, 0),
+      harvestFee: harvestFee[index]
     }
   })
   return (
@@ -267,7 +279,10 @@ const Reports = () => {
             rowKey={record => record.id}
             columns={columns}
             dataSource={data.list}
-            pagination={pagination}
+            pagination={{
+              ...pagination,
+              showSizeChanger: false
+            }}
           />
         </Card>
       </Suspense>
@@ -277,27 +292,27 @@ const Reports = () => {
         visible={showIndex !== -1}
         footer={null}
         onCancel={() => setShowIndex(-1)}
-        width='1000px'
+        width='1200px'
       >
         <Row>
           <Col span={24}>
             <Descriptions title='Report Details'>
               <Descriptions.Item
                 label='Recommended'
-                contentStyle={{ color: isExec === 0 ? 'red' : 'green' }}
+                contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
               >
                 {isExec === 0 && 'UnDo'}
-                {isExec === 1 && 'Do'}
+                {(isExec === 1 || isExec === 2) && 'Do'}
               </Descriptions.Item>
               <Descriptions.Item label='Allocation Profit'>
                 {(-1 * fun).toFixed(6)}
               </Descriptions.Item>
               <Descriptions.Item label='Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Total Profit(Before)'>
-                {sum(originalGain).toFixed(6)}
+                {sum(originalGain).toFixed(6)} ({((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
               <Descriptions.Item label='Total Profit(After)'>
-                {sum(newGain).toFixed(6)}
+                {sum(newGain).toFixed(6)} ({((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
               <Descriptions.Item label='Profits'>
                 {(sum(newGain) - sum(originalGain)).toFixed(6)}
@@ -320,7 +335,7 @@ const Reports = () => {
               bordered
               columns={detailsColumns}
               dataSource={displayData}
-              scroll={{ x: 1300 }}
+              scroll={{ x: 1300, y: 500 }}
               pagination={false}
             />
           </Col>

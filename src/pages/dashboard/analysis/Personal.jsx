@@ -1,7 +1,6 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import {useModel} from 'umi'
 import { getDecimals } from '@/apollo/client'
-import { getDaysAgoTimestamp } from '@/services/dashboard-service'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -11,7 +10,6 @@ import { Col, Row, Tooltip, Result, Card } from 'antd'
 // === Components === //
 import { ChartCard } from './components/Charts'
 import { BarEchart, LineEchart } from '@/components/echarts'
-import lineSimple from '@/components/echarts/options/line/lineSimple';
 
 // === Utils === //
 import moment from 'moment';
@@ -27,6 +25,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import compact from 'lodash/compact';
 import { toFixed } from '@/helper/number-format'
+import BN from 'bignumber.js';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 
 const topColResponsiveProps = {
@@ -38,14 +37,12 @@ const topColResponsiveProps = {
 }
 
 
-const Personal = props => {
+const Personal = () => {
   const [totalAssets, setTotalAssets] = useState(0)
   const [bocBalance, setBOCBalance] = useState(0)
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
-  const [dailyTvlEchartOpt, setDailyTvlEchartOpt] = useState({})
-  const [monthProfitEchartOpt, setMonthProfitEchartOpt] = useState({})
   const {dataSource, loading} = useModel('usePersonalData')
   const {initialState} = useModel('@@initialState')
 
@@ -55,10 +52,6 @@ const Personal = props => {
   const shares = dataSource?.accountDetail?.shares
   const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
   const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
-  const accountDailyDatas = dataSource?.accountDetail?.accountDailyDatas
-  const pastLatestAccountDailyData = dataSource?.pastLatestAccountDailyData
-  const vaultDailyDatas = dataSource?.vaultDailyDatas
-  const pastLatestVaultDailyData = dataSource?.pastLatestVaultDailyData
 
   // 计算apy
   const { accountDailyDatasInYear, vaultDailyDatesInYear } = dataSource
@@ -121,7 +114,7 @@ const Personal = props => {
     textStyle:{
       color: '#fff'
     },
-    color:['#5470c6', '#91cc75'],
+    color:['#91cc75', '#5470c6'],
     legend: {
       data: ['Total', 'Obtained'],
       align: 'auto',
@@ -150,16 +143,16 @@ const Personal = props => {
     },
     series: [
       {
-        name: 'Total',
-        type: 'bar',
-        stack: 'one',
-        data:  totalProfitArray,
-      },
-      {
         name: 'Obtained',
         type: 'bar',
         stack: 'two',
         data: ObtainedProfitArray
+      },
+      {
+        name: 'Total',
+        type: 'bar',
+        stack: 'one',
+        data:  totalProfitArray
       },
     ]
   }
@@ -168,7 +161,7 @@ const Personal = props => {
     if(isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
     return {
       date: 1000 * i.dayTimestamp,
-      tvl: toFixed(`${i.currentShares * i.pricePerShare}` , 10 ** (decimals * 2), 4)
+      tvl: parseFloat(BN(i.currentShares).multipliedBy(BN(i.pricePerShare)).div(BN(10).pow(decimals * 2)).toFixed(4))
     }
   })), 'tvl', 'USDT', true, { format: 'MM-DD' })
   if (isEmpty(initialState.address)) {

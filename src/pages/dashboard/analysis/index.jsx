@@ -163,7 +163,7 @@ const Analysis = (props) => {
       </Suspense>
 
       <Suspense fallback={null}>
-        <StrategyTable loading={loading} searchData={dataSource?.vaultDetail?.strategies || []}/>
+        <StrategyTable />
       </Suspense>
       <Suspense fallback={null}>
         <TransationsTable loading={loading} visitData={transations}/>
