@@ -71,3 +71,21 @@ export const getStrategyDetails = (chainId, offset = 0, limit = 20) => {
     params: nextParams,
   });
 }
+
+/**
+ * 获取币本位的apy数据
+ * @param {*} params
+ * @param {*} offset
+ * @param {*} limit
+ * @returns
+ */
+export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
+  const nextParams = {
+    offset,
+    limit,
+    ...params
+  }
+  return request(`${API_SERVER}/v1/apy/currentBaseApy`, {
+    params: nextParams,
+  });
+}
