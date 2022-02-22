@@ -5,7 +5,7 @@ import { getDecimals } from '@/apollo/client'
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { GridContent } from '@ant-design/pro-layout'
-import { Col, Row, Tooltip, Result, Card } from 'antd'
+import { Col, Row, Tooltip, Result, Card, Input } from 'antd'
 
 // === Components === //
 import { ChartCard } from './components/Charts'
@@ -44,7 +44,7 @@ const Personal = () => {
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
   const {dataSource, loading} = useModel('usePersonalData')
-  const {initialState} = useModel('@@initialState')
+  const {initialState, setInitialState} = useModel('@@initialState')
 
   const decimals = dataSource?.vaultSummary?.decimals
   const sharePrice = dataSource?.vaultSummary?.pricePerShare
@@ -122,14 +122,6 @@ const Personal = () => {
         color: '#fff'
       }
     },
-    toolbox: {
-      feature: {
-        magicType: {
-          type: ['stack']
-        },
-        dataView: {}
-      }
-    },
     tooltip: {},
     xAxis: {
       data: nextMonths,
@@ -173,10 +165,16 @@ const Personal = () => {
       />
     )
   }
-
+  console.log('option=', option)
   return (
     <GridContent>
       <Suspense fallback={null}>
+      <Row gutter={[24, 24]}>
+        <Col>
+          <Input placeholder="请输入用户地址" onChange={(e) => setInitialState({...initialState, address: e.target.value}) } />
+          <p>该输入框为测试使用，发布前需要删除</p>
+        </Col>
+      </Row>
         <Row gutter={[24, 24]}>
           <Col {...topColResponsiveProps}>
             <ChartCard
