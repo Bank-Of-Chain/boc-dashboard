@@ -61,7 +61,12 @@ const Personal = () => {
       ...vaultDailyDatesInYear[index]
     }
   })
-  const totalAccumulatedProfit = sumBy(yearData, 'accumulatedProfit')
+  const totalAccumulatedProfit = sumBy(yearData, (o) => {
+    if (o.hasOwnProperty('accumulatedProfit')) {
+      return +o.accumulatedProfit
+    }
+    return 0
+  })
   const totalTvl = sumBy(yearData, i => {
     if(isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return 0
     return i.currentShares * i.pricePerShare
@@ -210,7 +215,7 @@ const Personal = () => {
               loading={loading}
               title='APY'
               action={
-                <Tooltip title='The amount of USDT'>
+                <Tooltip title='last 1 year'>
                   <InfoCircleOutlined />
                 </Tooltip>
               }
@@ -249,7 +254,7 @@ const Personal = () => {
             />
           </Col>
 
-          <Col {...topColResponsiveProps}>
+          {/* <Col {...topColResponsiveProps}>
             <ChartCard
               bordered={false}
               title='Deposit Percent'
@@ -262,7 +267,7 @@ const Personal = () => {
               total={() => depositedPercent.toFixed(2) + '%'}
               contentHeight={100}
             />
-          </Col>
+          </Col> */}
         </Row>
       </Suspense>
       <Suspense fallback={null}>

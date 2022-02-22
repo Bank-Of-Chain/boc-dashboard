@@ -2,19 +2,22 @@ import { Card, Table, Image, Button, Switch, Tooltip } from 'antd'
 import React, { useState } from 'react'
 import styles from '../style.less'
 import { useModel, useRequest } from 'umi'
-import { filter, isEmpty } from 'lodash'
+import { filter } from 'lodash'
 
 // === Constants === //
 import STRATEGIES_MAP from './../../../../constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from './CoinSuperPosition/index'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { toFixed } from './../../../../helper/number-format'
 import { getDecimals } from './../../../../apollo/client'
 import BN from 'bignumber.js'
 import { MoreOutlined } from '@ant-design/icons'
+import map from 'lodash/map'
+import isEmpty from 'lodash/isEmpty'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
@@ -78,28 +81,52 @@ const StrategyTable = ({ dropdownGroup }) => {
       render: text => <span>{toFixed(text || '0', getDecimals(), 2)}</span>,
     },
     {
-      title: '待开发',
-      dataIndex: '',
-      key: '',
-      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
+      title: 'Week Profit',
+      dataIndex: 'weeklyProfit',
+      key: 'weeklyProfit',
+      render: (text, item) => {
+        if (isEmpty(text)) return <span>none</span>
+        return (
+          <Tooltip
+            title={map(text, (i, index) => (
+              <p key={index} style={{ marginBottom: 0 }}>
+                 {toFixed(i.value, getDecimals(), 2)} {i.unit}
+              </p>
+            ))}
+          >
+            <a>Details</a>
+          </Tooltip>
+        )
+      },
     },
     {
-      title: '待开发',
-      dataIndex: '',
-      key: '',
-      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
-    },
-    {
-      title: '待开发',
-      dataIndex: '',
-      key: '',
-      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
-    },
-    {
-      title: 'Apy',
+      title: (
+        <Tooltip title='official apy'>
+          <span>APY (official)</span> <InfoCircleOutlined />
+        </Tooltip>
+      ),
       dataIndex: 'apyOffLatest',
       key: 'apyOffLatest',
-      render: text => <span>{(100 * text).toFixed(4)} %</span>,
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        return a.apyOffLatest - b.apyOffLatest
+      },
+      render: text => <span>{(100 * text).toFixed(2)} %</span>,
+    },
+    {
+      title: (
+        <Tooltip title='value of LP tokens'>
+          <span>APY</span> <InfoCircleOutlined />
+        </Tooltip>
+      ),
+
+      dataIndex: 'apyLP',
+      key: 'apyLP',
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        return a.apyLP - b.apyLP
+      },
+      render: text => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
       title: 'Detail',
