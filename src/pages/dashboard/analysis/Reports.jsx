@@ -35,7 +35,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Total Debt (Before)',
+    title: 'Assets (Before)',
     dataIndex: 'originalAmount',
     key: 'originalAmount',
     fixed: 'left',
@@ -45,7 +45,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Total Debt (After)',
+    title: 'Assets (After)',
     dataIndex: 'totalAmount',
     key: 'totalAmount',
     fixed: 'left',
@@ -55,7 +55,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Amount',
+    title: 'Change Assets',
     dataIndex: 'amount',
     key: 'amount',
     render: value => {
@@ -63,15 +63,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Total Profit',
-    dataIndex: 'deltaGain',
-    key: 'deltaGain',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'APY (Before)',
+    title: 'APR (Before)',
     dataIndex: 'originalApr',
     key: 'originalApr',
     render: value => {
@@ -79,7 +71,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'APY (After)',
+    title: 'APR (After)',
     dataIndex: 'newApr',
     key: 'newApr',
     render: value => {
@@ -103,9 +95,9 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Harvest Fee',
-    dataIndex: 'harvestFee',
-    key: 'harvestFee',
+    title: 'Change Profits',
+    dataIndex: 'deltaGain',
+    key: 'deltaGain',
     render: value => {
       return <span>{value.toFixed(2)}</span>
     },
@@ -127,9 +119,17 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Operate Loss',
+    title: 'Allocation Cost',
     dataIndex: 'operateLoss',
     key: 'operateLoss',
+    render: value => {
+      return <span>{value.toFixed(2)}</span>
+    },
+  },
+  {
+    title: 'Harvest Fee',
+    dataIndex: 'harvestFee',
+    key: 'harvestFee',
     render: value => {
       return <span>{value.toFixed(2)}</span>
     },
@@ -201,12 +201,12 @@ const Reports = () => {
       },
     },
     {
-      title: 'Result',
+      title: 'Type',
       dataIndex: 'type',
       key: 'type',
       render: text => {
-        if (text === 0) return <span key={text}>unexecuted</span>
-        if (text === 1) return <span key={text}>executed</span>
+        if (text === 0) return <span key={text}>assessment</span>
+        if (text === 1) return <span key={text}>pre-execution assessment</span>
       },
     },
     {
@@ -302,30 +302,34 @@ const Reports = () => {
                 {isExec === 1 && 'Implemented（Recommended）'}
                 {isExec === 2 && 'enforced（Not recommended）'}
               </Descriptions.Item>
+              <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
+              <Descriptions.Item label='Report Time'>
+                {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
+              </Descriptions.Item>
               <Descriptions.Item label='Allocation Profit'>
                 {(-1 * fun).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Period'>{durationDays} days</Descriptions.Item>
-              <Descriptions.Item label='Total Profit(Before)'>
-                {sum(originalGain).toFixed(6)} (
-                {((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
-              </Descriptions.Item>
-              <Descriptions.Item label='Total Profit(After)'>
-                {sum(newGain).toFixed(6)} (
-                {((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
-              </Descriptions.Item>
-              <Descriptions.Item label='Profits Growth'>
+              <Descriptions.Item label='Total Harvest Fee'>
+                {sum(harvestFee).toFixed(6)}
+              </Descriptions.Item><br/>
+              <Descriptions.Item label='Change Profits'>
                 {(sum(newGain) - sum(originalGain)).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Total Operate Loss'>
+              <Descriptions.Item label='Profits Before'>
+                {sum(originalGain).toFixed(6)} (APR:
+                {((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+              </Descriptions.Item>
+              <Descriptions.Item label='Profits After'>
+                {sum(newGain).toFixed(6)} (APR:
+                {((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+              </Descriptions.Item>
+
+              <Descriptions.Item label='Allocation Cost'>
                 {sum(operateLoss).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Total Operate Fee'>{sum(operateFee).toFixed(6)}</Descriptions.Item>
-              <Descriptions.Item label='Total Exhange Loss'>
+              <Descriptions.Item label='Operate Fee'>{sum(operateFee).toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label='Exchange Loss'>
                 {sum(exchangeLoss).toFixed(6)}
-              </Descriptions.Item>
-              <Descriptions.Item label='Report Time'>
-                {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
               </Descriptions.Item>
             </Descriptions>
           </Col>

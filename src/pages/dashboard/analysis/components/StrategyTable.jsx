@@ -79,34 +79,38 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       render: text => <span>{toFixed(text || '0', getDecimals(), 2)}</span>,
     },
     {
-      title: (
-        <Tooltip title='official apy'>
-          <span>APY</span> <InfoCircleOutlined />
-        </Tooltip>
-      ),
+      title: 'Official APY',
       dataIndex: 'apyOffLatest',
       key: 'apyOffLatest',
       showSorterTooltip: false,
       sorter: (a, b) => {
         return a.apyOffLatest - b.apyOffLatest
       },
+      render: text => <span>{(100 * text).toFixed(2)} %</span>,
+    },
+    {
+      title: 'Weekly APY',
+      dataIndex: 'apyLP',
+      key: 'apyLP',
+      sorter: (a, b) => {
+        return a.apyLP - b.apyLP
+      },
+      render: text => <span>{(100 * text).toFixed(2)} %</span>,
+    },
+    {
+      title: 'Weekly Profit',
+      dataIndex: 'weeklyProfit',
+      key: 'weeklyProfit',
       render: (text, item) => {
-        return (
-          <Tooltip
-            title={[
-              <p key={`${item.strategyAddress}-apyLP`} style={{ marginBottom: 0, borderBottom: '1px solid rgba(200, 200, 200, 0.85)' }}>
-                LP apy : {(100 * item.apyLP).toFixed(2)}%
-                <br />
-              </p>,
-              ...map(item.weeklyProfit, (i, index) => (
-                <p key={index} style={{ marginBottom: 0 }}>
-                  {toFixed(i.value, getDecimals(), 2)} {i.unit}
-                </p>
-              )),
-            ]}
-          >
-            <a>{(100 * text).toFixed(2)} %</a>
-          </Tooltip>
+        return (<span>
+           {
+             map(text, (i, index) => (
+               <p key={index} style={{ marginBottom: 0 }}>
+                 {toFixed(i.value, getDecimals(), 2)} {i.unit}
+               </p>
+             ))
+           }
+        </span>
         )
       },
     },

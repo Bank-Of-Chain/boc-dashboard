@@ -137,7 +137,6 @@ const Analysis = (props) => {
           bordered={false}
           title="Protocol Allocations"
           style={{
-            marginTop: 24,
             height: '100%',
             marginTop: 24
           }}
