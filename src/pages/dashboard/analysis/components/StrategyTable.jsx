@@ -17,7 +17,6 @@ import { getDecimals } from './../../../../apollo/client'
 import BN from 'bignumber.js'
 import { MoreOutlined } from '@ant-design/icons'
 import map from 'lodash/map'
-import isEmpty from 'lodash/isEmpty'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
@@ -81,28 +80,9 @@ const StrategyTable = ({ dropdownGroup }) => {
       render: text => <span>{toFixed(text || '0', getDecimals(), 2)}</span>,
     },
     {
-      title: 'Week Profit',
-      dataIndex: 'weeklyProfit',
-      key: 'weeklyProfit',
-      render: (text, item) => {
-        if (isEmpty(text)) return <span>none</span>
-        return (
-          <Tooltip
-            title={map(text, (i, index) => (
-              <p key={index} style={{ marginBottom: 0 }}>
-                 {toFixed(i.value, getDecimals(), 2)} {i.unit}
-              </p>
-            ))}
-          >
-            <a>Details</a>
-          </Tooltip>
-        )
-      },
-    },
-    {
       title: (
         <Tooltip title='official apy'>
-          <span>APY (official)</span> <InfoCircleOutlined />
+          <span>APY</span> <InfoCircleOutlined />
         </Tooltip>
       ),
       dataIndex: 'apyOffLatest',
@@ -111,22 +91,25 @@ const StrategyTable = ({ dropdownGroup }) => {
       sorter: (a, b) => {
         return a.apyOffLatest - b.apyOffLatest
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>,
-    },
-    {
-      title: (
-        <Tooltip title='value of LP tokens'>
-          <span>APY</span> <InfoCircleOutlined />
-        </Tooltip>
-      ),
-
-      dataIndex: 'apyLP',
-      key: 'apyLP',
-      showSorterTooltip: false,
-      sorter: (a, b) => {
-        return a.apyLP - b.apyLP
+      render: (text, item) => {
+        return (
+          <Tooltip
+            title={[
+              <p key={`${item.strategyAddress}-apyLP`} style={{ marginBottom: 0, borderBottom: '1px solid rgba(200, 200, 200, 0.85)' }}>
+                LP apy : {(100 * item.apyLP).toFixed(2)}%
+                <br />
+              </p>,
+              ...map(item.weeklyProfit, (i, index) => (
+                <p key={index} style={{ marginBottom: 0 }}>
+                  {toFixed(i.value, getDecimals(), 2)} {i.unit}
+                </p>
+              )),
+            ]}
+          >
+            <a>{(100 * text).toFixed(2)} %</a>
+          </Tooltip>
+        )
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
       title: 'Detail',
