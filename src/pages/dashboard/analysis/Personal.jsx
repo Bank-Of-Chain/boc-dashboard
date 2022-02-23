@@ -22,6 +22,7 @@ import groupBy from 'lodash/groupBy'
 import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import reduce from 'lodash/reduce'
+import isNull from 'lodash/isNull'
 import { toFixed } from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
@@ -171,13 +172,9 @@ const Personal = () => {
       4,
     ),
   )
-  const value51 = map(value5, (i, index) =>
-    sumBy(value5.slice(0, index + 1), o => parseFloat(o)).toFixed(4),
-  )
   const profitOfLastDayOfMonth = map(nextMonths, i => {
     const monthArray = groupByMonth[i]
-    if (isEmpty(monthArray)) return '0'
-    if (monthArray.length < 2) return '0'
+    if (isEmpty(monthArray)) return null
     const lastItem = last(monthArray)
     const lastDayProfit = BN(lastItem.currentShares)
       .multipliedBy(BN(lastItem.pricePerShare))
@@ -186,9 +183,52 @@ const Personal = () => {
       .div(10 ** decimals)
     return toFixed(lastDayProfit, 1, 4)
   })
-  const monthProfitTotal = map(profitOfLastDayOfMonth, (i, index) =>
-    sumBy([i, value51[index]], o => parseFloat(o)).toFixed(4),
-  )
+  const avgTvlOfMonth = map(nextMonths, i => {
+    const monthArray = groupByMonth[i]
+    if (isEmpty(monthArray)) return null
+    return toFixed(
+      reduce(
+        monthArray,
+        (rs, item) => {
+          const nextPricePerShare = BN(item.pricePerShare)
+          const nextCurrentShares = BN(item.currentShares)
+          if (nextPricePerShare.lt(0) || nextCurrentShares.lt(0)) return rs
+          const nextValue = nextCurrentShares.multipliedBy(nextPricePerShare).div(10 ** decimals)
+          return rs.plus(nextValue)
+        },
+        BN(0),
+      ).div(monthArray.length),
+      10 ** decimals,
+      4,
+    )
+  })
+  const monthProfitTotal = map(profitOfLastDayOfMonth, (i, index) => {
+    if (isNull(i) || isNull(value5[index])) return null
+    return sumBy([i, value5[index]], o => parseFloat(o)).toFixed(4)
+  })
+  const result = {
+    未实现的盈利: toFixed(value1, 10 ** decimals),
+    已实现的盈利: toFixed(value2, 10 ** decimals),
+    总盈利: toFixed(profitTotal, 10 ** decimals),
+    平均tvl: toFixed(avgTvl, 10 ** decimals),
+    apy: toFixed(
+      profitTotal
+        .multipliedBy(365)
+        .div(avgTvl)
+        .div(yearValidData.length),
+    ),
+    每月的已实现的盈利: value5.toString(),
+    每月最后一天未实现的盈利: profitOfLastDayOfMonth.toString(),
+    每月最后一天总盈利: monthProfitTotal.toString(),
+    每月单独的盈利: map(monthProfitTotal, (i, index) => {
+      if (index === 0) return i
+      if (isNull(i)) return null
+      if (isNull(profitOfLastDayOfMonth[index - 1])) return i
+      return (parseFloat(i) - parseFloat(profitOfLastDayOfMonth[index - 1])).toFixed(4)
+    }).toString(),
+    月平均锁仓: avgTvlOfMonth.toString(),
+  }
+  console.table(result)
   const option = {
     textStyle: {
       color: '#fff',
@@ -212,7 +252,9 @@ const Personal = () => {
         stack: 'one',
         data: map(monthProfitTotal, (i, index) => {
           if (index === 0) return i
-          return (parseFloat(i) - parseFloat(monthProfitTotal[index - 1])).toFixed(4)
+          if (isNull(i)) return null
+          if (isNull(profitOfLastDayOfMonth[index - 1])) return i
+          return (parseFloat(i) - parseFloat(profitOfLastDayOfMonth[index - 1])).toFixed(4)
         }),
       },
     ],
@@ -296,9 +338,11 @@ const Personal = () => {
               }
               total={`${toFixed(
                 profitTotal
-                  .multipliedBy(365)
+                  .div(yearValidData.length)
                   .div(avgTvl)
-                  .div(yearValidData.length),
+                  .plus(1)
+                  .pow(365)
+                  .minus(1),
                 10 ** -2,
                 2,
               )}%`}
