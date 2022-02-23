@@ -65,7 +65,6 @@ const StrategyTable = ({ dropdownGroup }) => {
       title: 'Wants',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      width: 120,
       render: text => <CoinSuperPosition array={text} />,
     },
     {
@@ -115,6 +114,7 @@ const StrategyTable = ({ dropdownGroup }) => {
       title: 'Detail',
       dataIndex: 'strategyAddress',
       key: 'strategyAddress',
+      width: 90,
       render: text => (
         <Button
           type='dashed'
