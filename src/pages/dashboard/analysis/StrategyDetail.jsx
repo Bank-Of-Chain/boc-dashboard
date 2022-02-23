@@ -93,11 +93,11 @@ const Strategy = props => {
       officialApy.push(offChainApy)
     }
     let obj = {
-      legend: { data: ['Official APY', 'LP APY'], textStyle: { color: '#fff' } },
+      legend: { data: ['Official APY', 'BOC APY'], textStyle: { color: '#fff' } },
       xAxisData: dates,
       data: [
           {
-          "seriesName":'LP APY',
+          "seriesName":'BOC APY',
           "seriesData": bocApy,
           "color": 'rgba(169, 204, 245, 1)'
         },
