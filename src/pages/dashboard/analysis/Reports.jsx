@@ -182,7 +182,7 @@ const Reports = () => {
       render: text => moment(text).format('yyyy-MM-DD HH:mm:ss'),
     },
     {
-      title: 'Mode',
+      title: 'Operation Type',
       key: 'mode',
       dataIndex: 'mode',
       render: text => {
@@ -201,12 +201,12 @@ const Reports = () => {
       },
     },
     {
-      title: 'Type',
+      title: 'Result',
       dataIndex: 'type',
       key: 'type',
       render: text => {
-        if (text === 0) return <span key={text}>Unenforced</span>
-        if (text === 1) return <span key={text}>Executed</span>
+        if (text === 0) return <span key={text}>unexecuted</span>
+        if (text === 1) return <span key={text}>executed</span>
       },
     },
     {
@@ -295,12 +295,12 @@ const Reports = () => {
           <Col span={24}>
             <Descriptions title='Report Details'>
               <Descriptions.Item
-                label='Action'
+                label='Implementation type'
                 contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
               >
-                {isExec === 0 && 'UnDo'}
-                {isExec === 1 && 'Do'}
-                {isExec === 2 && 'Force'}
+                {isExec === 0 && 'undo（Not recommended）'}
+                {isExec === 1 && 'Implemented（Recommended）'}
+                {isExec === 2 && 'enforced（Not recommended）'}
               </Descriptions.Item>
               <Descriptions.Item label='Allocation Profit'>
                 {(-1 * fun).toFixed(6)}
