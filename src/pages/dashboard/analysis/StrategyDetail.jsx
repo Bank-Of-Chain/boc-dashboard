@@ -42,20 +42,10 @@ const Strategy = props => {
     getStrategyById(id)
       .then(setStrategy)
       .catch(noop)
-    // getStrategyApysInChain(id, 0, 100)
-    //   .then((rs) =>
-    //     map(rs.content, (i) => {
-    //       return {
-    //         value: i.apy,
-    //         date: i.apyValidateTime,
-    //       };
-    //     }),
-    //   )
-    //   .then(setApys);
     getBaseApyByPage({ chainId: initialState.chain, strategyAddress: id, sort: 'fetch_block desc' }, 0, 100).then(rs =>
       map(rs.content, i => {
         return {
-          value: i.lpApy / 100,
+          value: i.lpApy,
           date: moment(1000 * i.fetchTimestamp).format('yyyy-MM-DD'),
         }
       }),
