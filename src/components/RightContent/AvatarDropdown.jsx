@@ -31,7 +31,7 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
     <Menu className={styles.menu}>
       <Menu.Item key='mine' onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
         <AreaChartOutlined />
-        Mine
+        Individual
       </Menu.Item>
       <Menu.Item key='logout' onClick={logoutOfWeb3Modal}>
         <LogoutOutlined />

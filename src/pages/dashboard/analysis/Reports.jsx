@@ -111,7 +111,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Fee',
+    title: 'Operate Fee',
     dataIndex: 'operateFee',
     key: 'operateFee',
     render: value => {
@@ -127,7 +127,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Loss',
+    title: 'Operate Loss',
     dataIndex: 'operateLoss',
     key: 'operateLoss',
     render: value => {
@@ -182,31 +182,31 @@ const Reports = () => {
       render: text => moment(text).format('yyyy-MM-DD HH:mm:ss'),
     },
     {
-      title: 'Mode',
+      title: 'Operation Type',
       key: 'mode',
       dataIndex: 'mode',
       render: text => {
         if (text === 1)
           return (
             <Tag key={text} color='#2db7f5'>
-              doHardwork
+              DoHardwork
             </Tag>
           )
         if (text === 2)
           return (
             <Tag key={text} color='#87d068'>
-              allocation
+              Allocation
             </Tag>
           )
       },
     },
     {
-      title: 'Type',
+      title: 'Result',
       dataIndex: 'type',
       key: 'type',
       render: text => {
-        if (text === 0) return <span key={text}>Estimate</span>
-        if (text === 1) return <span key={text}>Done</span>
+        if (text === 0) return <span key={text}>unexecuted</span>
+        if (text === 1) return <span key={text}>executed</span>
       },
     },
     {
@@ -219,8 +219,6 @@ const Reports = () => {
           .fromNow(),
     },
     {
-      title: 'Action',
-      key: 'action',
       render: (text, record, index) => (
         <Space size='middle'>
           <a onClick={() => setShowIndex(index)}>View</a>
@@ -229,7 +227,6 @@ const Reports = () => {
     },
   ]
   const currentReport = get(data.list, showIndex, {})
-  console.log('currentReport=', currentReport)
   const { optimizeResult = {}, investStrategies = {}, isExec } = currentReport
   const {
     address,
@@ -268,7 +265,7 @@ const Reports = () => {
       totalAmount: get(investStrategies, `${strategy}.totalAmount`, '0'),
       originalAmount: get(investStrategies, `${strategy}.originalAmount`, '0'),
       apy: get(investStrategies, `${strategy}.apy`, 0),
-      harvestFee: harvestFee[index]
+      harvestFee: harvestFee[index],
     }
   })
   return (
@@ -281,7 +278,7 @@ const Reports = () => {
             dataSource={data.list}
             pagination={{
               ...pagination,
-              showSizeChanger: false
+              showSizeChanger: false,
             }}
           />
         </Card>
@@ -298,29 +295,32 @@ const Reports = () => {
           <Col span={24}>
             <Descriptions title='Report Details'>
               <Descriptions.Item
-                label='Recommended'
+                label='Implementation type'
                 contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
               >
-                {isExec === 0 && 'UnDo'}
-                {(isExec === 1 || isExec === 2) && 'Do'}
+                {isExec === 0 && 'undo（Not recommended）'}
+                {isExec === 1 && 'Implemented（Recommended）'}
+                {isExec === 2 && 'enforced（Not recommended）'}
               </Descriptions.Item>
               <Descriptions.Item label='Allocation Profit'>
                 {(-1 * fun).toFixed(6)}
               </Descriptions.Item>
               <Descriptions.Item label='Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Total Profit(Before)'>
-                {sum(originalGain).toFixed(6)} ({((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+                {sum(originalGain).toFixed(6)} (
+                {((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
               <Descriptions.Item label='Total Profit(After)'>
-                {sum(newGain).toFixed(6)} ({((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+                {sum(newGain).toFixed(6)} (
+                {((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
-              <Descriptions.Item label='Profits'>
+              <Descriptions.Item label='Profits Growth'>
                 {(sum(newGain) - sum(originalGain)).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Total Loss'>
+              <Descriptions.Item label='Total Operate Loss'>
                 {sum(operateLoss).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Total Fee'>{sum(operateFee).toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label='Total Operate Fee'>{sum(operateFee).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label='Total Exhange Loss'>
                 {sum(exchangeLoss).toFixed(6)}
               </Descriptions.Item>

@@ -52,8 +52,8 @@ const appendVaultDailyDatas  = rs => {
 const dataMerge = (account) => {
   if(isEmpty(account)) return Promise.resolve({})
   const thirtyDaysAgoTimestamp = getDaysAgoTimestamp(30)
-  // 一年前的秒数
-  const time = moment().subtract(1, 'year').startOf('day').valueOf() / 1000
+  // 13个月前的秒数
+  const time = moment().subtract(1, 'year').subtract(1, 'month').startOf('day').valueOf() / 1000
   return Promise.all([
     getVaultSummaryData(),
     getAccountDetail(account),
@@ -100,9 +100,7 @@ export default function usePersonalData() {
 
   useEffect(() => {
     setLoading(true)
-    // TODO: 发布时，需要删除
-    // 先固定使用特定的地址
-    dataMerge('0x2346c6b1024e97c50370c783a66d80f577fe991d').then(r => {
+    dataMerge(initialState?.address).then(r => {
       setData(r)
       setLoading(false)
     }).catch(() => setLoading(false))
