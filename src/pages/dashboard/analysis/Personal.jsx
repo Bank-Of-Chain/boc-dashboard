@@ -242,9 +242,7 @@ const Personal = () => {
       splitArea: { show: false },
     },
     yAxis: {},
-    grid: {
-      bottom: 100,
-    },
+    grid: {},
     series: [
       {
         name: 'Total',
@@ -353,7 +351,7 @@ const Personal = () => {
           <Col {...topColResponsiveProps}>
             <ChartCard
               bordered={false}
-              title='Profit (USDT)'
+              title='Current profits (USDT)'
               action={
                 <Tooltip title='The profits currently in the vault'>
                   <InfoCircleOutlined />
@@ -368,14 +366,14 @@ const Personal = () => {
           <Col {...topColResponsiveProps}>
             <ChartCard
               bordered={false}
-              title='Total Profit (USDT)'
+              title='Realized profits (USDT)'
               action={
-                <Tooltip title='Profits taken out and profits currently in the vault'>
+                <Tooltip title='Profits taken out'>
                   <InfoCircleOutlined />
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(totalProfit.toString(), getDecimals(), 2)}
+              total={() => toFixed(sumBy(value5, o => parseFloat(o)).toString(), 1, 2)}
               contentHeight={100}
             />
           </Col>
@@ -400,22 +398,22 @@ const Personal = () => {
         <Card
           loading={loading}
           bordered={false}
-          bodyStyle={{ paddingLeft: 0, paddingRight: 0, height: '600px' }}
+          bodyStyle={{ height: '400px' }}
           style={{ marginTop: 24 }}
-          title='Monthly Profit'
+          title='Daily TVL'
         >
-          <BarEchart option={option} style={{ height: '100%' }} />
+          <LineEchart option={option1} style={{ height: '100%' }} />
         </Card>
       </Suspense>
       <Suspense fallback={null}>
         <Card
           loading={loading}
           bordered={false}
-          bodyStyle={{ height: '600px' }}
+          bodyStyle={{ paddingLeft: 0, paddingRight: 0, height: '450px' }}
           style={{ marginTop: 24 }}
-          title='Daily TVL'
+          title='Monthly Profit'
         >
-          <LineEchart option={option1} style={{ height: '100%' }} />
+          <BarEchart option={option} style={{ height: '100%', width: '100%' }} />
         </Card>
       </Suspense>
     </GridContent>
