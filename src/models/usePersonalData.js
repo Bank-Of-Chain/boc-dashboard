@@ -52,8 +52,8 @@ const appendVaultDailyDatas  = rs => {
 const dataMerge = (account) => {
   if(isEmpty(account)) return Promise.resolve({})
   const thirtyDaysAgoTimestamp = getDaysAgoTimestamp(30)
-  // 一年前的秒数
-  const time = moment().subtract(1, 'year').startOf('day').valueOf() / 1000
+  // 13个月前的秒数
+  const time = moment().subtract(1, 'year').subtract(1, 'month').startOf('day').valueOf() / 1000
   return Promise.all([
     getVaultSummaryData(),
     getAccountDetail(account),
