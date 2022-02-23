@@ -21,10 +21,10 @@ import map from 'lodash/map'
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
 
-const StrategyTable = ({ dropdownGroup }) => {
+const StrategyTable = ({ dropdownGroup, loading }) => {
   const [showAll, setShowAll] = useState(false)
   const { initialState } = useModel('@@initialState')
-  const { data: searchData, loading } = useRequest(
+  const { data: searchData } = useRequest(
     () => getStrategyDetails(initialState.chain, 0, 100),
     {
       formatResult: resp => resp.content,
