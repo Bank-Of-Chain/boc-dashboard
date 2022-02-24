@@ -92,6 +92,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       title: 'Weekly APY',
       dataIndex: 'apyLP',
       key: 'apyLP',
+      showSorterTooltip: false,
       sorter: (a, b) => {
         return a.apyLP - b.apyLP
       },
