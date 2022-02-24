@@ -297,7 +297,7 @@ const Reports = () => {
             <Descriptions title='Report Details'>
               <Descriptions.Item
                 label='Recommendation'
-                contentStyle={{color: isExec === 0 ? 'green' : 'red', fontWeight: 'bold'}}
+                contentStyle={{color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold'}}
               >
                 {isExec === 0 && 'Don\'t execute'}
                 {isExec === 1 && 'To execute'}
