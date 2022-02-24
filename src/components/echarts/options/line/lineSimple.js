@@ -11,7 +11,7 @@ export default function (obj) {
     },
     grid: {
       left: '0%',
-      right: '0%',
+      right: '1%',
       bottom: '0%',
       containLabel: true
     },
