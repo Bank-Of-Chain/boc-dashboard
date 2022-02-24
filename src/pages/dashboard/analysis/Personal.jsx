@@ -295,9 +295,14 @@ const Personal = () => {
         <Row gutter={[24, 24]}>
           <Col>
             <Input
+              value={initialState.address}
               placeholder='请输入用户地址'
               onChange={e => setInitialState({ ...initialState, address: e.target.value })}
             />
+            <a onClick={() => setInitialState({ ...initialState, address: '0x2346c6b1024e97c50370c783a66d80f577fe991d' })}>eth/bsc: 0x2346c6b1024e97c50370c783a66d80f577fe991d</a>
+            <br />
+            <a onClick={() => setInitialState({ ...initialState, address: '0x375d80da4271f5dcdf821802f981a765a0f11763' })}>matic: 0x375d80da4271f5dcdf821802f981a765a0f11763</a>
+            <br />
             <p>该输入框为测试使用，发布前需要删除</p>
           </Col>
         </Row>
@@ -366,7 +371,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(profit.toString(), getDecimals(), 2)}
+              total={() => toFixed(value1, getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
