@@ -75,7 +75,7 @@ const Strategy = props => {
       }),
     ).sort()
     let bocApy = [];
-    let officialApy = []
+    // let officialApy = []
     for (let i = 0; i < dates.length; i++) {
         let apy = _find(apys, {'date': dates[i]});
         if(apy && apy.value){
@@ -84,28 +84,28 @@ const Strategy = props => {
           apy = null;
         }
         bocApy.push(apy);
-      let offChainApy = _find(offChainApys, { date: dates[i] })
-      if (offChainApy && offChainApy.value) {
-        offChainApy = Number(offChainApy.value * 100).toFixed(2)
-      } else {
-        offChainApy = null
-      }
-      officialApy.push(offChainApy)
+      // let offChainApy = _find(offChainApys, { date: dates[i] })
+      // if (offChainApy && offChainApy.value) {
+      //   offChainApy = Number(offChainApy.value * 100).toFixed(2)
+      // } else {
+      //   offChainApy = null
+      // }
+      // officialApy.push(offChainApy)
     }
     let obj = {
-      legend: { data: ['Official APY', 'BOC APY'], textStyle: { color: '#fff' } },
+      legend: { data: ['Weekly APY'], textStyle: { color: '#fff' } },
       xAxisData: dates,
       data: [
           {
-          "seriesName":'BOC APY',
+          "seriesName":'Weekly APY',
           "seriesData": bocApy,
           "color": 'rgba(169, 204, 245, 1)'
         },
-        {
-          seriesName: 'Official APY',
-          seriesData: officialApy,
-          color: 'rgba(86, 122, 246, 1)',
-        },
+        // {
+        //   seriesName: 'Official APY',
+        //   seriesData: officialApy,
+        //   color: 'rgba(86, 122, 246, 1)',
+        // },
       ],
     }
     const option = multipleLine(obj)
