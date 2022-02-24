@@ -50,7 +50,6 @@ const Analysis = () => {
   useEffect(() => {
     reload();
   }, [initialState.chain]);
-  console.log('initialState=', initialState)
   useEffect(() => {
     if (isEmpty(vaultAddress)) return;
     getTransations(vaultAddress).then(setTransations);
