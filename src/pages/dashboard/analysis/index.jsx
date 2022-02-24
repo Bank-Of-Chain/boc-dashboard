@@ -10,6 +10,9 @@ import {useModel} from 'umi';
 import _min from 'lodash/min';
 import _max from 'lodash/max';
 
+// === Components === //
+import LegacyStrategyTable from './components/LegacyStrategyTable';
+
 // === Services === //
 import {
   getVaultDailyData,
@@ -17,6 +20,7 @@ import {
 } from './../../../services/dashboard-service';
 
 // === Utils === //
+import numeral from "numeral";
 import {map, isEmpty} from 'lodash';
 import {getDecimals} from './../../../apollo/client';
 import {arrayAppendOfDay} from './../../../helper/array-append';
@@ -24,17 +28,13 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 
 // === Styles === //
 import styles from './style.less';
-import moment from 'moment';
 import {toFixed} from '@/helper/number-format';
 
 import {LineEchart} from "@/components/echarts";
-import lineSimple from "@/components/echarts/options/line/lineSimple";
-import {calVaultApyByRange} from "@/utils/Apy";
-import numeral from "numeral";
 
 const {TabPane} = Tabs;
 
-const Analysis = (props) => {
+const Analysis = () => {
   const [calDateRange, setCalDateRange] = useState(30);
   const [tvlEchartOpt, setTvlEchartOpt] = useState({});
   const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({});
@@ -50,7 +50,6 @@ const Analysis = (props) => {
   useEffect(() => {
     reload();
   }, [initialState.chain]);
-
   useEffect(() => {
     if (isEmpty(vaultAddress)) return;
     getTransations(vaultAddress).then(setTransations);
@@ -137,7 +136,6 @@ const Analysis = (props) => {
           bordered={false}
           title="Protocol Allocations"
           style={{
-            marginTop: 24,
             height: '100%',
             marginTop: 24
           }}
@@ -163,7 +161,11 @@ const Analysis = (props) => {
       </Suspense>
 
       <Suspense fallback={null}>
-        <StrategyTable loading={loading} />
+        {
+          initialState.chain === '1'
+            ? <StrategyTable loading={loading} />
+            : <LegacyStrategyTable loading={loading} searchData={dataSource?.vaultDetail?.strategies || []} />
+        }
       </Suspense>
       <Suspense fallback={null}>
         <TransationsTable loading={loading} visitData={transations}/>

@@ -122,15 +122,19 @@ const Personal = () => {
   const array1 = months.splice(0, monthOffset)
   const nextMonths = [...array, ...array1]
 
-  if (yearData.length === 0) return <span />
   const yearValidData = filter(yearData, i => BN(i.currentDepositedUSDT).gt(0))
-  const lastItem = last(yearValidData)
+  console.log('yearValidData=', yearValidData, groupByMonth)
+  const lastItem = last(yearValidData) || {
+    pricePerShare: 1,
+    currentShares: 0,
+    currentDepositedUSDT: 0,
+  }
 
   // 未实现的盈利
-  const value1 = BN(lastItem.pricePerShare)
-    .multipliedBy(lastItem.currentShares)
+  const value1 = BN(lastItem?.pricePerShare)
+    .multipliedBy(lastItem?.currentShares)
     .div(10 ** decimals)
-    .minus(BN(lastItem.currentDepositedUSDT))
+    .minus(BN(lastItem?.currentDepositedUSDT))
   // 已实现的盈利
   const value2 = reduce(
     yearValidData,
@@ -145,17 +149,19 @@ const Personal = () => {
   const profitTotal = value1.plus(value2)
 
   // 平均tvl
-  const avgTvl = reduce(
-    yearValidData,
-    (rs, item) => {
-      const nextPricePerShare = BN(item.pricePerShare)
-      const nextCurrentShares = BN(item.currentShares)
-      if (nextPricePerShare.lt(0) || nextCurrentShares.lt(0)) return rs
-      const nextValue = nextCurrentShares.multipliedBy(nextPricePerShare).div(10 ** decimals)
-      return rs.plus(nextValue)
-    },
-    BN(0),
-  ).div(yearValidData.length)
+  const avgTvl = isEmpty(yearValidData)
+    ? BN(0)
+    : reduce(
+        yearValidData,
+        (rs, item) => {
+          const nextPricePerShare = BN(item.pricePerShare)
+          const nextCurrentShares = BN(item.currentShares)
+          if (nextPricePerShare.lt(0) || nextCurrentShares.lt(0)) return rs
+          const nextValue = nextCurrentShares.multipliedBy(nextPricePerShare).div(10 ** decimals)
+          return rs.plus(nextValue)
+        },
+        BN(0),
+      ).div(yearValidData.length)
 
   const value5 = map(nextMonths, i =>
     toFixed(
@@ -277,7 +283,7 @@ const Personal = () => {
     'USDT',
     true,
     {
-      format: 'MM-DD'
+      format: 'MM-DD',
     },
   )
   if (isEmpty(initialState.address)) {
@@ -289,9 +295,14 @@ const Personal = () => {
         <Row gutter={[24, 24]}>
           <Col>
             <Input
+              value={initialState.address}
               placeholder='请输入用户地址'
               onChange={e => setInitialState({ ...initialState, address: e.target.value })}
             />
+            <a onClick={() => setInitialState({ ...initialState, address: '0x2346c6b1024e97c50370c783a66d80f577fe991d' })}>eth/bsc: 0x2346c6b1024e97c50370c783a66d80f577fe991d</a>
+            <br />
+            <a onClick={() => setInitialState({ ...initialState, address: '0x375d80da4271f5dcdf821802f981a765a0f11763' })}>matic: 0x375d80da4271f5dcdf821802f981a765a0f11763</a>
+            <br />
             <p>该输入框为测试使用，发布前需要删除</p>
           </Col>
         </Row>
@@ -335,12 +346,14 @@ const Personal = () => {
                 </Tooltip>
               }
               total={`${toFixed(
-                profitTotal
-                  .div(yearValidData.length)
-                  .div(avgTvl)
-                  .plus(1)
-                  .pow(365)
-                  .minus(1),
+                avgTvl.eq(0) || isEmpty(yearValidData)
+                  ? '0'
+                  : profitTotal
+                      .div(yearValidData.length)
+                      .div(avgTvl)
+                      .plus(1)
+                      .pow(365)
+                      .minus(1),
                 10 ** -2,
                 2,
               )}%`}
@@ -358,7 +371,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(profit.toString(), getDecimals(), 2)}
+              total={() => toFixed(value1, getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
