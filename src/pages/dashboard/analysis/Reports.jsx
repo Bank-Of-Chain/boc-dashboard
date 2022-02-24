@@ -205,8 +205,8 @@ const Reports = () => {
       dataIndex: 'type',
       key: 'type',
       render: text => {
-        if (text === 0) return <span key={text}>assessment</span>
-        if (text === 1) return <span key={text}>pre-execution assessment</span>
+        if (text === 0) return <span key={text}>estimation</span>
+        if (text === 1) return <span key={text}>pre-execution estimation</span>
       },
     },
     {
@@ -298,9 +298,9 @@ const Reports = () => {
                 label='Implementation type'
                 contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
               >
-                {isExec === 0 && 'undo（Not recommended）'}
-                {isExec === 1 && 'Implemented（Recommended）'}
-                {isExec === 2 && 'enforced（Not recommended）'}
+                {isExec === 0 && 'undo（Not recommend）'}
+                {isExec === 1 && 'Implemented（Recommend）'}
+                {isExec === 2 && 'enforced（Not recommend）'}
               </Descriptions.Item>
               <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Report Time'>
