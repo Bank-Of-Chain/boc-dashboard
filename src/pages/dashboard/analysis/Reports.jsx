@@ -295,12 +295,12 @@ const Reports = () => {
           <Col span={24}>
             <Descriptions title='Report Details'>
               <Descriptions.Item
-                label='Implementation type'
-                contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
+                label='Recommendation'
+                contentStyle={{ color: isExec === 0 ? 'green' : 'red', fontWeight: 'bold' }}
               >
-                {isExec === 0 && 'undo（Not recommend）'}
-                {isExec === 1 && 'Implemented（Recommend）'}
-                {isExec === 2 && 'enforced（Not recommend）'}
+                {isExec === 0 && 'To execute'}
+                {isExec === 1 && 'Don\'t execute '}
+                {isExec === 2 && 'Don\'t execute (But enforced)'}
               </Descriptions.Item>
               <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Report Time'>
