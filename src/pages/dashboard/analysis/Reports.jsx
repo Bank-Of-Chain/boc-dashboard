@@ -66,6 +66,7 @@ const detailsColumns = [
     title: 'APR (Before)',
     dataIndex: 'originalApr',
     key: 'originalApr',
+    width: 100,
     render: value => {
       return <span>{(100 * value).toFixed(4)}%</span>
     },
@@ -74,6 +75,7 @@ const detailsColumns = [
     title: 'APR (After)',
     dataIndex: 'newApr',
     key: 'newApr',
+    width: 100,
     render: value => {
       return <span>{(100 * value).toFixed(4)}%</span>
     },
@@ -244,7 +246,7 @@ const Reports = () => {
     fun,
     durationDays,
     harvestFee,
-    totalAssets,
+    totalAssets = 0,
   } = optimizeResult
 
   let displayData = map(address, (strategy, index) => {
@@ -317,11 +319,11 @@ const Reports = () => {
               </Descriptions.Item>
               <Descriptions.Item label='Profits Before'>
                 {sum(originalGain).toFixed(6)} (APR:
-                {((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+                { totalAssets * durationDays === 0 ? 0 : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
               <Descriptions.Item label='Profits After'>
                 {sum(newGain).toFixed(6)} (APR:
-                {((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+                { totalAssets * durationDays === 0 ? 0 : ((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
 
               <Descriptions.Item label='Allocation Cost'>
@@ -337,6 +339,7 @@ const Reports = () => {
           <Col span={24}>
             <Table
               bordered
+              size='small'
               columns={detailsColumns}
               dataSource={displayData}
               scroll={{ x: 1300, y: 500 }}
