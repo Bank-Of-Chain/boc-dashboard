@@ -109,11 +109,11 @@ const GlobalHeaderRight = () => {
         <LoadingOutlined style={{ fontSize: 24 }} spin />
       ) : !isEmpty(address) ? (
         <Avatar menu address={address} logoutOfWeb3Modal={logoutOfWeb3Modal} />
-      ) : (
+      ) : window.ethereum ? (
         <Button type='primary' onClick={loadWeb3Modal}>
           Connect
         </Button>
-      )}
+      ) : null}
     </Space>
   )
 }

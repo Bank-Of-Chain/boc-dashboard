@@ -287,7 +287,15 @@ const Personal = () => {
     },
   )
   if (isEmpty(initialState.address)) {
-    return <Result status='500' title='un connect' subTitle='connect metamask firstly' />
+    return (
+      <Result
+        status='500'
+        title={isUndefined(window.ethereum) ? '' : 'No Connect!'}
+        subTitle={
+          isUndefined(window.ethereum) ? 'Please install Metamask first.' : 'Please connect metamask first.'
+        }
+      />
+    )
   }
   return (
     <GridContent>
