@@ -320,11 +320,11 @@ const Reports = () => {
               </Descriptions.Item>
               <Descriptions.Item label='Profits Before'>
                 {sum(originalGain).toFixed(6)} (APR:
-                { totalAssets * durationDays === 0 ? 0 : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+                { totalAssets === undefined ? 0 : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
               <Descriptions.Item label='Profits After'>
                 {sum(newGain).toFixed(6)} (APR:
-                {((365 * 100 * sum(newGain)) / ((newTotalAssets  ? newTotalAssets : totalAssets - sum(exchangeLoss)) * durationDays)).toFixed(2)}%)
+                { (newTotalAssets === undefined || totalAssets === undefined) ? 0 : ((365 * 100 * sum(newGain)) / ((newTotalAssets  ? newTotalAssets : totalAssets - sum(exchangeLoss)) * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
 
               <Descriptions.Item label='Allocation Cost'>
