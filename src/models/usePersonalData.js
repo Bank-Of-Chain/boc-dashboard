@@ -100,7 +100,7 @@ export default function usePersonalData() {
 
   useEffect(() => {
     setLoading(true)
-    dataMerge(initialState?.address).then(r => {
+    dataMerge(initialState?.address?.toLowerCase()).then(r => {
       setData(r)
       setLoading(false)
     }).catch(() => setLoading(false))
