@@ -62,7 +62,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       ),
     },
     {
-      title: 'Wants',
+      title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
       render: text => <CoinSuperPosition array={text} />,
