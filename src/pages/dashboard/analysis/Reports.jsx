@@ -1,20 +1,20 @@
-import React, { useState, Suspense } from 'react'
-import { useRequest, useModel } from 'umi'
+import React, {useState, Suspense} from 'react'
+import {useRequest, useModel} from 'umi'
 import moment from 'moment'
 
 // === Components === //
-import { GridContent } from '@ant-design/pro-layout'
-import { Table, Card, Space, Tag, Modal, Descriptions, Row, Col } from 'antd'
+import {GridContent} from '@ant-design/pro-layout'
+import {Table, Card, Space, Tag, Modal, Descriptions, Row, Col} from 'antd'
 
 // === Services === //
-import { getReports } from './../../../services/api-service'
+import {getReports} from './../../../services/api-service'
 
 // === Utils === //
 import get from 'lodash/get'
 import map from 'lodash/map'
 import sum from 'lodash/sum'
-import { toFixed } from './../../../helper/number-format'
-import { getDecimals } from './../../../apollo/client'
+import {toFixed} from './../../../helper/number-format'
+import {getDecimals} from './../../../apollo/client'
 
 const usdtDecimals = getDecimals()
 
@@ -139,17 +139,17 @@ const detailsColumns = [
 ]
 
 const Reports = () => {
-  const { initialState } = useModel('@@initialState')
+  const {initialState} = useModel('@@initialState')
   const [showIndex, setShowIndex] = useState(-1)
 
-  const { data, error, loading, pagination } = useRequest(
-    ({ current, pageSize }) => {
-      return getReports({ chainId: initialState.chain }, (current - 1) * pageSize, pageSize)
+  const {data, error, loading, pagination} = useRequest(
+    ({current, pageSize}) => {
+      return getReports({chainId: initialState.chain}, (current - 1) * pageSize, pageSize)
     },
     {
       paginated: true,
       formatResult: resp => {
-        const { content } = resp
+        const {content} = resp
         return {
           total: resp.totalElements,
           list: map(content, i => {
@@ -229,7 +229,7 @@ const Reports = () => {
     },
   ]
   const currentReport = get(data.list, showIndex, {})
-  const { optimizeResult = {}, investStrategies = {}, isExec } = currentReport
+  const {optimizeResult = {}, investStrategies = {}, isExec} = currentReport
   const {
     address,
     name,
@@ -246,7 +246,8 @@ const Reports = () => {
     fun,
     durationDays,
     harvestFee,
-    totalAssets = 0,
+    totalAssets,
+    newTotalAssets
   } = optimizeResult
 
   let displayData = map(address, (strategy, index) => {
@@ -287,7 +288,7 @@ const Reports = () => {
       </Suspense>
       <Modal
         title={''}
-        style={{ top: 20 }}
+        style={{top: 20}}
         visible={showIndex !== -1}
         footer={null}
         onCancel={() => setShowIndex(-1)}
@@ -297,12 +298,12 @@ const Reports = () => {
           <Col span={24}>
             <Descriptions title='Report Details'>
               <Descriptions.Item
-                label='Implementation type'
-                contentStyle={{ color: isExec === 0 ? 'red' : 'green', fontWeight: 'bold' }}
+                label='Recommendation'
+                contentStyle={{color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold'}}
               >
-                {isExec === 0 && 'undo（Not recommend）'}
-                {isExec === 1 && 'Implemented（Recommend）'}
-                {isExec === 2 && 'enforced（Not recommend）'}
+                {isExec === 0 && 'Don\'t execute'}
+                {isExec === 1 && 'To execute'}
+                {isExec === 2 && 'Don\'t execute (But enforced)'}
               </Descriptions.Item>
               <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Report Time'>
@@ -323,7 +324,7 @@ const Reports = () => {
               </Descriptions.Item>
               <Descriptions.Item label='Profits After'>
                 {sum(newGain).toFixed(6)} (APR:
-                { totalAssets * durationDays === 0 ? 0 : ((365 * 100 * sum(newGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+                {((365 * 100 * sum(newGain)) / ((newTotalAssets  ? newTotalAssets : totalAssets - sum(exchangeLoss)) * durationDays)).toFixed(2)}%)
               </Descriptions.Item>
 
               <Descriptions.Item label='Allocation Cost'>
@@ -342,7 +343,7 @@ const Reports = () => {
               size='small'
               columns={detailsColumns}
               dataSource={displayData}
-              scroll={{ x: 1300, y: 500 }}
+              scroll={{x: 1300, y: 500}}
               pagination={false}
             />
           </Col>
