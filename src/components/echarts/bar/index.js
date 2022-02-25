@@ -2,10 +2,10 @@ import React, {memo, useEffect, useState} from "react";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import * as echarts from "echarts/core";
 import {BarChart} from "echarts/charts";
-import {GraphicComponent, TooltipComponent, GridComponent} from "echarts/components";
+import {GraphicComponent, TooltipComponent, GridComponent, TitleComponent, LegendComponent, ToolboxComponent } from "echarts/components";
 import {CanvasRenderer} from "echarts/renderers";
 
-echarts.use([GraphicComponent, TooltipComponent, GridComponent, BarChart, CanvasRenderer]);
+echarts.use([GraphicComponent, TooltipComponent, GridComponent, BarChart, CanvasRenderer, TitleComponent, LegendComponent, ToolboxComponent ]);
 
 function Line({theme = "light", style = {}, option = {}}) {
   const [echartRef, setRef] = useState(null);
