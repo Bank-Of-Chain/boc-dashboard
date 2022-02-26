@@ -81,7 +81,8 @@ const dataMerge = (account) => {
         vaultDailyDatas,
         pastLatestVaultDailyData: pastLatestVaultDailyData?.data?.vaultDailyDatas[0],
         accountDailyDatasInYear,
-        vaultDailyDatesInYear
+        vaultDailyDatesInYear,
+        vaultLastUpdateTime: vaultDailyDatas.length>0?vaultDailyDatas[vaultDailyDatas.length-1].id : undefined
       };
       console.log('nextData=', nextData);
       return nextData;
