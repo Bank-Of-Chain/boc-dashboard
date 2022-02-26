@@ -1,13 +1,14 @@
-import React, { Suspense, useEffect, useState } from 'react'
-import { useModel } from 'umi'
-import { getDecimals } from '@/apollo/client'
+import React, {Suspense, useEffect, useState} from 'react'
+import {useModel} from 'umi'
+import {getDecimals} from '@/apollo/client'
+import numeral from 'numeral';
 
 // === Components === //
-import { InfoCircleOutlined } from '@ant-design/icons'
-import { GridContent } from '@ant-design/pro-layout'
-import { Col, Row, Tooltip, Result, Card, Input } from 'antd'
-import { ChartCard } from './components/Charts'
-import { BarEchart, LineEchart } from '@/components/echarts'
+import {InfoCircleOutlined} from '@ant-design/icons'
+import {GridContent} from '@ant-design/pro-layout'
+import {Col, Row, Tooltip, Result, Card, Input} from 'antd'
+import {ChartCard} from './components/Charts'
+import {BarEchart, LineEchart} from '@/components/echarts'
 
 // === Utils === //
 import moment from 'moment'
@@ -23,9 +24,10 @@ import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import reduce from 'lodash/reduce'
 import isNull from 'lodash/isNull'
-import { toFixed } from '@/helper/number-format'
+import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
+import {getDaysAgoTimestamp} from "@/services/dashboard-service";
 
 const topColResponsiveProps = {
   xs: 24,
@@ -41,8 +43,8 @@ const Personal = () => {
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
-  const { dataSource, loading } = useModel('usePersonalData')
-  const { initialState, setInitialState } = useModel('@@initialState')
+  const {dataSource, loading} = useModel('usePersonalData')
+  const {initialState, setInitialState} = useModel('@@initialState')
 
   const decimals = dataSource?.vaultSummary?.decimals
   const sharePrice = dataSource?.vaultSummary?.pricePerShare
@@ -50,9 +52,9 @@ const Personal = () => {
   const shares = dataSource?.accountDetail?.shares
   const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
   const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
-
+  const vaultLastUpdateTime = dataSource?.vaultLastUpdateTime
   // 计算apy
-  const { accountDailyDatasInYear, vaultDailyDatesInYear } = dataSource
+  const {accountDailyDatasInYear, vaultDailyDatesInYear} = dataSource
   const yearData = map(accountDailyDatasInYear, (i, index) => {
     return {
       ...i,
@@ -130,12 +132,12 @@ const Personal = () => {
     currentDepositedUSDT: 0,
   }
 
-  // 未实现的盈利
+// 未实现的盈利
   const value1 = BN(lastItem?.pricePerShare)
     .multipliedBy(lastItem?.currentShares)
     .div(10 ** decimals)
     .minus(BN(lastItem?.currentDepositedUSDT))
-  // 已实现的盈利
+// 已实现的盈利
   const value2 = reduce(
     yearValidData,
     (rs, item) => {
@@ -145,23 +147,86 @@ const Personal = () => {
     },
     BN(0),
   )
-  // 总盈利
+
+  const costChangeArray = [];
+  let lastPoint = {};
+  let minId = getDaysAgoTimestamp(30);
+  let apyCalData = filter(yearData, i => i.dayTimestamp >= minId && i.dayTimestamp <=vaultLastUpdateTime);
+  if(initialState.chain === '1')
+  {
+    apyCalData = filter(apyCalData, i => i.dayTimestamp > 1644249600);
+  }
+
+  for (let i = 0; i < apyCalData.length; i++) {
+    let currentData = apyCalData[i];
+    if (currentData.currentDepositedUSDT) {
+      // cost not change
+      if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
+        lastPoint.duration += currentData.dayTimestamp - lastPoint.endTime;
+        lastPoint.endTime = currentData.dayTimestamp;
+        lastPoint.endValue = currentData.pricePerShare * currentData.currentShares / (10 ** decimals);
+        costChangeArray[costChangeArray.length - 1] = lastPoint;
+      } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
+        lastPoint.duration += currentData.dayTimestamp - lastPoint.endTime;
+        lastPoint.endTime = currentData.dayTimestamp;
+        lastPoint.endValue = currentData.pricePerShare * currentData.currentShares / (10 ** decimals);
+        costChangeArray[costChangeArray.length - 1] = lastPoint;
+        lastPoint = {
+          beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          userCost: currentData.currentDepositedUSDT,
+          beginTime: currentData.dayTimestamp,
+          endTime: currentData.dayTimestamp,
+          duration: 0
+        };
+        costChangeArray.push(lastPoint);
+      } else {
+        lastPoint = {
+          beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          userCost: currentData.currentDepositedUSDT,
+          beginTime: currentData.dayTimestamp,
+          endTime: currentData.dayTimestamp,
+          duration: 0
+        };
+        costChangeArray.push(lastPoint);
+      }
+    } else {
+      lastPoint = {};
+    }
+  }
+
+  let APY = 0;
+  let userTotalTvl = 0;
+  let duration = 0;
+  let changeValue = 0;
+  for (let i = 0; i < costChangeArray.length; i++) {
+    userTotalTvl += costChangeArray[i].userCost * costChangeArray[i].duration;
+    duration += costChangeArray[i].duration;
+    changeValue = costChangeArray[i].endValue - costChangeArray[i].beginValue;
+  }
+  if (userTotalTvl > 0) {
+    console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
+    APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
+  }
+
+// 总盈利
   const profitTotal = value1.plus(value2)
 
-  // 平均tvl
+// 平均tvl
   const avgTvl = isEmpty(yearValidData)
     ? BN(0)
     : reduce(
-        yearValidData,
-        (rs, item) => {
-          const nextPricePerShare = BN(item.pricePerShare)
-          const nextCurrentShares = BN(item.currentShares)
-          if (nextPricePerShare.lt(0) || nextCurrentShares.lt(0)) return rs
-          const nextValue = nextCurrentShares.multipliedBy(nextPricePerShare).div(10 ** decimals)
-          return rs.plus(nextValue)
-        },
-        BN(0),
-      ).div(yearValidData.length)
+      yearValidData,
+      (rs, item) => {
+        const nextPricePerShare = BN(item.pricePerShare)
+        const nextCurrentShares = BN(item.currentShares)
+        if (nextPricePerShare.lt(0) || nextCurrentShares.lt(0)) return rs
+        const nextValue = nextCurrentShares.multipliedBy(nextPricePerShare).div(10 ** decimals)
+        return rs.plus(nextValue)
+      },
+      BN(0),
+    ).div(yearValidData.length)
 
   const value5 = map(nextMonths, i =>
     toFixed(
@@ -243,9 +308,9 @@ const Personal = () => {
     tooltip: {},
     xAxis: {
       data: nextMonths,
-      axisLine: { onZero: true },
-      splitLine: { show: false },
-      splitArea: { show: false },
+      axisLine: {onZero: true},
+      splitLine: {show: false},
+      splitArea: {show: false},
     },
     yAxis: {},
     grid: {},
@@ -305,12 +370,16 @@ const Personal = () => {
             <Input
               value={initialState.address}
               placeholder='请输入用户地址'
-              onChange={e => setInitialState({ ...initialState, address: e.target.value })}
+              onChange={e => setInitialState({...initialState, address: e.target.value})}
             />
-            <a onClick={() => setInitialState({ ...initialState, address: '0x2346c6b1024e97c50370c783a66d80f577fe991d' })}>eth/bsc: 0x2346c6b1024e97c50370c783a66d80f577fe991d</a>
-            <br />
-            <a onClick={() => setInitialState({ ...initialState, address: '0x375d80da4271f5dcdf821802f981a765a0f11763' })}>matic: 0x375d80da4271f5dcdf821802f981a765a0f11763</a>
-            <br />
+            <a
+              onClick={() => setInitialState({...initialState, address: '0x2346c6b1024e97c50370c783a66d80f577fe991d'})}>eth/bsc:
+              0x2346c6b1024e97c50370c783a66d80f577fe991d</a>
+            <br/>
+            <a
+              onClick={() => setInitialState({...initialState, address: '0x375d80da4271f5dcdf821802f981a765a0f11763'})}>matic:
+              0x375d80da4271f5dcdf821802f981a765a0f11763</a>
+            <br/>
             <p>该输入框为测试使用，发布前需要删除</p>
           </Col>
         </Row>
@@ -321,7 +390,7 @@ const Personal = () => {
               title='Total Assets (USDT)'
               action={
                 <Tooltip title='The value of shares currently'>
-                  <InfoCircleOutlined />
+                  <InfoCircleOutlined/>
                 </Tooltip>
               }
               loading={loading}
@@ -332,10 +401,10 @@ const Personal = () => {
           <Col {...topColResponsiveProps}>
             <ChartCard
               bordered={false}
-              title='Shares'
+              title='Current shares'
               action={
                 <Tooltip title='Total shares amounts'>
-                  <InfoCircleOutlined />
+                  <InfoCircleOutlined/>
                 </Tooltip>
               }
               loading={loading}
@@ -347,24 +416,13 @@ const Personal = () => {
             <ChartCard
               bordered={false}
               loading={loading}
-              title='APY'
+              title='APY(last 30 days)'
               action={
-                <Tooltip title='Last 1 year'>
-                  <InfoCircleOutlined />
+                <Tooltip title={`Yield over the past 1 month ${initialState.chain === '1' ? '(From Feb. 8)' : ''}`}>
+                  <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${toFixed(
-                avgTvl.eq(0) || isEmpty(yearValidData)
-                  ? '0'
-                  : profitTotal
-                      .div(yearValidData.length)
-                      .div(avgTvl)
-                      .plus(1)
-                      .pow(365)
-                      .minus(1),
-                10 ** -2,
-                2,
-              )}%`}
+              total={`${numeral(APY * 100).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>
@@ -372,10 +430,10 @@ const Personal = () => {
           <Col {...topColResponsiveProps}>
             <ChartCard
               bordered={false}
-              title='Current profits (USDT)'
+              title='Unrealized profits (USDT)'
               action={
-                <Tooltip title='The profits currently in the vault'>
-                  <InfoCircleOutlined />
+                <Tooltip title='Potential profit that has not been effected'>
+                  <InfoCircleOutlined/>
                 </Tooltip>
               }
               loading={loading}
@@ -389,8 +447,8 @@ const Personal = () => {
               bordered={false}
               title='Realized profits (USDT)'
               action={
-                <Tooltip title='Profits taken out'>
-                  <InfoCircleOutlined />
+                <Tooltip title='The profits that have been actualized'>
+                  <InfoCircleOutlined/>
                 </Tooltip>
               }
               loading={loading}
@@ -419,22 +477,22 @@ const Personal = () => {
         <Card
           loading={loading}
           bordered={false}
-          bodyStyle={{ height: '400px' }}
-          style={{ marginTop: 24 }}
+          bodyStyle={{height: '400px'}}
+          style={{marginTop: 24}}
           title='Daily TVL'
         >
-          <LineEchart option={option1} style={{ height: '100%' }} />
+          <LineEchart option={option1} style={{height: '100%'}}/>
         </Card>
       </Suspense>
       <Suspense fallback={null}>
         <Card
           loading={loading}
           bordered={false}
-          bodyStyle={{ paddingLeft: 0, paddingRight: 0, height: '450px' }}
-          style={{ marginTop: 24 }}
+          bodyStyle={{paddingLeft: 0, paddingRight: 0, height: '450px'}}
+          style={{marginTop: 24}}
           title='Monthly Profit'
         >
-          <BarEchart option={option} style={{ height: '100%', width: '100%' }} />
+          <BarEchart option={option} style={{height: '100%', width: '100%'}}/>
         </Card>
       </Suspense>
     </GridContent>
