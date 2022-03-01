@@ -105,7 +105,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Operate Fee',
+    title: 'Operate Gas Fee',
     dataIndex: 'operateFee',
     key: 'operateFee',
     render: value => {
@@ -129,7 +129,7 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Harvest Fee',
+    title: 'Harvest Gas Fee',
     dataIndex: 'harvestFee',
     key: 'harvestFee',
     render: value => {
@@ -312,7 +312,7 @@ const Reports = () => {
               <Descriptions.Item label='Allocation Profit'>
                 {(-1 * fun).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Total Harvest Fee'>
+              <Descriptions.Item label='Total Harvest Gas Fee'>
                 {sum(harvestFee).toFixed(6)}
               </Descriptions.Item><br/>
               <Descriptions.Item label='Change Profits'>
@@ -330,7 +330,7 @@ const Reports = () => {
               <Descriptions.Item label='Allocation Cost'>
                 {sum(operateLoss).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Operate Fee'>{sum(operateFee).toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label='Operate Gas Fee'>{sum(operateFee).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label='Exchange Loss'>
                 {sum(exchangeLoss).toFixed(6)}
               </Descriptions.Item>
