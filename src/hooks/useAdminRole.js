@@ -49,7 +49,6 @@ const useAdminRole = (address) => {
   const [loading, setLoading] = useState(false);
   const {
     userProvider,
-    loading: userProviderLoading
   } = useUserProvider()
 
   const {
@@ -83,11 +82,11 @@ const useAdminRole = (address) => {
   }
 
   useEffect(() => {
-    if (isEmpty(initialState.chain) || isEmpty(address) || userProviderLoading) return
+    if (isEmpty(initialState.chain) || isEmpty(address) || isEmpty(userProvider)) return
     setLoading(true)
     //TODO: 此处地址待修改
     roleFetch('0xc791B4A9B10b1bDb5FBE2614d389f0FE92105279').then(setIsAdmin).finally(() => setLoading(false))
-  }, [address, initialState.chain, userProviderLoading]);
+  }, [address, initialState.chain, userProvider]);
 
   return {
     isAdmin,

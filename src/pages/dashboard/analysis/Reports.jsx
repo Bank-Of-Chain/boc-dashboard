@@ -15,6 +15,8 @@ import get from 'lodash/get'
 import map from 'lodash/map'
 import sum from 'lodash/sum'
 import noop from 'lodash/noop'
+import find from 'lodash/find'
+import isEmpty from 'lodash/isEmpty'
 import { toFixed } from './../../../helper/number-format'
 import { getDecimals } from './../../../apollo/client'
 import * as ethers from 'ethers'
@@ -23,8 +25,12 @@ import * as ethers from 'ethers'
 import useAdminRole from './../../../hooks/useAdminRole'
 import useUserProvider from './../../../hooks/useUserProvider'
 
+// === Constants === //
+import CHAINS from '@/constants/chain'
+
 // === Styles === //
 import styles from './reports.less'
+import { useEffect } from 'react'
 
 const usdtDecimals = getDecimals()
 const { utils } = ethers
@@ -154,6 +160,8 @@ const Reports = () => {
   const [showIndex, setShowIndex] = useState(-1)
   const { userProvider } = useUserProvider()
 
+  const [showWarningModal, setShowWarningModal] = useState(false)
+
   const { data, error, loading, pagination, refresh } = useRequest(
     ({ current, pageSize }) => {
       return getReports({ chainId: initialState.chain }, (current - 1) * pageSize, pageSize)
@@ -175,7 +183,7 @@ const Reports = () => {
       },
     },
   )
-  const { isAdmin, loading: roleLoading } = useAdminRole(initialState.address)
+  const { isAdmin, loading: roleLoading, error: roleError } = useAdminRole(initialState.address)
   /**
    * 驳回调仓报告
    * @param {string} id
@@ -196,6 +204,53 @@ const Reports = () => {
       .catch(noop)
       .finally(close)
   }
+
+  const changeNetwork = async id => {
+    const targetNetwork = find(CHAINS, { id })
+    console.log('targetNetwork=', targetNetwork)
+    if (isEmpty(targetNetwork)) return
+    const ethereum = window.ethereum
+    const data = [
+      {
+        chainId: `0x${Number(targetNetwork.id).toString(16)}`,
+        chainName: targetNetwork.name,
+        nativeCurrency: targetNetwork.nativeCurrency,
+        rpcUrls: [targetNetwork.rpcUrl],
+        blockExplorerUrls: [targetNetwork.blockExplorer],
+      },
+    ]
+    console.log('data', data)
+
+    let switchTx
+    try {
+      switchTx = await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: data[0].chainId }],
+      })
+    } catch (switchError) {
+      try {
+        switchTx = await ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: data,
+        })
+      } catch (addError) {
+        console.log('addError=', addError)
+      }
+    }
+
+    if (switchTx) {
+      console.log(switchTx)
+    }
+  }
+
+  const hideModal = () => {
+    setShowWarningModal(false)
+  }
+
+  useEffect(() => {
+    if (!roleError) return
+    setShowWarningModal(!!roleError)
+  }, [roleError])
 
   if (loading) {
     return <div>loading...</div>
@@ -433,6 +488,23 @@ const Reports = () => {
             />
           </Col>
         </Row>
+      </Modal>
+      <Modal
+        title="Set metamask's network to current?"
+        visible={showWarningModal}
+        onOk={() => changeNetwork(initialState.chain)}
+        onCancel={hideModal}
+        okText='ok'
+        cancelText='close'
+      >
+        <p>
+          Metamask ChainId:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.walletChainId}</span>
+        </p>
+        <p>
+          Current ChainId:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.chain}</span>
+        </p>
       </Modal>
     </GridContent>
   )

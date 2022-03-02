@@ -51,6 +51,8 @@ const useUserProvider = () => {
     setLoading(false)
   }, [setUserProvider])
 
+  const logoutOfWeb3Modal = async () => web3Modal.clearCachedProvider()
+
   useEffect(() => {
     if (web3Modal.cachedProvider) {
       loadWeb3Modal()
@@ -60,7 +62,9 @@ const useUserProvider = () => {
   return {
     userProvider,
     loading,
-    error
+    error,
+    loadWeb3Modal,
+    logoutOfWeb3Modal
   }
 };
 
