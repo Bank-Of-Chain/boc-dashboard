@@ -1,20 +1,27 @@
-import React, {useState, Suspense} from 'react'
-import {useRequest, useModel} from 'umi'
+import React, { useState, Suspense } from 'react'
+import { useRequest, useModel } from 'umi'
 import moment from 'moment'
 
 // === Components === //
-import {GridContent} from '@ant-design/pro-layout'
-import {Table, Card, Space, Tag, Modal, Descriptions, Row, Col} from 'antd'
+import { GridContent } from '@ant-design/pro-layout'
+import { Table, Card, Space, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin } from 'antd'
+import Address from './../../../components/Address'
 
 // === Services === //
-import {getReports} from './../../../services/api-service'
+import { getReports, updateReportStatus } from './../../../services/api-service'
 
 // === Utils === //
 import get from 'lodash/get'
 import map from 'lodash/map'
 import sum from 'lodash/sum'
-import {toFixed} from './../../../helper/number-format'
-import {getDecimals} from './../../../apollo/client'
+import { toFixed } from './../../../helper/number-format'
+import { getDecimals } from './../../../apollo/client'
+
+// === Hooks === //
+import useAdminRole from './../../../hooks/useAdminRole'
+
+// === Styles === //
+import styles from './reports.less'
 
 const usdtDecimals = getDecimals()
 
@@ -139,17 +146,17 @@ const detailsColumns = [
 ]
 
 const Reports = () => {
-  const {initialState} = useModel('@@initialState')
+  const { initialState } = useModel('@@initialState')
   const [showIndex, setShowIndex] = useState(-1)
 
-  const {data, error, loading, pagination} = useRequest(
-    ({current, pageSize}) => {
-      return getReports({chainId: initialState.chain}, (current - 1) * pageSize, pageSize)
+  const { data, error, loading, pagination, refresh } = useRequest(
+    ({ current, pageSize }) => {
+      return getReports({ chainId: initialState.chain }, (current - 1) * pageSize, pageSize)
     },
     {
       paginated: true,
       formatResult: resp => {
-        const {content} = resp
+        const { content } = resp
         return {
           total: resp.totalElements,
           list: map(content, i => {
@@ -163,6 +170,16 @@ const Reports = () => {
       },
     },
   )
+  const { isAdmin, loading: roleLoading } = useAdminRole(initialState.address)
+  /**
+   * 驳回调仓报告
+   * @param {string} id
+   */
+  const reportCancel = id => {
+    const headers = {}
+    updateReportStatus(id, true, headers).then(refresh)
+  }
+
   if (loading) {
     return <div>loading...</div>
   }
@@ -221,15 +238,53 @@ const Reports = () => {
           .fromNow(),
     },
     {
-      render: (text, record, index) => (
-        <Space size='middle'>
-          <a onClick={() => setShowIndex(index)}>View</a>
-        </Space>
-      ),
+      width: 180,
+      render: (text, record, index) => {
+        const { id, reject, rejectTime, rejecter, type } = record
+        let rejectElement = null
+        if (isAdmin && type === 0) {
+          if (roleLoading) {
+            rejectElement = <Spin size='small' />
+          } else {
+            if (reject) {
+              rejectElement = (
+                <Tooltip
+                  title={
+                    <div>
+                      <span>
+                        Rejecter:
+                        <Address size='short' wrapClassName='anticon' address={rejecter || ''} />
+                      </span>
+                      <br />
+                      <span>RejectTime: {moment(rejectTime).format('yyyy-MM-DD HH:mm:ss')}</span>
+                    </div>
+                  }
+                >
+                  <a className={styles.disabled}>Rejected</a>
+                </Tooltip>
+              )
+            } else {
+              rejectElement = (
+                <a className={styles.danger} onClick={() => reportCancel(id)}>
+                  Reject
+                </a>
+              )
+            }
+          }
+        }
+        return (
+          <Row>
+            <Col md={12}>
+              <a onClick={() => setShowIndex(index)}>View</a>
+            </Col>
+            <Col md={12}>{rejectElement}</Col>
+          </Row>
+        )
+      },
     },
   ]
   const currentReport = get(data.list, showIndex, {})
-  const {optimizeResult = {}, investStrategies = {}, isExec} = currentReport
+  const { optimizeResult = {}, investStrategies = {}, isExec } = currentReport
   const {
     address,
     name,
@@ -247,10 +302,10 @@ const Reports = () => {
     durationDays,
     harvestFee,
     totalAssets,
-    newTotalAssets
+    newTotalAssets,
   } = optimizeResult
 
-  let displayData = map(address, (strategy, index) => {
+  const displayData = map(address, (strategy, index) => {
     return {
       key: strategy,
       name: name[index],
@@ -288,7 +343,7 @@ const Reports = () => {
       </Suspense>
       <Modal
         title={''}
-        style={{top: 20}}
+        style={{ top: 20 }}
         visible={showIndex !== -1}
         footer={null}
         onCancel={() => setShowIndex(-1)}
@@ -299,7 +354,7 @@ const Reports = () => {
             <Descriptions title='Report Details'>
               <Descriptions.Item
                 label='Recommendation'
-                contentStyle={{color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold'}}
+                contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
               >
                 {isExec === 0 && 'Not execute'}
                 {isExec === 1 && 'Execute'}
@@ -314,23 +369,36 @@ const Reports = () => {
               </Descriptions.Item>
               <Descriptions.Item label='Total Harvest Gas Fee'>
                 {sum(harvestFee).toFixed(6)}
-              </Descriptions.Item><br/>
+              </Descriptions.Item>
+              <br />
               <Descriptions.Item label='Change Profits'>
                 {(sum(newGain) - sum(originalGain)).toFixed(6)}
               </Descriptions.Item>
               <Descriptions.Item label='Profits Before'>
                 {sum(originalGain).toFixed(6)} (APR:
-                { totalAssets === undefined ? 0 : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}%)
+                {totalAssets === undefined
+                  ? 0
+                  : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
+                %)
               </Descriptions.Item>
               <Descriptions.Item label='Profits After'>
                 {sum(newGain).toFixed(6)} (APR:
-                { (newTotalAssets === undefined || totalAssets === undefined) ? 0 : ((365 * 100 * sum(newGain)) / ((newTotalAssets  ? newTotalAssets : totalAssets - sum(exchangeLoss)) * durationDays)).toFixed(2)}%)
+                {newTotalAssets === undefined || totalAssets === undefined
+                  ? 0
+                  : (
+                      (365 * 100 * sum(newGain)) /
+                      ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
+                        durationDays)
+                    ).toFixed(2)}
+                %)
               </Descriptions.Item>
 
               <Descriptions.Item label='Allocation Cost'>
                 {sum(operateLoss).toFixed(6)}
               </Descriptions.Item>
-              <Descriptions.Item label='Operate Gas Fee'>{sum(operateFee).toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label='Operate Gas Fee'>
+                {sum(operateFee).toFixed(6)}
+              </Descriptions.Item>
               <Descriptions.Item label='Exchange Loss'>
                 {sum(exchangeLoss).toFixed(6)}
               </Descriptions.Item>
@@ -343,7 +411,7 @@ const Reports = () => {
               size='small'
               columns={detailsColumns}
               dataSource={displayData}
-              scroll={{x: 1300, y: 500}}
+              scroll={{ x: 1300, y: 500 }}
               pagination={false}
             />
           </Col>
