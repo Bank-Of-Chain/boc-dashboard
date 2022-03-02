@@ -2,6 +2,7 @@ import {
   request
 } from 'umi'
 import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 export const getStrategyApysInChain = (address, offset = 0, limit = 20) => {
   try {
@@ -97,7 +98,7 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
  * @returns
  */
 export const updateReportStatus = (reportId, isReject, headers) => {
-  if (isEmpty(reportId)) return
+  if (isNil(reportId)) return
   request
   return request(`${API_SERVER}/v1/allocation/report/${reportId}/${isReject}`, {
     method: 'patch',
