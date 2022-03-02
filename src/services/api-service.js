@@ -1,6 +1,9 @@
 import {
   request
 } from 'umi'
+import {
+  isNil
+} from 'lodash';
 
 export const getStrategyApysInChain = (address, offset = 0, limit = 20) => {
   try {
@@ -87,5 +90,19 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
   }
   return request(`${API_SERVER}/v1/apy/currentBaseApy`, {
     params: nextParams,
+  });
+}
+
+/**
+ * 更新调仓报告的状态
+ * @param {*} reportId
+ * @returns
+ */
+export const updateReportStatus = (reportId, isReject, headers) => {
+  if (isNil(reportId)) return
+  request
+  return request(`${API_SERVER}/v1/allocation/report/${reportId}/${isReject}`, {
+    method: 'patch',
+    headers
   });
 }
