@@ -4,7 +4,7 @@ import moment from 'moment'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
-import { Table, Card, Space, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin } from 'antd'
+import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message } from 'antd'
 import Address from './../../../components/Address'
 
 // === Services === //
@@ -14,16 +14,20 @@ import { getReports, updateReportStatus } from './../../../services/api-service'
 import get from 'lodash/get'
 import map from 'lodash/map'
 import sum from 'lodash/sum'
+import noop from 'lodash/noop'
 import { toFixed } from './../../../helper/number-format'
 import { getDecimals } from './../../../apollo/client'
+import * as ethers from 'ethers'
 
 // === Hooks === //
 import useAdminRole from './../../../hooks/useAdminRole'
+import useUserProvider from './../../../hooks/useUserProvider'
 
 // === Styles === //
 import styles from './reports.less'
 
 const usdtDecimals = getDecimals()
+const { utils } = ethers
 
 const detailsColumns = [
   {
@@ -148,6 +152,7 @@ const detailsColumns = [
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
   const [showIndex, setShowIndex] = useState(-1)
+  const { userProvider } = useUserProvider()
 
   const { data, error, loading, pagination, refresh } = useRequest(
     ({ current, pageSize }) => {
@@ -175,9 +180,21 @@ const Reports = () => {
    * 驳回调仓报告
    * @param {string} id
    */
-  const reportCancel = id => {
-    const headers = {}
-    updateReportStatus(id, true, headers).then(refresh)
+  const reportCancel = async id => {
+    const timestamp = Date.now()
+    const signer = userProvider.getSigner()
+    const messageHash = utils.id(`/v1/allocation/report/${id}/true:${timestamp}`)
+    const messageHashBytes = utils.arrayify(messageHash)
+    const signature = await signer.signMessage(messageHashBytes)
+    const close = message.loading('on submit', 60 * 60)
+    const headers = {
+      timestamp,
+      signature,
+    }
+    updateReportStatus(id, true, headers)
+      .then(refresh)
+      .catch(noop)
+      .finally(close)
   }
 
   if (loading) {

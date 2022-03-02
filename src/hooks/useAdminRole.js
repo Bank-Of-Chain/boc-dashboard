@@ -48,6 +48,7 @@ const useAdminRole = (address) => {
   const [loading, setLoading] = useState(false);
   const {
     userProvider,
+    loading: userProviderLoading
   } = useUserProvider()
 
   const {
@@ -67,23 +68,23 @@ const useAdminRole = (address) => {
           .isVaultOrGov(userAddress)
           .then(setIsAdmin)
           .catch((error) => {
-            console.log('inner error=', error)
+            console.log('inner error=', error, vaultContract, userProvider)
             setIsAdmin(false)
           })
       })
       .catch((error) => {
-        console.log('outer error=', error)
+        console.log('outer error=', error, vaultContract, userProvider)
         setIsAdmin(false)
       })
       .finally(() => setLoading(false))
   }
 
   useEffect(() => {
-    if (isEmpty(initialState.chain) || isEmpty(address)) return
+    if (isEmpty(initialState.chain) || isEmpty(address) || userProviderLoading) return
     setLoading(true)
     //TODO: 此处地址待修改
     roleFetch('0xc791B4A9B10b1bDb5FBE2614d389f0FE92105279').then(setIsAdmin).finally(() => setLoading(false))
-  }, [address, initialState.chain]);
+  }, [address, initialState.chain, userProviderLoading]);
 
   return {
     isAdmin,
