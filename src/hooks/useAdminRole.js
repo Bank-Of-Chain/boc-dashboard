@@ -45,6 +45,7 @@ const MIX_ABI = [{
 }]
 const useAdminRole = (address) => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const {
     userProvider,
@@ -69,11 +70,13 @@ const useAdminRole = (address) => {
           .then(setIsAdmin)
           .catch((error) => {
             console.log('inner error=', error, vaultContract, userProvider)
+            setError(error)
             setIsAdmin(false)
           })
       })
       .catch((error) => {
         console.log('outer error=', error, vaultContract, userProvider)
+        setError(error)
         setIsAdmin(false)
       })
       .finally(() => setLoading(false))
@@ -88,7 +91,8 @@ const useAdminRole = (address) => {
 
   return {
     isAdmin,
-    loading
+    loading,
+    error
   };
 };
 
