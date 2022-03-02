@@ -66,9 +66,15 @@ const useAdminRole = (address) => {
         return accessControlProxyContract
           .isVaultOrGov(userAddress)
           .then(setIsAdmin)
-          .catch(() => setIsAdmin(false))
+          .catch((error) => {
+            console.log('inner error=', error)
+            setIsAdmin(false)
+          })
       })
-      .catch(() => setIsAdmin(false))
+      .catch((error) => {
+        console.log('outer error=', error)
+        setIsAdmin(false)
+      })
       .finally(() => setLoading(false))
   }
 

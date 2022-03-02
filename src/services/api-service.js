@@ -1,8 +1,9 @@
 import {
   request
 } from 'umi'
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
+import {
+  isNil
+} from 'lodash';
 
 export const getStrategyApysInChain = (address, offset = 0, limit = 20) => {
   try {
