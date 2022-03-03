@@ -35,7 +35,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
   const filterValueArray = map(data, dataValueKey).filter(i => !isUndefined(i));
   if (needMinMax) {
     option.yAxis.min = parseInt(_min(filterValueArray) * 0.9999 * 10 ** 4) / 10 ** 4;
-    option.yAxis.max = parseInt(_max(filterValueArray) * 1.0001 * 10 ** 4) / 10 ** 4;;
+    option.yAxis.max = parseInt(_max(filterValueArray) * 1.0001 * 10 ** 4) / 10 ** 4;
   }
   option.series[0].connectNulls = true;
   return option;

@@ -40,7 +40,7 @@ export default function (obj) {
       type: 'value'
     },
     series: [{
-      name: obj.seriesMame ? obj.seriesMame : "",
+      name: obj.seriesName ? obj.seriesName : "",
       data: obj.seriesData,
       type: 'line',
       symbol: 'circle',

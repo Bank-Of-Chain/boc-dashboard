@@ -13,7 +13,7 @@ export default function (obj) {
   if (dataArray.length > 0) {
     dataArray.forEach((element) => {
       let dataFormat = {
-        name: element.seriesMame ? element.seriesMame : "",
+        name: element.seriesName ? element.seriesName : "",
         data: element.seriesData,
         type: 'line',
         smooth: true,

@@ -1,7 +1,3 @@
-/**
- * Created by duanwenlong on 2019/1/7.
- */
-
 export default function (obj) {
   let option = {
     tooltip: {
@@ -40,7 +36,7 @@ export default function (obj) {
       type: 'value'
     },
     series: [{
-      name: obj.seriesMame ? obj.seriesMame : "",
+      name: obj.seriesName ? obj.seriesName : "",
       data: obj.seriesData,
       type: 'line',
       symbol: 'circle',

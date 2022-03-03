@@ -23,7 +23,7 @@ export default function (obj) {
       show: false,
     },
     series: [{
-      name: obj.seriesMame ? obj.seriesMame : "",
+      name: obj.seriesName ? obj.seriesName : "",
       data: obj.seriesData,
       type: 'line',
       showSymbol: false,
