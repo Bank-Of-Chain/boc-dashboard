@@ -39,7 +39,13 @@ const GlobalHeaderRight = () => {
   const address = useUserAddress(userProvider)
 
   const changeChain = value => {
-    history.push(`/?chain=${value}`)
+    const [before] = window.location?.hash?.split('?')
+    history.push({
+      pathname: before?.replace('#', ''),
+      query: {
+        chain: value,
+      },
+    })
     location.reload()
   }
 
