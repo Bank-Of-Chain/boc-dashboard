@@ -22,6 +22,7 @@ export default function (obj) {
   }
 
   let option = {
+    animation: false,
     textStyle:{
       color: '#fff'
     },

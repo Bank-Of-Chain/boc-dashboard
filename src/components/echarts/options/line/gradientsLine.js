@@ -6,6 +6,7 @@ import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 
 export default function (obj) {
   let option = {
+    animation: false,
     tooltip: {
       trigger: 'axis',
       axisPointer: {    // 坐标轴指示器，坐标轴触发有效

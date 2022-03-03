@@ -6,6 +6,7 @@ import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 
 export default function (obj) {
   let option = {
+    animation: false,
     grid: {left: '20', right: '20', top: '60', bottom: '10',containLabel:true},
     tooltip : {
       trigger: 'axis',

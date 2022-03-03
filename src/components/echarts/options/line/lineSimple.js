@@ -6,6 +6,7 @@ import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 
 export default function (obj) {
   const option = {
+    animation: false,
     textStyle:{
       color: '#fff'
     },
