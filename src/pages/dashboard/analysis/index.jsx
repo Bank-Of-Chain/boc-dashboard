@@ -161,11 +161,7 @@ const Analysis = () => {
       </Suspense>
 
       <Suspense fallback={null}>
-        {
-          initialState.chain === '1'
-            ? <StrategyTable loading={loading} />
-            : <LegacyStrategyTable loading={loading} searchData={dataSource?.vaultDetail?.strategies || []} />
-        }
+        <StrategyTable loading={loading} />
       </Suspense>
       <Suspense fallback={null}>
         <TransationsTable loading={loading} visitData={transations}/>
