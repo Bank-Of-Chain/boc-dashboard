@@ -301,8 +301,8 @@ const Reports = () => {
                 label='Recommendation'
                 contentStyle={{color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold'}}
               >
-                {isExec === 0 && 'Not execute'}
-                {isExec === 1 && `Execute${ forcedExecuted ? ' (enforced)' : '' }`}
+                {isExec === 0 && `Not execute${ forcedExecuted ? ' (enforced)' : '' }`}
+                {isExec === 1 && 'Execute'}
               </Descriptions.Item>
               <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Report Time'>
