@@ -39,14 +39,14 @@ const GlobalHeaderRight = () => {
   const address = useUserAddress(userProvider)
 
   const changeChain = value => {
-    const [before] = window.location?.hash?.split('?')
     history.push({
-      pathname: before?.replace('#', ''),
       query: {
         chain: value,
       },
     })
-    location.reload()
+    setTimeout(() => {
+      location.reload()
+    }, 1)
   }
 
   const loadWeb3Modal = useCallback(async () => {
