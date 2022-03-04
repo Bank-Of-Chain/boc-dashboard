@@ -107,7 +107,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
            {
              map(text, (i, index) => (
                <p key={index} style={{ marginBottom: 0 }}>
-                 {toFixed(i.value, getDecimals(), 2)} {i.unit}
+                 {toFixed(i.value, 10 ** 6, 2)} {i.unit}
                </p>
              ))
            }

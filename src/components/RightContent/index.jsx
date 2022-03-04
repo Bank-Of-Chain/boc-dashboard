@@ -39,8 +39,14 @@ const GlobalHeaderRight = () => {
   const address = useUserAddress(userProvider)
 
   const changeChain = value => {
-    history.push(`/?chain=${value}`)
-    location.reload()
+    history.push({
+      query: {
+        chain: value,
+      },
+    })
+    setTimeout(() => {
+      location.reload()
+    }, 1)
   }
 
   const loadWeb3Modal = useCallback(async () => {
