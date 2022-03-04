@@ -156,7 +156,7 @@ const Personal = () => {
   {
     apyCalData = filter(apyCalData, i => i.dayTimestamp > 1644249600);
   }
-
+  // console.log('apyCalData',JSON.stringify(apyCalData));
   for (let i = 0; i < apyCalData.length; i++) {
     let currentData = apyCalData[i];
     if (currentData.currentDepositedUSDT) {
@@ -164,16 +164,17 @@ const Personal = () => {
       if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
         lastPoint.duration += currentData.dayTimestamp - lastPoint.endTime;
         lastPoint.endTime = currentData.dayTimestamp;
-        lastPoint.endValue = currentData.pricePerShare * currentData.currentShares / (10 ** decimals);
+        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
       } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
         lastPoint.duration += currentData.dayTimestamp - lastPoint.endTime;
         lastPoint.endTime = currentData.dayTimestamp;
-        lastPoint.endValue = currentData.pricePerShare * currentData.currentShares / (10 ** decimals);
+        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
         lastPoint = {
           beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
           endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
           beginTime: currentData.dayTimestamp,
           endTime: currentData.dayTimestamp,
@@ -184,6 +185,7 @@ const Personal = () => {
         lastPoint = {
           beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
           endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
           beginTime: currentData.dayTimestamp,
           endTime: currentData.dayTimestamp,
@@ -196,6 +198,7 @@ const Personal = () => {
     }
   }
 
+  // console.log('costChangeArray',JSON.stringify(costChangeArray));
   let APY = 0;
   let userTotalTvl = 0;
   let duration = 0;
@@ -203,10 +206,10 @@ const Personal = () => {
   for (let i = 0; i < costChangeArray.length; i++) {
     userTotalTvl += costChangeArray[i].userCost * costChangeArray[i].duration;
     duration += costChangeArray[i].duration;
-    changeValue = costChangeArray[i].endValue - costChangeArray[i].beginValue;
+    changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
   }
   if (userTotalTvl > 0) {
-    console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
+    // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
     APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
   }
 
@@ -365,7 +368,7 @@ const Personal = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Row gutter={[24, 24]} style={{ display: 'none' }}>
+        <Row gutter={[24, 24]}>
           <Col>
             <Input
               value={initialState.address}
