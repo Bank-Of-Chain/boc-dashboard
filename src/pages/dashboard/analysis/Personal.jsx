@@ -28,6 +28,9 @@ import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {getDaysAgoTimestamp} from "@/services/dashboard-service";
+import * as ethers from "ethers"
+
+const { BigNumber } = ethers
 
 const topColResponsiveProps = {
   xs: 24,
@@ -39,7 +42,8 @@ const topColResponsiveProps = {
 
 const Personal = () => {
   const [totalAssets, setTotalAssets] = useState(0)
-  const [bocBalance, setBOCBalance] = useState(0)
+  const [liveTotalAssets, setLiveTotalAssets] = useState(BigNumber.from(0))
+  const [bocBalance, setBOCBalance] = useState(BigNumber.from(0))
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
@@ -53,6 +57,8 @@ const Personal = () => {
   const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
   const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
   const vaultLastUpdateTime = dataSource?.vaultLastUpdateTime
+  const liveAcountShares = dataSource?.liveAcountShares
+  const livePricePerShare = dataSource?.livePricePerShare
   // 计算apy
   const {accountDailyDatasInYear, vaultDailyDatesInYear} = dataSource
   const yearData = map(accountDailyDatasInYear, (i, index) => {
@@ -79,9 +85,14 @@ const Personal = () => {
   }, [sharePrice, shares, decimals])
 
   useEffect(() => {
-    if (!shares) return
-    setBOCBalance(shares)
-  }, [shares])
+    if (!liveAcountShares || !livePricePerShare) return
+    setLiveTotalAssets(liveAcountShares.mul(livePricePerShare).div(BigNumber.from(getDecimals().toString())))
+  }, [liveAcountShares, livePricePerShare])
+
+  useEffect(() => {
+    if (!liveAcountShares) return
+    setBOCBalance(liveAcountShares)
+  }, [liveAcountShares])
 
   useEffect(() => {
     if (!totalAssets || totalAssets === 0) return
@@ -394,7 +405,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(totalAssets.toString(), getDecimals(), 2)}
+              total={() => toFixed(liveTotalAssets, getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
@@ -408,7 +419,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(bocBalance.toString(), getDecimals(), 2)}
+              total={() => toFixed(bocBalance, getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
