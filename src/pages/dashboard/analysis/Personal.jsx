@@ -204,7 +204,7 @@ const Personal = () => {
   let duration = 0;
   let changeValue = 0;
   for (let i = 0; i < costChangeArray.length; i++) {
-    userTotalTvl += costChangeArray[i].userCost * costChangeArray[i].duration;
+    userTotalTvl += costChangeArray[i].beginValue * costChangeArray[i].duration;
     duration += costChangeArray[i].duration;
     changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
   }
