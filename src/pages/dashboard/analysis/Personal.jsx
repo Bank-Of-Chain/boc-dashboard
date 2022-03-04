@@ -28,6 +28,9 @@ import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {getDaysAgoTimestamp} from "@/services/dashboard-service";
+import * as ethers from "ethers"
+
+const { BigNumber } = ethers
 
 const topColResponsiveProps = {
   xs: 24,
@@ -39,8 +42,8 @@ const topColResponsiveProps = {
 
 const Personal = () => {
   const [totalAssets, setTotalAssets] = useState(0)
-  const [liveTotalAssets, setLiveTotalAssets] = useState(0)
-  const [bocBalance, setBOCBalance] = useState(0)
+  const [liveTotalAssets, setLiveTotalAssets] = useState(BigNumber.from(0))
+  const [bocBalance, setBOCBalance] = useState(BigNumber.from(0))
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
@@ -83,7 +86,7 @@ const Personal = () => {
 
   useEffect(() => {
     if (!liveAcountShares || !livePricePerShare) return
-    setLiveTotalAssets(liveAcountShares.mul(livePricePerShare))
+    setLiveTotalAssets(liveAcountShares.mul(livePricePerShare).div(BigNumber.from(getDecimals().toString())))
   }, [liveAcountShares, livePricePerShare])
 
   useEffect(() => {
@@ -402,7 +405,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(liveTotalAssets, getDecimals() * getDecimals(), 2)}
+              total={() => toFixed(liveTotalAssets, getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
