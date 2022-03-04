@@ -125,7 +125,7 @@ const Personal = () => {
   const nextMonths = [...array, ...array1]
 
   const yearValidData = filter(yearData, i => BN(i.currentDepositedUSDT).gt(0))
-  console.log('yearValidData=', yearValidData, groupByMonth)
+  // console.log('yearValidData=', yearValidData, groupByMonth)
   const lastItem = last(yearValidData) || {
     pricePerShare: 1,
     currentShares: 0,
@@ -154,9 +154,9 @@ const Personal = () => {
   let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
   if(initialState.chain === '1')
   {
-    apyCalData = filter(apyCalData, i => i.id > 1644249600);
+    apyCalData = filter(apyCalData, i => i.id >= 1644249600);
   }
-  console.log('apyCalData',JSON.stringify(apyCalData));
+  // console.log('apyCalData',JSON.stringify(apyCalData));
   for (let i = 0; i < apyCalData.length; i++) {
     let currentData = apyCalData[i];
     if (currentData.currentDepositedUSDT) {
@@ -198,7 +198,7 @@ const Personal = () => {
     }
   }
 
-  console.log('costChangeArray',JSON.stringify(costChangeArray));
+  // console.log('costChangeArray',JSON.stringify(costChangeArray));
   let APY = 0;
   let userTotalTvl = 0;
   let duration = 0;
@@ -209,7 +209,7 @@ const Personal = () => {
     changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
   }
   if (userTotalTvl > 0) {
-    console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
+    // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
     APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
   }
 
