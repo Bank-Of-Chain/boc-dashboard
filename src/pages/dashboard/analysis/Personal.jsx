@@ -136,7 +136,7 @@ const Personal = () => {
   const nextMonths = [...array, ...array1]
 
   const yearValidData = filter(yearData, i => BN(i.currentDepositedUSDT).gt(0))
-  console.log('yearValidData=', yearValidData, groupByMonth)
+  // console.log('yearValidData=', yearValidData, groupByMonth)
   const lastItem = last(yearValidData) || {
     pricePerShare: 1,
     currentShares: 0,
@@ -162,32 +162,33 @@ const Personal = () => {
   const costChangeArray = [];
   let lastPoint = {};
   let minId = getDaysAgoTimestamp(30);
-  let apyCalData = filter(yearData, i => i.dayTimestamp >= minId && i.dayTimestamp <=vaultLastUpdateTime);
+  let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
   if(initialState.chain === '1')
   {
-    apyCalData = filter(apyCalData, i => i.dayTimestamp > 1644249600);
+    apyCalData = filter(apyCalData, i => i.id >= 1644249600);
   }
-
+  // console.log('apyCalData',JSON.stringify(apyCalData));
   for (let i = 0; i < apyCalData.length; i++) {
     let currentData = apyCalData[i];
     if (currentData.currentDepositedUSDT) {
       // cost not change
       if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
-        lastPoint.duration += currentData.dayTimestamp - lastPoint.endTime;
-        lastPoint.endTime = currentData.dayTimestamp;
-        lastPoint.endValue = currentData.pricePerShare * currentData.currentShares / (10 ** decimals);
+        lastPoint.duration += currentData.id - lastPoint.endTime;
+        lastPoint.endTime = currentData.id;
+        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
       } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
-        lastPoint.duration += currentData.dayTimestamp - lastPoint.endTime;
-        lastPoint.endTime = currentData.dayTimestamp;
-        lastPoint.endValue = currentData.pricePerShare * currentData.currentShares / (10 ** decimals);
+        lastPoint.duration += currentData.id - lastPoint.endTime;
+        lastPoint.endTime = currentData.id;
+        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
         lastPoint = {
           beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
           endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
-          beginTime: currentData.dayTimestamp,
-          endTime: currentData.dayTimestamp,
+          beginTime: currentData.id,
+          endTime: currentData.id,
           duration: 0
         };
         costChangeArray.push(lastPoint);
@@ -195,9 +196,10 @@ const Personal = () => {
         lastPoint = {
           beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
           endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
-          beginTime: currentData.dayTimestamp,
-          endTime: currentData.dayTimestamp,
+          beginTime: currentData.id,
+          endTime: currentData.id,
           duration: 0
         };
         costChangeArray.push(lastPoint);
@@ -207,17 +209,18 @@ const Personal = () => {
     }
   }
 
+  // console.log('costChangeArray',JSON.stringify(costChangeArray));
   let APY = 0;
   let userTotalTvl = 0;
   let duration = 0;
   let changeValue = 0;
   for (let i = 0; i < costChangeArray.length; i++) {
-    userTotalTvl += costChangeArray[i].userCost * costChangeArray[i].duration;
+    userTotalTvl += costChangeArray[i].beginValue * costChangeArray[i].duration;
     duration += costChangeArray[i].duration;
-    changeValue = costChangeArray[i].endValue - costChangeArray[i].beginValue;
+    changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
   }
   if (userTotalTvl > 0) {
-    console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
+    // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
     APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
   }
 

@@ -356,7 +356,7 @@ const Reports = () => {
     },
   ]
   const currentReport = get(data.list, showIndex, {})
-  const { optimizeResult = {}, investStrategies = {}, isExec } = currentReport
+  const {optimizeResult = {}, investStrategies = {}, isExec, forcedExecuted} = currentReport
   const {
     address,
     name,
@@ -428,9 +428,8 @@ const Reports = () => {
                 label='Recommendation'
                 contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
               >
-                {isExec === 0 && 'Not execute'}
+                {isExec === 0 && `Not execute${ forcedExecuted ? ' (enforced)' : '' }`}
                 {isExec === 1 && 'Execute'}
-                {isExec === 2 && 'Not execute (But enforced)'}
               </Descriptions.Item>
               <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Report Time'>
