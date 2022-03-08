@@ -118,7 +118,7 @@ const Strategy = props => {
       },
     }
     setApysEchartOpt(option)
-  }, [offChainApys])
+  }, [apys, offChainApys])
 
   if (!initialState.chain || isEmpty(strategy)) return null
   const { underlyingTokens, depositedAssets } = strategy
