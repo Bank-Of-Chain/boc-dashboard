@@ -100,7 +100,6 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
  */
 export const updateReportStatus = (reportId, isReject, headers) => {
   if (isNil(reportId)) return
-  request
   return request(`${API_SERVER}/v1/allocation/report/${reportId}/${isReject}`, {
     method: 'patch',
     headers

@@ -28,6 +28,9 @@ import useUserProvider from './../../../hooks/useUserProvider'
 // === Constants === //
 import CHAINS from '@/constants/chain'
 
+// === Services === //
+import { getSignatureHeader } from '@/services/signer-service'
+
 // === Styles === //
 import styles from './reports.less'
 import { useEffect } from 'react'
@@ -189,16 +192,9 @@ const Reports = () => {
    * @param {string} id
    */
   const reportCancel = async id => {
-    const timestamp = Date.now()
     const signer = userProvider.getSigner()
-    const messageHash = utils.id(`/v1/allocation/report/${id}/true:${timestamp}`)
-    const messageHashBytes = utils.arrayify(messageHash)
-    const signature = await signer.signMessage(messageHashBytes)
     const close = message.loading('on submit', 60 * 60)
-    const headers = {
-      timestamp,
-      signature,
-    }
+    const headers = await getSignatureHeader(initialState.address, signer).catch(close)
     updateReportStatus(id, true, headers)
       .then(refresh)
       .catch(noop)
@@ -312,35 +308,38 @@ const Reports = () => {
     {
       width: 180,
       render: (text, record, index) => {
-        const { id, reject, rejectTime, rejecter, type } = record
+        const { id, reject, rejectTime, rejecter, type, geneTime } = record
         let rejectElement = null
-        if (isAdmin && type === 0) {
-          if (roleLoading) {
-            rejectElement = <Spin size='small' />
-          } else {
-            if (reject) {
-              rejectElement = (
-                <Tooltip
-                  title={
-                    <div>
-                      <span>
-                        Rejecter:
-                        <Address size='short' wrapClassName='anticon' address={rejecter || ''} />
-                      </span>
-                      <br />
-                      <span>RejectTime: {moment(rejectTime).format('yyyy-MM-DD HH:mm:ss')}</span>
-                    </div>
-                  }
-                >
-                  <a className={styles.disabled}>Rejected</a>
-                </Tooltip>
-              )
+        // 如果报告超过1天，则不能进行驳回
+        if (moment(geneTime).isBetween(moment().subtract(1, 'days'), moment())) {
+          if (true && type === 0) {
+            if (roleLoading) {
+              rejectElement = <Spin size='small' />
             } else {
-              rejectElement = (
-                <a className={styles.danger} onClick={() => reportCancel(id)}>
-                  Reject
-                </a>
-              )
+              if (reject) {
+                rejectElement = (
+                  <Tooltip
+                    title={
+                      <div>
+                        <span>
+                          Rejecter:
+                          <Address size='short' wrapClassName='anticon' address={rejecter || ''} />
+                        </span>
+                        <br />
+                        <span>RejectTime: {moment(rejectTime).format('yyyy-MM-DD HH:mm:ss')}</span>
+                      </div>
+                    }
+                  >
+                    <a className={styles.disabled}>Rejected</a>
+                  </Tooltip>
+                )
+              } else {
+                rejectElement = (
+                  <a className={styles.danger} onClick={() => reportCancel(id)}>
+                    Reject
+                  </a>
+                )
+              }
             }
           }
         }
@@ -356,7 +355,7 @@ const Reports = () => {
     },
   ]
   const currentReport = get(data.list, showIndex, {})
-  const {optimizeResult = {}, investStrategies = {}, isExec, forcedExecuted} = currentReport
+  const { optimizeResult = {}, investStrategies = {}, isExec, forcedExecuted } = currentReport
   const {
     address,
     name,
@@ -428,7 +427,7 @@ const Reports = () => {
                 label='Recommendation'
                 contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
               >
-                {isExec === 0 && `Not execute${ forcedExecuted ? ' (enforced)' : '' }`}
+                {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
                 {isExec === 1 && 'Execute'}
               </Descriptions.Item>
               <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
