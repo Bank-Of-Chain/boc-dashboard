@@ -6,8 +6,8 @@ import _min from 'lodash/min';
 import _max from 'lodash/max';
 import isUndefined from 'lodash/isUndefined';
 
-const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, options = { format: 'MM-DD HH:mm',  }) => {
-  const { format, xAxis, yAxis } = options
+const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, options = {}) => {
+  const { format = 'MM-DD HH:mm', xAxis, yAxis, smooth = true } = options
   const xAxisData = [];
   const seriesData = [];
   data.forEach((o) => {
@@ -17,7 +17,8 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
   const option = lineSimple({
     xAxisData,
     seriesName: seriesName,
-    seriesData
+    seriesData,
+    smooth
   });
   option.yAxis = {
     ...option.yAxis,

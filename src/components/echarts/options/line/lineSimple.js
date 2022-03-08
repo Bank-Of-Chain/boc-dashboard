@@ -47,7 +47,7 @@ export default function (obj) {
         },
         width: '3',
       },
-      smooth: true,
+      smooth: obj.smooth,
     }]
   };
 
