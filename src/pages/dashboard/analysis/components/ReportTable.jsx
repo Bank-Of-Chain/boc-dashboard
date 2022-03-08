@@ -30,14 +30,14 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       ),
     },
     {
-      title: 'Amount',
+      title: 'Total Asset (USDT)',
       dataIndex: 'nowStrategyTotalDebt',
       key: 'nowStrategyTotalDebt',
       width: 200,
       render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
-      title: 'Profit',
+      title: 'Profit (USDT)',
       dataIndex: 'profit',
       key: 'profit',
       width: 200,
