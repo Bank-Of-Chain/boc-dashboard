@@ -21,7 +21,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
     seriesName: seriesName,
     seriesData,
     smooth,
-    step
+    // step
   });
   option.yAxis = {
     ...option.yAxis,
