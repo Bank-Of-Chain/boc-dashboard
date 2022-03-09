@@ -48,6 +48,7 @@ export default function (obj) {
         width: '3',
       },
       smooth: obj.smooth,
+      step: obj.step
     }]
   };
 
