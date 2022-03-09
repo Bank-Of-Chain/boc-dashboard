@@ -77,7 +77,7 @@ const appendVaultDailyDatas  = rs => {
   // 补齐字段数据
   const setDefaultValueArray = usedPreValue(appendArray, 'pricePerShare')
   // 选取里面有用的字段
-  const result = map(setDefaultValueArray, i => pick(i, ['id', 'pricePerShare']))
+  const result = map(setDefaultValueArray, i => pick(i, ['id', 'pricePerShare', 'unlockedPricePerShare']))
   return result
 }
 

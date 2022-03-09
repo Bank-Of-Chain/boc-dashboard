@@ -170,21 +170,23 @@ const Personal = () => {
   // console.log('apyCalData',JSON.stringify(apyCalData));
   for (let i = 0; i < apyCalData.length; i++) {
     let currentData = apyCalData[i];
+    // 优先使用释放后的单价进行计算
+    const pricePerShare = currentData.unlockedPricePerShare || currentData.pricePerShare
     if (currentData.currentDepositedUSDT) {
       // cost not change
       if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
         lastPoint.duration += currentData.id - lastPoint.endTime;
         lastPoint.endTime = currentData.id;
-        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
+        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
       } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
         lastPoint.duration += currentData.id - lastPoint.endTime;
         lastPoint.endTime = currentData.id;
-        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
+        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
         lastPoint = {
-          beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
           shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
           beginTime: currentData.id,
@@ -194,8 +196,8 @@ const Personal = () => {
         costChangeArray.push(lastPoint);
       } else {
         lastPoint = {
-          beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
           shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
           beginTime: currentData.id,
@@ -379,7 +381,7 @@ const Personal = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Row gutter={[24, 24]} style={{ display: 'none' }}>
+        <Row gutter={[24, 24]} style={{ display: '' }}>
           <Col>
             <Input
               value={initialState.address}
@@ -393,6 +395,10 @@ const Personal = () => {
             <a
               onClick={() => setInitialState({...initialState, address: '0x375d80da4271f5dcdf821802f981a765a0f11763'})}>matic:
               0x375d80da4271f5dcdf821802f981a765a0f11763</a>
+            <br/>
+            <a
+              onClick={() => setInitialState({...initialState, address: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'})}>晓天地址:
+              0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff</a>
             <br/>
             <p>该输入框为测试使用，发布前需要删除</p>
           </Col>
