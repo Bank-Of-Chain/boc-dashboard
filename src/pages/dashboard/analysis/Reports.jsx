@@ -312,28 +312,11 @@ const Reports = () => {
         let rejectElement = null
         // 如果报告超过1天，则不能进行驳回
         if (moment(geneTime).isBetween(moment().subtract(1, 'days'), moment())) {
-          if (true && type === 0) {
+          if (isAdmin && type === 0) {
             if (roleLoading) {
               rejectElement = <Spin size='small' />
             } else {
-              if (reject) {
-                rejectElement = (
-                  <Tooltip
-                    title={
-                      <div>
-                        <span>
-                          Rejecter:
-                          <Address size='short' wrapClassName='anticon' address={rejecter || ''} />
-                        </span>
-                        <br />
-                        <span>RejectTime: {moment(rejectTime).format('yyyy-MM-DD HH:mm:ss')}</span>
-                      </div>
-                    }
-                  >
-                    <a className={styles.disabled}>Rejected</a>
-                  </Tooltip>
-                )
-              } else {
+               if(!reject) {
                 rejectElement = (
                   <a className={styles.danger} onClick={() => reportCancel(id)}>
                     Reject
@@ -342,6 +325,24 @@ const Reports = () => {
               }
             }
           }
+        }
+        if (reject) {
+          rejectElement = (
+            <Tooltip
+              title={
+                <div>
+                  <span>
+                    Rejecter:
+                    <Address size='short' wrapClassName='anticon' address={rejecter || ''} />
+                  </span>
+                  <br />
+                  <span>RejectTime: {moment(rejectTime).format('yyyy-MM-DD HH:mm:ss')}</span>
+                </div>
+              }
+            >
+              <a className={styles.disabled}>Rejected</a>
+            </Tooltip>
+          )
         }
         return (
           <Row>
