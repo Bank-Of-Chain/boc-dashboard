@@ -17,9 +17,9 @@ import sum from 'lodash/sum'
 import noop from 'lodash/noop'
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 import { toFixed } from './../../../helper/number-format'
 import { getDecimals } from './../../../apollo/client'
-import * as ethers from 'ethers'
 
 // === Hooks === //
 import useAdminRole from './../../../hooks/useAdminRole'
@@ -30,13 +30,13 @@ import CHAINS from '@/constants/chain'
 
 // === Services === //
 import { getSignatureHeader } from '@/services/signer-service'
+import { isProEnv } from '@/services/env-service'
 
 // === Styles === //
 import styles from './reports.less'
 import { useEffect } from 'react'
 
 const usdtDecimals = getDecimals()
-const { utils } = ethers
 
 const detailsColumns = [
   {
@@ -244,9 +244,33 @@ const Reports = () => {
   }
 
   useEffect(() => {
-    if (!roleError) return
-    setShowWarningModal(!!roleError)
-  }, [roleError])
+    const { chain, walletChainId } = initialState
+    // 生产环境下
+    if (isProEnv(ENV_INDEX)) {
+      // 链不一致，必须提示
+      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+        setShowWarningModal(true)
+      } else {
+        setShowWarningModal(false)
+      }
+    } else {
+      // 非生产环境下
+      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+        // 链如果等于31337
+        if (isEqual(walletChainId, '31337')) {
+          if (roleError) {
+            setShowWarningModal(true)
+          } else {
+            setShowWarningModal(false)
+          }
+        } else {
+          setShowWarningModal(true)
+        }
+      } else {
+        setShowWarningModal(false)
+      }
+    }
+  }, [initialState, roleError])
 
   if (loading) {
     return <div>loading...</div>
@@ -316,7 +340,7 @@ const Reports = () => {
             if (roleLoading) {
               rejectElement = <Spin size='small' />
             } else {
-               if(!reject) {
+              if (!reject) {
                 rejectElement = (
                   <a className={styles.danger} onClick={() => reportCancel(id)}>
                     Reject
@@ -504,6 +528,11 @@ const Reports = () => {
           Current ChainId:{' '}
           <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.chain}</span>
         </p>
+        {!isEmpty(roleError) && (
+          <p>
+            Message：<span style={{ color: 'red', fontWeight: 'bold' }}>Error Vault address!</span>
+          </p>
+        )}
       </Modal>
     </GridContent>
   )

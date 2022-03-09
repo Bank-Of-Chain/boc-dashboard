@@ -6,13 +6,15 @@ import numeral from 'numeral';
 // === Components === //
 import {InfoCircleOutlined} from '@ant-design/icons'
 import {GridContent} from '@ant-design/pro-layout'
-import {Col, Row, Tooltip, Result, Card, Input} from 'antd'
+import {Col, Row, Tooltip, Result, Card, Input, Modal} from 'antd'
 import {ChartCard} from './components/Charts'
 import {BarEchart, LineEchart} from '@/components/echarts'
 
 // === Utils === //
 import moment from 'moment'
 import filter from 'lodash/filter'
+import isEqual from 'lodash/isEqual'
+import find from 'lodash/find'
 import last from 'lodash/last'
 import sumBy from 'lodash/sumBy'
 import _min from 'lodash/min'
@@ -28,7 +30,14 @@ import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {getDaysAgoTimestamp} from "@/services/dashboard-service";
+import {isProEnv} from "@/services/env-service"
 import * as ethers from "ethers"
+
+// === Constants === //
+import CHAINS from '@/constants/chain'
+
+// === Hooks === //
+import useAdminRole from './../../../hooks/useAdminRole'
 
 const { BigNumber } = ethers
 
@@ -47,8 +56,10 @@ const Personal = () => {
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
+  const [showWarningModal, setShowWarningModal] = useState(false)
   const {dataSource, loading} = useModel('usePersonalData')
   const {initialState, setInitialState} = useModel('@@initialState')
+  const { error: roleError } = useAdminRole(initialState.address)
 
   const decimals = dataSource?.vaultSummary?.decimals
   const sharePrice = dataSource?.vaultSummary?.pricePerShare
@@ -108,6 +119,35 @@ const Personal = () => {
     if (!shares || !totalShares) return
     setDepositedPercent((shares * 100) / totalShares)
   }, [shares, totalShares])
+
+  useEffect(() => {
+    const { chain, walletChainId } = initialState
+    // 生产环境下
+    if (isProEnv(ENV_INDEX)) {
+      // 链不一致，必须提示
+      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+        setShowWarningModal(true)
+      } else {
+        setShowWarningModal(false)
+      }
+    } else {
+      // 非生产环境下
+      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+        // 链如果等于31337
+        if (isEqual(walletChainId, '31337')) {
+          if (roleError) {
+            setShowWarningModal(true)
+          } else {
+            setShowWarningModal(false)
+          }
+        } else {
+          setShowWarningModal(true)
+        }
+      } else {
+        setShowWarningModal(false)
+      }
+    }
+  }, [initialState, roleError])
 
   const monthOffset = moment().month() + 1
   const groupByMonth = groupBy(
@@ -367,6 +407,46 @@ const Personal = () => {
       format: 'MM-DD',
     },
   )
+  const changeNetwork = async id => {
+    const targetNetwork = find(CHAINS, { id })
+    console.log('targetNetwork=', targetNetwork)
+    if (isEmpty(targetNetwork)) return
+    const ethereum = window.ethereum
+    const data = [
+      {
+        chainId: `0x${Number(targetNetwork.id).toString(16)}`,
+        chainName: targetNetwork.name,
+        nativeCurrency: targetNetwork.nativeCurrency,
+        rpcUrls: [targetNetwork.rpcUrl],
+        blockExplorerUrls: [targetNetwork.blockExplorer],
+      },
+    ]
+    console.log('data', data)
+
+    let switchTx
+    try {
+      switchTx = await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: data[0].chainId }],
+      })
+    } catch (switchError) {
+      try {
+        switchTx = await ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: data,
+        })
+      } catch (addError) {
+        console.log('addError=', addError)
+      }
+    }
+
+    if (switchTx) {
+      console.log(switchTx)
+    }
+  }
+  const hideModal = () => {
+    setShowWarningModal(false)
+  }
   if (isEmpty(initialState.address)) {
     return (
       <Result
@@ -381,7 +461,7 @@ const Personal = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Row gutter={[24, 24]} style={{ display: 'none' }}>
+        <Row gutter={[24, 24]} style={{ display: isProEnv(ENV_INDEX) ? 'none' : '' }}>
           <Col>
             <Input
               value={initialState.address}
@@ -515,6 +595,28 @@ const Personal = () => {
           <BarEchart option={option} style={{height: '100%', width: '100%'}}/>
         </Card>
       </Suspense>
+      <Modal
+        title="Set metamask's network to current?"
+        visible={showWarningModal}
+        onOk={() => changeNetwork(initialState.chain)}
+        onCancel={hideModal}
+        okText='ok'
+        cancelText='close'
+      >
+        <p>
+          Metamask ChainId:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.walletChainId}</span>
+        </p>
+        <p>
+          Current ChainId:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.chain}</span>
+        </p>
+        {!isEmpty(roleError) && (
+          <p>
+            Message：<span style={{ color: 'red', fontWeight: 'bold' }}>Error Vault address!</span>
+          </p>
+        )}
+      </Modal>
     </GridContent>
   )
 }

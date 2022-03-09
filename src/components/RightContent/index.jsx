@@ -8,6 +8,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import map from 'lodash/map'
+import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
 
 // === Contansts === //
@@ -32,14 +33,56 @@ const GlobalHeaderRight = () => {
   const address = useUserAddress(userProvider)
 
   const changeChain = value => {
-    history.push({
-      query: {
-        chain: value,
-      },
+    changeNetwork(value).then(() => {
+      history.push({
+        query: {
+          chain: value,
+        },
+      })
+      setTimeout(() => {
+        location.reload()
+      }, 1)
     })
-    setTimeout(() => {
-      location.reload()
-    }, 1)
+  }
+  const changeNetwork = id => {
+    return new Promise(async (resolve) => {
+      const targetNetwork = find(CHAINS, { id })
+      console.log('targetNetwork=', targetNetwork)
+      if (isEmpty(targetNetwork)) return
+      const ethereum = window.ethereum
+      const data = [
+        {
+          chainId: `0x${Number(targetNetwork.id).toString(16)}`,
+          chainName: targetNetwork.name,
+          nativeCurrency: targetNetwork.nativeCurrency,
+          rpcUrls: [targetNetwork.rpcUrl],
+          blockExplorerUrls: [targetNetwork.blockExplorer],
+        },
+      ]
+      console.log('data', data)
+
+      let switchTx
+      try {
+        switchTx = await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: data[0].chainId }],
+        })
+      } catch (switchError) {
+        try {
+          switchTx = await ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: data,
+          })
+        } catch (addError) {
+          console.log('addError=', addError)
+        }
+      }
+
+      if (switchTx) {
+        console.log(switchTx)
+      }
+      resolve()
+    })
   }
 
   useEffect(() => {
