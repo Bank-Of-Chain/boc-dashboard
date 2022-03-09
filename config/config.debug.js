@@ -6,6 +6,7 @@ export default defineConfig({
   base: '/dashboard/',
   publicPath: '/dashboard/',
   define: {
+    ENV_INDEX: 'debug',
     API_SERVER: 'http://192.168.60.12:8080',
     IMAGE_ROOT: 'http://192.168.60.12/dashboard',
     SUB_GRAPH_URL: {

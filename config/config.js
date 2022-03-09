@@ -77,6 +77,7 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   define: {
+    ENV_INDEX: 'pro',
     API_SERVER: 'https://service.bankofchain.io',
     IMAGE_ROOT: 'https://dashboard.bankofchain.io',
     SUB_GRAPH_URL: {

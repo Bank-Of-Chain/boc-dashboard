@@ -14,6 +14,7 @@ export default defineConfig({
     babelOptions: {},
   },
   define:{
+    ENV_INDEX: 'dev',
     API_SERVER: 'http://192.168.60.12/server',
     IMAGE_ROOT: '.',
     SUB_GRAPH_URL: {
