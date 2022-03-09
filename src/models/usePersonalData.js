@@ -20,6 +20,9 @@ import { arrayAppendOfDay, usedPreValue } from '@/helper/array-append'
 import { useEffect, useState } from 'react';
 import * as ethers from "ethers";
 import useUserProvider from '@/hooks/useUserProvider'
+import {getDecimals} from '@/apollo/client'
+
+const { BigNumber } = ethers
 
 const ABI = [{
   "inputs": [{
@@ -139,8 +142,14 @@ export default function usePersonalData() {
     if (!isEmpty(userProvider) && initialState?.address) {
       const vaultAddress = VAULT_ADDRESS[initialState?.chain]
       const vaultContract = new ethers.Contract(vaultAddress, ABI, userProvider)
-      requests.push(vaultContract.balanceOf(initialState?.address))
-      requests.push(vaultContract.pricePerShare())
+      requests.push(vaultContract.balanceOf(initialState?.address).catch((e) => {
+        console.error(e)
+        return BigNumber.from(0)
+      }))
+      requests.push(vaultContract.pricePerShare().catch((e) => {
+        console.error(e)
+        return BigNumber.from(getDecimals().toString())
+      }))
     }
     dataMerge(initialState?.address?.toLowerCase(), requests).then(r => {
       setData(r)
