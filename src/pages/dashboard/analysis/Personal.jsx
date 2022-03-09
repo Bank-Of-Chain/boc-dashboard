@@ -381,7 +381,7 @@ const Personal = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Row gutter={[24, 24]} style={{ display: '' }}>
+        <Row gutter={[24, 24]} style={{ display: 'none' }}>
           <Col>
             <Input
               value={initialState.address}
