@@ -1,4 +1,4 @@
-name: Release Debug1
+name: Release Debug
 on:
   pull_request:
     branches:
