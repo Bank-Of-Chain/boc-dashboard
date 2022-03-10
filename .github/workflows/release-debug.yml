@@ -2,7 +2,7 @@ name: Release Debug1
 on:
   pull_request:
     branches:
-      - release/*
+      - 'release/*'
 jobs:
   release:
     name: Release
