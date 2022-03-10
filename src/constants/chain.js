@@ -22,6 +22,13 @@ const MATIC = {
 }
 const CHAINS = [ETH, BSC, MATIC]
 
+export const CHIANS_NAME = {
+  '1': 'Ethereum',
+  '56': 'BSC ',
+  '137': 'Matic',
+  '31337': 'Local Fork'
+}
+
 export {
   ETH,
   BSC,
