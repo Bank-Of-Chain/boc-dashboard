@@ -26,7 +26,7 @@ import useAdminRole from './../../../hooks/useAdminRole'
 import useUserProvider from './../../../hooks/useUserProvider'
 
 // === Constants === //
-import CHAINS from '@/constants/chain'
+import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 
 // === Services === //
 import { getSignatureHeader } from '@/services/signer-service'
@@ -521,12 +521,12 @@ const Reports = () => {
         cancelText='close'
       >
         <p>
-          Metamask ChainId:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.walletChainId}</span>
+           Metamask Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}</span>
         </p>
         <p>
-          Current ChainId:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.chain}</span>
+          Current Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.chain] || initialState.chain}</span>
         </p>
         {!isEmpty(roleError) && (
           <p>

@@ -34,7 +34,7 @@ import {isProEnv} from "@/services/env-service"
 import * as ethers from "ethers"
 
 // === Constants === //
-import CHAINS from '@/constants/chain'
+import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 
 // === Hooks === //
 import useAdminRole from './../../../hooks/useAdminRole'
@@ -619,12 +619,12 @@ const Personal = () => {
         cancelText='close'
       >
         <p>
-          Metamask ChainId:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.walletChainId}</span>
+           Metamask Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}</span>
         </p>
         <p>
-          Current ChainId:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>{initialState.chain}</span>
+          Current Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.chain] || initialState.chain}</span>
         </p>
         {!isEmpty(roleError) && (
           <p>
