@@ -122,6 +122,21 @@ const Personal = () => {
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
+    // start 这一段似乎更好，但未经过测试
+    // 加载异常，一定弹窗
+    // if (roleError) {
+    //     setShowWarningModal(true)
+    //     return
+    // }
+    // // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
+    // if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+    //   if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
+    //     setShowWarningModal(false)
+    //     return
+    //   }
+    //   setShowWarningModal(true)
+    // }
+    // end
     // 生产环境下
     if (isProEnv(ENV_INDEX)) {
       // 链不一致，必须提示
