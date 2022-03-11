@@ -1,10 +1,14 @@
+import isEmpty from "lodash/isEmpty"
 import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 
 /**
  * Created by linyu on 2018/5/3.
  */
 
+const DATA_ZOOM_HEIGHT = '52px'
+
 export default function (obj) {
+  const showDataZoom = !isEmpty(obj.seriesData) && obj.dataZoom
   const option = {
     animation: false,
     textStyle:{
@@ -13,7 +17,7 @@ export default function (obj) {
     grid: {
       left: '0%',
       right: '1%',
-      bottom: '0%',
+      bottom: showDataZoom ? DATA_ZOOM_HEIGHT : '0%',
       containLabel: true
     },
     tooltip: {
@@ -26,6 +30,7 @@ export default function (obj) {
     yAxis: {
       type: 'value'
     },
+    dataZoom: showDataZoom ? obj.dataZoom : null,
     series: [{
       name: obj.seriesName ? obj.seriesName : "",
       data: obj.seriesData,
@@ -45,7 +50,7 @@ export default function (obj) {
             offset: 1, color: 'rgb(166, 192, 252)'
           }],
         },
-        width: '3',
+        width: 3,
       },
       smooth: obj.smooth,
       step: obj.step
