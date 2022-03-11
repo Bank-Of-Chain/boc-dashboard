@@ -363,6 +363,10 @@ const Personal = () => {
     true,
     {
       format: 'MM-DD',
+      dataZoom: [{
+        start: 0,
+        end: 100
+      }]
     },
   )
   if (isEmpty(initialState.address)) {
@@ -491,7 +495,7 @@ const Personal = () => {
         <Card
           loading={loading}
           bordered={false}
-          bodyStyle={{height: '400px'}}
+          bodyStyle={{height: '452px'}}
           style={{marginTop: 24}}
           title='Daily TVL'
         >
