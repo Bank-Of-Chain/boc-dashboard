@@ -87,13 +87,13 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       extra={dropdownGroup}
       style={{
         height: '100%',
-        width:'100%',
         marginTop: 32,
       }}
     >
       <Table
         rowKey={record => record.id}
         size='small'
+        scroll={{ x: 1300 }}
         columns={columns}
         dataSource={visitData}
         pagination={{

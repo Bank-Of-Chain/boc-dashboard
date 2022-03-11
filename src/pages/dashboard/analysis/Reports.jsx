@@ -429,6 +429,7 @@ const Reports = () => {
           <Table
             rowKey={record => record.id}
             columns={columns}
+            scroll={{ x: 1300 }}
             dataSource={data.list}
             pagination={{
               ...pagination,
