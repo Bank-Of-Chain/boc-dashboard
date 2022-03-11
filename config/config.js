@@ -77,6 +77,7 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   define: {
+    ENV_INDEX: 'pro',
     API_SERVER: 'https://service.bankofchain.io',
     IMAGE_ROOT: 'https://dashboard.bankofchain.io',
     SUB_GRAPH_URL: {
@@ -88,6 +89,11 @@ export default defineConfig({
       1: 'https://etherscan.io',
       56: 'https://bscscan.com',
       137: 'https://polygonscan.com',
+    },
+    VAULT_ADDRESS: {
+      1: '0x008586B7f6768EDc269D9e5cd276316d33CECE6d',
+      56: '0x699F86dd50224544E6c23670Af44682CAe9db3c5',
+      137: '0xFB7f340A7DEfD3bB0072844db6D5EbdFAD765dea'
     }
   },
 });

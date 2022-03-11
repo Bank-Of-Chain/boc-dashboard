@@ -4,6 +4,7 @@ export default defineConfig({
   base: '/dashboard/',
   publicPath: '/dashboard/',
   define:{
+    ENV_INDEX: 'inte',
     API_SERVER: 'http://192.168.60.40:8080',
     IMAGE_ROOT: 'http://192.168.60.40/dashboard',
     SUB_GRAPH_URL: {

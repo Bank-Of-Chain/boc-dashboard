@@ -6,6 +6,7 @@ import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 
 export default function (obj) {
   const option = {
+    animation: false,
     textStyle:{
       color: '#fff'
     },
@@ -46,7 +47,8 @@ export default function (obj) {
         },
         width: '3',
       },
-      smooth: true,
+      smooth: obj.smooth,
+      step: obj.step
     }]
   };
 

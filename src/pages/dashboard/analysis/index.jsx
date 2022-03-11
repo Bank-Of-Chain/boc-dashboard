@@ -79,7 +79,7 @@ const Analysis = () => {
         // }).filter(item => item.id >= minId);
         // setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 7-day APY(%)', false));
         const rangeArray = array.filter(item => item.id >= minId);
-        setSharePriceEchartOpt(getLineEchartOpt(rangeArray, 'pricePerShare', 'USDT', true, calDateRange > 7 ? { format: 'MM-DD' } : undefined));
+        setSharePriceEchartOpt(getLineEchartOpt(rangeArray, 'pricePerShare', 'USDT', true, calDateRange > 7 ? { format: 'MM-DD', smooth: false, step: 'end' } : { smooth: false, step: 'end' }));
         setTvlEchartOpt(getLineEchartOpt(rangeArray, 'tvl', 'USDT', true, calDateRange > 7 ? { format: 'MM-DD' } : undefined));
       });
   }, [calDateRange]);

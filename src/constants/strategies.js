@@ -21,7 +21,8 @@ const BSC_STRATEGIES_MAP = [
   'Ellipsis',
   'Belt',
   'Dodo',
-  'DForce'
+  'DForce',
+  'Synapse'
 ]
 
 const MATIC_STRATEGIES_MAP = [
@@ -32,7 +33,9 @@ const MATIC_STRATEGIES_MAP = [
   'Polycat',
   'Qi',
   'Quickswap',
-  'Sushi'
+  'Sushi',
+  'Synapse',
+  'Dodo'
 ]
 const STRATEGIES_MAP = {
   1: ETH_STRATEGIES_MAP,

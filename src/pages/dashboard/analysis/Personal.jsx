@@ -6,13 +6,15 @@ import numeral from 'numeral';
 // === Components === //
 import {InfoCircleOutlined} from '@ant-design/icons'
 import {GridContent} from '@ant-design/pro-layout'
-import {Col, Row, Tooltip, Result, Card, Input} from 'antd'
+import {Col, Row, Tooltip, Result, Card, Input, Modal} from 'antd'
 import {ChartCard} from './components/Charts'
 import {BarEchart, LineEchart} from '@/components/echarts'
 
 // === Utils === //
 import moment from 'moment'
 import filter from 'lodash/filter'
+import isEqual from 'lodash/isEqual'
+import find from 'lodash/find'
 import last from 'lodash/last'
 import sumBy from 'lodash/sumBy'
 import _min from 'lodash/min'
@@ -28,6 +30,16 @@ import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {getDaysAgoTimestamp} from "@/services/dashboard-service";
+import {isProEnv} from "@/services/env-service"
+import * as ethers from "ethers"
+
+// === Constants === //
+import CHAINS, { CHIANS_NAME } from '@/constants/chain'
+
+// === Hooks === //
+import useAdminRole from './../../../hooks/useAdminRole'
+
+const { BigNumber } = ethers
 
 const topColResponsiveProps = {
   xs: 24,
@@ -39,12 +51,15 @@ const topColResponsiveProps = {
 
 const Personal = () => {
   const [totalAssets, setTotalAssets] = useState(0)
-  const [bocBalance, setBOCBalance] = useState(0)
+  const [liveTotalAssets, setLiveTotalAssets] = useState(BigNumber.from(0))
+  const [bocBalance, setBOCBalance] = useState(BigNumber.from(0))
   const [profit, setProfit] = useState(0)
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
+  const [showWarningModal, setShowWarningModal] = useState(false)
   const {dataSource, loading} = useModel('usePersonalData')
   const {initialState, setInitialState} = useModel('@@initialState')
+  const { error: roleError } = useAdminRole(initialState.address)
 
   const decimals = dataSource?.vaultSummary?.decimals
   const sharePrice = dataSource?.vaultSummary?.pricePerShare
@@ -53,6 +68,8 @@ const Personal = () => {
   const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
   const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
   const vaultLastUpdateTime = dataSource?.vaultLastUpdateTime
+  const liveAcountShares = dataSource?.liveAcountShares
+  const livePricePerShare = dataSource?.livePricePerShare
   // 计算apy
   const {accountDailyDatasInYear, vaultDailyDatesInYear} = dataSource
   const yearData = map(accountDailyDatasInYear, (i, index) => {
@@ -79,9 +96,14 @@ const Personal = () => {
   }, [sharePrice, shares, decimals])
 
   useEffect(() => {
-    if (!shares) return
-    setBOCBalance(shares)
-  }, [shares])
+    if (!liveAcountShares || !livePricePerShare) return
+    setLiveTotalAssets(liveAcountShares.mul(livePricePerShare).div(BigNumber.from(getDecimals().toString())))
+  }, [liveAcountShares, livePricePerShare])
+
+  useEffect(() => {
+    if (!liveAcountShares) return
+    setBOCBalance(liveAcountShares)
+  }, [liveAcountShares])
 
   useEffect(() => {
     if (!totalAssets || totalAssets === 0) return
@@ -97,6 +119,50 @@ const Personal = () => {
     if (!shares || !totalShares) return
     setDepositedPercent((shares * 100) / totalShares)
   }, [shares, totalShares])
+
+  useEffect(() => {
+    const { chain, walletChainId } = initialState
+    // start 这一段似乎更好，但未经过测试
+    // 加载异常，一定弹窗
+    // if (roleError) {
+    //     setShowWarningModal(true)
+    //     return
+    // }
+    // // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
+    // if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+    //   if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
+    //     setShowWarningModal(false)
+    //     return
+    //   }
+    //   setShowWarningModal(true)
+    // }
+    // end
+    // 生产环境下
+    if (isProEnv(ENV_INDEX)) {
+      // 链不一致，必须提示
+      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+        setShowWarningModal(true)
+      } else {
+        setShowWarningModal(false)
+      }
+    } else {
+      // 非生产环境下
+      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+        // 链如果等于31337
+        if (isEqual(walletChainId, '31337')) {
+          if (roleError) {
+            setShowWarningModal(true)
+          } else {
+            setShowWarningModal(false)
+          }
+        } else {
+          setShowWarningModal(true)
+        }
+      } else {
+        setShowWarningModal(false)
+      }
+    }
+  }, [initialState, roleError])
 
   const monthOffset = moment().month() + 1
   const groupByMonth = groupBy(
@@ -159,21 +225,23 @@ const Personal = () => {
   // console.log('apyCalData',JSON.stringify(apyCalData));
   for (let i = 0; i < apyCalData.length; i++) {
     let currentData = apyCalData[i];
+    // 优先使用释放后的单价进行计算
+    const pricePerShare = currentData.unlockedPricePerShare || currentData.pricePerShare
     if (currentData.currentDepositedUSDT) {
       // cost not change
       if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
         lastPoint.duration += currentData.id - lastPoint.endTime;
         lastPoint.endTime = currentData.id;
-        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
+        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
       } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
         lastPoint.duration += currentData.id - lastPoint.endTime;
         lastPoint.endTime = currentData.id;
-        lastPoint.endValue = currentData.pricePerShare * lastPoint.shares / (10 ** decimals);
+        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
         costChangeArray[costChangeArray.length - 1] = lastPoint;
         lastPoint = {
-          beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
           shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
           beginTime: currentData.id,
@@ -183,8 +251,8 @@ const Personal = () => {
         costChangeArray.push(lastPoint);
       } else {
         lastPoint = {
-          beginValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: currentData.pricePerShare * currentData.currentShares / (10 ** decimals),
+          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
           shares: currentData.currentShares,
           userCost: currentData.currentDepositedUSDT,
           beginTime: currentData.id,
@@ -354,6 +422,46 @@ const Personal = () => {
       format: 'MM-DD',
     },
   )
+  const changeNetwork = async id => {
+    const targetNetwork = find(CHAINS, { id })
+    console.log('targetNetwork=', targetNetwork)
+    if (isEmpty(targetNetwork)) return
+    const ethereum = window.ethereum
+    const data = [
+      {
+        chainId: `0x${Number(targetNetwork.id).toString(16)}`,
+        chainName: targetNetwork.name,
+        nativeCurrency: targetNetwork.nativeCurrency,
+        rpcUrls: [targetNetwork.rpcUrl],
+        blockExplorerUrls: [targetNetwork.blockExplorer],
+      },
+    ]
+    console.log('data', data)
+
+    let switchTx
+    try {
+      switchTx = await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: data[0].chainId }],
+      })
+    } catch (switchError) {
+      try {
+        switchTx = await ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: data,
+        })
+      } catch (addError) {
+        console.log('addError=', addError)
+      }
+    }
+
+    if (switchTx) {
+      console.log(switchTx)
+    }
+  }
+  const hideModal = () => {
+    setShowWarningModal(false)
+  }
   if (isEmpty(initialState.address)) {
     return (
       <Result
@@ -368,7 +476,7 @@ const Personal = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Row gutter={[24, 24]} style={{ display: 'none' }}>
+        <Row gutter={[24, 24]} style={{ display: isProEnv(ENV_INDEX) ? 'none' : '' }}>
           <Col>
             <Input
               value={initialState.address}
@@ -382,6 +490,10 @@ const Personal = () => {
             <a
               onClick={() => setInitialState({...initialState, address: '0x375d80da4271f5dcdf821802f981a765a0f11763'})}>matic:
               0x375d80da4271f5dcdf821802f981a765a0f11763</a>
+            <br/>
+            <a
+              onClick={() => setInitialState({...initialState, address: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'})}>晓天地址:
+              0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff</a>
             <br/>
             <p>该输入框为测试使用，发布前需要删除</p>
           </Col>
@@ -397,7 +509,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(totalAssets.toString(), getDecimals(), 2)}
+              total={() => toFixed(liveTotalAssets, getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
@@ -411,7 +523,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(bocBalance.toString(), getDecimals(), 2)}
+              total={() => toFixed(bocBalance, getDecimals(), 2)}
               contentHeight={100}
             />
           </Col>
@@ -498,6 +610,28 @@ const Personal = () => {
           <BarEchart option={option} style={{height: '100%', width: '100%'}}/>
         </Card>
       </Suspense>
+      <Modal
+        title="Set metamask's network to current?"
+        visible={showWarningModal}
+        onOk={() => changeNetwork(initialState.chain)}
+        onCancel={hideModal}
+        okText='ok'
+        cancelText='close'
+      >
+        <p>
+           Metamask Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}</span>
+        </p>
+        <p>
+          Current Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.chain] || initialState.chain}</span>
+        </p>
+        {!isEmpty(roleError) && (
+          <p>
+            Message：<span style={{ color: 'red', fontWeight: 'bold' }}>Error Vault address!</span>
+          </p>
+        )}
+      </Modal>
     </GridContent>
   )
 }
