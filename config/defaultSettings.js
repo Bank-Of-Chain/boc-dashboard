@@ -12,5 +12,6 @@ const Settings = {
   pwa: false,
   logo: '/logo.png',
   iconfontUrl: '',
+  textColor: '#fff'
 };
 export default Settings;
