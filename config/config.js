@@ -15,6 +15,8 @@ export default defineConfig({
   },
   antd: {
     dark: true,
+    // 启用紧凑模式
+    // compact: true,
   },
   dva: {
     hmr: true,
@@ -44,6 +46,10 @@ export default defineConfig({
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,
+    'text-color': defaultSettings.textColor,
+    'card-head-color': defaultSettings.textColor,
+    'table-header-color': defaultSettings.textColor,
+    'modal-heading-color': defaultSettings.textColor,
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild

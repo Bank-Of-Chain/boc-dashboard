@@ -42,16 +42,21 @@ const Strategy = props => {
     getStrategyById(id)
       .then(setStrategy)
       .catch(noop)
-    getBaseApyByPage({ chainId: initialState.chain, strategyAddress: id, sort: 'fetch_block desc' }, 0, 100).then(rs =>
-      map(rs.content, i => {
-        return {
-          value: i.lpApy,
-          date: moment(1000 * i.fetchTimestamp).format('yyyy-MM-DD'),
-        }
-      }),
+    getBaseApyByPage(
+      { chainId: initialState.chain, strategyAddress: id, sort: 'fetch_block desc' },
+      0,
+      100,
     )
-    .then(setApys)
-    .catch(noop)
+      .then(rs =>
+        map(rs.content, i => {
+          return {
+            value: i.lpApy,
+            date: moment(1000 * i.fetchTimestamp).format('yyyy-MM-DD'),
+          }
+        }),
+      )
+      .then(setApys)
+      .catch(noop)
     getStrategyApysOffChain(id, 0, 100)
       .then(rs =>
         map(rs.content, i => {
@@ -68,22 +73,22 @@ const Strategy = props => {
   useEffect(() => {
     let dates = _union(
       apys.map(o => {
-        return o.date;
+        return o.date
       }),
       offChainApys.map(o => {
         return o.date
       }),
     ).sort()
-    let bocApy = [];
+    let bocApy = []
     // let officialApy = []
     for (let i = 0; i < dates.length; i++) {
-        let apy = _find(apys, {'date': dates[i]});
-        if(apy && apy.value){
-          apy = Number(apy.value * 100).toFixed(2);
-        }else{
-          apy = null;
-        }
-        bocApy.push(apy);
+      let apy = _find(apys, { date: dates[i] })
+      if (apy && apy.value) {
+        apy = Number(apy.value * 100).toFixed(2)
+      } else {
+        apy = null
+      }
+      bocApy.push(apy)
       // let offChainApy = _find(offChainApys, { date: dates[i] })
       // if (offChainApy && offChainApy.value) {
       //   offChainApy = Number(offChainApy.value * 100).toFixed(2)
@@ -96,10 +101,10 @@ const Strategy = props => {
       legend: { data: ['Weekly APY'], textStyle: { color: '#fff' } },
       xAxisData: dates,
       data: [
-          {
-          "seriesName":'Weekly APY',
-          "seriesData": bocApy,
-          "color": 'rgba(169, 204, 245, 1)'
+        {
+          seriesName: 'Weekly APY',
+          seriesData: bocApy,
+          color: 'rgba(169, 204, 245, 1)',
         },
         // {
         //   seriesName: 'Official APY',
@@ -141,12 +146,14 @@ const Strategy = props => {
             <Col xl={10} lg={10} md={10} sm={22} xs={22}>
               <Descriptions
                 column={1}
-                title='Base Info'
+                title={<span style={{ color: '#fff' }}>Base Info</span>}
                 style={{
                   marginBottom: 32,
                 }}
+                labelStyle={{ color: '#fff' }}
+                contentStyle={{ color: '#fff' }}
               >
-                <Descriptions.Item label='name'>
+                <Descriptions.Item label='Name'>
                   <a
                     target={'_blank'}
                     rel='noreferrer'

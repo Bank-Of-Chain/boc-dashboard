@@ -429,6 +429,7 @@ const Reports = () => {
           <Table
             rowKey={record => record.id}
             columns={columns}
+            scroll={{ x: 1300 }}
             dataSource={data.list}
             pagination={{
               ...pagination,
@@ -447,7 +448,11 @@ const Reports = () => {
       >
         <Row>
           <Col span={24}>
-            <Descriptions title='Report Details'>
+            <Descriptions
+              title={<span style={{ color: '#fff' }}>Report Details</span>}
+              labelStyle={{ color: '#fff' }}
+              contentStyle={{ color: '#fff' }}
+            >
               <Descriptions.Item
                 label='Recommendation'
                 contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
@@ -521,12 +526,16 @@ const Reports = () => {
         cancelText='close'
       >
         <p>
-           Metamask Chain:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}</span>
+          Metamask Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>
+            {CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}
+          </span>
         </p>
         <p>
           Current Chain:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.chain] || initialState.chain}</span>
+          <span style={{ color: 'red', fontWeight: 'bold' }}>
+            {CHIANS_NAME[initialState.chain] || initialState.chain}
+          </span>
         </p>
         {!isEmpty(roleError) && (
           <p>

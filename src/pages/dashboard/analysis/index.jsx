@@ -95,6 +95,7 @@ const Analysis = () => {
         <Card loading={loading} bordered={false} bodyStyle={{padding: 0}} style={{marginTop: 24}}>
           <div className={styles.vaultKeyCard}>
             <Tabs
+              animated
               tabBarExtraContent={
                 <div>
                   <Tooltip title="last 7 days">
@@ -110,11 +111,6 @@ const Analysis = () => {
               }
               size="large"
             >
-              {/*<TabPane tab="APY" key="apy">*/}
-              {/*  <div className={styles.chartDiv}>*/}
-              {/*    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
-              {/*  </div>*/}
-              {/*</TabPane>*/}
               <TabPane tab="Share Price" key="sharePrice">
                 <div className={styles.chartDiv}>
                   <LineEchart option={sharePriceEchartOpt} style={{height: '100%', width: '100%'}}/>
