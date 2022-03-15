@@ -511,7 +511,7 @@ const Reports = () => {
               size='small'
               columns={detailsColumns}
               dataSource={displayData}
-              scroll={{ x: 1300, y: 500 }}
+              scroll={{ x: 1300, y: 400 }}
               pagination={false}
             />
           </Col>
