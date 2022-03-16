@@ -6,7 +6,7 @@ import moment from 'moment'
 import { GridContent } from '@ant-design/pro-layout'
 import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message } from 'antd'
 import Address from './../../../components/Address'
-import { Desktop, Tablet, Mobile, Default } from '@/components/Container/Container'
+import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 
 // === Services === //
 import { getReports, updateReportStatus } from './../../../services/api-service'
@@ -421,19 +421,6 @@ const Reports = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Default>
-          <Card loading={loading} bordered={false} title='Allocation Reports'>
-            <Table
-              rowKey={record => record.id}
-              columns={columns}
-              dataSource={data.list}
-              pagination={{
-                ...pagination,
-                showSizeChanger: false,
-              }}
-            />
-          </Card>
-        </Default>
         <Desktop>
           <Card loading={loading} bordered={false} title='Allocation Reports'>
             <Table
@@ -486,65 +473,6 @@ const Reports = () => {
       >
         <Row>
           <Col span={24}>
-            <Default>
-              <Descriptions
-                title={<span style={{ color: '#fff' }}>Report Details</span>}
-                labelStyle={{ color: '#fff' }}
-                contentStyle={{ color: '#fff' }}
-              >
-                <Descriptions.Item
-                  label='Recommendation'
-                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
-                >
-                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
-                  {isExec === 1 && 'Execute'}
-                </Descriptions.Item>
-                <Descriptions.Item label='Calculation Period'>
-                  {durationDays} days
-                </Descriptions.Item>
-                <Descriptions.Item label='Report Time'>
-                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
-                </Descriptions.Item>
-                <Descriptions.Item label='Allocation Profit'>
-                  {(-1 * fun).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Total Harvest Gas Fee'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
-                <br />
-                <Descriptions.Item label='Change Profits'>
-                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits Before'>
-                  {sum(originalGain).toFixed(6)} (APR:
-                  {totalAssets === undefined
-                    ? 0
-                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits After'>
-                  {sum(newGain).toFixed(6)} (APR:
-                  {newTotalAssets === undefined || totalAssets === undefined
-                    ? 0
-                    : (
-                        (365 * 100 * sum(newGain)) /
-                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
-                          durationDays)
-                      ).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-
-                <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Operate Gas Fee'>
-                  {sum(operateFee).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Exchange Loss'>
-                  {sum(exchangeLoss).toFixed(6)}
-                </Descriptions.Item>
-              </Descriptions>
-            </Default>
             <Desktop>
               <Descriptions
                 title={<span style={{ color: '#fff' }}>Report Details</span>}
@@ -726,15 +654,6 @@ const Reports = () => {
           </Col>
 
           <Col span={24}>
-            <Default>
-              <Table
-                bordered
-                columns={detailsColumns}
-                dataSource={displayData}
-                scroll={{ x: 1300, y: 400 }}
-                pagination={false}
-              />
-            </Default>
             <Desktop>
               <Table
                 bordered
