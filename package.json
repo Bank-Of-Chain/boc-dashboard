@@ -70,6 +70,7 @@
     "classnames": "^2.2.6",
     "echarts": "^5.2.2",
     "echarts-for-react": "^3.0.2",
+    "ethers": "^5.5.4",
     "gg-editor": "^2.0.2",
     "graphql": "^16.2.0",
     "lodash": "^4.17.11",
@@ -83,11 +84,11 @@
     "react-dom": "^17.0.0",
     "react-fittext": "^1.0.0",
     "react-helmet-async": "^1.0.4",
+    "react-responsive": "^9.0.0-beta.6",
     "react-router": "^4.3.1",
     "umi": "^3.5.0",
     "umi-serve": "^1.9.10",
-    "web3modal": "^1.9.5",
-    "ethers": "^5.5.4"
+    "web3modal": "^1.9.5"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.0.2",
