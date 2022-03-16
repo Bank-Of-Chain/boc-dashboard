@@ -27,6 +27,7 @@ export async function getInitialState() {
 
 export const layout = ({ initialState, setInitialState }) => {
   return {
+    logo: <img src="/logo.png" alt="logo" onClick={() => history.push('/')} />,
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
@@ -45,6 +46,7 @@ export const layout = ({ initialState, setInitialState }) => {
     },
     links: [],
     menuHeaderRender: undefined,
+    collapsedButtonRender: () => null,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings,
