@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react'
+import React, { useState, Suspense, useEffect } from 'react'
 import { useRequest, useModel } from 'umi'
 import moment from 'moment'
 
@@ -6,6 +6,7 @@ import moment from 'moment'
 import { GridContent } from '@ant-design/pro-layout'
 import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message } from 'antd'
 import Address from './../../../components/Address'
+import { Desktop, Tablet, Mobile, Default } from '@/components/Container/Container'
 
 // === Services === //
 import { getReports, updateReportStatus } from './../../../services/api-service'
@@ -34,7 +35,6 @@ import { isProEnv } from '@/services/env-service'
 
 // === Styles === //
 import styles from './reports.less'
-import { useEffect } from 'react'
 
 const usdtDecimals = getDecimals()
 
@@ -43,8 +43,7 @@ const detailsColumns = [
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    fixed: 'left',
-    width: 200,
+    width: '14rem',
     ellipsis: true,
     render: (text, item, index) => {
       return (
@@ -58,8 +57,6 @@ const detailsColumns = [
     title: 'Assets (Before)',
     dataIndex: 'originalAmount',
     key: 'originalAmount',
-    fixed: 'left',
-    width: 100,
     render: value => {
       return <span>{toFixed(value, usdtDecimals, 2)}</span>
     },
@@ -68,8 +65,6 @@ const detailsColumns = [
     title: 'Assets (After)',
     dataIndex: 'totalAmount',
     key: 'totalAmount',
-    fixed: 'left',
-    width: 100,
     render: value => {
       return <span>{toFixed(value, usdtDecimals, 2)}</span>
     },
@@ -86,7 +81,6 @@ const detailsColumns = [
     title: 'APR (Before)',
     dataIndex: 'originalApr',
     key: 'originalApr',
-    width: 100,
     render: value => {
       return <span>{(100 * value).toFixed(4)}%</span>
     },
@@ -95,7 +89,6 @@ const detailsColumns = [
     title: 'APR (After)',
     dataIndex: 'newApr',
     key: 'newApr',
-    width: 100,
     render: value => {
       return <span>{(100 * value).toFixed(4)}%</span>
     },
@@ -152,6 +145,7 @@ const detailsColumns = [
     title: 'Harvest Gas Fee',
     dataIndex: 'harvestFee',
     key: 'harvestFee',
+    width: '8rem',
     render: value => {
       return <span>{value.toFixed(2)}</span>
     },
@@ -284,6 +278,8 @@ const Reports = () => {
       title: 'Name',
       dataIndex: 'id',
       key: 'id',
+      fixed: 'left',
+      width: '11rem',
       render: (text, item, index) => <a onClick={() => setShowIndex(index)}>Report-{text}</a>,
     },
     {
@@ -330,7 +326,7 @@ const Reports = () => {
           .fromNow(),
     },
     {
-      width: 180,
+      width: '11rem',
       render: (text, record, index) => {
         const { id, reject, rejectTime, rejecter, type, geneTime } = record
         let rejectElement = null
@@ -425,18 +421,60 @@ const Reports = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Card loading={loading} bordered={false} title='Allocation Reports'>
-          <Table
-            rowKey={record => record.id}
-            columns={columns}
-            scroll={{ x: 1300 }}
-            dataSource={data.list}
-            pagination={{
-              ...pagination,
-              showSizeChanger: false,
-            }}
-          />
-        </Card>
+        <Default>
+          <Card loading={loading} bordered={false} title='Allocation Reports'>
+            <Table
+              rowKey={record => record.id}
+              columns={columns}
+              dataSource={data.list}
+              pagination={{
+                ...pagination,
+                showSizeChanger: false,
+              }}
+            />
+          </Card>
+        </Default>
+        <Desktop>
+          <Card loading={loading} bordered={false} title='Allocation Reports'>
+            <Table
+              rowKey={record => record.id}
+              columns={columns}
+              dataSource={data.list}
+              pagination={{
+                ...pagination,
+                showSizeChanger: false,
+              }}
+            />
+          </Card>
+        </Desktop>
+        <Tablet>
+          <Card loading={loading} bordered={false} title='Allocation Reports' size='small'>
+            <Table
+              rowKey={record => record.id}
+              columns={columns}
+              size='small'
+              dataSource={data.list}
+              pagination={{
+                ...pagination,
+                showSizeChanger: false,
+              }}
+            />
+          </Card>
+        </Tablet>
+        <Mobile>
+          <Card loading={loading} bordered={false} title='Allocation Reports' size='small'>
+            <Table
+              rowKey={record => record.id}
+              columns={columns}
+              size='small'
+              dataSource={data.list}
+              pagination={{
+                ...pagination,
+                showSizeChanger: false,
+              }}
+            />
+          </Card>
+        </Mobile>
       </Suspense>
       <Modal
         title={''}
@@ -448,72 +486,284 @@ const Reports = () => {
       >
         <Row>
           <Col span={24}>
-            <Descriptions
-              title={<span style={{ color: '#fff' }}>Report Details</span>}
-              labelStyle={{ color: '#fff' }}
-              contentStyle={{ color: '#fff' }}
-            >
-              <Descriptions.Item
-                label='Recommendation'
-                contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
+            <Default>
+              <Descriptions
+                title={<span style={{ color: '#fff' }}>Report Details</span>}
+                labelStyle={{ color: '#fff' }}
+                contentStyle={{ color: '#fff' }}
               >
-                {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
-                {isExec === 1 && 'Execute'}
-              </Descriptions.Item>
-              <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
-              <Descriptions.Item label='Report Time'>
-                {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
-              </Descriptions.Item>
-              <Descriptions.Item label='Allocation Profit'>
-                {(-1 * fun).toFixed(6)}
-              </Descriptions.Item>
-              <Descriptions.Item label='Total Harvest Gas Fee'>
-                {sum(harvestFee).toFixed(6)}
-              </Descriptions.Item>
-              <br />
-              <Descriptions.Item label='Change Profits'>
-                {(sum(newGain) - sum(originalGain)).toFixed(6)}
-              </Descriptions.Item>
-              <Descriptions.Item label='Profits Before'>
-                {sum(originalGain).toFixed(6)} (APR:
-                {totalAssets === undefined
-                  ? 0
-                  : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
-                %)
-              </Descriptions.Item>
-              <Descriptions.Item label='Profits After'>
-                {sum(newGain).toFixed(6)} (APR:
-                {newTotalAssets === undefined || totalAssets === undefined
-                  ? 0
-                  : (
-                      (365 * 100 * sum(newGain)) /
-                      ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
-                        durationDays)
-                    ).toFixed(2)}
-                %)
-              </Descriptions.Item>
+                <Descriptions.Item
+                  label='Recommendation'
+                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
+                >
+                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
+                  {isExec === 1 && 'Execute'}
+                </Descriptions.Item>
+                <Descriptions.Item label='Calculation Period'>
+                  {durationDays} days
+                </Descriptions.Item>
+                <Descriptions.Item label='Report Time'>
+                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
+                </Descriptions.Item>
+                <Descriptions.Item label='Allocation Profit'>
+                  {(-1 * fun).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Total Harvest Gas Fee'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <br />
+                <Descriptions.Item label='Change Profits'>
+                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits Before'>
+                  {sum(originalGain).toFixed(6)} (APR:
+                  {totalAssets === undefined
+                    ? 0
+                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
+                  %)
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits After'>
+                  {sum(newGain).toFixed(6)} (APR:
+                  {newTotalAssets === undefined || totalAssets === undefined
+                    ? 0
+                    : (
+                        (365 * 100 * sum(newGain)) /
+                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
+                          durationDays)
+                      ).toFixed(2)}
+                  %)
+                </Descriptions.Item>
 
-              <Descriptions.Item label='Allocation Cost'>
-                {sum(operateLoss).toFixed(6)}
-              </Descriptions.Item>
-              <Descriptions.Item label='Operate Gas Fee'>
-                {sum(operateFee).toFixed(6)}
-              </Descriptions.Item>
-              <Descriptions.Item label='Exchange Loss'>
-                {sum(exchangeLoss).toFixed(6)}
-              </Descriptions.Item>
-            </Descriptions>
+                <Descriptions.Item label='Allocation Cost'>
+                  {sum(operateLoss).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Operate Gas Fee'>
+                  {sum(operateFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Exchange Loss'>
+                  {sum(exchangeLoss).toFixed(6)}
+                </Descriptions.Item>
+              </Descriptions>
+            </Default>
+            <Desktop>
+              <Descriptions
+                title={<span style={{ color: '#fff' }}>Report Details</span>}
+                labelStyle={{ color: '#fff' }}
+                contentStyle={{ color: '#fff' }}
+              >
+                <Descriptions.Item
+                  label='Recommendation'
+                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
+                >
+                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
+                  {isExec === 1 && 'Execute'}
+                </Descriptions.Item>
+                <Descriptions.Item label='Calculation Period'>
+                  {durationDays} days
+                </Descriptions.Item>
+                <Descriptions.Item label='Report Time'>
+                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
+                </Descriptions.Item>
+                <Descriptions.Item label='Allocation Profit'>
+                  {(-1 * fun).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Total Harvest Gas Fee'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <br />
+                <Descriptions.Item label='Change Profits'>
+                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits Before'>
+                  {sum(originalGain).toFixed(6)} (APR:
+                  {totalAssets === undefined
+                    ? 0
+                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
+                  %)
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits After'>
+                  {sum(newGain).toFixed(6)} (APR:
+                  {newTotalAssets === undefined || totalAssets === undefined
+                    ? 0
+                    : (
+                        (365 * 100 * sum(newGain)) /
+                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
+                          durationDays)
+                      ).toFixed(2)}
+                  %)
+                </Descriptions.Item>
+
+                <Descriptions.Item label='Allocation Cost'>
+                  {sum(operateLoss).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Operate Gas Fee'>
+                  {sum(operateFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Exchange Loss'>
+                  {sum(exchangeLoss).toFixed(6)}
+                </Descriptions.Item>
+              </Descriptions>
+            </Desktop>
+            <Tablet>
+              <Descriptions
+                size='small'
+                title={<span style={{ color: '#fff' }}>Report Details</span>}
+                labelStyle={{ color: '#fff', fontSize: '0.3rem' }}
+                contentStyle={{ color: '#fff', fontSize: '0.3rem' }}
+              >
+                <Descriptions.Item
+                  label='Recommendation'
+                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
+                >
+                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
+                  {isExec === 1 && 'Execute'}
+                </Descriptions.Item>
+                <Descriptions.Item label='Calculation Period'>
+                  {durationDays} days
+                </Descriptions.Item>
+                <Descriptions.Item label='Report Time'>
+                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
+                </Descriptions.Item>
+                <Descriptions.Item label='Allocation Profit'>
+                  {(-1 * fun).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Total Harvest Gas Fee'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <br />
+                <Descriptions.Item label='Change Profits'>
+                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits Before'>
+                  {sum(originalGain).toFixed(6)} (APR:
+                  {totalAssets === undefined
+                    ? 0
+                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
+                  %)
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits After'>
+                  {sum(newGain).toFixed(6)} (APR:
+                  {newTotalAssets === undefined || totalAssets === undefined
+                    ? 0
+                    : (
+                        (365 * 100 * sum(newGain)) /
+                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
+                          durationDays)
+                      ).toFixed(2)}
+                  %)
+                </Descriptions.Item>
+
+                <Descriptions.Item label='Allocation Cost'>
+                  {sum(operateLoss).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Operate Gas Fee'>
+                  {sum(operateFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Exchange Loss'>
+                  {sum(exchangeLoss).toFixed(6)}
+                </Descriptions.Item>
+              </Descriptions>
+            </Tablet>
+            <Mobile>
+              <Descriptions
+                size='small'
+                title={<span style={{ color: '#fff' }}>Report Details</span>}
+                labelStyle={{ color: '#fff' }}
+                contentStyle={{ color: '#fff' }}
+              >
+                <Descriptions.Item
+                  label='Recommendation'
+                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
+                >
+                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
+                  {isExec === 1 && 'Execute'}
+                </Descriptions.Item>
+                <Descriptions.Item label='Calculation Period'>
+                  {durationDays} days
+                </Descriptions.Item>
+                <Descriptions.Item label='Report Time'>
+                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
+                </Descriptions.Item>
+                <Descriptions.Item label='Allocation Profit'>
+                  {(-1 * fun).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Total Harvest Gas Fee'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Change Profits'>
+                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits Before'>
+                  {sum(originalGain).toFixed(6)} (APR:
+                  {totalAssets === undefined
+                    ? 0
+                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
+                  %)
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits After'>
+                  {sum(newGain).toFixed(6)} (APR:
+                  {newTotalAssets === undefined || totalAssets === undefined
+                    ? 0
+                    : (
+                        (365 * 100 * sum(newGain)) /
+                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
+                          durationDays)
+                      ).toFixed(2)}
+                  %)
+                </Descriptions.Item>
+
+                <Descriptions.Item label='Allocation Cost'>
+                  {sum(operateLoss).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Operate Gas Fee'>
+                  {sum(operateFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Exchange Loss'>
+                  {sum(exchangeLoss).toFixed(6)}
+                </Descriptions.Item>
+              </Descriptions>
+            </Mobile>
           </Col>
 
           <Col span={24}>
-            <Table
-              bordered
-              size='small'
-              columns={detailsColumns}
-              dataSource={displayData}
-              scroll={{ x: 1300, y: 400 }}
-              pagination={false}
-            />
+            <Default>
+              <Table
+                bordered
+                columns={detailsColumns}
+                dataSource={displayData}
+                scroll={{ x: 1300, y: 400 }}
+                pagination={false}
+              />
+            </Default>
+            <Desktop>
+              <Table
+                bordered
+                columns={detailsColumns}
+                dataSource={displayData}
+                scroll={{ x: 1300, y: 400 }}
+                pagination={false}
+              />
+            </Desktop>
+            <Tablet>
+              <Table
+                bordered
+                size='small'
+                columns={detailsColumns}
+                dataSource={displayData}
+                scroll={{ x: 1300, y: 400 }}
+                pagination={false}
+              />
+            </Tablet>
+            <Mobile>
+              <Table
+                bordered
+                size='small'
+                columns={detailsColumns}
+                dataSource={displayData}
+                scroll={{ x: 1300, y: 400 }}
+                pagination={false}
+              />
+            </Mobile>
           </Col>
         </Row>
       </Modal>
