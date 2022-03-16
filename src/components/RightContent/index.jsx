@@ -101,7 +101,7 @@ const GlobalHeaderRight = () => {
       <Select
         value={initialState.chain}
         defaultValue={ETH.id}
-        style={{ width: 100 }}
+        style={{ width: '7.5rem' }}
         onChange={changeChain}
       >
         {map(CHAINS, i => (
