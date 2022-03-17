@@ -246,7 +246,7 @@ const Strategy = props => {
                   labelStyle={{ color: '#fff' }}
                   contentStyle={{ color: '#fff' }}
                 >
-                  <Descriptions.Item label='Icon'>
+                  <Descriptions.Item label='Platform'>
                     <Image
                       preview={false}
                       width={24}

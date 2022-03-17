@@ -147,7 +147,6 @@ const detailsColumns = [
     title: 'Harvest Gas Fee',
     dataIndex: 'harvestFee',
     key: 'harvestFee',
-    width: '8rem',
     render: value => {
       return <span>{value.toFixed(2)}</span>
     },
@@ -281,7 +280,6 @@ const Reports = () => {
       dataIndex: 'id',
       key: 'id',
       fixed: 'left',
-      width: '11rem',
       render: (text, item, index) => <a onClick={() => setShowIndex(index)}>Report-{text}</a>,
     },
     {
@@ -332,7 +330,8 @@ const Reports = () => {
           .fromNow(),
     },
     {
-      width: '11rem',
+      title: 'Operation',
+      width: '7rem',
       render: (text, record, index) => {
         const { id, reject, rejectTime, rejecter, type, geneTime } = record
         let rejectElement = null
@@ -542,8 +541,8 @@ const Reports = () => {
               <Descriptions
                 size='small'
                 title={<span style={{ color: '#fff' }}>Report Details</span>}
-                labelStyle={{ color: '#fff', fontSize: '0.3rem' }}
-                contentStyle={{ color: '#fff', fontSize: '0.3rem' }}
+                labelStyle={{ color: '#fff', fontSize: '0.7rem' }}
+                contentStyle={{ color: '#fff', fontSize: '0.7rem' }}
               >
                 <Descriptions.Item
                   label='Recommendation'

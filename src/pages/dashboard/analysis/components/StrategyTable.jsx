@@ -62,6 +62,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
+      width: 220,
       render: text => <CoinSuperPosition array={text} />,
     },
     {
