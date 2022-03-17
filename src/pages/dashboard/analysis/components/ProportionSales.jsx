@@ -110,7 +110,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           radius={1}
           innerRadius={0.75}
           angleField='amount'
-          colorField='name'
+          colorField='Protocol'
           data={tableData}
           legend={{
             visible: true,
@@ -125,7 +125,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
             type: 'spider',
             offset: 20,
             formatter: (text, item) => {
-              return `${item._origin.name}: ${item._origin.amount}`
+              return `${item._origin.Protocol}: ${item._origin.amount}`
             },
           }}
           tooltip={{
@@ -154,7 +154,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           radius={1}
           innerRadius={0.75}
           angleField='amount'
-          colorField='name'
+          colorField='Protocol'
           data={tableData}
           legend={{
             position: 'top',
@@ -170,7 +170,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
             type: 'spider',
             offset: 20,
             formatter: (text, item) => {
-              return `${item._origin.name}: ${item._origin.amount}`
+              return `${item._origin.Protocol}: ${item._origin.amount}`
             },
           }}
           tooltip={{
