@@ -85,7 +85,8 @@ export default defineConfig({
   define: {
     ENV_INDEX: 'pro',
     API_SERVER: 'https://service.bankofchain.io',
-    IMAGE_ROOT: 'https://dashboard.bankofchain.io',
+    DASHBOARD_ROOT: 'https://dashboard.bankofchain.io',
+    IMAGE_ROOT: 'https://web.bankofchain.io',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
