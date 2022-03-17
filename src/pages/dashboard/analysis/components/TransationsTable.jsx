@@ -66,7 +66,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Detail',
       dataIndex: 'id',
       key: 'id',
-      width: '4rem',
+      width: '6rem',
       ellipsis: {
         showTitle: false,
       },

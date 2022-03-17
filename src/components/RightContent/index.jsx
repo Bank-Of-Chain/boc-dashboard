@@ -23,6 +23,9 @@ import styles from './index.less'
 
 const { Option } = Select
 
+// 以下路由时，不展示头部的切链下拉框
+const enabledChangeChainRoute = ['/strategy']
+
 const GlobalHeaderRight = () => {
   const className = `${styles.right}  ${styles.dark}`
 
@@ -45,7 +48,7 @@ const GlobalHeaderRight = () => {
     })
   }
   const changeNetwork = id => {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       const targetNetwork = find(CHAINS, { id })
       console.log('targetNetwork=', targetNetwork)
       if (isEmpty(targetNetwork)) return
@@ -98,18 +101,20 @@ const GlobalHeaderRight = () => {
 
   return (
     <Space className={className}>
-      <Select
-        value={initialState.chain}
-        defaultValue={ETH.id}
-        style={{ width: '7.5rem' }}
-        onChange={changeChain}
-      >
-        {map(CHAINS, i => (
-          <Option key={i.id} value={i.id}>
-            {i.name}
-          </Option>
-        ))}
-      </Select>
+      {!enabledChangeChainRoute.includes(history.location.pathname) && (
+        <Select
+          value={initialState.chain}
+          defaultValue={ETH.id}
+          style={{ width: '7.5rem' }}
+          onChange={changeChain}
+        >
+          {map(CHAINS, i => (
+            <Option key={i.id} value={i.id}>
+              {i.name}
+            </Option>
+          ))}
+        </Select>
+      )}
       {isLoading ? (
         <LoadingOutlined style={{ fontSize: 24 }} spin />
       ) : !isEmpty(address) ? (
