@@ -81,6 +81,7 @@ const detailsColumns = [
     title: 'APR (Before)',
     dataIndex: 'originalApr',
     key: 'originalApr',
+    width: '6rem',
     render: value => {
       return <span>{(100 * value).toFixed(4)}%</span>
     },
@@ -89,6 +90,7 @@ const detailsColumns = [
     title: 'APR (After)',
     dataIndex: 'newApr',
     key: 'newApr',
+    width: '6rem',
     render: value => {
       return <span>{(100 * value).toFixed(4)}%</span>
     },
