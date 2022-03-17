@@ -63,18 +63,18 @@ export default defineConfig({
   // Fast Refresh 热更新
   fastRefresh: {},
   openAPI: [
-    {
-      requestLibPath: "import { request } from 'umi'",
-      // 或者使用在线的版本
-      // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-      schemaPath: join(__dirname, 'oneapi.json'),
-      mock: false,
-    },
-    {
-      requestLibPath: "import { request } from 'umi'",
-      schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-      projectName: 'swagger',
-    },
+    // {
+    //   requestLibPath: "import { request } from 'umi'",
+    //   // 或者使用在线的版本
+    //   // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
+    //   schemaPath: join(__dirname, 'oneapi.json'),
+    //   mock: false,
+    // },
+    // {
+    //   requestLibPath: "import { request } from 'umi'",
+    //   schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
+    //   projectName: 'swagger',
+    // },
   ],
   nodeModulesTransform: {
     type: 'none',
@@ -85,7 +85,8 @@ export default defineConfig({
   define: {
     ENV_INDEX: 'pro',
     API_SERVER: 'https://service.bankofchain.io',
-    IMAGE_ROOT: 'https://dashboard.bankofchain.io',
+    DASHBOARD_ROOT: 'https://dashboard.bankofchain.io',
+    IMAGE_ROOT: 'https://web.bankofchain.io',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
