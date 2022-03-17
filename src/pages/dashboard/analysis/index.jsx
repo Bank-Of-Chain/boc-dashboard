@@ -234,7 +234,7 @@ const Analysis = () => {
             </div>
           </Tablet>
           <Mobile>
-            <div className={styles.vaultKeyCard} style={{ height: '200px' }}>
+            <div className={styles.vaultKeyCard}>
               <Tabs
                 animated
                 size='small'

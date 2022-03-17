@@ -235,7 +235,7 @@ const Strategy = props => {
             bordered={false}
           >
             <Row justify='space-around'>
-              <Col xl={10} lg={10} md={10} sm={22} xs={22}>
+              <Col xl={10} lg={10} md={10} sm={24} xs={24}>
                 <Descriptions
                   size='small'
                   column={1}
@@ -246,6 +246,17 @@ const Strategy = props => {
                   labelStyle={{ color: '#fff' }}
                   contentStyle={{ color: '#fff' }}
                 >
+                  <Descriptions.Item label='Icon'>
+                    <Image
+                      preview={false}
+                      width={24}
+                      style={{ backgroundColor: '#fff', borderRadius: '50%' }}
+                      src={`${IMAGE_ROOT}/images/amms/${
+                        STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]
+                      }.png`}
+                      fallback={`${IMAGE_ROOT}/default.png`}
+                    />
+                  </Descriptions.Item>
                   <Descriptions.Item label='Name'>
                     <a
                       target={'_blank'}
@@ -264,17 +275,6 @@ const Strategy = props => {
                   </Descriptions.Item>
                   <Descriptions.Item label='Status'>Active</Descriptions.Item>
                 </Descriptions>
-              </Col>
-              <Col xl={8} lg={8} md={8} sm={22} xs={22} style={{ margin: '0 auto' }}>
-                <Image
-                  preview={false}
-                  width={200}
-                  style={{ backgroundColor: '#fff', borderRadius: '50%' }}
-                  src={`${IMAGE_ROOT}/images/amms/${
-                    STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]
-                  }.png`}
-                  fallback={`${IMAGE_ROOT}/default.png`}
-                />
               </Col>
             </Row>
           </Card>
@@ -336,7 +336,7 @@ const Strategy = props => {
             <div
               style={{
                 padding: '0 24px',
-                height: 400,
+                height: 280,
               }}
             >
               <LineEchart option={apysEchartOpt} style={{ height: '100%', width: '100%' }} />
