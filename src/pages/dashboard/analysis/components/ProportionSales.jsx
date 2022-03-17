@@ -44,13 +44,13 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           BN(0),
         )
         return {
-          name: STRATEGIES_MAP[initialState.chain][key],
+          Protocol: STRATEGIES_MAP[initialState.chain][key],
           amount: toFixed(amount, getDecimals(), 2),
         }
       }),
     ),
     {
-      name: 'Vault',
+      Protocol: 'Vault',
       amount: toFixed(vaultPoolValue, getDecimals(), 2),
     },
   ]
@@ -66,7 +66,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           radius={1}
           innerRadius={0.75}
           angleField='amount'
-          colorField='name'
+          colorField='Protocol'
           data={tableData}
           legend={{
             visible: true,
@@ -81,7 +81,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
             type: 'spider',
             offset: 20,
             formatter: (text, item) => {
-              return `${item._origin.name}: ${item._origin.amount}`
+              return `${item._origin.Protocol}: ${item._origin.amount}`
             },
           }}
           tooltip={{
