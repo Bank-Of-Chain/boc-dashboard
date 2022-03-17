@@ -9,7 +9,7 @@ export default defineConfig({
     ENV_INDEX: 'debug',
     API_SERVER: 'http://192.168.60.12:8080',
     DASHBOARD_ROOT: 'http://192.168.60.12/dashboard',
-    IMAGE_ROOT:'http://192.168.60.12/',
+    IMAGE_ROOT:'http://192.168.60.12',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',
