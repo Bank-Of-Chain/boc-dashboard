@@ -238,7 +238,7 @@ const Analysis = () => {
               <Tabs
                 animated
                 size='small'
-                tabBarGutter={8}
+                tabBarGutter={16}
                 tabBarExtraContent={
                   <div>
                     <Tooltip title='last 7 days'>
