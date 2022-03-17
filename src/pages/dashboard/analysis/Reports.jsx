@@ -295,15 +295,19 @@ const Reports = () => {
       render: text => {
         if (text === 1)
           return (
-            <Tag key={text} color='#2db7f5'>
-              DoHardwork
-            </Tag>
+            <span>
+              <Tag key={text} color='#2db7f5'>
+                DoHardwork
+              </Tag>
+            </span>
           )
         if (text === 2)
           return (
-            <Tag key={text} color='#87d068'>
-              Allocation
-            </Tag>
+            <span>
+              <Tag key={text} color='#87d068'>
+                Allocation
+              </Tag>
+            </span>
           )
       },
     },

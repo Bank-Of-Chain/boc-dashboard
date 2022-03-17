@@ -134,7 +134,7 @@ const Strategy = props => {
         <Desktop>
           <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false}>
             <Row justify='space-around'>
-              <Col xl={8} lg={8} md={8} sm={22} xs={22} style={{ margin: '0 auto' }}>
+              <Col xl={8} lg={8} md={8} sm={22} xs={22} style={{ margin: '0 auto 16px' }}>
                 <Image
                   preview={false}
                   width={200}
