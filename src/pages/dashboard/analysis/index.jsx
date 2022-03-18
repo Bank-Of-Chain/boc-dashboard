@@ -91,8 +91,25 @@ const Analysis = () => {
             'USDT',
             true,
             calDateRange > 7
-              ? { format: 'MM-DD', smooth: false, step: 'end' }
-              : { smooth: false, step: 'end' },
+              ? {
+                  format: 'MM-DD',
+                  smooth: false,
+                  step: 'end',
+                  xAxis: {
+                    axisTick: {
+                      alignWithLabel: true,
+                    },
+                  },
+                }
+              : {
+                  smooth: false,
+                  step: 'end',
+                  xAxis: {
+                    axisTick: {
+                      alignWithLabel: true,
+                    },
+                  },
+                },
           ),
         )
         setTvlEchartOpt(
@@ -101,7 +118,22 @@ const Analysis = () => {
             'tvl',
             'USDT',
             true,
-            calDateRange > 7 ? { format: 'MM-DD' } : undefined,
+            calDateRange > 7
+              ? {
+                  format: 'MM-DD',
+                  xAxis: {
+                    axisTick: {
+                      alignWithLabel: true,
+                    },
+                  },
+                }
+              : {
+                  xAxis: {
+                    axisTick: {
+                      alignWithLabel: true,
+                    },
+                  },
+                },
           ),
         )
       })

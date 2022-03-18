@@ -383,6 +383,9 @@ const Personal = () => {
       axisLine: {onZero: true},
       splitLine: {show: false},
       splitArea: {show: false},
+      axisTick:{
+        alignWithLabel: true
+      },
     },
     yAxis: {},
     grid: {},
@@ -424,7 +427,12 @@ const Personal = () => {
       dataZoom: [{
         start: 0,
         end: 100
-      }]
+      }],
+      xAxis: {
+        axisTick:{
+          alignWithLabel: true
+        },
+      }
     },
   )
   const changeNetwork = async id => {
