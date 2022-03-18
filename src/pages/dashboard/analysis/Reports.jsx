@@ -331,7 +331,7 @@ const Reports = () => {
     },
     {
       title: 'Operation',
-      width: '7rem',
+      width: '10rem',
       render: (text, record, index) => {
         const { id, reject, rejectTime, rejecter, type, geneTime } = record
         let rejectElement = null
@@ -372,7 +372,9 @@ const Reports = () => {
         return (
           <Row>
             <Col md={12}>
-              <a onClick={() => setShowIndex(index)}>View</a>
+              <a style={{ marginRight: '1rem' }} onClick={() => setShowIndex(index)}>
+                View
+              </a>
             </Col>
             <Col md={12}>{rejectElement}</Col>
           </Row>
