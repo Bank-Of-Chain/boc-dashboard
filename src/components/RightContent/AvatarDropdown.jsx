@@ -39,7 +39,7 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
         <Button icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
-          Individual
+          My Dashboard
         </Button>
         <Address size='short' wrapClassName={`${styles.name} anticon`} address={address} />
         <Avatar
