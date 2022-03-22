@@ -60,7 +60,7 @@ const IntroduceRow = ({loading, visitData = {}}) => {
           loading={loading}
           title="APY (last 30 days)"
           action={
-            <Tooltip title={`Yield over the past 1 month ${initialState.chain === '1' ? '(From Feb. 8)' : ''}`}>
+            <Tooltip title={`Yield over the past 1 month`}>
               <InfoCircleOutlined />
             </Tooltip>
           }
