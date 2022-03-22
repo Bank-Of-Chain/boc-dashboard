@@ -68,7 +68,6 @@ const IntroduceRow = ({loading, visitData = {}}) => {
           contentHeight={70}
          />
       </Col>
-
     </Row>
   );
 };
