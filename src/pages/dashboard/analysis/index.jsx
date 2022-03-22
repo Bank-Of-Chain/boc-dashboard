@@ -21,10 +21,10 @@ import {
 } from './../../../services/dashboard-service'
 
 // === Utils === //
-import numeral from 'numeral'
-import { map, isEmpty } from 'lodash'
-import { getDecimals } from './../../../apollo/client'
-import { arrayAppendOfDay } from './../../../helper/array-append'
+import numeral from "numeral";
+import {map, isEmpty} from 'lodash';
+import {getDecimals} from './../../../apollo/client';
+import {arrayAppendOfDay, usedPreValue} from './../../../helper/array-append';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 
 // === Styles === //
@@ -56,10 +56,11 @@ const Analysis = () => {
   }, [vaultAddress])
 
   useEffect(() => {
-    getVaultDailyData(calDateRange + 30)
-      .then(array => arrayAppendOfDay(array, calDateRange + 30))
-      .then(array =>
-        map(array, item => {
+    getVaultDailyData(calDateRange + 30).then((array) => arrayAppendOfDay(array, calDateRange + 30))
+      .then((array) => usedPreValue(array, 'totalShares', undefined))
+      .then((array) => usedPreValue(array, 'tvl', undefined))
+      .then((array) =>
+        map(array, (item) => {
           return {
             id: item.id,
             date: 1000 * item.id,
