@@ -14,6 +14,7 @@ import STRATEGIES_MAP from '../../../constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from './components/CoinSuperPosition/index'
+import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 
 // === Utils === //
 import { toFixed } from '../../../helper/number-format'
@@ -42,16 +43,21 @@ const Strategy = props => {
     getStrategyById(id)
       .then(setStrategy)
       .catch(noop)
-    getBaseApyByPage({ chainId: initialState.chain, strategyAddress: id, sort: 'fetch_block desc' }, 0, 100).then(rs =>
-      map(rs.content, i => {
-        return {
-          value: i.lpApy,
-          date: moment(1000 * i.fetchTimestamp).format('yyyy-MM-DD'),
-        }
-      }),
+    getBaseApyByPage(
+      { chainId: initialState.chain, strategyAddress: id, sort: 'fetch_block desc' },
+      0,
+      100,
     )
-    .then(setApys)
-    .catch(noop)
+      .then(rs =>
+        map(rs.content, i => {
+          return {
+            value: i.lpApy,
+            date: moment(1000 * i.fetchTimestamp).format('yyyy-MM-DD'),
+          }
+        }),
+      )
+      .then(setApys)
+      .catch(noop)
     getStrategyApysOffChain(id, 0, 100)
       .then(rs =>
         map(rs.content, i => {
@@ -68,22 +74,22 @@ const Strategy = props => {
   useEffect(() => {
     let dates = _union(
       apys.map(o => {
-        return o.date;
+        return o.date
       }),
       offChainApys.map(o => {
         return o.date
       }),
     ).sort()
-    let bocApy = [];
+    let bocApy = []
     // let officialApy = []
     for (let i = 0; i < dates.length; i++) {
-        let apy = _find(apys, {'date': dates[i]});
-        if(apy && apy.value){
-          apy = Number(apy.value * 100).toFixed(2);
-        }else{
-          apy = null;
-        }
-        bocApy.push(apy);
+      let apy = _find(apys, { date: dates[i] })
+      if (apy && apy.value) {
+        apy = Number(apy.value * 100).toFixed(2)
+      } else {
+        apy = null
+      }
+      bocApy.push(apy)
       // let offChainApy = _find(offChainApys, { date: dates[i] })
       // if (offChainApy && offChainApy.value) {
       //   offChainApy = Number(offChainApy.value * 100).toFixed(2)
@@ -96,10 +102,10 @@ const Strategy = props => {
       legend: { data: ['Weekly APY'], textStyle: { color: '#fff' } },
       xAxisData: dates,
       data: [
-          {
-          "seriesName":'Weekly APY',
-          "seriesData": bocApy,
-          "color": 'rgba(169, 204, 245, 1)'
+        {
+          seriesName: 'Weekly APY',
+          seriesData: bocApy,
+          color: 'rgba(169, 204, 245, 1)',
         },
         // {
         //   seriesName: 'Official APY',
@@ -125,68 +131,218 @@ const Strategy = props => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false}>
-          <Row justify='space-around'>
-            <Col xl={8} lg={8} md={8} sm={22} xs={22} style={{ margin: '0 auto' }}>
-              <Image
-                preview={false}
-                width={200}
-                style={{ backgroundColor: '#fff', borderRadius: '50%' }}
-                src={`https://bankofchain.io/images/amms/${
-                  STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]
-                }.png`}
-                fallback={'https://bankofchain.io/default.webp'}
-              />
-            </Col>
-            <Col xl={10} lg={10} md={10} sm={22} xs={22}>
-              <Descriptions
-                column={1}
-                title='Base Info'
-                style={{
-                  marginBottom: 32,
-                }}
-              >
-                <Descriptions.Item label='name'>
-                  <a
-                    target={'_blank'}
-                    rel='noreferrer'
-                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.id}`}
-                  >
-                    {strategy.name}
-                  </a>
-                </Descriptions.Item>
-                <Descriptions.Item label='Underlying Token'>
-                  &nbsp;&nbsp;
-                  <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
-                </Descriptions.Item>
-                <Descriptions.Item label='Asset Value'>
-                  {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
-                </Descriptions.Item>
-                <Descriptions.Item label='Status'>Active</Descriptions.Item>
-              </Descriptions>
-            </Col>
-          </Row>
-        </Card>
+        <Desktop>
+          <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false}>
+            <Row justify='space-around'>
+              <Col xl={8} lg={8} md={8} sm={22} xs={22} style={{ margin: '0 auto 16px' }}>
+                <Image
+                  preview={false}
+                  width={200}
+                  style={{ backgroundColor: '#fff', borderRadius: '50%' }}
+                  src={`${IMAGE_ROOT}/images/amms/${
+                    STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]
+                  }.png`}
+                  fallback={`${IMAGE_ROOT}/default.webp`}
+                />
+              </Col>
+              <Col xl={10} lg={10} md={10} sm={22} xs={22}>
+                <Descriptions
+                  column={1}
+                  title={<span style={{ color: '#fff' }}>Base Info</span>}
+                  style={{
+                    marginBottom: 32,
+                  }}
+                  labelStyle={{ color: '#fff' }}
+                  contentStyle={{ color: '#fff' }}
+                >
+                  <Descriptions.Item label='Name'>
+                    <a
+                      target={'_blank'}
+                      rel='noreferrer'
+                      href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.id}`}
+                    >
+                      {strategy.name}
+                    </a>
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Underlying Token'>
+                    &nbsp;&nbsp;
+                    <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Asset Value'>
+                    {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Status'>Active</Descriptions.Item>
+                </Descriptions>
+              </Col>
+            </Row>
+          </Card>
+        </Desktop>
+        <Tablet>
+          <Card
+            size='small'
+            title={<LeftOutlined onClick={() => history.push('/')} />}
+            bordered={false}
+          >
+            <Row justify='space-around'>
+              <Col xl={8} lg={8} md={8} sm={22} xs={22} style={{ margin: '0 auto' }}>
+                <Image
+                  preview={false}
+                  width={200}
+                  style={{ backgroundColor: '#fff', borderRadius: '50%' }}
+                  src={`${IMAGE_ROOT}/images/amms/${
+                    STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]
+                  }.png`}
+                  fallback={`${IMAGE_ROOT}/default.webp`}
+                />
+              </Col>
+              <Col xl={10} lg={10} md={10} sm={22} xs={22}>
+                <Descriptions
+                  size='small'
+                  column={1}
+                  title={<span style={{ color: '#fff' }}>Base Info</span>}
+                  style={{
+                    marginBottom: 32,
+                  }}
+                  labelStyle={{ color: '#fff' }}
+                  contentStyle={{ color: '#fff' }}
+                >
+                  <Descriptions.Item label='Name'>
+                    <a
+                      target={'_blank'}
+                      rel='noreferrer'
+                      href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.id}`}
+                    >
+                      {strategy.name}
+                    </a>
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Underlying Token'>
+                    &nbsp;&nbsp;
+                    <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Asset Value'>
+                    {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Status'>Active</Descriptions.Item>
+                </Descriptions>
+              </Col>
+            </Row>
+          </Card>
+        </Tablet>
+        <Mobile>
+          <Card
+            size='small'
+            title={<LeftOutlined onClick={() => history.push('/')} />}
+            bordered={false}
+          >
+            <Row justify='space-around'>
+              <Col xl={10} lg={10} md={10} sm={24} xs={24}>
+                <Descriptions
+                  size='small'
+                  column={1}
+                  title={<span style={{ color: '#fff' }}>Base Info</span>}
+                  style={{
+                    marginBottom: 32,
+                  }}
+                  labelStyle={{ color: '#fff' }}
+                  contentStyle={{ color: '#fff' }}
+                >
+                  <Descriptions.Item label='Platform'>
+                    <Image
+                      preview={false}
+                      width={24}
+                      style={{ backgroundColor: '#fff', borderRadius: '50%' }}
+                      src={`${IMAGE_ROOT}/images/amms/${
+                        STRATEGIES_MAP[initialState.chain][strategy?.protocol.id]
+                      }.png`}
+                      fallback={`${IMAGE_ROOT}/default.png`}
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Name'>
+                    <a
+                      target={'_blank'}
+                      rel='noreferrer'
+                      href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.id}`}
+                    >
+                      {strategy.name}
+                    </a>
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Underlying Token'>
+                    &nbsp;&nbsp;
+                    <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Asset Value'>
+                    {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Status'>Active</Descriptions.Item>
+                </Descriptions>
+              </Col>
+            </Row>
+          </Card>
+        </Mobile>
       </Suspense>
       <Suspense fallback={null}>
-        <Card
-          loading={loading}
-          title='Apy'
-          className={styles.offlineCard}
-          bordered={false}
-          style={{
-            marginTop: 32,
-          }}
-        >
-          <div
+        <Desktop>
+          <Card
+            loading={loading}
+            title='Apy'
+            className={styles.offlineCard}
+            bordered={false}
             style={{
-              padding: '0 24px',
-              height: 400,
+              marginTop: 32,
             }}
           >
-            <LineEchart option={apysEchartOpt} style={{ height: '100%', width: '100%' }} />
-          </div>
-        </Card>
+            <div
+              style={{
+                padding: '0 24px',
+                height: 400,
+              }}
+            >
+              <LineEchart option={apysEchartOpt} style={{ height: '100%', width: '100%' }} />
+            </div>
+          </Card>
+        </Desktop>
+        <Tablet>
+          <Card
+            loading={loading}
+            title='Apy'
+            size='small'
+            className={styles.offlineCard}
+            bordered={false}
+            style={{
+              marginTop: 32,
+            }}
+          >
+            <div
+              style={{
+                padding: '0 24px',
+                height: 400,
+              }}
+            >
+              <LineEchart option={apysEchartOpt} style={{ height: '100%', width: '100%' }} />
+            </div>
+          </Card>
+        </Tablet>
+        <Mobile>
+          <Card
+            size='small'
+            loading={loading}
+            title='Apy'
+            className={styles.offlineCard}
+            bordered={false}
+            style={{
+              marginTop: 32,
+            }}
+          >
+            <div
+              style={{
+                padding: '0 24px',
+                height: 280,
+              }}
+            >
+              <LineEchart option={apysEchartOpt} style={{ height: '100%', width: '100%' }} />
+            </div>
+          </Card>
+        </Mobile>
       </Suspense>
       <Suspense fallback={null}>
         <ReportTable loading={loading} visitData={strategy.reports || []} />

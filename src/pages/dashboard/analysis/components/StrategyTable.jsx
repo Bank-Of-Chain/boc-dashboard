@@ -9,7 +9,7 @@ import STRATEGIES_MAP from './../../../../constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from './CoinSuperPosition/index'
-import { InfoCircleOutlined } from '@ant-design/icons'
+import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 
 // === Utils === //
 import { toFixed } from './../../../../helper/number-format'
@@ -24,12 +24,9 @@ import { getStrategyDetails } from '@/services/api-service'
 const StrategyTable = ({ dropdownGroup, loading }) => {
   const [showAll, setShowAll] = useState(false)
   const { initialState } = useModel('@@initialState')
-  const { data: searchData } = useRequest(
-    () => getStrategyDetails(initialState.chain, 0, 100),
-    {
-      formatResult: resp => resp.content,
-    },
-  )
+  const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, 0, 100), {
+    formatResult: resp => resp.content,
+  })
   if (!initialState.chain) return null
   const columns = [
     {
@@ -65,6 +62,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
+      width: 220,
       render: text => <CoinSuperPosition array={text} />,
     },
     {
@@ -103,15 +101,14 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       dataIndex: 'weeklyProfit',
       key: 'weeklyProfit',
       render: (text, item) => {
-        return (<span>
-           {
-             map(text, (i, index) => (
-               <p key={index} style={{ marginBottom: 0 }}>
-                 {toFixed(i.value, 10 ** 6, 2)} {i.unit}
-               </p>
-             ))
-           }
-        </span>
+        return (
+          <span>
+            {map(text, (i, index) => (
+              <p key={index} style={{ marginBottom: 0 }}>
+                {toFixed(i.value, 10 ** 6, 2)} {i.unit}
+              </p>
+            ))}
+          </span>
         )
       },
     },
@@ -126,7 +123,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
           icon={<MoreOutlined />}
           size={'Default'}
           target={'_blank'}
-          href={`${IMAGE_ROOT}/#/strategy?id=${text}&chain=${initialState.chain}`}
+          href={`${DASHBOARD_ROOT}/#/strategy?id=${text}&chain=${initialState.chain}`}
           rel='noreferrer'
         />
       ),
@@ -134,36 +131,107 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
   ]
   const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
   return (
-    <Card
-      loading={loading}
-      bordered={false}
-      title='Strategies Allocations'
-      extra={
-        <div>
-          <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-          <Tooltip title='show all strategies added in vault'>
-            <span style={{ padding: 10 }}>Show All</span>
-          </Tooltip>
-        </div>
-      }
-      style={{
-        height: '100%',
-        marginTop: 32,
-      }}
-    >
-      <Table
-        rowKey={record => record.strategyAddress}
-        size='small'
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          style: {
-            marginBottom: 0,
-          },
-          pageSize: 10,
-        }}
-      />
-    </Card>
+    <div>
+      <Desktop>
+        <Card
+          loading={loading}
+          bordered={false}
+          title='Strategies Allocations'
+          extra={
+            <div>
+              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
+              <Tooltip title='show all strategies added in vault'>
+                <span style={{ padding: 10 }}>Show All</span>
+              </Tooltip>
+            </div>
+          }
+          style={{
+            height: '100%',
+            marginTop: 32,
+          }}
+        >
+          <Table
+            rowKey={record => record.strategyAddress}
+            columns={columns}
+            dataSource={data}
+            pagination={{
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }}
+          />
+        </Card>
+      </Desktop>
+      <Tablet>
+        <Card
+          loading={loading}
+          bordered={false}
+          size='small'
+          title='Strategies Allocations'
+          extra={
+            <div>
+              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
+              <Tooltip title='show all strategies added in vault'>
+                <span style={{ padding: 10 }}>Show All</span>
+              </Tooltip>
+            </div>
+          }
+          style={{
+            height: '100%',
+            marginTop: 32,
+          }}
+        >
+          <Table
+            rowKey={record => record.strategyAddress}
+            size='small'
+            rowClassName='tablet-font-size'
+            columns={columns}
+            dataSource={data}
+            pagination={{
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }}
+          />
+        </Card>
+      </Tablet>
+      <Mobile>
+        <Card
+          loading={loading}
+          bordered={false}
+          size='small'
+          title='Strategies Allocations'
+          extra={
+            <div>
+              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
+              <Tooltip title='show all strategies added in vault'>
+                <span style={{ padding: 10 }}>Show All</span>
+              </Tooltip>
+            </div>
+          }
+          style={{
+            height: '100%',
+            marginTop: 32,
+          }}
+        >
+          <Table
+            rowKey={record => record.strategyAddress}
+            size='small'
+            rowClassName='mobile-font-size'
+            columns={columns}
+            dataSource={data}
+            pagination={{
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }}
+          />
+        </Card>
+      </Mobile>
+    </div>
   )
 }
 
