@@ -19,7 +19,6 @@ const topColResponsiveProps = {
 
 const IntroduceRow = ({loading, visitData = {}}) => {
   const {vaultDailyData = [], vaultDetail = {}} = visitData;
-  const {initialState} = useModel('@@initialState');
   // const last7DaysTime = vaultDailyData.length > 0 ? Number(vaultDailyData[vaultDailyData.length - 1].id) - 7 * 24 * 3600 : 0;
   // const vaultWeeklyData = vaultDailyData.filter(x => x.id >= last7DaysTime);
   return (
