@@ -2,6 +2,9 @@ import { Card, Table, Tooltip } from 'antd'
 import React from 'react'
 import { useModel } from 'umi'
 
+// === Components === //
+import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
+
 // === Utils === //
 import moment from 'moment'
 import { toFixed } from './../../../../helper/number-format'
@@ -14,7 +17,7 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Txn Hash',
       dataIndex: 'id',
       key: 'id',
-      width: 550,
+      width: '20rem',
       ellipsis: {
         showTitle: false,
       },
@@ -33,54 +36,113 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       title: 'Total Asset (USDT)',
       dataIndex: 'nowStrategyTotalDebt',
       key: 'nowStrategyTotalDebt',
-      width: 200,
+      width: '8rem',
       render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Profit (USDT)',
       dataIndex: 'profit',
       key: 'profit',
-      width: 200,
+      width: '6rem',
       render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
     },
     {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      width: 200,
+      width: '5rem',
       render: text => (
-        <Tooltip
-          title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}
-        >
-          {moment(1000 * text).locale('en').fromNow()}
+        <Tooltip title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}>
+          {moment(1000 * text)
+            .locale('en')
+            .fromNow()}
         </Tooltip>
       ),
     },
   ]
   return (
-    <Card
-      loading={loading}
-      bordered={false}
-      title='Reports'
-      extra={dropdownGroup}
-      style={{
-        height: '100%',
-        marginTop: 32,
-      }}
-    >
-      <Table
-        rowKey={record => record.id}
-        size='small'
-        columns={columns}
-        dataSource={visitData}
-        pagination={{
-          style: {
-            marginBottom: 0,
-          },
-          pageSize: 10,
-        }}
-      />
-    </Card>
+    <div>
+      <Desktop>
+        <Card
+          loading={loading}
+          bordered={false}
+          title='Reports'
+          extra={dropdownGroup}
+          style={{
+            height: '100%',
+            marginTop: 32,
+          }}
+        >
+          <Table
+            rowKey={record => record.id}
+            columns={columns}
+            dataSource={visitData}
+            pagination={{
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }}
+          />
+        </Card>
+      </Desktop>
+      <Tablet>
+        <Card
+          size='small'
+          loading={loading}
+          bordered={false}
+          title='Reports'
+          extra={dropdownGroup}
+          style={{
+            height: '100%',
+            marginTop: 32,
+          }}
+        >
+          <Table
+            rowKey={record => record.id}
+            size='small'
+            rowClassName='tablet-font-size'
+            scroll={{ x: 900 }}
+            columns={columns}
+            dataSource={visitData}
+            pagination={{
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }}
+          />
+        </Card>
+      </Tablet>
+      <Mobile>
+        <Card
+          size='small'
+          loading={loading}
+          bordered={false}
+          title='Reports'
+          extra={dropdownGroup}
+          style={{
+            height: '100%',
+            marginTop: 32,
+          }}
+        >
+          <Table
+            rowKey={record => record.id}
+            size='small'
+            rowClassName='mobile-font-size'
+            scroll={{ x: 900 }}
+            columns={columns}
+            dataSource={visitData}
+            pagination={{
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }}
+          />
+        </Card>
+      </Mobile>
+    </div>
   )
 }
 

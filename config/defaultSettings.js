@@ -10,7 +10,7 @@ const Settings = {
   colorWeak: false,
   title: 'BOC DashBoard',
   pwa: false,
-  logo: '/logo.png',
   iconfontUrl: '',
+  textColor: '#fff'
 };
 export default Settings;

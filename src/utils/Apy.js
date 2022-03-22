@@ -30,7 +30,6 @@ export const calVaultDailyAPY = (vaultDailyData) => {
   let lastTime = undefined;
   for (let i = 0; i < vaultDailyData.length; i++) {
     if (vaultDailyData[i].totalShares) {
-
       const currentPricePerShare = Number(vaultDailyData[i].tvl / vaultDailyData[i].totalShares);
       const currentBeginTime = Number(vaultDailyData[i].id);
       if (lastPricePerShare) {
@@ -47,7 +46,7 @@ export const calVaultDailyAPY = (vaultDailyData) => {
   return vaultDailyData;
 }
 
-export const calVaultApyByRange = (vaultDailyData,preDayNumber) => {
+export const calVaultApyByRange = (vaultDailyData, preDayNumber) => {
   const lastApyPoints = [];
   for (let i = 0; i < vaultDailyData.length; i++) {
     if (vaultDailyData[i].totalShares) {

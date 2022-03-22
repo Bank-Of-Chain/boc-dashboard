@@ -16,7 +16,8 @@ export default defineConfig({
   define:{
     ENV_INDEX: 'dev',
     API_SERVER: 'http://192.168.60.12/server',
-    IMAGE_ROOT: '.',
+    DASHBOARD_ROOT: '.',
+    IMAGE_ROOT:'http://localhost:3001',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',

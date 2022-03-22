@@ -9,6 +9,7 @@ import {GridContent} from '@ant-design/pro-layout'
 import {Col, Row, Tooltip, Result, Card, Input, Modal} from 'antd'
 import {ChartCard} from './components/Charts'
 import {BarEchart, LineEchart} from '@/components/echarts'
+import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 
 // === Utils === //
 import moment from 'moment'
@@ -382,6 +383,9 @@ const Personal = () => {
       axisLine: {onZero: true},
       splitLine: {show: false},
       splitArea: {show: false},
+      axisTick:{
+        alignWithLabel: true
+      },
     },
     yAxis: {},
     grid: {},
@@ -420,6 +424,15 @@ const Personal = () => {
     true,
     {
       format: 'MM-DD',
+      dataZoom: [{
+        start: 0,
+        end: 100
+      }],
+      xAxis: {
+        axisTick:{
+          alignWithLabel: true
+        },
+      }
     },
   )
   const changeNetwork = async id => {
@@ -589,26 +602,79 @@ const Personal = () => {
         </Row>
       </Suspense>
       <Suspense fallback={null}>
-        <Card
-          loading={loading}
-          bordered={false}
-          bodyStyle={{height: '400px'}}
-          style={{marginTop: 24}}
-          title='Daily TVL'
-        >
-          <LineEchart option={option1} style={{height: '100%'}}/>
-        </Card>
+        <Desktop>
+          <Card
+            loading={loading}
+            bordered={false}
+            bodyStyle={{height: '452px'}}
+            style={{marginTop: 24}}
+            title='Daily TVL'
+          >
+            <LineEchart option={option1} style={{height: '100%'}}/>
+          </Card>
+        </Desktop>
+        <Tablet>
+          <Card
+            loading={loading}
+            bordered={false}
+            size="small"
+            bodyStyle={{height: '402px'}}
+            style={{marginTop: 24}}
+            title='Daily TVL'
+          >
+            <LineEchart option={option1} style={{height: '100%'}}/>
+          </Card>
+        </Tablet>
+        <Mobile>
+          <Card
+            loading={loading}
+            bordered={false}
+            size="small"
+            bodyStyle={{height: '302px'}}
+            style={{marginTop: 24}}
+            title='Daily TVL'
+          >
+            <LineEchart option={option1} style={{height: '100%'}}/>
+          </Card>
+        </Mobile>
+
       </Suspense>
       <Suspense fallback={null}>
-        <Card
-          loading={loading}
-          bordered={false}
-          bodyStyle={{paddingLeft: 0, paddingRight: 0, height: '450px'}}
-          style={{marginTop: 24}}
-          title='Monthly Profit'
-        >
-          <BarEchart option={option} style={{height: '100%', width: '100%'}}/>
-        </Card>
+        <Desktop>
+          <Card
+            loading={loading}
+            bordered={false}
+            bodyStyle={{paddingLeft: 0, paddingRight: 0, height: '452px'}}
+            style={{marginTop: 24}}
+            title='Monthly Profit'
+          >
+            <BarEchart option={option} style={{height: '100%', width: '100%'}}/>
+          </Card>
+        </Desktop>
+        <Tablet>
+          <Card
+            loading={loading}
+            bordered={false}
+            size="small"
+            bodyStyle={{paddingLeft: 0, paddingRight: 0, height: '402px'}}
+            style={{marginTop: 24}}
+            title='Monthly Profit'
+          >
+            <BarEchart option={option} style={{height: '100%', width: '100%'}}/>
+          </Card>
+        </Tablet>
+        <Mobile>
+          <Card
+            loading={loading}
+            bordered={false}
+            size="small"
+            bodyStyle={{paddingLeft: 0, paddingRight: 0, height: '302px'}}
+            style={{marginTop: 24}}
+            title='Monthly Profit'
+          >
+            <BarEchart option={option} style={{height: '100%', width: '100%'}}/>
+          </Card>
+        </Mobile>
       </Suspense>
       <Modal
         title="Set metamask's network to current?"
