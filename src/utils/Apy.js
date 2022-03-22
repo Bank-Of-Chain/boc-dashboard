@@ -1,19 +1,21 @@
-export const calVaultAPY = (vaultDailyData) => {
-  let beginPricePerShare = 1;
-  let beginTime = 0;
-  for (let i = 0; i < vaultDailyData.length; i++) {
-    if (vaultDailyData[i].totalShares) {
-      beginPricePerShare = Number(vaultDailyData[i].unlockedPricePerShare);
-      beginTime = Number(vaultDailyData[i].id);
-      break;
-    }
-  }
+export const calVaultAPY = (vaultDailyData,days) => {
   let endPricePerShare = 1;
   let endTime = 0;
   for (let i = vaultDailyData.length - 1; i > 0; i--) {
     if (vaultDailyData[i].unlockedPricePerShare) {
       endPricePerShare = Number(vaultDailyData[i].unlockedPricePerShare);
       endTime = Number(vaultDailyData[i].id);
+      break;
+    }
+  }
+  let minBeginTime = endTime - 24 * 3600 * days;
+
+  let beginPricePerShare = 1;
+  let beginTime = 0;
+  for (let i = 0; i < vaultDailyData.length; i++) {
+    if (vaultDailyData[i].totalShares && vaultDailyData[i].id >= minBeginTime) {
+      beginPricePerShare = Number(vaultDailyData[i].unlockedPricePerShare);
+      beginTime = Number(vaultDailyData[i].id);
       break;
     }
   }
@@ -36,9 +38,9 @@ export const calVaultDailyAPY = (vaultDailyData) => {
       if (lastPricePerShare) {
         vaultDailyData[i].apy = calAPY(lastPricePerShare, currentPricePerShare, currentBeginTime - lastTime);
       }
-      if(vaultDailyData[i].apy > 10){
-        console.warn('apy more than 1000%',JSON.stringify(vaultDailyData[i]));
-        vaultDailyData[i].apy =null;
+      if (vaultDailyData[i].apy > 10) {
+        console.warn('apy more than 1000%', JSON.stringify(vaultDailyData[i]));
+        vaultDailyData[i].apy = null;
       }
       lastPricePerShare = currentPricePerShare;
       lastTime = currentBeginTime;
@@ -47,7 +49,7 @@ export const calVaultDailyAPY = (vaultDailyData) => {
   return vaultDailyData;
 }
 
-export const calVaultApyByRange = (vaultDailyData,preDayNumber) => {
+export const calVaultApyByRange = (vaultDailyData, preDayNumber) => {
   const lastApyPoints = [];
   for (let i = 0; i < vaultDailyData.length; i++) {
     if (vaultDailyData[i].totalShares) {
