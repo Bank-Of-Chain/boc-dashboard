@@ -25,9 +25,9 @@ export const fetchData = async () => {
 };
 
 export function getDaysAgoTimestamp(daysAgo) {
-  const currentTimestamp = new Date(new Date().setHours(0, 0, 0, 0));
-  const daysAgoTimestamp = currentTimestamp.getTime() /1000 - daysAgo * 24*3600;
-  return daysAgoTimestamp;
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const daysAgoTimestamp = currentTimestamp - daysAgo * 86400;
+  return daysAgoTimestamp - (daysAgoTimestamp % 86400);
 }
 
 const VAULT_DETAIL_QUERY = `

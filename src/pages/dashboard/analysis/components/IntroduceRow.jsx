@@ -64,7 +64,7 @@ const IntroduceRow = ({loading, visitData = {}}) => {
               <InfoCircleOutlined />
             </Tooltip>
           }
-          total={() => numeral(calVaultAPY(vaultDailyData,30)* 100).format('0,0.00') +'%'}
+          total={() => numeral(calVaultAPY(vaultDailyData)* 100).format('0,0.00') +'%'}
           contentHeight={70}
          />
       </Col>
