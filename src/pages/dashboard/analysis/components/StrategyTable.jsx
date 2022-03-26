@@ -77,7 +77,9 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       render: text => <span>{toFixed(text || '0', getDecimals(), 2)}</span>,
     },
     {
-      title: 'Official AVG APY',
+      title: <Tooltip title='Official weekly average APY'>
+        <span>Official APY</span>
+      </Tooltip>,
       dataIndex: 'apyOffLatest',
       key: 'apyOffLatest',
       showSorterTooltip: false,
