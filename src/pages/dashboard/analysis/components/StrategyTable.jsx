@@ -22,7 +22,7 @@ import map from 'lodash/map'
 import { getStrategyDetails } from '@/services/api-service'
 
 const StrategyTable = ({ dropdownGroup, loading }) => {
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, 0, 100), {
     formatResult: resp => resp.content,
@@ -77,7 +77,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       render: text => <span>{toFixed(text || '0', getDecimals(), 2)}</span>,
     },
     {
-      title: 'Official APY',
+      title: 'Official AVG APY',
       dataIndex: 'apyOffLatest',
       key: 'apyOffLatest',
       showSorterTooltip: false,
