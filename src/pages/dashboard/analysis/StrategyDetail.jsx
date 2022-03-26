@@ -6,8 +6,6 @@ import { history, useModel } from 'umi'
 import { LeftOutlined } from '@ant-design/icons'
 import { LineEchart } from '@/components/echarts'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
-import _union from 'lodash/union'
-import _find from 'lodash/find'
 
 // === Constants === //
 import STRATEGIES_MAP from '../../../constants/strategies'
@@ -20,6 +18,9 @@ import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 import { toFixed } from '../../../helper/number-format'
 import { getDecimals } from '../../../apollo/client'
 import moment from 'moment'
+import _union from 'lodash/union'
+import _find from 'lodash/find'
+import { get, isNil, keyBy } from 'lodash'
 
 // === Services === //
 import { getStrategyById } from '../../../services/dashboard-service'
@@ -27,7 +28,7 @@ import { getStrategyApysOffChain, getBaseApyByPage } from '../../../services/api
 
 // === Styles === //
 import styles from './style.less'
-import { isEmpty, map, noop } from 'lodash'
+import { isEmpty, map, noop, reduce } from 'lodash'
 import { useState } from 'react'
 
 const Strategy = props => {
@@ -72,46 +73,43 @@ const Strategy = props => {
   }, [id])
 
   useEffect(() => {
-    let dates = _union(
-      apys.map(o => {
-        return o.date
-      }),
-      offChainApys.map(o => {
-        return o.date
-      }),
-    ).sort()
-    let bocApy = []
-    // let officialApy = []
-    for (let i = 0; i < dates.length; i++) {
-      let apy = _find(apys, { date: dates[i] })
-      if (apy && apy.value) {
-        apy = Number(apy.value * 100).toFixed(2)
-      } else {
-        apy = null
-      }
-      bocApy.push(apy)
-      // let offChainApy = _find(offChainApys, { date: dates[i] })
-      // if (offChainApy && offChainApy.value) {
-      //   offChainApy = Number(offChainApy.value * 100).toFixed(2)
-      // } else {
-      //   offChainApy = null
-      // }
-      // officialApy.push(offChainApy)
-    }
+    const startMoment = moment()
+      .subtract(60, 'day')
+      .startOf('day')
+    const dayArray = reduce(
+      new Array(60),
+      (rs) => {
+        const currentMoment = startMoment.subtract(-1, 'day')
+        rs.push(currentMoment.format('yyyy-MM-DD'))
+        return rs
+      },
+      [],
+    )
+    const apyMap = keyBy(apys, 'date')
+
+    const officialApyMap = keyBy(offChainApys, 'date')
+    const bocApy = []
+    const officialApy = []
+    dayArray.forEach(i => {
+      const value1 = get(apyMap, `${i}.value`, null)
+      bocApy.push(isNil(value1) ? null : Number(value1 * 100).toFixed(2))
+      const value2 = get(officialApyMap, `${i}.value`, null)
+      officialApy.push(isNil(value2) ? null : Number(value2 * 100).toFixed(2))
+    })
     let obj = {
-      legend: { data: ['Weekly APY'], textStyle: { color: '#fff' } },
-      xAxisData: dates,
+      legend: { data: ['Weekly APY', 'Official APY'], textStyle: { color: '#fff' } },
+      xAxisData: dayArray,
       data: [
         {
           seriesName: 'Weekly APY',
           seriesData: bocApy,
           color: 'rgba(169, 204, 245, 1)',
         },
-        // {
-        //   seriesName: 'Official APY',
-        //   seriesData: officialApy,
-        //   color: 'rgba(86, 122, 246, 1)',
-        // },
+        {
+          seriesName: 'Official APY',
+          seriesData: officialApy,
+          color: 'rgba(86, 122, 246, 1)',
+        },
       ],
     }
     const option = multipleLine(obj)
