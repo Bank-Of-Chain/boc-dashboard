@@ -125,7 +125,7 @@ const Strategy = props => {
   }, [apys, offChainApys])
 
   if (!initialState.chain || isEmpty(strategy)) return null
-  const { underlyingTokens, depositedAssets } = strategy
+  const { underlyingTokens, debt, depositedAssets } = strategy
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -167,6 +167,9 @@ const Strategy = props => {
                     <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                   </Descriptions.Item>
                   <Descriptions.Item label='Asset Value'>
+                    {toFixed(debt, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Total Investments'>
                     {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
                   </Descriptions.Item>
                   <Descriptions.Item label='Status'>Active</Descriptions.Item>
@@ -218,6 +221,9 @@ const Strategy = props => {
                     <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                   </Descriptions.Item>
                   <Descriptions.Item label='Asset Value'>
+                    {toFixed(debt, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Total Investments'>
                     {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
                   </Descriptions.Item>
                   <Descriptions.Item label='Status'>Active</Descriptions.Item>
@@ -269,6 +275,9 @@ const Strategy = props => {
                     <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                   </Descriptions.Item>
                   <Descriptions.Item label='Asset Value'>
+                    {toFixed(debt, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Total Investments'>
                     {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
                   </Descriptions.Item>
                   <Descriptions.Item label='Status'>Active</Descriptions.Item>
