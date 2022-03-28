@@ -399,6 +399,7 @@ const Reports = () => {
     originalGain,
     fun,
     durationDays,
+    originalHarvestFee,
     harvestFee,
     totalAssets,
     newTotalAssets,
@@ -502,9 +503,7 @@ const Reports = () => {
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <Descriptions.Item label='Total Harvest Gas Fee'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
+                <br />
                 <br />
                 <Descriptions.Item label='Change Profits'>
                   {(sum(newGain) - sum(originalGain)).toFixed(6)}
@@ -527,9 +526,17 @@ const Reports = () => {
                       ).toFixed(2)}
                   %)
                 </Descriptions.Item>
-
+                <Descriptions.Item label='Harvest Fee Reduce'>
+                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  {sum(originalHarvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
+                  {(0-sum(operateLoss)).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -562,9 +569,7 @@ const Reports = () => {
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <Descriptions.Item label='Total Harvest Gas Fee'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
+                <br />
                 <br />
                 <Descriptions.Item label='Change Profits'>
                   {(sum(newGain) - sum(originalGain)).toFixed(6)}
@@ -587,9 +592,17 @@ const Reports = () => {
                       ).toFixed(2)}
                   %)
                 </Descriptions.Item>
-
+                <Descriptions.Item label='Harvest Fee Reduce'>
+                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  {sum(originalHarvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
+                  {(0-sum(operateLoss)).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -622,9 +635,8 @@ const Reports = () => {
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <Descriptions.Item label='Total Harvest Gas Fee'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
+                <br />
+                <br />
                 <Descriptions.Item label='Change Profits'>
                   {(sum(newGain) - sum(originalGain)).toFixed(6)}
                 </Descriptions.Item>
@@ -646,9 +658,17 @@ const Reports = () => {
                       ).toFixed(2)}
                   %)
                 </Descriptions.Item>
-
+                <Descriptions.Item label='Harvest Fee Reduce'>
+                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  {sum(originalHarvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
+                  {(0-sum(operateLoss)).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}

@@ -30,7 +30,7 @@ import isNull from 'lodash/isNull'
 import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
-import {getDaysAgoTimestamp} from "@/services/dashboard-service";
+import {getDaysAgoTimestamp, getDaysAgoUtcTimestamp} from "@/services/dashboard-service";
 import {isProEnv} from "@/services/env-service"
 import * as ethers from "ethers"
 
@@ -217,13 +217,12 @@ const Personal = () => {
 
   const costChangeArray = [];
   let lastPoint = {};
-  let minId = getDaysAgoTimestamp(30);
+  let minId = getDaysAgoUtcTimestamp(30);
   let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
   if(initialState.chain === '1')
   {
     apyCalData = filter(apyCalData, i => i.id >= 1644249600);
   }
-  // console.log('apyCalData',JSON.stringify(apyCalData));
   for (let i = 0; i < apyCalData.length; i++) {
     let currentData = apyCalData[i];
     // 优先使用释放后的单价进行计算
