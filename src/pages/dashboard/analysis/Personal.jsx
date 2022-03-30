@@ -27,6 +27,7 @@ import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import reduce from 'lodash/reduce'
 import isNull from 'lodash/isNull'
+import { findIndex, intersectionWith, reverse } from 'lodash'
 import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
@@ -402,29 +403,37 @@ const Personal = () => {
       },
     ],
   }
-
+  const tvlArray = compact(
+    map(yearData, i => {
+      if (isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
+      return {
+        date: 1000 * i.dayTimestamp,
+        tvl: parseFloat(
+          BN(i.currentShares)
+            .multipliedBy(BN(i.pricePerShare))
+            .div(BN(10).pow(decimals * 2))
+            .toFixed(4),
+        ),
+      }
+    }),
+  )
+  // 参考 https://github.com/PiggyFinance/dashboard/issues/166
+  const reverseArray = reverse([...tvlArray])
+  const continuousIndex = findIndex(reverseArray, (item, index) => {
+    if (index <= 2) return false
+    if (index === reverseArray.length) return true
+    return Math.abs(item.tvl - reverseArray[index - 1].tvl) > item.tvl * 0.005
+  })
+  const startPercent = 100 - parseInt(100 * continuousIndex / tvlArray.length) + 1
   const option1 = getLineEchartOpt(
-    compact(
-      map(yearData, i => {
-        if (isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
-        return {
-          date: 1000 * i.dayTimestamp,
-          tvl: parseFloat(
-            BN(i.currentShares)
-              .multipliedBy(BN(i.pricePerShare))
-              .div(BN(10).pow(decimals * 2))
-              .toFixed(4),
-          ),
-        }
-      }),
-    ),
+    tvlArray,
     'tvl',
     'USDT',
     true,
     {
       format: 'MM-DD',
       dataZoom: [{
-        start: 0,
+        start: startPercent,
         end: 100
       }],
       xAxis: {
