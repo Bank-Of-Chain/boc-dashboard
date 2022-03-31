@@ -8,11 +8,12 @@ import isNaN from 'lodash/isNaN';
 import isUndefined from 'lodash/isUndefined';
 
 const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, options = {}) => {
-  const { format = 'MM-DD HH:mm', xAxis, yAxis, smooth = true, step, dataZoom } = options
+  const { format = 'MM-DD HH:mm', xAxis, yAxis, smooth = true, step, dataZoom, tootlTipSuffix = 'UTC' } = options
   const xAxisData = [];
   const seriesData = [];
   data.forEach((o) => {
-    xAxisData.push(moment(Number(o.date)).utcOffset(0).format(format));``
+    const value = moment(Number(o.date)).utcOffset(0).format(format);
+    xAxisData.push(tootlTipSuffix ? `${value} ${tootlTipSuffix}` : value);
     seriesData.push(o[dataValueKey]);
   });
   const option = lineSimple({
@@ -27,8 +28,13 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
     ...yAxis
   }
   option.xAxis = {
+    axisLabel: {
+      formatter: (value) => {
+        return tootlTipSuffix ? value.replace(` ${tootlTipSuffix}`, '') : value
+      }
+    },
     ...option.xAxis,
-    ...xAxis
+    ...xAxis,
   }
   option.yAxis.splitLine = {
     lineStyle: {

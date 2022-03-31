@@ -122,6 +122,10 @@ const Strategy = props => {
     option.series.forEach(serie => {
       serie.connectNulls = true
     })
+    option.xAxis.data = option.xAxis.data.map(item => `${item} UTC`)
+    option.xAxis.axisLabel = {
+      formatter: (value) => value.replace(' UTC', '')
+    }
     option.yAxis.splitLine = {
       lineStyle: {
         color: 'black',
