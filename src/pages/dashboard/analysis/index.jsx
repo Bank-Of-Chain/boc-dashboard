@@ -85,7 +85,22 @@ const Analysis = () => {
           }
           return item;
         }).filter(item => item.id >= minId);
-        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false));
+        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, calDateRange > 7
+        ? {
+            format: 'MM-DD',
+            xAxis: {
+              axisTick: {
+                alignWithLabel: true,
+              },
+            },
+          }
+        : {
+            xAxis: {
+              axisTick: {
+                alignWithLabel: true,
+              },
+            },
+          },));
         const rangeArray = array.filter(item => item.id >= minId)
         // setSharePriceEchartOpt(
         //   getLineEchartOpt(
