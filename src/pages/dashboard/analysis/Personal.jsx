@@ -166,11 +166,12 @@ const Personal = () => {
     }
   }, [initialState, roleError])
 
-  const monthOffset = moment().month() + 1
+  const monthOffset = moment().utcOffset(0).month() + 1
   const groupByMonth = groupBy(
     filter(yearData, i => i.currentShares > 0 && i.pricePerShare > 0 && i.currentDepositedUSDT > 0),
     i =>
       moment(1000 * i.id)
+        .utcOffset(0)
         .locale('en')
         .format('MMM'),
   )
