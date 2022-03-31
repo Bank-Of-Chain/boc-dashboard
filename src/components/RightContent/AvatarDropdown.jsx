@@ -29,6 +29,10 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
 
   const menuHeaderDropdown = (
     <Menu className={styles.menu}>
+      <Menu.Item key='mine' onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
+        <AreaChartOutlined />
+        My Dashboard
+      </Menu.Item>
       <Menu.Item key='logout' onClick={logoutOfWeb3Modal}>
         <LogoutOutlined />
         Disconnect
@@ -38,9 +42,6 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Button icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
-          My Dashboard
-        </Button>
         <Address size='short' wrapClassName={`${styles.name} anticon`} address={address} />
         <Avatar
           size='small'
