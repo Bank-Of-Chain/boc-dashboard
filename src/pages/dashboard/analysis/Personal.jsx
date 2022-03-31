@@ -424,7 +424,7 @@ const Personal = () => {
     if (index === reverseArray.length) return true
     return Math.abs(item.tvl - reverseArray[index - 1].tvl) > item.tvl * 0.005
   })
-  const startPercent = 100 - parseInt(100 * continuousIndex / tvlArray.length) + 1
+  const startPercent = continuousIndex === -1 ?  0 : (100 - (100 * continuousIndex / tvlArray.length))
   const option1 = getLineEchartOpt(
     tvlArray,
     'tvl',
