@@ -77,8 +77,6 @@ const Analysis = () => {
         }),
       )
       .then(array => {
-        const hasShowLastedDay = array.length === calDateRange + 30 // 最新一天无数据的话不显示
-        const minId = getDaysAgoTimestamp(hasShowLastedDay ? calDateRange : calDateRange + 1)
 //         let result = calVaultApyByRange(array, 30);
 //         result = result.map(item => {
 //           if (item.apy) {
@@ -102,7 +100,7 @@ const Analysis = () => {
 //               },
 //             },
 //           },));
-        const rangeArray = array.filter(item => item.id >= minId)
+        const rangeArray = array.slice(-calDateRange)
         setSharePriceEchartOpt(
           getLineEchartOpt(
             rangeArray,
