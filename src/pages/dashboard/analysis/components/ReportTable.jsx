@@ -101,7 +101,7 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
       render: text => <span>{toFixed(text, decimal, 2)}</span>,
     },
     {
-      title: `Asset Change ${unit ? `(${unit})` : ''}`,
+      title: `Asset Changed ${unit ? `(${unit})` : ''}`,
       dataIndex: 'assetChange',
       key: 'assetChange',
       width: '7rem',
