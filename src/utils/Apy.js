@@ -1,4 +1,5 @@
 export const calVaultAPY = (vaultDailyData) => {
+  console.log(vaultDailyData)
   // console.log('vaultDailyData',JSON.stringify(vaultDailyData));
   let beginPricePerShare = 1;
   let beginTime = 0;

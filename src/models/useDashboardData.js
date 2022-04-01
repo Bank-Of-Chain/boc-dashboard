@@ -15,7 +15,7 @@ const dataMerge = () => {
       .then((array) => usedPreValue(array, 'holderCount', 0))
       .then((array) => usedPreValue(array, 'totalShares', undefined))
       .then((array) => usedPreValue(array, 'unlockedPricePerShare', undefined))
-      .then((array) => array.slice(-31)),
+      .then((array) => array.slice(-30)),
   ])
     .then((rs) => {
       const [vaultDetail = {}, vaultTodayData = {}, vaultDailyData = []] = rs;
