@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 
 // === Components === //
 import Avatar from './AvatarDropdown'
-import { LoadingOutlined } from '@ant-design/icons'
+import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import map from 'lodash/map'
@@ -117,8 +117,12 @@ const GlobalHeaderRight = () => {
       )}
       {isLoading ? (
         <LoadingOutlined style={{ fontSize: 24 }} spin />
-      ) : !isEmpty(address) ? (
+      ) : !isEmpty(address) ? ([
+        <Button key="mine" icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
+          My Dashboard
+        </Button>,
         <Avatar
+          key="avatar"
           menu
           address={address}
           logoutOfWeb3Modal={() =>
@@ -129,6 +133,7 @@ const GlobalHeaderRight = () => {
             })
           }
         />
+      ]
       ) : window.ethereum ? (
         <Button type='primary' onClick={loadWeb3Modal}>
           Connect

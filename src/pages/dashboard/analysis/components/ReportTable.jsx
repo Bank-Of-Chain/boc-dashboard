@@ -1,22 +1,83 @@
 import { Card, Table, Tooltip } from 'antd'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useModel } from 'umi'
+import BN from 'bignumber.js'
 
 // === Components === //
 import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 
+import { getStrategyDetailsReports } from '../../../../services/api-service'
+
 // === Utils === //
 import moment from 'moment'
+import isUndefined from 'lodash/isUndefined'
 import { toFixed } from './../../../../helper/number-format'
-import { getDecimals } from './../../../../apollo/client'
 
-const ReportTable = ({ loading, visitData, dropdownGroup }) => {
+const OPERATION = {
+  0: 'harvest',
+  1: 'lend',
+  2: 'withdraw',
+  3: 'redeem'
+}
+
+const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState')
+  const [dataSource, setDataSource] = useState([])
+  const [tableLoading, setTableLoading] = useState(false)
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10
+  })
+
+  const unit = dataSource[0] ? dataSource[0].lpTokenUnit : ''
+
+  const fetch = async () => {
+    setTableLoading(true)
+    getStrategyDetailsReports({
+      strategyAddress,
+      chainId,
+      limit: pagination.pageSize,
+      offset: (pagination.current - 1) * pagination.pageSize
+    }).then((data) => {
+      setDataSource(data.content)
+      if (isUndefined(pagination.total)) {
+        setPagination({
+          ...pagination,
+          total: data.totalElements
+        })
+      }
+    }).catch(() => {
+      setDataSource([])
+    }).finally(() => {
+      setTableLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    fetch()
+    // eslint-disable-next-line
+  }, [pagination.current])
+
+  useEffect(() => {
+    setPagination({
+      ...pagination,
+      current: 1
+    })
+    // eslint-disable-next-line
+  }, [chainId, strategyAddress])
+
+  const handleTableChange = (pagination) => {
+    setPagination(pagination)
+  }
+
+  // 固定6位
+  const decimal = BN(1e6)
+
   const columns = [
     {
       title: 'Txn Hash',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'txnHash',
+      key: 'txnHash',
       width: '20rem',
       ellipsis: {
         showTitle: false,
@@ -33,27 +94,35 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
       ),
     },
     {
-      title: 'Total Asset (USDT)',
-      dataIndex: 'nowStrategyTotalDebt',
-      key: 'nowStrategyTotalDebt',
-      width: '8rem',
-      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
+      title: `Total Asset ${unit ? `(${unit})` : ''}`,
+      dataIndex: 'totalAsset',
+      key: 'totalAsset',
+      width: '7rem',
+      render: text => <span>{toFixed(text, decimal, 2)}</span>,
     },
     {
-      title: 'Profit (USDT)',
-      dataIndex: 'profit',
-      key: 'profit',
+      title: `Asset Change ${unit ? `(${unit})` : ''}`,
+      dataIndex: 'assetChange',
+      key: 'assetChange',
       width: '6rem',
-      render: text => <span>{toFixed(text, getDecimals(), 2)}</span>,
+      render: text => <span>{toFixed(text, decimal, 2)}</span>,
+    },
+    {
+      title: 'Operation',
+      dataIndex: 'fetchType',
+      key: 'fetchType',
+      width: '4.5rem',
+      render: text => <span>{OPERATION[text]}</span>,
     },
     {
       title: 'Date',
-      dataIndex: 'timestamp',
-      key: 'timestamp',
+      dataIndex: 'fetchTimestamp',
+      key: 'fetchTimestamp',
       width: '5rem',
       render: text => (
-        <Tooltip title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}>
+        <Tooltip title={moment(1000 * text).utcOffset(0).format('yyyy-MM-DD HH:mm:ss')}>
           {moment(1000 * text)
+            .utcOffset(0)
             .locale('en')
             .fromNow()}
         </Tooltip>
@@ -76,12 +145,14 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
           <Table
             rowKey={record => record.id}
             columns={columns}
-            dataSource={visitData}
+            dataSource={dataSource}
+            loading={tableLoading}
+            onChange={handleTableChange}
             pagination={{
               style: {
                 marginBottom: 0,
               },
-              pageSize: 10,
+              ...pagination,
             }}
           />
         </Card>
@@ -104,12 +175,14 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
             rowClassName='tablet-font-size'
             scroll={{ x: 900 }}
             columns={columns}
-            dataSource={visitData}
+            dataSource={dataSource}
+            loading={tableLoading}
+            onChange={handleTableChange}
             pagination={{
               style: {
                 marginBottom: 0,
               },
-              pageSize: 10,
+              ...pagination,
             }}
           />
         </Card>
@@ -132,12 +205,14 @@ const ReportTable = ({ loading, visitData, dropdownGroup }) => {
             rowClassName='mobile-font-size'
             scroll={{ x: 900 }}
             columns={columns}
-            dataSource={visitData}
+            dataSource={dataSource}
+            loading={tableLoading}
+            onChange={handleTableChange}
             pagination={{
               style: {
                 marginBottom: 0,
               },
-              pageSize: 10,
+              ...pagination,
             }}
           />
         </Card>

@@ -78,14 +78,29 @@ const Analysis = () => {
       )
       .then(array => {
         let minId = getDaysAgoTimestamp(calDateRange)
-        // let result = calVaultApyByRange(array, 30);
-        // result = result.map(item => {
-        //   if (item.apy) {
-        //     item.apy = numeral(item.apy * 100).format('0,0.00');
-        //   }
-        //   return item;
-        // }).filter(item => item.id >= minId);
-        // setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false));
+//         let result = calVaultApyByRange(array, 30);
+//         result = result.map(item => {
+//           if (item.apy) {
+//             item.apy = numeral(item.apy * 100).format('0,0.00');
+//           }
+//           return item;
+//         }).filter(item => item.id >= minId);
+//         setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, calDateRange > 7
+//         ? {
+//             format: 'MM-DD',
+//             xAxis: {
+//               axisTick: {
+//                 alignWithLabel: true,
+//               },
+//             },
+//           }
+//         : {
+//             xAxis: {
+//               axisTick: {
+//                 alignWithLabel: true,
+//               },
+//             },
+//           },));
         const rangeArray = array.filter(item => item.id >= minId)
         setSharePriceEchartOpt(
           getLineEchartOpt(

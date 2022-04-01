@@ -21,6 +21,7 @@ import moment from 'moment'
 import _union from 'lodash/union'
 import _find from 'lodash/find'
 import { get, isNil, keyBy } from 'lodash'
+import { formatToUTC0 } from '@/utils/format'
 
 // === Services === //
 import { getStrategyById } from '../../../services/dashboard-service'
@@ -28,7 +29,7 @@ import { getStrategyApysOffChain, getBaseApyByPage } from '../../../services/api
 
 // === Styles === //
 import styles from './style.less'
-import { isEmpty, map, noop, reduce } from 'lodash'
+import { isEmpty, map, noop, reduce, groupBy, sortBy } from 'lodash'
 import { useState } from 'react'
 
 const Strategy = props => {
@@ -49,14 +50,18 @@ const Strategy = props => {
       0,
       100,
     )
-      .then(rs =>
-        map(rs.content, i => {
+      .then(rs => {
+        // 一天可能返回两个值，取 timestamp 大的
+        const baseApys = map(rs.content, i => {
           return {
             value: i.lpApy,
-            date: moment(1000 * i.fetchTimestamp).format('yyyy-MM-DD'),
+            timestamp: i.fetchTimestamp,
+            date: formatToUTC0(1000 * i.fetchTimestamp, 'yyyy-MM-DD'),
           }
-        }),
-      )
+        })
+        const groupApys = groupBy(baseApys, (item) => item.date)
+        return map(groupApys, (group) => sortBy(group, o => o.timestamp).pop())
+      })
       .then(setApys)
       .catch(noop)
     getStrategyApysOffChain(id, 0, 100)
@@ -64,7 +69,7 @@ const Strategy = props => {
         map(rs.content, i => {
           return {
             value: i.apy,
-            date: i.apyValidateTime,
+            date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
           }
         }),
       )
@@ -74,6 +79,7 @@ const Strategy = props => {
 
   useEffect(() => {
     const startMoment = moment()
+      .utcOffset(0)
       .subtract(60, 'day')
       .startOf('day')
     const dayArray = reduce(
@@ -125,7 +131,7 @@ const Strategy = props => {
   }, [apys, offChainApys])
 
   if (!initialState.chain || isEmpty(strategy)) return null
-  const { underlyingTokens, depositedAssets } = strategy
+  const { underlyingTokens, debt, depositedAssets } = strategy
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -167,6 +173,9 @@ const Strategy = props => {
                     <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                   </Descriptions.Item>
                   <Descriptions.Item label='Asset Value'>
+                    {toFixed(debt, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Total Investments'>
                     {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
                   </Descriptions.Item>
                   <Descriptions.Item label='Status'>Active</Descriptions.Item>
@@ -218,6 +227,9 @@ const Strategy = props => {
                     <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                   </Descriptions.Item>
                   <Descriptions.Item label='Asset Value'>
+                    {toFixed(debt, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Total Investments'>
                     {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
                   </Descriptions.Item>
                   <Descriptions.Item label='Status'>Active</Descriptions.Item>
@@ -269,6 +281,9 @@ const Strategy = props => {
                     <CoinSuperPosition array={map(underlyingTokens, 'token.id')} />
                   </Descriptions.Item>
                   <Descriptions.Item label='Asset Value'>
+                    {toFixed(debt, getDecimals(), 2) + ' USDT'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Total Investments'>
                     {toFixed(depositedAssets, getDecimals(), 2) + ' USDT'}
                   </Descriptions.Item>
                   <Descriptions.Item label='Status'>Active</Descriptions.Item>
@@ -343,7 +358,7 @@ const Strategy = props => {
         </Mobile>
       </Suspense>
       <Suspense fallback={null}>
-        <ReportTable loading={loading} visitData={strategy.reports || []} />
+        <ReportTable chainId={initialState.chain} strategyAddress={id} loading={loading} />
       </Suspense>
     </GridContent>
   )
