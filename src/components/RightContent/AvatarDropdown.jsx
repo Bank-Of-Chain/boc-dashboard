@@ -1,5 +1,5 @@
 import React from 'react'
-import { LogoutOutlined, AreaChartOutlined } from '@ant-design/icons'
+import { LogoutOutlined } from '@ant-design/icons'
 import { Avatar, Menu, Spin, Button } from 'antd'
 import { useModel, history } from 'umi'
 
@@ -29,10 +29,6 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
 
   const menuHeaderDropdown = (
     <Menu className={styles.menu}>
-      <Menu.Item key='mine' onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
-        <AreaChartOutlined />
-        My Dashboard
-      </Menu.Item>
       <Menu.Item key='logout' onClick={logoutOfWeb3Modal}>
         <LogoutOutlined />
         Disconnect

@@ -77,7 +77,8 @@ const Analysis = () => {
         }),
       )
       .then(array => {
-        let minId = getDaysAgoTimestamp(calDateRange)
+        const hasShowLastedDay = array.length === calDateRange + 30 // 最新一天无数据的话不显示
+        const minId = getDaysAgoTimestamp(hasShowLastedDay ? calDateRange : calDateRange + 1)
 //         let result = calVaultApyByRange(array, 30);
 //         result = result.map(item => {
 //           if (item.apy) {
