@@ -39,8 +39,8 @@ const { TabPane } = Tabs
 const Analysis = () => {
   const [calDateRange, setCalDateRange] = useState(30)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
-  // const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({})
-  const [apyEchartOpt, setApyEchartOpt] = useState({});
+  const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({})
+  // const [apyEchartOpt, setApyEchartOpt] = useState({});
   const [transations, setTransations] = useState([])
 
   const { initialState } = useModel('@@initialState')
@@ -78,58 +78,58 @@ const Analysis = () => {
       )
       .then(array => {
         let minId = getDaysAgoTimestamp(calDateRange)
-        let result = calVaultApyByRange(array, 30);
-        result = result.map(item => {
-          if (item.apy) {
-            item.apy = numeral(item.apy * 100).format('0,0.00');
-          }
-          return item;
-        }).filter(item => item.id >= minId);
-        setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, calDateRange > 7
-        ? {
-            format: 'MM-DD',
-            xAxis: {
-              axisTick: {
-                alignWithLabel: true,
-              },
-            },
-          }
-        : {
-            xAxis: {
-              axisTick: {
-                alignWithLabel: true,
-              },
-            },
-          },));
+//         let result = calVaultApyByRange(array, 30);
+//         result = result.map(item => {
+//           if (item.apy) {
+//             item.apy = numeral(item.apy * 100).format('0,0.00');
+//           }
+//           return item;
+//         }).filter(item => item.id >= minId);
+//         setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, calDateRange > 7
+//         ? {
+//             format: 'MM-DD',
+//             xAxis: {
+//               axisTick: {
+//                 alignWithLabel: true,
+//               },
+//             },
+//           }
+//         : {
+//             xAxis: {
+//               axisTick: {
+//                 alignWithLabel: true,
+//               },
+//             },
+//           },));
         const rangeArray = array.filter(item => item.id >= minId)
-        // setSharePriceEchartOpt(
-        //   getLineEchartOpt(
-        //     rangeArray,
-        //     'pricePerShare',
-        //     'USDT',
-        //     true,
-        //     calDateRange > 7
-        //       ? {
-        //           format: 'MM-DD',
-        //           smooth: false,
-        //           step: 'end',
-        //           xAxis: {
-        //             axisTick: {
-        //               alignWithLabel: true,
-        //             },
-        //           },
-        //         }
-        //       : {
-        //           smooth: false,
-        //           step: 'end',
-        //           xAxis: {
-        //             axisTick: {
-        //               alignWithLabel: true,
-        //             },
-        //           },
-        //         },
-        //   ),
-        // )
+        setSharePriceEchartOpt(
+          getLineEchartOpt(
+            rangeArray,
+            'pricePerShare',
+            'USDT',
+            true,
+            calDateRange > 7
+              ? {
+                  format: 'MM-DD',
+                  smooth: false,
+                  step: 'end',
+                  xAxis: {
+                    axisTick: {
+                      alignWithLabel: true,
+                    },
+                  },
+                }
+              : {
+                  smooth: false,
+                  step: 'end',
+                  xAxis: {
+                    axisTick: {
+                      alignWithLabel: true,
+                    },
+                  },
+                },
+          ),
+        )
         setTvlEchartOpt(
           getLineEchartOpt(
             rangeArray,
@@ -208,19 +208,19 @@ const Analysis = () => {
                   </div>
                 }
               >
-                <TabPane tab="APY" key="apy">
-                  <div className={styles.chartDiv}>
-                    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
-                  </div>
-                </TabPane>
-                {/*<TabPane tab='Share Price' key='sharePrice'>*/}
+                {/*<TabPane tab="APY" key="apy">*/}
                 {/*  <div className={styles.chartDiv}>*/}
-                {/*    <LineEchart*/}
-                {/*      option={sharePriceEchartOpt}*/}
-                {/*      style={{ height: '100%', width: '100%' }}*/}
-                {/*    />*/}
+                {/*    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
                 {/*  </div>*/}
                 {/*</TabPane>*/}
+                <TabPane tab='Share Price' key='sharePrice'>
+                  <div className={styles.chartDiv}>
+                    <LineEchart
+                      option={sharePriceEchartOpt}
+                      style={{ height: '100%', width: '100%' }}
+                    />
+                  </div>
+                </TabPane>
                 <TabPane tab='TVL' key='tvl'>
                   <div className={styles.chartDiv}>
                     <LineEchart option={tvlEchartOpt} style={{ height: '100%', width: '100%' }} />
@@ -272,19 +272,19 @@ const Analysis = () => {
                   </div>
                 }
               >
-	        <TabPane tab="APY" key="apy">
+	        {/*<TabPane tab="APY" key="apy">*/}
+          {/*        <div className={styles.chartDivMobile}>*/}
+          {/*          <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
+          {/*        </div>*/}
+          {/*      </TabPane>*/}
+                <TabPane tab='Share Price' key='sharePrice'>
                   <div className={styles.chartDivMobile}>
-                    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
+                    <LineEchart
+                      option={sharePriceEchartOpt}
+                      style={{ height: '100%', width: '100%' }}
+                    />
                   </div>
                 </TabPane>
-                {/*<TabPane tab='Share Price' key='sharePrice'>*/}
-                {/*  <div className={styles.chartDivMobile}>*/}
-                {/*    <LineEchart*/}
-                {/*      option={sharePriceEchartOpt}*/}
-                {/*      style={{ height: '100%', width: '100%' }}*/}
-                {/*    />*/}
-                {/*  </div>*/}
-                {/*</TabPane>*/}
                 <TabPane tab='TVL' key='tvl'>
                   <div className={styles.chartDivMobile}>
                     <LineEchart option={tvlEchartOpt} style={{ height: '100%', width: '100%' }} />
@@ -337,19 +337,19 @@ const Analysis = () => {
                   </div>
                 }
               >
-	       <TabPane tab="APY" key="apy">
+	       {/*<TabPane tab="APY" key="apy">*/}
+         {/*         <div className={styles.chartDivMobile}>*/}
+         {/*           <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
+         {/*         </div>*/}
+         {/*       </TabPane>*/}
+                <TabPane tab='Share Price' key='sharePrice'>
                   <div className={styles.chartDivMobile}>
-                    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
+                    <LineEchart
+                      option={sharePriceEchartOpt}
+                      style={{ height: '100%', width: '100%' }}
+                    />
                   </div>
                 </TabPane>
-                {/*<TabPane tab='Share Price' key='sharePrice'>*/}
-                {/*  <div className={styles.chartDivMobile}>*/}
-                {/*    <LineEchart*/}
-                {/*      option={sharePriceEchartOpt}*/}
-                {/*      style={{ height: '100%', width: '100%' }}*/}
-                {/*    />*/}
-                {/*  </div>*/}
-                {/*</TabPane>*/}
                 <TabPane tab='TVL' key='tvl'>
                   <div className={styles.chartDivMobile}>
                     <LineEchart option={tvlEchartOpt} style={{ height: '100%', width: '100%' }} />
