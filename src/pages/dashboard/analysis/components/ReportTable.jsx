@@ -120,7 +120,7 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
       key: 'fetchTimestamp',
       width: '5rem',
       render: text => (
-        <Tooltip title={`${moment(1000 * text).utcOffset(0).format('yyyy-MM-DD HH:mm:ss')} UTC`}>
+        <Tooltip title={`${moment(1000 * text).utcOffset(0).format('yyyy-MM-DD HH:mm:ss')} (UTC)`}>
           {moment(1000 * text)
             .utcOffset(0)
             .locale('en')

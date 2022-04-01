@@ -59,8 +59,8 @@ const ABI = [{
 const appendAccountDailyDatas = (rs) => {
   if(isEmpty(rs)||rs.loading) return []
   const { data: { accountDailyDatas }} = rs
-  // 补齐到365条
-  const appendArray = arrayAppendOfDay(accountDailyDatas, 365, 'dayTimestamp')
+  // 补齐到365条，最新一天没数据不展示
+  const appendArray = arrayAppendOfDay(accountDailyDatas, 366, 'dayTimestamp').slice(-365)
   // 补齐字段数据
   const setDefaultValueArray = usedPreValue(appendArray, 'currentDepositedUSDT')
   const setDefaultShareArray = usedPreValue(setDefaultValueArray, 'currentShares')
@@ -72,8 +72,8 @@ const appendAccountDailyDatas = (rs) => {
 const appendVaultDailyDatas  = rs => {
   if(isEmpty(rs) || rs.loading) return []
   const { data: { vaultDailyDatas }} = rs
-  // 补齐到365条
-  const appendArray = arrayAppendOfDay(vaultDailyDatas, 365, 'id')
+  // 补齐到365条，最新一天没数据不展示
+  const appendArray = arrayAppendOfDay(vaultDailyDatas, 366, 'id').slice(-365)
   // 补齐字段数据
   const setDefaultValueArray = usedPreValue(appendArray, 'pricePerShare')
   // 选取里面有用的字段

@@ -13,7 +13,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
   const seriesData = [];
   data.forEach((o) => {
     const value = moment(Number(o.date)).utcOffset(0).format(format);
-    xAxisData.push(tootlTipSuffix ? `${value} ${tootlTipSuffix}` : value);
+    xAxisData.push(tootlTipSuffix ? `${value} (${tootlTipSuffix})` : value);
     seriesData.push(o[dataValueKey]);
   });
   const option = lineSimple({
@@ -30,7 +30,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
   option.xAxis = {
     axisLabel: {
       formatter: (value) => {
-        return tootlTipSuffix ? value.replace(` ${tootlTipSuffix}`, '') : value
+        return tootlTipSuffix ? value.replace(` (${tootlTipSuffix})`, '') : value
       }
     },
     ...option.xAxis,

@@ -144,7 +144,15 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Harvest Gas Fee',
+    title: 'Harvest Gas Fee (Before)',
+    dataIndex: 'originalHarvestFee',
+    key: 'originalHarvestFee',
+    render: value => {
+      return <span>{value.toFixed(2)}</span>
+    },
+  },
+  {
+    title: 'Harvest Gas Fee (After)',
     dataIndex: 'harvestFee',
     key: 'harvestFee',
     render: value => {
@@ -399,7 +407,7 @@ const Reports = () => {
     originalGain,
     fun,
     durationDays,
-    originalHarvestFee,
+    originalHarvestFee = [],
     harvestFee,
     totalAssets,
     newTotalAssets,
@@ -424,6 +432,7 @@ const Reports = () => {
       originalAmount: get(investStrategies, `${strategy}.originalAmount`, '0'),
       apy: get(investStrategies, `${strategy}.apy`, 0),
       harvestFee: harvestFee[index],
+      originalHarvestFee: originalHarvestFee[index] || 0
     }
   })
   return (
@@ -686,7 +695,7 @@ const Reports = () => {
                 bordered
                 columns={detailsColumns}
                 dataSource={displayData}
-                scroll={{ x: 1300, y: 400 }}
+                scroll={{ x: 1400, y: 400 }}
                 pagination={false}
               />
             </Desktop>
@@ -696,7 +705,7 @@ const Reports = () => {
                 size='small'
                 columns={detailsColumns}
                 dataSource={displayData}
-                scroll={{ x: 1300, y: 400 }}
+                scroll={{ x: 1400, y: 400 }}
                 pagination={false}
               />
             </Tablet>
@@ -706,7 +715,7 @@ const Reports = () => {
                 size='small'
                 columns={detailsColumns}
                 dataSource={displayData}
-                scroll={{ x: 1300, y: 400 }}
+                scroll={{ x: 1400, y: 400 }}
                 pagination={false}
               />
             </Mobile>
