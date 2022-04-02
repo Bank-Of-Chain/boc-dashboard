@@ -37,7 +37,7 @@ import {calVaultApyByRange} from "@/utils/Apy";
 const { TabPane } = Tabs
 
 const Analysis = () => {
-  const [calDateRange, setCalDateRange] = useState(30)
+  const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({})
   // const [apyEchartOpt, setApyEchartOpt] = useState({});
@@ -58,7 +58,8 @@ const Analysis = () => {
   }, [vaultAddress])
 
   useEffect(() => {
-    getVaultDailyData(calDateRange + 30).then((array) => arrayAppendOfDay(array, calDateRange + 30))
+    const extraDataNum = 30
+    getVaultDailyData(calDateRange + extraDataNum).then((array) => arrayAppendOfDay(array, calDateRange + extraDataNum))
       .then((array) => usedPreValue(array, 'totalShares', undefined))
       .then((array) => usedPreValue(array, 'tvl', undefined))
       .then((array) =>
@@ -189,8 +190,8 @@ const Analysis = () => {
                     <Tooltip title='last 30 days'>
                       <Button
                         ghost
-                        type={calDateRange === 30 ? 'primary' : ''}
-                        onClick={() => setCalDateRange(30)}
+                        type={calDateRange === 31 ? 'primary' : ''}
+                        onClick={() => setCalDateRange(31)}
                       >
                         MONTH
                       </Button>
@@ -251,8 +252,8 @@ const Analysis = () => {
                         ghost
                         size='small'
                         style={{ fontSize: '0.5rem' }}
-                        type={calDateRange === 30 ? 'primary' : ''}
-                        onClick={() => setCalDateRange(30)}
+                        type={calDateRange === 31 ? 'primary' : ''}
+                        onClick={() => setCalDateRange(31)}
                       >
                         MONTH
                       </Button>
@@ -316,8 +317,8 @@ const Analysis = () => {
                         ghost
                         size='small'
                         style={{ fontSize: '0.5rem' }}
-                        type={calDateRange === 30 ? 'primary' : ''}
-                        onClick={() => setCalDateRange(30)}
+                        type={calDateRange === 31 ? 'primary' : ''}
+                        onClick={() => setCalDateRange(31)}
                       >
                         MONTH
                       </Button>
