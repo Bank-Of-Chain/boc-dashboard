@@ -118,9 +118,6 @@ const GlobalHeaderRight = () => {
       {isLoading ? (
         <LoadingOutlined style={{ fontSize: 24 }} spin />
       ) : !isEmpty(address) ? ([
-        <Button key="mine" icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
-          My Dashboard
-        </Button>,
         <Avatar
           key="avatar"
           menu
@@ -132,7 +129,10 @@ const GlobalHeaderRight = () => {
               }, 1)
             })
           }
-        />
+        />,
+        <Button key="mine" icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
+          My Dashboard
+        </Button>
       ]
       ) : window.ethereum ? (
         <Button type='primary' onClick={loadWeb3Modal}>

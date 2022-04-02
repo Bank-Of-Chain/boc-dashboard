@@ -50,7 +50,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
           <a
             target={'_blank'}
             rel='noreferrer'
-            href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}
+            href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}`}
             className={styles.text}
           >
             {text}
@@ -62,7 +62,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      width: 220,
+      width: 160,
       render: text => <CoinSuperPosition array={text} />,
     },
     {
@@ -115,19 +115,18 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       },
     },
     {
-      title: 'Detail',
+      title: 'Strategy Address',
       dataIndex: 'strategyAddress',
       key: 'strategyAddress',
-      width: 90,
-      render: text => (
-        <Button
-          type='dashed'
-          icon={<MoreOutlined />}
-          size={'Default'}
-          target={'_blank'}
-          href={`${DASHBOARD_ROOT}/#/strategy?id=${text}&chain=${initialState.chain}`}
-          rel='noreferrer'
-        />
+      align: 'center',
+      render: (text, item) => (
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}
+        >
+          <img width={21} src="./images/link.png" alt="link" />
+        </a>
       ),
     },
   ]
