@@ -219,8 +219,10 @@ const Personal = () => {
 
   const costChangeArray = [];
   let lastPoint = {};
-  let minId = getDaysAgoUtcTimestamp(30);
-  let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
+  // 最新一天可能没数据，直接取 31 天数据
+  // let minId = getDaysAgoUtcTimestamp(30);
+  // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
+  let apyCalData = yearData.slice(-31)
   if(initialState.chain === '1')
   {
     apyCalData = filter(apyCalData, i => i.id >= 1644249600);
