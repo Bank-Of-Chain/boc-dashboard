@@ -75,7 +75,8 @@ const appendVaultDailyDatas  = rs => {
   // 补齐到365条，最新一天没数据不展示
   const appendArray = arrayAppendOfDay(vaultDailyDatas, 366, 'id').slice(-365)
   // 补齐字段数据
-  const setDefaultValueArray = usedPreValue(appendArray, 'pricePerShare')
+  let setDefaultValueArray = usedPreValue(appendArray, 'pricePerShare')
+  setDefaultValueArray = usedPreValue(setDefaultValueArray, 'unlockedPricePerShare')
   // 选取里面有用的字段
   const result = map(setDefaultValueArray, i => pick(i, ['id', 'pricePerShare', 'unlockedPricePerShare']))
   return result
