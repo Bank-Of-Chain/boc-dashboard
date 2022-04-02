@@ -67,12 +67,12 @@ const Analysis = () => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            pricePerShare: Number(toFixed(item.pricePerShare, getDecimals(), 6)),
-            //item.totalShares
-            //   ? item.totalShares === 0
-            //     ? 1
-            //     : numeral(item.tvl / item.totalShares).format('0,0.000000')
-            //   : undefined,
+            pricePerShare: //Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+            item.totalShares
+              ? item.totalShares === 0
+                ? 1
+                : numeral(item.tvl / item.totalShares).format('0,0.000000')
+              : undefined,
             tvl: Number(toFixed(item.tvl, getDecimals(), 2)),
             totalShares: item.totalShares,
           }
