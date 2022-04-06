@@ -1,5 +1,5 @@
 import React from 'react'
-import { LogoutOutlined, AreaChartOutlined } from '@ant-design/icons'
+import { LogoutOutlined } from '@ant-design/icons'
 import { Avatar, Menu, Spin, Button } from 'antd'
 import { useModel, history } from 'umi'
 
@@ -38,9 +38,6 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Button icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
-          My Dashboard
-        </Button>
         <Address size='short' wrapClassName={`${styles.name} anticon`} address={address} />
         <Avatar
           size='small'

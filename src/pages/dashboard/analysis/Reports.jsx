@@ -144,7 +144,15 @@ const detailsColumns = [
     },
   },
   {
-    title: 'Harvest Gas Fee',
+    title: 'Harvest Gas Fee (Before)',
+    dataIndex: 'originalHarvestFee',
+    key: 'originalHarvestFee',
+    render: value => {
+      return <span>{value.toFixed(2)}</span>
+    },
+  },
+  {
+    title: 'Harvest Gas Fee (After)',
     dataIndex: 'harvestFee',
     key: 'harvestFee',
     render: value => {
@@ -399,6 +407,7 @@ const Reports = () => {
     originalGain,
     fun,
     durationDays,
+    originalHarvestFee = [],
     harvestFee,
     totalAssets,
     newTotalAssets,
@@ -423,6 +432,7 @@ const Reports = () => {
       originalAmount: get(investStrategies, `${strategy}.originalAmount`, '0'),
       apy: get(investStrategies, `${strategy}.apy`, 0),
       harvestFee: harvestFee[index],
+      originalHarvestFee: originalHarvestFee[index] || 0
     }
   })
   return (
@@ -502,9 +512,7 @@ const Reports = () => {
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <Descriptions.Item label='Total Harvest Gas Fee'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
+                <br />
                 <br />
                 <Descriptions.Item label='Change Profits'>
                   {(sum(newGain) - sum(originalGain)).toFixed(6)}
@@ -527,9 +535,17 @@ const Reports = () => {
                       ).toFixed(2)}
                   %)
                 </Descriptions.Item>
-
+                <Descriptions.Item label='Harvest Fee Reduce'>
+                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  {sum(originalHarvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
+                  {(0-sum(operateLoss)).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -562,9 +578,7 @@ const Reports = () => {
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <Descriptions.Item label='Total Harvest Gas Fee'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
+                <br />
                 <br />
                 <Descriptions.Item label='Change Profits'>
                   {(sum(newGain) - sum(originalGain)).toFixed(6)}
@@ -587,9 +601,17 @@ const Reports = () => {
                       ).toFixed(2)}
                   %)
                 </Descriptions.Item>
-
+                <Descriptions.Item label='Harvest Fee Reduce'>
+                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  {sum(originalHarvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
+                  {(0-sum(operateLoss)).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -622,9 +644,8 @@ const Reports = () => {
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <Descriptions.Item label='Total Harvest Gas Fee'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
+                <br />
+                <br />
                 <Descriptions.Item label='Change Profits'>
                   {(sum(newGain) - sum(originalGain)).toFixed(6)}
                 </Descriptions.Item>
@@ -646,9 +667,17 @@ const Reports = () => {
                       ).toFixed(2)}
                   %)
                 </Descriptions.Item>
-
+                <Descriptions.Item label='Harvest Fee Reduce'>
+                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  {sum(originalHarvestFee).toFixed(6)}
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  {sum(harvestFee).toFixed(6)}
+                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
+                  {(0-sum(operateLoss)).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -666,7 +695,7 @@ const Reports = () => {
                 bordered
                 columns={detailsColumns}
                 dataSource={displayData}
-                scroll={{ x: 1300, y: 400 }}
+                scroll={{ x: 1400, y: 400 }}
                 pagination={false}
               />
             </Desktop>
@@ -676,7 +705,7 @@ const Reports = () => {
                 size='small'
                 columns={detailsColumns}
                 dataSource={displayData}
-                scroll={{ x: 1300, y: 400 }}
+                scroll={{ x: 1400, y: 400 }}
                 pagination={false}
               />
             </Tablet>
@@ -686,7 +715,7 @@ const Reports = () => {
                 size='small'
                 columns={detailsColumns}
                 dataSource={displayData}
-                scroll={{ x: 1300, y: 400 }}
+                scroll={{ x: 1400, y: 400 }}
                 pagination={false}
               />
             </Mobile>

@@ -19,8 +19,9 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       dataIndex: 'timestamp',
       key: 'timestamp',
       render: text => (
-        <Tooltip title={moment(1000 * text).format('yyyy-MM-DD HH:mm:ss')}>
+        <Tooltip title={`${moment(1000 * text).utcOffset(0).format('yyyy-MM-DD HH:mm:ss')} (UTC)`}>
           {moment(1000 * text)
+            .utcOffset(0)
             .locale('en')
             .fromNow()}
         </Tooltip>
@@ -63,22 +64,22 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
       render: (text, item) => `${toFixed(item.shareValue, getDecimals(), 2)}`,
     },
     {
-      title: 'Detail',
+      title: 'Tx Address',
       dataIndex: 'id',
       key: 'id',
-      width: '6rem',
+      width: '6.5rem',
       ellipsis: {
         showTitle: false,
       },
+      align: 'center',
       render: text => (
-        <Button
-          type='dashed'
-          icon={<MoreOutlined />}
-          size={'Default'}
-          target={'_blank'}
+        <a
+          target="_blank"
+          rel="noreferrer"
           href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
-          rel='noreferrer'
-        />
+        >
+          <img width={21} src="./images/link.png" alt="link" />
+        </a>
       ),
     },
   ]

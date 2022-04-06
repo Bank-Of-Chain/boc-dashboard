@@ -32,13 +32,15 @@ import styles from './style.less'
 import { toFixed } from '@/helper/number-format'
 
 import { LineEchart } from '@/components/echarts'
+import {calVaultApyByRange} from "@/utils/Apy";
 
 const { TabPane } = Tabs
 
 const Analysis = () => {
-  const [calDateRange, setCalDateRange] = useState(30)
+  const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [sharePriceEchartOpt, setSharePriceEchartOpt] = useState({})
+  // const [apyEchartOpt, setApyEchartOpt] = useState({});
   const [transations, setTransations] = useState([])
 
   const { initialState } = useModel('@@initialState')
@@ -56,7 +58,8 @@ const Analysis = () => {
   }, [vaultAddress])
 
   useEffect(() => {
-    getVaultDailyData(calDateRange + 30).then((array) => arrayAppendOfDay(array, calDateRange + 30))
+    const extraDataNum = 30
+    getVaultDailyData(calDateRange + extraDataNum).then((array) => arrayAppendOfDay(array, calDateRange + extraDataNum))
       .then((array) => usedPreValue(array, 'totalShares', undefined))
       .then((array) => usedPreValue(array, 'tvl', undefined))
       .then((array) =>
@@ -64,27 +67,42 @@ const Analysis = () => {
           return {
             id: item.id,
             date: 1000 * item.id,
-            pricePerShare: item.totalShares
+            pricePerShare: //Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+            item.totalShares
               ? item.totalShares === 0
                 ? 1
                 : numeral(item.tvl / item.totalShares).format('0,0.000000')
-              : undefined, //Number(toFixed(item.pricePerShare, getDecimals(), 6)),
+              : undefined,
             tvl: Number(toFixed(item.tvl, getDecimals(), 2)),
             totalShares: item.totalShares,
           }
         }),
       )
       .then(array => {
-        let minId = getDaysAgoTimestamp(calDateRange)
-        // let result = calVaultApyByRange(array, 7);
-        // result = result.map(item => {
-        //   if (item.apy) {
-        //     item.apy = numeral(item.apy * 100).format('0,0.00');
-        //   }
-        //   return item;
-        // }).filter(item => item.id >= minId);
-        // setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 7-day APY(%)', false));
-        const rangeArray = array.filter(item => item.id >= minId)
+//         let result = calVaultApyByRange(array, 30);
+//         result = result.map(item => {
+//           if (item.apy) {
+//             item.apy = numeral(item.apy * 100).format('0,0.00');
+//           }
+//           return item;
+//         }).filter(item => item.id >= minId);
+//         setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, calDateRange > 7
+//         ? {
+//             format: 'MM-DD',
+//             xAxis: {
+//               axisTick: {
+//                 alignWithLabel: true,
+//               },
+//             },
+//           }
+//         : {
+//             xAxis: {
+//               axisTick: {
+//                 alignWithLabel: true,
+//               },
+//             },
+//           },));
+        const rangeArray = array.slice(-calDateRange)
         setSharePriceEchartOpt(
           getLineEchartOpt(
             rangeArray,
@@ -173,8 +191,8 @@ const Analysis = () => {
                     <Tooltip title='last 30 days'>
                       <Button
                         ghost
-                        type={calDateRange === 30 ? 'primary' : ''}
-                        onClick={() => setCalDateRange(30)}
+                        type={calDateRange === 31 ? 'primary' : ''}
+                        onClick={() => setCalDateRange(31)}
                       >
                         MONTH
                       </Button>
@@ -191,6 +209,11 @@ const Analysis = () => {
                   </div>
                 }
               >
+                {/*<TabPane tab="APY" key="apy">*/}
+                {/*  <div className={styles.chartDiv}>*/}
+                {/*    <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
+                {/*  </div>*/}
+                {/*</TabPane>*/}
                 <TabPane tab='Share Price' key='sharePrice'>
                   <div className={styles.chartDiv}>
                     <LineEchart
@@ -230,8 +253,8 @@ const Analysis = () => {
                         ghost
                         size='small'
                         style={{ fontSize: '0.5rem' }}
-                        type={calDateRange === 30 ? 'primary' : ''}
-                        onClick={() => setCalDateRange(30)}
+                        type={calDateRange === 31 ? 'primary' : ''}
+                        onClick={() => setCalDateRange(31)}
                       >
                         MONTH
                       </Button>
@@ -250,6 +273,11 @@ const Analysis = () => {
                   </div>
                 }
               >
+	        {/*<TabPane tab="APY" key="apy">*/}
+          {/*        <div className={styles.chartDivMobile}>*/}
+          {/*          <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
+          {/*        </div>*/}
+          {/*      </TabPane>*/}
                 <TabPane tab='Share Price' key='sharePrice'>
                   <div className={styles.chartDivMobile}>
                     <LineEchart
@@ -290,8 +318,8 @@ const Analysis = () => {
                         ghost
                         size='small'
                         style={{ fontSize: '0.5rem' }}
-                        type={calDateRange === 30 ? 'primary' : ''}
-                        onClick={() => setCalDateRange(30)}
+                        type={calDateRange === 31 ? 'primary' : ''}
+                        onClick={() => setCalDateRange(31)}
                       >
                         MONTH
                       </Button>
@@ -310,6 +338,11 @@ const Analysis = () => {
                   </div>
                 }
               >
+	       {/*<TabPane tab="APY" key="apy">*/}
+         {/*         <div className={styles.chartDivMobile}>*/}
+         {/*           <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>*/}
+         {/*         </div>*/}
+         {/*       </TabPane>*/}
                 <TabPane tab='Share Price' key='sharePrice'>
                   <div className={styles.chartDivMobile}>
                     <LineEchart

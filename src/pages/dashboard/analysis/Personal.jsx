@@ -27,10 +27,11 @@ import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import reduce from 'lodash/reduce'
 import isNull from 'lodash/isNull'
+import { findIndex, intersectionWith, reverse } from 'lodash'
 import {toFixed} from '@/helper/number-format'
 import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
-import {getDaysAgoTimestamp} from "@/services/dashboard-service";
+import {getDaysAgoTimestamp, getDaysAgoUtcTimestamp} from "@/services/dashboard-service";
 import {isProEnv} from "@/services/env-service"
 import * as ethers from "ethers"
 
@@ -165,11 +166,12 @@ const Personal = () => {
     }
   }, [initialState, roleError])
 
-  const monthOffset = moment().month() + 1
+  const monthOffset = moment().utcOffset(0).month() + 1
   const groupByMonth = groupBy(
     filter(yearData, i => i.currentShares > 0 && i.pricePerShare > 0 && i.currentDepositedUSDT > 0),
     i =>
       moment(1000 * i.id)
+        .utcOffset(0)
         .locale('en')
         .format('MMM'),
   )
@@ -217,13 +219,14 @@ const Personal = () => {
 
   const costChangeArray = [];
   let lastPoint = {};
-  let minId = getDaysAgoTimestamp(30);
-  let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
+  // 最新一天可能没数据，直接取 31 天数据
+  // let minId = getDaysAgoUtcTimestamp(30);
+  // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
+  let apyCalData = yearData.slice(-31)
   if(initialState.chain === '1')
   {
     apyCalData = filter(apyCalData, i => i.id >= 1644249600);
   }
-  // console.log('apyCalData',JSON.stringify(apyCalData));
   for (let i = 0; i < apyCalData.length; i++) {
     let currentData = apyCalData[i];
     // 优先使用释放后的单价进行计算
@@ -403,29 +406,37 @@ const Personal = () => {
       },
     ],
   }
-
+  const tvlArray = compact(
+    map(yearData, i => {
+      if (isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
+      return {
+        date: 1000 * i.dayTimestamp,
+        tvl: parseFloat(
+          BN(i.currentShares)
+            .multipliedBy(BN(i.pricePerShare))
+            .div(BN(10).pow(decimals * 2))
+            .toFixed(4),
+        ),
+      }
+    }),
+  )
+  // 参考 https://github.com/PiggyFinance/dashboard/issues/166
+  const reverseArray = reverse([...tvlArray])
+  const continuousIndex = findIndex(reverseArray, (item, index) => {
+    if (index <= 2) return false
+    if (index === reverseArray.length) return true
+    return Math.abs(item.tvl - reverseArray[index - 1].tvl) > item.tvl * 0.005
+  })
+  const startPercent = continuousIndex === -1 ?  0 : (100.5 - (100 * continuousIndex / tvlArray.length))
   const option1 = getLineEchartOpt(
-    compact(
-      map(yearData, i => {
-        if (isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
-        return {
-          date: 1000 * i.dayTimestamp,
-          tvl: parseFloat(
-            BN(i.currentShares)
-              .multipliedBy(BN(i.pricePerShare))
-              .div(BN(10).pow(decimals * 2))
-              .toFixed(4),
-          ),
-        }
-      }),
-    ),
+    tvlArray,
     'tvl',
     'USDT',
     true,
     {
       format: 'MM-DD',
       dataZoom: [{
-        start: 0,
+        start: startPercent,
         end: 100
       }],
       xAxis: {
@@ -508,6 +519,10 @@ const Personal = () => {
               onClick={() => setInitialState({...initialState, address: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'})}>晓天地址:
               0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff</a>
             <br/>
+            <a onClick={() => setInitialState({ ...initialState, address: '0xee3db241031c4aa79feca628f7a00aaa603901a6', })}>
+              ND 测试用户：0xee3db241031c4aa79feca628f7a00aaa603901a6
+            </a>
+            <br />
             <p>该输入框为测试使用，发布前需要删除</p>
           </Col>
         </Row>

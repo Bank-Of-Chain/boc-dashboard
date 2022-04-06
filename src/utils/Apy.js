@@ -1,4 +1,5 @@
 export const calVaultAPY = (vaultDailyData) => {
+  // console.log('vaultDailyData',JSON.stringify(vaultDailyData));
   let beginPricePerShare = 1;
   let beginTime = 0;
   for (let i = 0; i < vaultDailyData.length; i++) {
@@ -17,12 +18,12 @@ export const calVaultAPY = (vaultDailyData) => {
       break;
     }
   }
-
+  // console.log('beginTime,endTime',beginTime,endTime);
   return calAPY(beginPricePerShare, endPricePerShare, endTime - beginTime);
 }
 
-const calAPY = (beginPricePerShare, endPricePerShare, timeDiffSenconds) => {
-  return Math.pow(1 + Number(endPricePerShare - beginPricePerShare) / Number(beginPricePerShare), 365 * 24 * 60 * 60 / timeDiffSenconds) - 1;
+const calAPY = (beginPricePerShare, endPricePerShare, timeDiffSeconds) => {
+  return Math.pow(1 + Number(endPricePerShare - beginPricePerShare) / Number(beginPricePerShare), 365 * 24 * 60 * 60 / timeDiffSeconds) - 1;
 }
 
 export const calVaultDailyAPY = (vaultDailyData) => {
@@ -47,6 +48,7 @@ export const calVaultDailyAPY = (vaultDailyData) => {
 }
 
 export const calVaultApyByRange = (vaultDailyData, preDayNumber) => {
+  // console.log('vaultDailyData',JSON.stringify(vaultDailyData));
   const lastApyPoints = [];
   for (let i = 0; i < vaultDailyData.length; i++) {
     if (vaultDailyData[i].totalShares) {
@@ -54,10 +56,11 @@ export const calVaultApyByRange = (vaultDailyData, preDayNumber) => {
       const currentBeginTime = Number(vaultDailyData[i].id);
       for (let j = 0; j < lastApyPoints.length; j++) {
         let lastApyPoint = lastApyPoints[j];
-        if (currentBeginTime - preDayNumber * 24 * 3600 >= lastApyPoint.lastTime) {
+        if (currentBeginTime - preDayNumber * 24 * 3600 > lastApyPoint.lastTime) {
           lastApyPoints.shift();
           j--;
         } else {
+          // console.log('lastTime, currentTime',lastApyPoint.lastTime,currentBeginTime, (currentBeginTime - lastApyPoint.lastTime)/3600/24);
           vaultDailyData[i].apy = calAPY(lastApyPoint.lastPricePerShare, currentPricePerShare, currentBeginTime - lastApyPoint.lastTime);
           if (vaultDailyData[i].apy > 10) {
             console.warn('apy more than 1000%', JSON.stringify(vaultDailyData[i]));
