@@ -123,7 +123,7 @@ export const getVaultSummaryData = async () => {
 
 const VAULT_DAILY_QUERY = `
 query($beginDayTimestamp: BigInt) {
-  vaultDailyDatas (where: {
+  vaultDailyDatas (first: 1000, where: {
     id_gt: $beginDayTimestamp
   }) {
     id
@@ -512,7 +512,7 @@ export const getAccountDetailByDays = async (userAddress, beginDayTimestamp) => 
   if (isEmpty(client)) return
   const query = `
     query($account: String, $beginTimestamp: BigInt) {
-      accountDailyDatas(where: {
+      accountDailyDatas(first: 1000, where: {
           account: $account,
           dayTimestamp_gt: $beginTimestamp
       }, orderBy: dayTimestamp, orderDirection: desc) {
@@ -544,7 +544,7 @@ export const getVaultDailyByDays = async (beginDayTimestamp) => {
   if (isEmpty(client)) return
   const query = `
     query($beginDayTimestamp: BigInt) {
-      vaultDailyDatas (where: {
+      vaultDailyDatas (first: 1000, where: {
         id_gt: $beginDayTimestamp
       }) {
         id
