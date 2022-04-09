@@ -24,7 +24,7 @@ export default defineConfig({
       137: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph'
     },
     VAULT_ADDRESS: {
-      1: '0x66F625B8c4c635af8b74ECe2d7eD0D58b4af3C3d',
+      1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
       56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
       137: '0xe47F0396CfCB8134A791246924171950f1a83053'
     }

@@ -29,7 +29,7 @@ export const getStrategyApysOffChain = (address, offset = 0, limit = 20) => {
       offset,
       limit
     }
-    return request(`${API_SERVER}/v1/apy-off-chain`, {
+    return request(`${API_SERVER}/officialApy`, {
       params,
     });
   } catch (error) {
@@ -70,7 +70,7 @@ export const getStrategyDetails = (chainId, offset = 0, limit = 20) => {
     offset,
     limit,
   }
-  return request(`${API_SERVER}/v1/strategy/apy/list/${chainId}`, {
+  return request(`${API_SERVER}/strategy/detail/list/${chainId}`, {
     params: nextParams,
   });
 }
