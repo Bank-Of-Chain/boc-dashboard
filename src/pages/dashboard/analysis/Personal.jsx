@@ -217,73 +217,79 @@ const Personal = () => {
     BN(0),
   )
 
-  const costChangeArray = [];
-  let lastPoint = {};
-  // 最新一天可能没数据，直接取 31 天数据
-  // let minId = getDaysAgoUtcTimestamp(30);
-  // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
-  let apyCalData = yearData.slice(-31)
-  if(initialState.chain === '1')
-  {
-    apyCalData = filter(apyCalData, i => i.id >= 1644249600);
-  }
-  for (let i = 0; i < apyCalData.length; i++) {
-    let currentData = apyCalData[i];
-    // 优先使用释放后的单价进行计算
-    const pricePerShare = currentData.unlockedPricePerShare || currentData.pricePerShare
-    if (currentData.currentDepositedUSDT) {
-      // cost not change
-      if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
-        lastPoint.duration += currentData.id - lastPoint.endTime;
-        lastPoint.endTime = currentData.id;
-        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
-        costChangeArray[costChangeArray.length - 1] = lastPoint;
-      } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
-        lastPoint.duration += currentData.id - lastPoint.endTime;
-        lastPoint.endTime = currentData.id;
-        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
-        costChangeArray[costChangeArray.length - 1] = lastPoint;
-        lastPoint = {
-          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          shares: currentData.currentShares,
-          userCost: currentData.currentDepositedUSDT,
-          beginTime: currentData.id,
-          endTime: currentData.id,
-          duration: 0
-        };
-        costChangeArray.push(lastPoint);
-      } else {
-        lastPoint = {
-          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          shares: currentData.currentShares,
-          userCost: currentData.currentDepositedUSDT,
-          beginTime: currentData.id,
-          endTime: currentData.id,
-          duration: 0
-        };
-        costChangeArray.push(lastPoint);
-      }
-    } else {
-      lastPoint = {};
+  function calApy(day) {
+    const costChangeArray = [];
+    let lastPoint = {};
+    // 最新一天可能没数据，直接取 31 天数据
+    // let minId = getDaysAgoUtcTimestamp(30);
+    // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
+    let apyCalData = yearData.slice(-(day + 1))
+    if(initialState.chain === '1')
+    {
+      apyCalData = filter(apyCalData, i => i.id >= 1644249600);
     }
+    for (let i = 0; i < apyCalData.length; i++) {
+      let currentData = apyCalData[i];
+      // 优先使用释放后的单价进行计算
+      const pricePerShare = currentData.unlockedPricePerShare || currentData.pricePerShare
+      if (currentData.currentDepositedUSDT) {
+        // cost not change
+        if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
+          lastPoint.duration += currentData.id - lastPoint.endTime;
+          lastPoint.endTime = currentData.id;
+          lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
+          costChangeArray[costChangeArray.length - 1] = lastPoint;
+        } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
+          lastPoint.duration += currentData.id - lastPoint.endTime;
+          lastPoint.endTime = currentData.id;
+          lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
+          costChangeArray[costChangeArray.length - 1] = lastPoint;
+          lastPoint = {
+            beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            shares: currentData.currentShares,
+            userCost: currentData.currentDepositedUSDT,
+            beginTime: currentData.id,
+            endTime: currentData.id,
+            duration: 0
+          };
+          costChangeArray.push(lastPoint);
+        } else {
+          lastPoint = {
+            beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            shares: currentData.currentShares,
+            userCost: currentData.currentDepositedUSDT,
+            beginTime: currentData.id,
+            endTime: currentData.id,
+            duration: 0
+          };
+          costChangeArray.push(lastPoint);
+        }
+      } else {
+        lastPoint = {};
+      }
+    }
+
+    // console.log('costChangeArray', JSON.stringify(costChangeArray));
+    let APY = 0;
+    let userTotalTvl = 0;
+    let duration = 0;
+    let changeValue = 0;
+    for (let i = 0; i < costChangeArray.length; i++) {
+      userTotalTvl += costChangeArray[i].beginValue * costChangeArray[i].duration;
+      duration += costChangeArray[i].duration;
+      changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
+    }
+    if (userTotalTvl > 0) {
+      // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
+      APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
+    }
+    return APY
   }
 
-  // console.log('costChangeArray',JSON.stringify(costChangeArray));
-  let APY = 0;
-  let userTotalTvl = 0;
-  let duration = 0;
-  let changeValue = 0;
-  for (let i = 0; i < costChangeArray.length; i++) {
-    userTotalTvl += costChangeArray[i].beginValue * costChangeArray[i].duration;
-    duration += costChangeArray[i].duration;
-    changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
-  }
-  if (userTotalTvl > 0) {
-    // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
-    APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
-  }
+  const APY_30 = calApy(30)
+  const APY_7 = calApy(7)
 
 // 总盈利
   const profitTotal = value1.plus(value2)
@@ -565,7 +571,7 @@ const Personal = () => {
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${numeral(APY * 100).format('0,0.00')}%`}
+              total={`${numeral(APY_30 * 100).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>
@@ -597,6 +603,21 @@ const Personal = () => {
               loading={loading}
               total={() => toFixed(sumBy(value5, o => parseFloat(o)).toString(), 1, 2)}
               contentHeight={100}
+            />
+          </Col>
+
+          <Col {...topColResponsiveProps}>
+            <ChartCard
+              bordered={false}
+              loading={loading}
+              title='APY(last 7 days)'
+              action={
+                <Tooltip title={`Yield over the past 1 week`}>
+                  <InfoCircleOutlined/>
+                </Tooltip>
+              }
+              total={`${numeral(APY_7 * 100).format('0,0.00')}%`}
+              contentHeight={70}
             />
           </Col>
 
