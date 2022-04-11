@@ -184,28 +184,28 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
           Mint: (item) => {
             return (
               <>
-                ❇️<strong>{item.method}</strong> {toFixed(item.value, getDecimals(), 2)} USDi to <strong>{item.to}</strong>
+                <strong>{item.method}</strong> {toFixed(item.value, getDecimals(), 2)} USDi to <strong>{item.to}</strong>
               </>
             )
           },
           Burn: (item) => {
             return (
               <>
-                🌹 <strong>{item.method}</strong> {toFixed(item.value, getDecimals(), 2)} USDi
+                <strong>{item.method}</strong> {toFixed(item.value, getDecimals(), 2)} USDi
               </>
             )
           },
           Rebase: (item) => {
             return (
               <>
-                🉑 <strong>{item.method}</strong> {toFixed(item.value, getDecimals(), 2)} raw yield
+                <strong>{item.method}</strong> {toFixed(item.value, getDecimals(), 2)} raw yield
               </>
             )
           },
           Transfer: (item) => {
             return (
               <>
-                🔆 <strong>{item.method}</strong> {toFixed(item.shares, getDecimals(), 2)} USDi from <strong>{item.from}</strong> to <strong>{item.to}</strong>
+                <strong>{item.method}</strong> {toFixed(item.shares, getDecimals(), 2)} USDi from <strong>{item.from}</strong> to <strong>{item.to}</strong>
               </>
             )
           },
@@ -263,7 +263,7 @@ const TransationsTable = ({ loading, visitData, dropdownGroup }) => {
           bordered={false}
           title='Recent Activity'
           extra={
-            <Radio.Group onChange={handleChange} defaultValue="All" buttonStyle="solid">
+            <Radio.Group onChange={handleChange} defaultValue="All" buttonStyle="outline">
               <Radio.Button value="All">All</Radio.Button>
               <Radio.Button value="Transfer">Transfer</Radio.Button>
               <Radio.Button value="Mint">Mint</Radio.Button>

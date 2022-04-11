@@ -6,7 +6,7 @@ import numeral from 'numeral';
 // === Components === //
 import {InfoCircleOutlined} from '@ant-design/icons'
 import {GridContent} from '@ant-design/pro-layout'
-import {Col, Row, Tooltip, Result, Card, Input, Modal} from 'antd'
+import {Col, Row, Tooltip, Result, Card, Input, Modal, Select} from 'antd'
 import {ChartCard} from './components/Charts'
 import {BarEchart, LineEchart} from '@/components/echarts'
 import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
@@ -34,6 +34,7 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 import {getDaysAgoTimestamp, getDaysAgoUtcTimestamp} from "@/services/dashboard-service";
 import {isProEnv} from "@/services/env-service"
 import * as ethers from "ethers"
+import styles from './style.less'
 
 // === Constants === //
 import CHAINS, { CHIANS_NAME } from '@/constants/chain'
@@ -42,6 +43,8 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 import useAdminRole from './../../../hooks/useAdminRole'
 
 const { BigNumber } = ethers
+
+const { Option } = Select
 
 const topColResponsiveProps = {
   xs: 24,
@@ -59,6 +62,7 @@ const Personal = () => {
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
   const [showWarningModal, setShowWarningModal] = useState(false)
+  const [apyDays, setApyDays] = useState(30)
   const {dataSource, loading} = useModel('usePersonalData')
   const {initialState, setInitialState} = useModel('@@initialState')
   const { error: roleError } = useAdminRole(initialState.address)
@@ -217,73 +221,79 @@ const Personal = () => {
     BN(0),
   )
 
-  const costChangeArray = [];
-  let lastPoint = {};
-  // 最新一天可能没数据，直接取 31 天数据
-  // let minId = getDaysAgoUtcTimestamp(30);
-  // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
-  let apyCalData = yearData.slice(-31)
-  if(initialState.chain === '1')
-  {
-    apyCalData = filter(apyCalData, i => i.id >= 1644249600);
-  }
-  for (let i = 0; i < apyCalData.length; i++) {
-    let currentData = apyCalData[i];
-    // 优先使用释放后的单价进行计算
-    const pricePerShare = currentData.unlockedPricePerShare || currentData.pricePerShare
-    if (currentData.currentDepositedUSDT) {
-      // cost not change
-      if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
-        lastPoint.duration += currentData.id - lastPoint.endTime;
-        lastPoint.endTime = currentData.id;
-        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
-        costChangeArray[costChangeArray.length - 1] = lastPoint;
-      } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
-        lastPoint.duration += currentData.id - lastPoint.endTime;
-        lastPoint.endTime = currentData.id;
-        lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
-        costChangeArray[costChangeArray.length - 1] = lastPoint;
-        lastPoint = {
-          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          shares: currentData.currentShares,
-          userCost: currentData.currentDepositedUSDT,
-          beginTime: currentData.id,
-          endTime: currentData.id,
-          duration: 0
-        };
-        costChangeArray.push(lastPoint);
-      } else {
-        lastPoint = {
-          beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-          shares: currentData.currentShares,
-          userCost: currentData.currentDepositedUSDT,
-          beginTime: currentData.id,
-          endTime: currentData.id,
-          duration: 0
-        };
-        costChangeArray.push(lastPoint);
-      }
-    } else {
-      lastPoint = {};
+  function calcAPY (day) {
+    const costChangeArray = [];
+    let lastPoint = {};
+    // 最新一天可能没数据，直接取 31 天数据
+    // let minId = getDaysAgoUtcTimestamp(30);
+    // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
+    let apyCalData = yearData.slice(-day - 1)
+    if(initialState.chain === '1')
+    {
+      apyCalData = filter(apyCalData, i => i.id >= 1644249600);
     }
+    for (let i = 0; i < apyCalData.length; i++) {
+      let currentData = apyCalData[i];
+      // 优先使用释放后的单价进行计算
+      const pricePerShare = currentData.unlockedPricePerShare || currentData.pricePerShare
+      if (currentData.currentDepositedUSDT) {
+        // cost not change
+        if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
+          lastPoint.duration += currentData.id - lastPoint.endTime;
+          lastPoint.endTime = currentData.id;
+          lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
+          costChangeArray[costChangeArray.length - 1] = lastPoint;
+        } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
+          lastPoint.duration += currentData.id - lastPoint.endTime;
+          lastPoint.endTime = currentData.id;
+          lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
+          costChangeArray[costChangeArray.length - 1] = lastPoint;
+          lastPoint = {
+            beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            shares: currentData.currentShares,
+            userCost: currentData.currentDepositedUSDT,
+            beginTime: currentData.id,
+            endTime: currentData.id,
+            duration: 0
+          };
+          costChangeArray.push(lastPoint);
+        } else {
+          lastPoint = {
+            beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
+            shares: currentData.currentShares,
+            userCost: currentData.currentDepositedUSDT,
+            beginTime: currentData.id,
+            endTime: currentData.id,
+            duration: 0
+          };
+          costChangeArray.push(lastPoint);
+        }
+      } else {
+        lastPoint = {};
+      }
+    }
+
+    // console.log('costChangeArray',JSON.stringify(costChangeArray));
+    let APY = 0;
+    let userTotalTvl = 0;
+    let duration = 0;
+    let changeValue = 0;
+    for (let i = 0; i < costChangeArray.length; i++) {
+      userTotalTvl += costChangeArray[i].beginValue * costChangeArray[i].duration;
+      duration += costChangeArray[i].duration;
+      changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
+    }
+    if (userTotalTvl > 0) {
+      // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
+      APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
+    }
+
+    return APY
   }
 
-  // console.log('costChangeArray',JSON.stringify(costChangeArray));
-  let APY = 0;
-  let userTotalTvl = 0;
-  let duration = 0;
-  let changeValue = 0;
-  for (let i = 0; i < costChangeArray.length; i++) {
-    userTotalTvl += costChangeArray[i].beginValue * costChangeArray[i].duration;
-    duration += costChangeArray[i].duration;
-    changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
-  }
-  if (userTotalTvl > 0) {
-    // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
-    APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
-  }
+  const APY = calcAPY(apyDays)
 
 // 总盈利
   const profitTotal = value1.plus(value2)
@@ -545,9 +555,17 @@ const Personal = () => {
             <ChartCard
               bordered={false}
               loading={loading}
-              title='APY(last 30 days)'
+              title={(
+                <div>
+                  <Select className={styles.apySelector} defaultValue={apyDays} size="small" onChange={(value) => setApyDays(value)}>
+                    <Option value={7}>7</Option>
+                    <Option value={30}>30</Option>
+                  </Select>
+                  <span> days trailing APY</span>
+                </div>
+              )}
               action={
-                <Tooltip title={`Yield over the past 1 month`}>
+                <Tooltip title={`Yield over the past ${apyDays} days`}>
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
