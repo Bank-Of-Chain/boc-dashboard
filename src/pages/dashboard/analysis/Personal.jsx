@@ -217,13 +217,13 @@ const Personal = () => {
     BN(0),
   )
 
-  function calcAPY (day) {
+  function calApy(day) {
     const costChangeArray = [];
     let lastPoint = {};
     // 最新一天可能没数据，直接取 31 天数据
     // let minId = getDaysAgoUtcTimestamp(30);
     // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
-    let apyCalData = yearData.slice(-day - 1)
+    let apyCalData = yearData.slice(-(day + 1))
     if(initialState.chain === '1')
     {
       apyCalData = filter(apyCalData, i => i.id >= 1644249600);
@@ -271,7 +271,7 @@ const Personal = () => {
       }
     }
 
-    // console.log('costChangeArray',JSON.stringify(costChangeArray));
+    // console.log('costChangeArray', JSON.stringify(costChangeArray));
     let APY = 0;
     let userTotalTvl = 0;
     let duration = 0;
@@ -285,12 +285,11 @@ const Personal = () => {
       // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
       APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
     }
-
     return APY
   }
 
-  const APY = calcAPY(30)
-
+  const APY_30 = calApy(30)
+  const APY_7 = calApy(7)
 
 // 总盈利
   const profitTotal = value1.plus(value2)
@@ -572,7 +571,7 @@ const Personal = () => {
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${numeral(APY * 100).format('0,0.00')}%`}
+              total={`${numeral(APY_30 * 100).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>
@@ -604,6 +603,21 @@ const Personal = () => {
               loading={loading}
               total={() => toFixed(sumBy(value5, o => parseFloat(o)).toString(), 1, 2)}
               contentHeight={100}
+            />
+          </Col>
+
+          <Col {...topColResponsiveProps}>
+            <ChartCard
+              bordered={false}
+              loading={loading}
+              title='APY(last 7 days)'
+              action={
+                <Tooltip title={`Yield over the past 1 week`}>
+                  <InfoCircleOutlined/>
+                </Tooltip>
+              }
+              total={`${numeral(APY_7 * 100).format('0,0.00')}%`}
+              contentHeight={70}
             />
           </Col>
 
