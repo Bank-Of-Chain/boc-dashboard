@@ -6,7 +6,7 @@ import numeral from 'numeral';
 // === Components === //
 import {InfoCircleOutlined} from '@ant-design/icons'
 import {GridContent} from '@ant-design/pro-layout'
-import {Col, Row, Tooltip, Result, Card, Input, Modal, Select} from 'antd'
+import {Col, Row, Tooltip, Result, Card, Input, Modal} from 'antd'
 import {ChartCard} from './components/Charts'
 import {BarEchart, LineEchart} from '@/components/echarts'
 import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
@@ -43,8 +43,6 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 import useAdminRole from './../../../hooks/useAdminRole'
 
 const { BigNumber } = ethers
-
-const { Option } = Select
 
 const topColResponsiveProps = {
   xs: 24,
