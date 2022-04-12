@@ -62,7 +62,6 @@ const Personal = () => {
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
   const [showWarningModal, setShowWarningModal] = useState(false)
-  const [apyDays, setApyDays] = useState(30)
   const {dataSource, loading} = useModel('usePersonalData')
   const {initialState, setInitialState} = useModel('@@initialState')
   const { error: roleError } = useAdminRole(initialState.address)
@@ -293,7 +292,8 @@ const Personal = () => {
     return APY
   }
 
-  const APY = calcAPY(apyDays)
+  const APY7 = calcAPY(7)
+  const APY30 = calcAPY(30)
 
 // 总盈利
   const profitTotal = value1.plus(value2)
@@ -555,21 +555,27 @@ const Personal = () => {
             <ChartCard
               bordered={false}
               loading={loading}
-              title={(
-                <div>
-                  <Select className={styles.apySelector} defaultValue={apyDays} size="small" onChange={(value) => setApyDays(value)}>
-                    <Option value={7}>7</Option>
-                    <Option value={30}>30</Option>
-                  </Select>
-                  <span> days trailing APY</span>
-                </div>
-              )}
+              title='APY(last 30 days)'
               action={
-                <Tooltip title={`Yield over the past ${apyDays} days`}>
+                <Tooltip title={`Yield over the past 1 month`}>
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${numeral(APY * 100).format('0,0.00')}%`}
+              total={`${numeral(APY30 * 100).format('0,0.00')}%`}
+              contentHeight={70}
+            />
+          </Col>
+          <Col {...topColResponsiveProps}>
+            <ChartCard
+              bordered={false}
+              loading={loading}
+              title='APY(last 7 days)'
+              action={
+                <Tooltip title={`Yield over the past 1 week`}>
+                  <InfoCircleOutlined/>
+                </Tooltip>
+              }
+              total={`${numeral(APY7 * 100).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>

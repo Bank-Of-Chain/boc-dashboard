@@ -289,7 +289,7 @@ const Personal = () => {
     return APY
   }
 
-  const APY = calcAPY(7)
+  const APY = calcAPY(30)
 
 
 // 总盈利
