@@ -4,7 +4,7 @@ import {
   getVaultDailyData,
   getVaultTodayData,
 } from '@/services/dashboard-service';
-import { arrayAppendOfDay, usedPreValue } from './../helper/array-append';
+import { arrayAppendOfDay, usedPreValue } from '@/utils/array-append';
 
 const dataMerge = () => {
   return Promise.all([

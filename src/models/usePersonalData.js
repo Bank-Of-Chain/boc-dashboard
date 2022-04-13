@@ -13,10 +13,9 @@ import {
 // === Utils === //
 import moment from 'moment';
 import isEmpty from 'lodash/isEmpty';
-import filter from 'lodash/filter';
 import pick from 'lodash/pick';
 import map from 'lodash/map';
-import { arrayAppendOfDay, usedPreValue } from '@/helper/array-append'
+import { arrayAppendOfDay, usedPreValue } from '@/utils/array-append'
 import { useEffect, useState } from 'react';
 import * as ethers from "ethers";
 import useUserProvider from '@/hooks/useUserProvider'

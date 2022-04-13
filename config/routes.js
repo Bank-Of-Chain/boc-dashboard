@@ -1,18 +1,18 @@
 export default [{
     path: '/',
-    component: './dashboard/analysisV2',
+    component: './home',
   },
   {
     path: '/strategy',
-    component: './dashboard/analysisV2/StrategyDetail',
+    component: './strategyDetail',
   },
   {
     path: '/mine',
-    component: './dashboard/analysisV2/Personal',
+    component: './mine',
   },
   {
     path: '/reports',
-    component: './dashboard/analysisV2/Reports',
+    component: './reports',
   },
   {
     component: '404',
