@@ -4,9 +4,23 @@ import moment from 'moment'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
-import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message } from 'antd'
+import {
+  Table,
+  Card,
+  Tag,
+  Modal,
+  Descriptions,
+  Row,
+  Col,
+  Tooltip,
+  Spin,
+  message,
+  Divider,
+  Switch,
+} from 'antd'
 import Address from '@/components/Address'
 import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
+import { FallOutlined, RiseOutlined } from '@ant-design/icons'
 
 // === Services === //
 import { getReports, updateReportStatus } from '@/services/api-service'
@@ -163,8 +177,14 @@ const detailsColumns = [
 
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
-  const [showIndex, setShowIndex] = useState(-1)
+  const [showIndex, setShowIndex] = useState(0)
   const { userProvider } = useUserProvider()
+  const [isRedUp, setIsRedUp] = useState(true)
+
+  const styleMap = {
+    [isRedUp]: styles.danger,
+    [!isRedUp]: styles.success,
+  }
 
   const [showWarningModal, setShowWarningModal] = useState(false)
 
@@ -244,6 +264,10 @@ const Reports = () => {
 
   const hideModal = () => {
     setShowWarningModal(false)
+  }
+
+  const iconRender = flag => {
+    return flag ? <RiseOutlined /> : <FallOutlined />
   }
 
   useEffect(() => {
@@ -432,14 +456,38 @@ const Reports = () => {
       originalAmount: get(investStrategies, `${strategy}.originalAmount`, '0'),
       apy: get(investStrategies, `${strategy}.apy`, 0),
       harvestFee: harvestFee[index],
-      originalHarvestFee: originalHarvestFee[index] || 0
+      originalHarvestFee: originalHarvestFee[index] || 0,
     }
   })
+  const aprBefore =
+    totalAssets === undefined
+      ? 0
+      : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)
+  const aprAfter =
+    newTotalAssets === undefined || totalAssets === undefined
+      ? 0
+      : (
+          (365 * 100 * sum(newGain)) /
+          ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) * durationDays)
+        ).toFixed(2)
+  const aprVariation = (aprAfter - aprBefore).toFixed(2)
+
+  const sumOriginalHarvestFee = sum(originalHarvestFee)
+  const sumHarvestFee = sum(harvestFee)
+  const sumHarvestFeeVariation = sumOriginalHarvestFee - sumHarvestFee
+
+  const sumOriginalGain = sum(originalGain)
+  const sumNewGain = sum(newGain)
+  const sumGainVariation = sumNewGain - sumOriginalGain
   return (
     <GridContent>
       <Suspense fallback={null}>
         <Desktop>
-          <Card loading={loading} bordered={false} title='Allocation Reports'>
+          <Card
+            loading={loading}
+            bordered={false}
+            title='Allocation Reports'
+          >
             <Table
               rowKey={record => record.id}
               columns={columns}
@@ -452,7 +500,12 @@ const Reports = () => {
           </Card>
         </Desktop>
         <Tablet>
-          <Card loading={loading} bordered={false} title='Allocation Reports' size='small'>
+          <Card
+            loading={loading}
+            bordered={false}
+            title='Allocation Reports'
+            size='small'
+          >
             <Table
               rowKey={record => record.id}
               columns={columns}
@@ -466,7 +519,12 @@ const Reports = () => {
           </Card>
         </Tablet>
         <Mobile>
-          <Card loading={loading} bordered={false} title='Allocation Reports' size='small'>
+          <Card
+            loading={loading}
+            bordered={false}
+            title='Allocation Reports'
+            size='small'
+          >
             <Table
               rowKey={record => record.id}
               columns={columns}
@@ -492,7 +550,17 @@ const Reports = () => {
           <Col span={24}>
             <Desktop>
               <Descriptions
-                title={<span style={{ color: '#fff' }}>Report Details</span>}
+                title={
+                  <span style={{ color: '#fff' }}>
+                    Report Details
+                    <Switch
+                      style={{ float: 'right', marginRight: '50px' }}
+                      checkedChildren='红升绿降'
+                      unCheckedChildren='绿升红降'
+                      onChange={setIsRedUp}
+                    />
+                  </span>
+                }
                 labelStyle={{ color: '#fff' }}
                 contentStyle={{ color: '#fff' }}
               >
@@ -509,43 +577,56 @@ const Reports = () => {
                 <Descriptions.Item label='Report Time'>
                   {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
                 </Descriptions.Item>
+              </Descriptions>
+              <Divider orientation='left' plain>
+                Before and after
+              </Divider>
+              <Descriptions>
+                <Descriptions.Item label='APR'>
+                  <span className={styleMap[aprVariation > 0]}>
+                    {aprVariation}% {aprVariation !== 0 && iconRender(aprVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='APR Before'>
+                  <span className={styleMap[false]}>{aprBefore}%</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='APR After'>
+                  <span className={styleMap[true]}>{aprAfter}%</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits'>
+                  <span className={styleMap[sumGainVariation > 0]}>
+                    {sumGainVariation.toFixed(6)}{' '}
+                    {sumGainVariation !== 0 && iconRender(sumGainVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits Before'>
+                  <span className={styleMap[false]}>{sumOriginalGain.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits After'>
+                  <span className={styleMap[true]}>{sumNewGain.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee'>
+                  <span className={styleMap[sumHarvestFeeVariation > 0]}>
+                    {sumHarvestFeeVariation.toFixed(6)}{' '}
+                    {sumHarvestFeeVariation !== 0 && iconRender(sumHarvestFeeVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  <span className={styleMap[false]}>{sumOriginalHarvestFee.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  <span className={styleMap[true]}>{sumHarvestFee.toFixed(6)}</span>
+                </Descriptions.Item>
+              </Descriptions>
+              <Divider orientation='left' plain>
+                Profit
+              </Divider>
+              <Descriptions column={4}>
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <br />
-                <br />
-                <Descriptions.Item label='Change Profits'>
-                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits Before'>
-                  {sum(originalGain).toFixed(6)} (APR:
-                  {totalAssets === undefined
-                    ? 0
-                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits After'>
-                  {sum(newGain).toFixed(6)} (APR:
-                  {newTotalAssets === undefined || totalAssets === undefined
-                    ? 0
-                    : (
-                        (365 * 100 * sum(newGain)) /
-                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
-                          durationDays)
-                      ).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Reduce'>
-                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Before'>
-                  {sum(originalHarvestFee).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee After'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {(0-sum(operateLoss)).toFixed(6)}
+                  {sum(operateLoss).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -558,7 +639,17 @@ const Reports = () => {
             <Tablet>
               <Descriptions
                 size='small'
-                title={<span style={{ color: '#fff' }}>Report Details</span>}
+                title={
+                  <span style={{ color: '#fff' }}>
+                    Report Details
+                    <Switch
+                      style={{ float: 'right', marginRight: '50px' }}
+                      checkedChildren='红升绿降'
+                      unCheckedChildren='绿升红降'
+                      onChange={setIsRedUp}
+                    />
+                  </span>
+                }
                 labelStyle={{ color: '#fff', fontSize: '0.7rem' }}
                 contentStyle={{ color: '#fff', fontSize: '0.7rem' }}
               >
@@ -575,43 +666,56 @@ const Reports = () => {
                 <Descriptions.Item label='Report Time'>
                   {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
                 </Descriptions.Item>
+              </Descriptions>
+              <Divider orientation='left' plain>
+                Before and after
+              </Divider>
+              <Descriptions>
+                <Descriptions.Item label='APR'>
+                  <span className={styleMap[aprVariation > 0]}>
+                    {aprVariation}% {aprVariation !== 0 && iconRender(aprVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='APR Before'>
+                  <span className={styleMap[false]}>{aprBefore}%</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='APR After'>
+                  <span className={styleMap[true]}>{aprAfter}%</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits'>
+                  <span className={styleMap[sumGainVariation > 0]}>
+                    {sumGainVariation.toFixed(6)}{' '}
+                    {sumGainVariation !== 0 && iconRender(sumGainVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits Before'>
+                  <span className={styleMap[false]}>{sumOriginalGain.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits After'>
+                  <span className={styleMap[true]}>{sumNewGain.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee'>
+                  <span className={styleMap[sumHarvestFeeVariation > 0]}>
+                    {sumHarvestFeeVariation.toFixed(6)}{' '}
+                    {sumHarvestFeeVariation !== 0 && iconRender(sumHarvestFeeVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  <span className={styleMap[false]}>{sumOriginalHarvestFee.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  <span className={styleMap[true]}>{sumHarvestFee.toFixed(6)}</span>
+                </Descriptions.Item>
+              </Descriptions>
+              <Divider orientation='left' plain>
+                Profit
+              </Divider>
+              <Descriptions>
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <br />
-                <br />
-                <Descriptions.Item label='Change Profits'>
-                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits Before'>
-                  {sum(originalGain).toFixed(6)} (APR:
-                  {totalAssets === undefined
-                    ? 0
-                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits After'>
-                  {sum(newGain).toFixed(6)} (APR:
-                  {newTotalAssets === undefined || totalAssets === undefined
-                    ? 0
-                    : (
-                        (365 * 100 * sum(newGain)) /
-                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
-                          durationDays)
-                      ).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Reduce'>
-                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Before'>
-                  {sum(originalHarvestFee).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee After'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {(0-sum(operateLoss)).toFixed(6)}
+                  {sum(operateLoss).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -624,7 +728,17 @@ const Reports = () => {
             <Mobile>
               <Descriptions
                 size='small'
-                title={<span style={{ color: '#fff' }}>Report Details</span>}
+                title={
+                  <span style={{ color: '#fff' }}>
+                    Report Details
+                    <Switch
+                      style={{ float: 'right', marginRight: '50px' }}
+                      checkedChildren='红升绿降'
+                      unCheckedChildren='绿升红降'
+                      onChange={setIsRedUp}
+                    />
+                  </span>
+                }
                 labelStyle={{ color: '#fff' }}
                 contentStyle={{ color: '#fff' }}
               >
@@ -641,43 +755,56 @@ const Reports = () => {
                 <Descriptions.Item label='Report Time'>
                   {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
                 </Descriptions.Item>
+              </Descriptions>
+              <Divider orientation='left' plain>
+                Before and after
+              </Divider>
+              <Descriptions>
+                <Descriptions.Item label='APR'>
+                  <span className={styleMap[aprVariation > 0]}>
+                    {aprVariation}% {aprVariation !== 0 && iconRender(aprVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='APR Before'>
+                  <span className={styleMap[false]}>{aprBefore}%</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='APR After'>
+                  <span className={styleMap[true]}>{aprAfter}%</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits'>
+                  <span className={styleMap[sumGainVariation > 0]}>
+                    {sumGainVariation.toFixed(6)}{' '}
+                    {sumGainVariation !== 0 && iconRender(sumGainVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits Before'>
+                  <span className={styleMap[false]}>{sumOriginalGain.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Profits After'>
+                  <span className={styleMap[true]}>{sumNewGain.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee'>
+                  <span className={styleMap[sumHarvestFeeVariation > 0]}>
+                    {sumHarvestFeeVariation.toFixed(6)}{' '}
+                    {sumHarvestFeeVariation !== 0 && iconRender(sumHarvestFeeVariation > 0)}
+                  </span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee Before'>
+                  <span className={styleMap[false]}>{sumOriginalHarvestFee.toFixed(6)}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label='Harvest Fee After'>
+                  <span className={styleMap[true]}>{sumHarvestFee.toFixed(6)}</span>
+                </Descriptions.Item>
+              </Descriptions>
+              <Divider orientation='left' plain>
+                Profit
+              </Divider>
+              <Descriptions>
                 <Descriptions.Item label='Allocation Profit'>
                   {(-1 * fun).toFixed(6)}
                 </Descriptions.Item>
-                <br />
-                <br />
-                <Descriptions.Item label='Change Profits'>
-                  {(sum(newGain) - sum(originalGain)).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits Before'>
-                  {sum(originalGain).toFixed(6)} (APR:
-                  {totalAssets === undefined
-                    ? 0
-                    : ((365 * 100 * sum(originalGain)) / (totalAssets * durationDays)).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits After'>
-                  {sum(newGain).toFixed(6)} (APR:
-                  {newTotalAssets === undefined || totalAssets === undefined
-                    ? 0
-                    : (
-                        (365 * 100 * sum(newGain)) /
-                        ((newTotalAssets ? newTotalAssets : totalAssets - sum(exchangeLoss)) *
-                          durationDays)
-                      ).toFixed(2)}
-                  %)
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Reduce'>
-                  {(sum(originalHarvestFee) - sum(harvestFee)).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Before'>
-                  {sum(originalHarvestFee).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee After'>
-                  {sum(harvestFee).toFixed(6)}
-                </Descriptions.Item>
                 <Descriptions.Item label='Allocation Cost'>
-                  {(0-sum(operateLoss)).toFixed(6)}
+                  {sum(operateLoss).toFixed(6)}
                 </Descriptions.Item>
                 <Descriptions.Item label='Operate Gas Fee'>
                   {sum(operateFee).toFixed(6)}
@@ -690,6 +817,9 @@ const Reports = () => {
           </Col>
 
           <Col span={24}>
+            <Divider orientation='left' plain>
+              Details
+            </Divider>
             <Desktop>
               <Table
                 bordered
