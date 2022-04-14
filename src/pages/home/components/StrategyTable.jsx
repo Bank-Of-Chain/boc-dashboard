@@ -9,7 +9,7 @@ import STRATEGIES_MAP from '@/constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
-import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
+import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format'
@@ -23,6 +23,7 @@ import { getStrategyDetails } from '@/services/api-service'
 const StrategyTable = ({ dropdownGroup, loading }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
+  const deviceType = useDeviceType()
   const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, 0, 100), {
     formatResult: resp => resp.content,
   })
@@ -79,11 +80,11 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       title: <Tooltip title='Official weekly average APY'>
         <span>Official APY</span>
       </Tooltip>,
-      dataIndex: 'apyOffLatest',
-      key: 'apyOffLatest',
+      dataIndex: 'officialApyAvg',
+      key: 'officialApyAvg',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.apyOffLatest - b.apyOffLatest
+        return a.officialApyAvg - b.officialApyAvg
       },
       render: text => <span>{(100 * text).toFixed(2)} %</span>,
     },
@@ -100,18 +101,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
     {
       title: 'Weekly Profit',
       dataIndex: 'weeklyProfit',
-      key: 'weeklyProfit',
-      render: (text, item) => {
-        return (
-          <span>
-            {map(text, (i, index) => (
-              <p key={index} style={{ marginBottom: 0 }}>
-                {toFixed(i.value, 10 ** 6, 2)} {i.unit}
-              </p>
-            ))}
-          </span>
-        )
-      },
+      key: 'weeklyProfit'
     },
     {
       title: 'Strategy Address',
@@ -130,107 +120,61 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
     },
   ]
   const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
+  const responsiveConfig = {
+    [MEDIA_TYPE.Desktop]: {},
+    [MEDIA_TYPE.Tablet]: {
+      cardProps: {
+        size: 'small'
+      },
+      tableProps: {
+        size: 'small',
+        rowClassName: 'tablet-font-size'
+      }
+    },
+    [MEDIA_TYPE.Mobile]: {
+      cardProps: {
+        size: 'small'
+      },
+      tableProps: {
+        size: 'small',
+        rowClassName: 'mobile-font-sizee'
+      }
+    }
+  }[deviceType]
+
   return (
     <div>
-      <Desktop>
-        <Card
-          loading={loading}
-          bordered={false}
-          title='Vault Strategies Allocations'
-          extra={
-            <div>
-              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-              <Tooltip title='show all strategies added in vault'>
-                <span style={{ padding: 10 }}>Show All</span>
-              </Tooltip>
-            </div>
-          }
-          style={{
-            height: '100%',
-            marginTop: 32,
+      <Card
+        loading={loading}
+        bordered={false}
+        title='Vault Strategies Allocations'
+        extra={
+          <div>
+            <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
+            <Tooltip title='show all strategies added in vault'>
+              <span style={{ padding: 10 }}>Show All</span>
+            </Tooltip>
+          </div>
+        }
+        style={{
+          height: '100%',
+          marginTop: 32,
+        }}
+        {...responsiveConfig.cardProps}
+      >
+        <Table
+          rowKey={record => record.strategyAddress}
+          columns={columns}
+          dataSource={data}
+          pagination={{
+            style: {
+              marginBottom: 0,
+            },
+            pageSize: 10,
           }}
-        >
-          <Table
-            rowKey={record => record.strategyAddress}
-            columns={columns}
-            dataSource={data}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              pageSize: 10,
-            }}
-          />
-        </Card>
-      </Desktop>
-      <Tablet>
-        <Card
-          loading={loading}
-          bordered={false}
-          size='small'
-          title='Vault Strategies Allocations'
-          extra={
-            <div>
-              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-              <Tooltip title='show all strategies added in vault'>
-                <span style={{ padding: 10 }}>Show All</span>
-              </Tooltip>
-            </div>
-          }
-          style={{
-            height: '100%',
-            marginTop: 32,
-          }}
-        >
-          <Table
-            rowKey={record => record.strategyAddress}
-            size='small'
-            rowClassName='tablet-font-size'
-            columns={columns}
-            dataSource={data}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              pageSize: 10,
-            }}
-          />
-        </Card>
-      </Tablet>
-      <Mobile>
-        <Card
-          loading={loading}
-          bordered={false}
-          size='small'
-          title='Vault Strategies Allocations'
-          extra={
-            <div>
-              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-              <Tooltip title='show all strategies added in vault'>
-                <span style={{ padding: 10 }}>Show All</span>
-              </Tooltip>
-            </div>
-          }
-          style={{
-            height: '100%',
-            marginTop: 32,
-          }}
-        >
-          <Table
-            rowKey={record => record.strategyAddress}
-            size='small'
-            rowClassName='mobile-font-size'
-            columns={columns}
-            dataSource={data}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              pageSize: 10,
-            }}
-          />
-        </Card>
-      </Mobile>
+          {...responsiveConfig.tableProps}
+        />
+      </Card>
     </div>
   )
 }

@@ -123,3 +123,46 @@ export const getStrategyDetailsReports = ({
     }
   })
 }
+
+export const getValutAPYByDate = ({
+  date,
+  chainId,
+  duration
+}) => {
+  return request(`${API_SERVER}/apy/vault_apy/date/${date}`, {
+    params: {
+      chainId,
+      duration
+    }
+  })
+}
+
+export const getValutAPYList = ({
+  chainId,
+  duration,
+  offset = 0,
+  limit
+}) => {
+  return request(`${API_SERVER}/apy/vault_apy`, {
+    params: {
+      chainId,
+      duration,
+      offset,
+      limit
+    }
+  })
+}
+
+export const getUsdiTotalSupplyList = ({
+  chainId,
+  offset = 0,
+  limit
+}) => {
+  return request(`${API_SERVER}}/USDi/totalSupply`, {
+    params: {
+      chainId,
+      offset,
+      limit
+    }
+  })
+}

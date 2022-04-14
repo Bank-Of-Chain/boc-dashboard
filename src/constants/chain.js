@@ -16,7 +16,7 @@ const BSC = {
 const MATIC = {
   id: '137',
   name: 'Polygon',
-  decimals: BN(1e6),
+  decimals: BN(1e18),
   rpcUrl: "https://polygon-rpc.com/",
   blockExplorer: "https://explorer-mainnet.maticvigil.com/",
 }

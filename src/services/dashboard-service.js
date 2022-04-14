@@ -35,65 +35,37 @@ export function getDaysAgoUtcTimestamp(daysAgo) {
   return daysAgoTimestamp + new Date().getTimezoneOffset() * 60 ;
 }
 
-const VAULT_DETAIL_QUERY = `
-query($sevenDaysAgoTimestamp: BigInt) {
+const DASHBOARD_DETAIL_QUERY = `
+query {
+  usdis(first: 1) {
+    tokenInfo {
+      decimals
+    }
+    totalSupply
+    holderCount
+  }
   vaults(first: 1) {
     id
-    decimals
-    emergencyShutdown
-    adjustPosition
-    pricePerShare
-    tvl
-    totalShares
-    usdtPrice
-    holderCount
-    totalProfit
-    trackedAssetsValue
-    strategies(
-      orderBy: debt,
-      orderDirection: desc
-      where: {addToVault: true}
-    ) {
+    totalAssets
+    strategies(where: {isAdded: true}) {
       id
-      name
-      protocol {
-        id
-        totalDebt
-        usdtPrice
-      }
-      underlyingTokens {
-        token {
-          id
-          symbol
-        }
-      }
-      addToVault
-      debt
-      depositedAssets
-      usdtPrice
-      reports(where: {
-        timestamp_gt: $sevenDaysAgoTimestamp
-      }) {
-        profit
-        usdtPrice
-      }
+      protocol
+      debtRecordInVault
     }
   }
 }
 `;
-export const getVaultDetails = async () => {
+export const getDashboardDetail = async () => {
   const client = getClient()
   if (isEmpty(client)) return
   const {
     data
   } = await client.query({
-    query: gql(VAULT_DETAIL_QUERY),
-    variables: {
-      sevenDaysAgoTimestamp: getDaysAgoTimestamp(7),
-    },
+    query: gql(DASHBOARD_DETAIL_QUERY)
   });
   return {
-    data: data.vaults[0],
+    usdi: data.usdis[0],
+    vault: data.vaults[0],
   };
 };
 
@@ -160,37 +132,6 @@ export const getVaultDailyData = async (day) => {
       },
     })
     .then((resp) => get(resp, 'data.vaultDailyDatas'));
-};
-
-const VAULT_TODAY_QUERY = `
-query($todayTimestamp: BigInt) {
-  vaultDailyData (id: $todayTimestamp) {
-    id
-    newHolderCount
-    tvl
-    totalShares
-    pricePerShare
-    totalProfit
-    usdtPrice
-  }
-}
-`;
-export const getVaultTodayData = async () => {
-  const client = getClient()
-  if (isEmpty(client)) return
-  const currentTimestamp = Math.floor(Date.parse(new Date()) / 1000);
-  const todayTimestamp = currentTimestamp - (currentTimestamp % 86400);
-  const {
-    data
-  } = await client.query({
-    query: gql(VAULT_TODAY_QUERY),
-    variables: {
-      todayTimestamp,
-    },
-  });
-  return {
-    data: data.vaultDailyData,
-  };
 };
 
 const VAULT_HOURLY_QUERY = `
@@ -279,27 +220,15 @@ query($strategyAddress: Bytes) {
   strategy(id: $strategyAddress) {
     id
     name
-    protocol {
-      id
-    }
-    underlyingTokens {
+    protocol
+    positionDetail {
       token {
         id
         symbol
       }
     }
-    addToVault
-    debt
-    depositedAssets
-    usdtPrice
-    reports (orderBy: timestamp, orderDirection: desc) {
-      id
-      profit
-      nowStrategyTotalDebt
-      usdtPrice
-      timestamp
-    }
-    lastReportTime
+    isAdded
+    debtRecordInVault
   }
 }
 `;
@@ -316,36 +245,47 @@ export const getStrategyById = async (strategyAddress) => {
     .then((data) => data.data.strategy);
 };
 
-const TXN_QUERY = `
-query($relatedContractAddress: Bytes) {
-  importantEvents(
+const ACTIVITY_QUERY = `
+query($types: [USDiUpdateType], $first: Int) {
+  usdiUpdates(
     orderBy: timestamp,
     orderDirection: desc,
+    first: $first,
     where: {
-      address: $relatedContractAddress
-    }) {
+      type_in: $types
+    },
+  ) {
     id
-    method
-    from
-    address
-    shares
-    shareValue
+    type
+    transferredAmount
+    changeAmount
     timestamp
+    fromAccountUpdate {
+      account {
+        id
+      }
+    }
+		toAccountUpdate {
+      account {
+        id
+      }
+    }
   }
 }
 `;
-export const getTransations = async (relatedContractAddress) => {
-  if (isEmpty(relatedContractAddress)) return;
+
+export const getRecentActivity = async (types, total = 100) => {
   const client = getClient()
   if (isEmpty(client)) return
   return await client
     .query({
-      query: gql(TXN_QUERY),
+      query: gql(ACTIVITY_QUERY),
       variables: {
-        relatedContractAddress,
+        types,
+        first: total
       },
     })
-    .then((data) => data.data.importantEvents);
+    .then((res) => res.data.usdiUpdates);
 };
 
 const TXN_PAGINATION_QUERY = `

@@ -1,31 +1,26 @@
-import { useRequest } from 'umi';
-import {
-  getVaultDetails,
-  getVaultDailyData,
-  getVaultTodayData,
-} from '@/services/dashboard-service';
-import { arrayAppendOfDay, usedPreValue } from '@/utils/array-append';
+import { useEffect, useState } from 'react';
+import { useModel } from 'umi';
+import moment from 'moment'
+import { getDashboardDetail } from '@/services/dashboard-service';
+import { getValutAPYByDate } from '@/services/api-service';
+import { APY_DURATION } from '@/constants/api'
 
-const dataMerge = () => {
+const dataMerge = (chain) => {
   return Promise.all([
-    getVaultDetails(),
-    getVaultTodayData(),
-    getVaultDailyData(60)
-      .then((array) => arrayAppendOfDay(array, 60))
-      .then((array) => usedPreValue(array, 'holderCount', 0))
-      .then((array) => usedPreValue(array, 'totalShares', undefined))
-      .then((array) => usedPreValue(array, 'unlockedPricePerShare', undefined))
-      .then((array) => array.slice(-31)),
+    getDashboardDetail(),
+    getValutAPYByDate({
+      date: moment().utcOffset(0).format('YYYY-MM-DD'),
+      duration: APY_DURATION.monthly,
+      chainId: chain
+    }).catch(() => ({
+      apy: '8.56'
+    }))
   ])
     .then((rs) => {
-      const [vaultDetail = {}, vaultTodayData = {}, vaultDailyData = []] = rs;
-      const nextData = {
-        vaultDetail: vaultDetail?.data,
-        vaultTodayData: vaultTodayData?.data,
-        vaultDailyData,
-      };
+      const [dashboardDetail = {}, valutApy] = rs;
       return {
-        data: nextData,
+        ...dashboardDetail,
+        apy30: valutApy.apy
       };
     })
     .catch((error) => {
@@ -34,10 +29,25 @@ const dataMerge = () => {
 };
 
 export default function useDashboardData() {
-  const msg = useRequest(() => dataMerge());
+  const [data, setData] = useState({})
+  const [loading, setLoading] = useState(false)
+  const {
+    initialState
+  } = useModel('@@initialState')
+
+  useEffect(() => {
+    if (initialState?.chain) {
+      setLoading(true)
+      dataMerge(initialState.chain)
+        .then(setData)
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [initialState?.chain])
+
   return {
-    dataSource: msg.data,
-    reload: msg.run,
-    loading: msg.loading,
+    dataSource: data,
+    loading,
   };
 }
