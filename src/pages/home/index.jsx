@@ -11,6 +11,7 @@ import _min from 'lodash/min'
 import _max from 'lodash/max'
 
 // === Services === //
+import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getUsdiTotalSupplyList } from '@/services/api-service'
 
 // === Utils === //
@@ -18,6 +19,8 @@ import { isEmpty} from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
 import { APY_DURATION } from '@/constants/api'
+import { toFixed } from '@/utils/number-format';
+import { getDecimals } from '@/apollo/client'
 
 // === Styles === //
 import styles from './style.less'
@@ -34,7 +37,7 @@ const Analysis = () => {
 
   const { initialState } = useModel('@@initialState')
 
-  const { dataSource = {}, loading } = useModel('useDashboardData')
+  const { dataSource = {}, loading } = useDashboardData()
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -50,15 +53,15 @@ const Analysis = () => {
     if (calDateRange > 7) {
       params.format = 'MM-DD'
     }
+    // apy 是事件监听，会有当天数据，offset 为 1
+    const apyOffset = 1
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
-      limit: calDateRange
+      offset: apyOffset,
+      limit: calDateRange + apyOffset
     }).then(data => {
-      const result = data.content.map(item => ({
-        apy: item.apy,
-        date: moment(item.date).valueOf()
-      }))
+      const result = data.content.reverse()
       setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
     }).catch((e) => {
       console.error(e)
@@ -67,9 +70,9 @@ const Analysis = () => {
       chainId: initialState.chain,
       limit: calDateRange
     }).then(data => {
-      const result = data.content.map(item => ({
-        totalSupply: item.totalSupply,
-        date: moment(item.date).valueOf()
+      const result = data.content.reverse().map((item) => ({
+        ...item,
+        totalSupply: toFixed(item.totalSupply, getDecimals(), 2),
       }))
       setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', false, params))
     }).catch((e) => {

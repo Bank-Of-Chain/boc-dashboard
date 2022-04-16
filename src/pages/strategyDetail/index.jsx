@@ -75,6 +75,7 @@ const Strategy = props => {
       )
       .then(setOffChainApys)
       .catch(noop)
+    // eslint-disable-next-line
   }, [id])
 
   useEffect(() => {

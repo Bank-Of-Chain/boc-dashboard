@@ -87,13 +87,14 @@ const TransationsTable = ({ loading }) => {
       key: 'detail',
       render: (text, item) => {
         const { type, changeAmount, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
-        const changeValue = toFixed(BN(changeAmount).abs(), getDecimals(), 2)
+        const changeValue = toFixed(changeAmount, getDecimals(), 2)
+        const absChangeValue = toFixed(BN(changeAmount).abs(), getDecimals(), 2)
         const transferValue = toFixed(transferredAmount, getDecimals(), 2)
         const from = fromAccountUpdate?.account.id
         const to = toAccountUpdate?.account.id
         const fns = {
           Mint: () => <>{type} {changeValue} USDi to {renderAddress(to)}</>,
-          Burn: () => <>{type} {changeValue} USDi from {renderAddress(from)}</>,
+          Burn: () => <>{type} {absChangeValue} USDi from {renderAddress(from)}</>,
           Rebase: () => <>{type} {changeValue} raw yield</>,
           Transfer: () => <>{type} {transferValue} USDi from {renderAddress(from)} to {renderAddress(to)}</>,
         }

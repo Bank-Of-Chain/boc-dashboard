@@ -3,6 +3,7 @@ import { Col, Row, Tooltip } from 'antd';
 import numeral from 'numeral';
 import ChartCard from '@/components/ChartCard';
 import BN from 'bignumber.js';
+import { isNil } from 'lodash';
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format';
@@ -41,7 +42,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
           loading={loading}
           title="Holders"
           action={
-            <Tooltip title="Number Of Holders">
+            <Tooltip title="Number Of USDi Holders">
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -60,7 +61,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
               <InfoCircleOutlined />
             </Tooltip>
           }
-          total={() => `${apy30}%`}
+          total={() => isNil(apy30) ? '' : `${apy30}%`}
           contentHeight={70}
         />
       </Col>

@@ -39,6 +39,7 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
+import usePersonalData from '@/hooks/usePersonalData'
 
 const { BigNumber } = ethers
 
@@ -58,7 +59,7 @@ const Personal = () => {
   const [totalProfit, setTotalProfit] = useState(0)
   const [depositedPercent, setDepositedPercent] = useState(0)
   const [showWarningModal, setShowWarningModal] = useState(false)
-  const {dataSource, loading} = useModel('usePersonalData')
+  const {dataSource, loading} = usePersonalData()
   const {initialState, setInitialState} = useModel('@@initialState')
   const { error: roleError } = useAdminRole(initialState.address)
 
@@ -72,7 +73,7 @@ const Personal = () => {
   const liveAcountShares = dataSource?.liveAcountShares
   const livePricePerShare = dataSource?.livePricePerShare
   // 计算apy
-  const {accountDailyDatasInYear, vaultDailyDatesInYear} = dataSource
+  const {accountDailyDatasInYear, vaultDailyDatesInYear} = dataSource || {}
   const yearData = map(accountDailyDatasInYear, (i, index) => {
     return {
       ...i,

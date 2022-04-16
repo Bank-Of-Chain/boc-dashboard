@@ -36,15 +36,15 @@ export function getDaysAgoUtcTimestamp(daysAgo) {
 }
 
 const DASHBOARD_DETAIL_QUERY = `
-query {
-  usdis(first: 1) {
+query ($usdiAddress: Bytes, $valutAddress: Bytes) {
+  usdi(id: $usdiAddress) {
     tokenInfo {
       decimals
     }
     totalSupply
     holderCount
   }
-  vaults(first: 1) {
+  vault(id: $valutAddress) {
     id
     totalAssets
     strategies(where: {isAdded: true}) {
@@ -55,18 +55,19 @@ query {
   }
 }
 `;
-export const getDashboardDetail = async () => {
+export const getDashboardDetail = async (usdiAddress, valutAddress) => {
   const client = getClient()
   if (isEmpty(client)) return
   const {
     data
   } = await client.query({
-    query: gql(DASHBOARD_DETAIL_QUERY)
+    query: gql(DASHBOARD_DETAIL_QUERY),
+    variables: {
+      usdiAddress,
+      valutAddress
+    }
   });
-  return {
-    usdi: data.usdis[0],
-    vault: data.vaults[0],
-  };
+  return data
 };
 
 const VAULT_SUMMARY_DATA = `

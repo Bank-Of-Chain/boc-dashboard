@@ -7,17 +7,17 @@ import { APY_DURATION } from '@/constants/api'
 
 const dataMerge = (chain) => {
   return Promise.all([
-    getDashboardDetail(),
+    getDashboardDetail(USDi_ADDRESS[chain], VAULT_ADDRESS[chain]),
     getValutAPYByDate({
       date: moment().utcOffset(0).format('YYYY-MM-DD'),
       duration: APY_DURATION.monthly,
       chainId: chain
-    }).catch(() => ({
-      apy: '8.56'
-    }))
+    }).catch((error) => {
+      console.log(error)
+    })
   ])
     .then((rs) => {
-      const [dashboardDetail = {}, valutApy] = rs;
+      const [dashboardDetail = {}, valutApy = {}] = rs;
       return {
         ...dashboardDetail,
         apy30: valutApy.apy

@@ -22,11 +22,11 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
   const seriesData = [];
   const xAxisLabels = {}
   data.forEach((o) => {
-    let value = moment(Number(o.date)).utcOffset(0).format(tootlTipFormat);
+    let value = moment(o.date).format(tootlTipFormat);
     if (tootlTipSuffix) {
       value = `${value} ${tootlTipSuffix}`
     }
-    xAxisLabels[value] = moment(Number(o.date)).utcOffset(0).format(format);
+    xAxisLabels[value] = moment(o.date).format(format);
     xAxisData.push(value);
     seriesData.push(o[dataValueKey]);
   });

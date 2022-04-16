@@ -32,6 +32,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
     },
     BN(0),
   )
+
   const vaultPoolValue = BN(totalAssets).minus(total)
 
   const groupData = groupBy(

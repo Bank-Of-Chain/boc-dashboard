@@ -13,9 +13,7 @@ import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format'
-import { getDecimals } from '@/apollo/client'
 import BN from 'bignumber.js'
-import map from 'lodash/map'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
@@ -28,6 +26,9 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
     formatResult: resp => resp.content,
   })
   if (!initialState.chain) return null
+
+  // boc-service fixed the number to 6
+  const decimals = BN(1e6)
   const columns = [
     {
       title: 'Name',
@@ -74,7 +75,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       sorter: (a, b) => {
         return BN(a.totalAsset || '0').minus(BN(b.totalAsset || '0'))
       },
-      render: text => <span>{toFixed(text || '0', getDecimals(), 2)}</span>,
+      render: text => <span>{toFixed(text || '0', decimals, 2)}</span>,
     },
     {
       title: <Tooltip title='Official weekly average APY'>
@@ -101,7 +102,8 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
     {
       title: 'Weekly Profit',
       dataIndex: 'weeklyProfit',
-      key: 'weeklyProfit'
+      key: 'weeklyProfit',
+      render: (text, item) => <span>{`${toFixed(text || '0', decimals, 2)} ${text == '0' ? '' : item.tokenUnit}`}</span>
     },
     {
       title: 'Strategy Address',
