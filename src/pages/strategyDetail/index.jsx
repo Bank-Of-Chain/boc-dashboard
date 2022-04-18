@@ -17,7 +17,8 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Utils === //
 import { isEmpty, map, noop, reduce, groupBy, sortBy } from 'lodash'
 import { toFixed } from '@/utils/number-format'
-import { getDecimals } from '@/apollo/client'
+import { USDi_DECIMALS } from '@/constants/usdi'
+
 import moment from 'moment'
 import _union from 'lodash/union'
 import _find from 'lodash/find'
@@ -222,10 +223,10 @@ const Strategy = props => {
                   <CoinSuperPosition array={map(positionDetail, 'token.id')} />
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
-                  {toFixed(totalValue, getDecimals(), 2) + ' USD'}
+                  {toFixed(totalValue, USDi_DECIMALS, 2) + ' USD'}
                 </Descriptions.Item>
                 {/* <Descriptions.Item label='Total Investments'>
-                  {toFixed(depositedAssets, getDecimals(), 2) + ' USDi'}
+                  {toFixed(depositedAssets, USDi_DECIMALS, 2) + ' USDi'}
                 </Descriptions.Item> */}
                 <Descriptions.Item label='Status'>
                   {strategy.isAdded ? 'Active' : 'Inactive'}

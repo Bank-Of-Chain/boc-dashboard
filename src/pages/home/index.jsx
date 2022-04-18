@@ -20,7 +20,7 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
-import { getDecimals } from '@/apollo/client'
+import { USDi_DECIMALS } from '@/constants/usdi'
 
 // === Styles === //
 import styles from './style.less'
@@ -72,7 +72,7 @@ const Analysis = () => {
     }).then(data => {
       const result = data.content.reverse().map((item) => ({
         ...item,
-        totalSupply: toFixed(item.totalSupply, getDecimals(), 2),
+        totalSupply: toFixed(item.totalSupply, USDi_DECIMALS, 2),
       }))
       setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', false, params))
     }).catch((e) => {

@@ -7,7 +7,8 @@ import moment from 'moment'
 import map from 'lodash/map'
 import BN from 'bignumber.js'
 import { toFixed } from '@/utils/number-format'
-import { getDecimals } from '@/apollo/client'
+
+import { USDi_DECIMALS } from '@/constants/usdi'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
@@ -87,9 +88,9 @@ const TransationsTable = ({ loading }) => {
       key: 'detail',
       render: (text, item) => {
         const { type, changeAmount, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
-        const changeValue = toFixed(changeAmount, getDecimals(), 2)
-        const absChangeValue = toFixed(BN(changeAmount).abs(), getDecimals(), 2)
-        const transferValue = toFixed(transferredAmount, getDecimals(), 2)
+        const changeValue = toFixed(changeAmount, USDi_DECIMALS, 2)
+        const absChangeValue = toFixed(BN(changeAmount).abs(), USDi_DECIMALS, 2)
+        const transferValue = toFixed(transferredAmount, USDi_DECIMALS, 2)
         const from = fromAccountUpdate?.account.id
         const to = toAccountUpdate?.account.id
         const fns = {

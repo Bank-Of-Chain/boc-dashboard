@@ -12,7 +12,7 @@ import reduce from 'lodash/reduce'
 import filter from 'lodash/filter'
 import { mapValues, values } from 'lodash'
 import { toFixed } from '@/utils/number-format'
-import { getDecimals } from '@/apollo/client'
+import { USDi_DECIMALS } from '@/constants/usdi'
 import BN from 'bignumber.js'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
@@ -92,7 +92,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
       sorter: (a, b) => {
         return a.amount.minus(b.amount)
       },
-      render: text => toFixed(text.toString(), getDecimals(), 2),
+      render: text => toFixed(text.toString(), USDi_DECIMALS, 2),
     },
     {
       title: 'Asset Ratio',
