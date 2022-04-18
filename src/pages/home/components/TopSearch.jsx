@@ -24,19 +24,19 @@ const TopSearch = ({ loading, visitData = {} }) => {
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null
-  const { strategies = [], totalAssets } = visitData
+  const { strategies = [], totalValue } = visitData
   const total = reduce(
     strategies,
     (rs, o) => {
-      return rs.plus(o.debtRecordInVault)
+      return rs.plus(o.totalValue)
     },
     BN(0),
   )
 
-  const vaultPoolValue = BN(totalAssets).minus(total)
+  const vaultPoolValue = BN(totalValue).minus(total)
 
   const groupData = groupBy(
-    filter(strategies, i => i.debtRecordInVault > 0),
+    filter(strategies, i => i.totalValue > 0),
     'protocol',
   )
 
@@ -46,21 +46,21 @@ const TopSearch = ({ loading, visitData = {} }) => {
         const amount = reduce(
           o,
           (rs, ob) => {
-            return rs.plus(ob.debtRecordInVault)
+            return rs.plus(ob.totalValue)
           },
           BN(0),
         )
         return {
           name: STRATEGIES_MAP[initialState.chain][key],
           amount,
-          percent: amount.div(totalAssets),
+          percent: amount.div(totalValue),
         }
       }),
     ),
     {
       name: 'Vault',
       amount: vaultPoolValue,
-      percent: vaultPoolValue.div(totalAssets),
+      percent: vaultPoolValue.div(totalValue),
     },
   ]
 
