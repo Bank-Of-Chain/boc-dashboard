@@ -17,7 +17,7 @@ const Default = ({ children }) => {
   return isNotMobile ? children : null
 }
 
-const MEDIA_TYPE = {
+const DEVICE_TYPE = {
   Desktop: 'Desktop',
   Tablet: 'Tablet',
   Mobile: 'Mobile'
@@ -28,14 +28,14 @@ const useDeviceType = () => {
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 })
 
   if (isDesktop) {
-    return MEDIA_TYPE.Desktop
+    return DEVICE_TYPE.Desktop
   }
 
   if (isTablet) {
-    return MEDIA_TYPE.Tablet
+    return DEVICE_TYPE.Tablet
   }
 
-  return MEDIA_TYPE.Mobile
+  return DEVICE_TYPE.Mobile
 }
 
-export { Desktop, Tablet, Mobile, Default, useDeviceType, MEDIA_TYPE }
+export { Desktop, Tablet, Mobile, Default, useDeviceType, DEVICE_TYPE }

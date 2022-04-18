@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useModel } from 'umi'
 import BN from 'bignumber.js'
 
-import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { getStrategyDetailsReports } from '@/services/api-service'
 
 // === Utils === //
@@ -140,8 +140,8 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
     }
   }
   const responsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {},
-    [MEDIA_TYPE.Tablet]: {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {
       ...smallCardConfig,
       tableProps: {
         size: 'small',
@@ -149,7 +149,7 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
         scroll: { x: 900 }
       }
     },
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Mobile]: {
       ...smallCardConfig,
       tableProps: {
         size: 'small',

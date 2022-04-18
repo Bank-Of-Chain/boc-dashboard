@@ -8,7 +8,7 @@ import BN from 'bignumber.js'
 import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 import { getDecimals } from '@/apollo/client'
-import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Constants === //
 import STRATEGIES_MAP from '@/constants/strategies'
@@ -57,9 +57,9 @@ const ProportionSales = ({ loading, visitData = {} }) => {
   ]
 
   const responsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {},
-    [MEDIA_TYPE.Tablet]: {},
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {},
+    [DEVICE_TYPE.Mobile]: {
       legendProps: {
         position: 'top'
       }

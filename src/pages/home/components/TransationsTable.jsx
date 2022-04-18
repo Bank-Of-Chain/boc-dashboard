@@ -8,7 +8,7 @@ import map from 'lodash/map'
 import BN from 'bignumber.js'
 import { toFixed } from '@/utils/number-format'
 import { getDecimals } from '@/apollo/client'
-import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
 import { getRecentActivity } from '@/services/dashboard-service'
@@ -44,9 +44,9 @@ const TransationsTable = ({ loading }) => {
   }
 
   const tableColumnWidth = {
-    [MEDIA_TYPE.Desktop]: ["10rem", "10rem", "25rem", "8rem"],
-    [MEDIA_TYPE.Tablet]: ["8rem", "8rem", undefined, "8rem"],
-    [MEDIA_TYPE.Mobile]: ["8rem", "8rem", undefined, "8rem"],
+    [DEVICE_TYPE.Desktop]: ["10rem", "10rem", "25rem", "8rem"],
+    [DEVICE_TYPE.Tablet]: ["8rem", "8rem", undefined, "8rem"],
+    [DEVICE_TYPE.Mobile]: ["8rem", "8rem", undefined, "8rem"],
   }[deviceType]
 
   const columns = [
@@ -130,8 +130,8 @@ const TransationsTable = ({ loading }) => {
   }
 
   const responsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {},
-    [MEDIA_TYPE.Tablet]: {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {
       cardProps: {
         size: 'small'
       },
@@ -143,7 +143,7 @@ const TransationsTable = ({ loading }) => {
         scroll: { x: 800 }
       }
     },
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Mobile]: {
       cardProps: {
         size: 'small'
       },

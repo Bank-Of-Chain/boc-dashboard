@@ -14,7 +14,7 @@ import { mapValues, values } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 import { getDecimals } from '@/apollo/client'
 import BN from 'bignumber.js'
-import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // 列表中的平台图标，直接使用透明背景即可
 const withoutBackgroundColor = ['Vault']
@@ -108,14 +108,14 @@ const TopSearch = ({ loading, visitData = {} }) => {
   ]
 
   const responsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {},
-    [MEDIA_TYPE.Tablet]: {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {
       tableProps: {
         size: 'small',
         rowClassName: 'tablet-font-size'
       }
     },
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Mobile]: {
       tableProps: {
         size: 'small',
         rowClassName: 'tablet-font-size'

@@ -12,7 +12,7 @@ import STRATEGIES_MAP from '@/constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
-import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import { isEmpty, map, noop, reduce, groupBy, sortBy } from 'lodash'
@@ -147,9 +147,9 @@ const Strategy = props => {
     }
   }
   const infoResponsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {},
-    [MEDIA_TYPE.Tablet]: smallSizeProps,
-    [MEDIA_TYPE.Mobile]: smallSizeProps
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: smallSizeProps,
+    [DEVICE_TYPE.Mobile]: smallSizeProps
   }[deviceType]
 
   const chartStyle = {
@@ -157,16 +157,16 @@ const Strategy = props => {
     height: 280,
   }
   const chartResponsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {
+    [DEVICE_TYPE.Desktop]: {
       chartStyle
     },
-    [MEDIA_TYPE.Tablet]: {
+    [DEVICE_TYPE.Tablet]: {
       cardProps: {
         size: 'small'
       },
       chartStyle
     },
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Mobile]: {
       cardProps: {
         size: 'small'
       },

@@ -17,7 +17,7 @@ import { getValutAPYList, getUsdiTotalSupplyList } from '@/services/api-service'
 // === Utils === //
 import { isEmpty} from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
-import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { getDecimals } from '@/apollo/client'
@@ -83,17 +83,17 @@ const Analysis = () => {
   if (isEmpty(initialState.chain)) return null
 
   const chartResponsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {
+    [DEVICE_TYPE.Desktop]: {
       chartWrapperClassName: styles.chartDiv
     },
-    [MEDIA_TYPE.Tablet]: {
+    [DEVICE_TYPE.Tablet]: {
       buttonProps: {
         size: 'small',
         style: { fontSize: '0.5rem' }
       },
       chartWrapperClassName: styles.chartDivMobile
     },
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Mobile]: {
       buttonProps: {
         size: 'small',
         style: { fontSize: '0.5rem' }
@@ -103,13 +103,13 @@ const Analysis = () => {
   }[deviceType]
 
   const protocolResponsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {},
-    [MEDIA_TYPE.Tablet]: {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {
       cardProps: {
         size: 'small'
       }
     },
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Mobile]: {
       cardProps: {
         size: 'small'
       }

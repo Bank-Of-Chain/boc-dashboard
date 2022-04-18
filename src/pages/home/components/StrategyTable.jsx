@@ -9,7 +9,7 @@ import STRATEGIES_MAP from '@/constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
-import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format'
@@ -123,8 +123,8 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
   ]
   const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
   const responsiveConfig = {
-    [MEDIA_TYPE.Desktop]: {},
-    [MEDIA_TYPE.Tablet]: {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {
       cardProps: {
         size: 'small'
       },
@@ -133,7 +133,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
         rowClassName: 'tablet-font-size'
       }
     },
-    [MEDIA_TYPE.Mobile]: {
+    [DEVICE_TYPE.Mobile]: {
       cardProps: {
         size: 'small'
       },
