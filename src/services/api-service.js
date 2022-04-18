@@ -88,7 +88,7 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
     limit,
     ...params
   }
-  return request(`${API_SERVER}/v1/apy/currentBaseApy`, {
+  return request(`${API_SERVER}/weeklyApy`, {
     params: nextParams,
   });
 }
@@ -113,13 +113,56 @@ export const getStrategyDetailsReports = ({
   offset = 0,
   sort = 'fetch_timestamp desc'
 }) => {
-  return request(`${API_SERVER}/v1/strategy/assets`, {
+  return request(`${API_SERVER}/strategy/assets`, {
     params: {
       strategyAddress,
       chainId,
       limit,
       offset,
       sort
+    }
+  })
+}
+
+export const getValutAPYByDate = ({
+  date,
+  chainId,
+  duration
+}) => {
+  return request(`${API_SERVER}/apy/vault_apy/date/${date}`, {
+    params: {
+      chainId,
+      duration
+    }
+  })
+}
+
+export const getValutAPYList = ({
+  chainId,
+  duration,
+  offset = 0,
+  limit
+}) => {
+  return request(`${API_SERVER}/apy/vault_apy`, {
+    params: {
+      chainId,
+      duration,
+      offset,
+      limit
+    }
+  })
+}
+
+export const getUsdiTotalSupplyList = ({
+  chainId,
+  offset = 0,
+  limit
+}) => {
+  return request(`${API_SERVER}/USDi/totalSupply`, {
+    params: {
+      chainId,
+      offset,
+      limit
     }
   })
 }

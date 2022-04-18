@@ -9,13 +9,11 @@ import STRATEGIES_MAP from '@/constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
-import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format'
-import { getDecimals } from '@/apollo/client'
 import BN from 'bignumber.js'
-import map from 'lodash/map'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
@@ -23,10 +21,14 @@ import { getStrategyDetails } from '@/services/api-service'
 const StrategyTable = ({ dropdownGroup, loading }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
+  const deviceType = useDeviceType()
   const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, 0, 100), {
     formatResult: resp => resp.content,
   })
   if (!initialState.chain) return null
+
+  // boc-service fixed the number to 6
+  const decimals = BN(1e6)
   const columns = [
     {
       title: 'Name',
@@ -73,17 +75,17 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       sorter: (a, b) => {
         return BN(a.totalAsset || '0').minus(BN(b.totalAsset || '0'))
       },
-      render: text => <span>{toFixed(text || '0', getDecimals(), 2)}</span>,
+      render: text => <span>{toFixed(text || '0', decimals, 2)}</span>,
     },
     {
       title: <Tooltip title='Official weekly average APY'>
         <span>Official APY</span>
       </Tooltip>,
-      dataIndex: 'apyOffLatest',
-      key: 'apyOffLatest',
+      dataIndex: 'officialApyAvg',
+      key: 'officialApyAvg',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.apyOffLatest - b.apyOffLatest
+        return a.officialApyAvg - b.officialApyAvg
       },
       render: text => <span>{(100 * text).toFixed(2)} %</span>,
     },
@@ -101,17 +103,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       title: 'Weekly Profit',
       dataIndex: 'weeklyProfit',
       key: 'weeklyProfit',
-      render: (text, item) => {
-        return (
-          <span>
-            {map(text, (i, index) => (
-              <p key={index} style={{ marginBottom: 0 }}>
-                {toFixed(i.value, 10 ** 6, 2)} {i.unit}
-              </p>
-            ))}
-          </span>
-        )
-      },
+      render: (text, item) => <span>{`${toFixed(text || '0', decimals, 2)} ${text == '0' ? '' : item.tokenUnit}`}</span>
     },
     {
       title: 'Strategy Address',
@@ -130,107 +122,61 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
     },
   ]
   const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
+  const responsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {
+      cardProps: {
+        size: 'small'
+      },
+      tableProps: {
+        size: 'small',
+        rowClassName: 'tablet-font-size'
+      }
+    },
+    [DEVICE_TYPE.Mobile]: {
+      cardProps: {
+        size: 'small'
+      },
+      tableProps: {
+        size: 'small',
+        rowClassName: 'mobile-font-sizee'
+      }
+    }
+  }[deviceType]
+
   return (
     <div>
-      <Desktop>
-        <Card
-          loading={loading}
-          bordered={false}
-          title='Vault Strategies Allocations'
-          extra={
-            <div>
-              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-              <Tooltip title='show all strategies added in vault'>
-                <span style={{ padding: 10 }}>Show All</span>
-              </Tooltip>
-            </div>
-          }
-          style={{
-            height: '100%',
-            marginTop: 32,
+      <Card
+        loading={loading}
+        bordered={false}
+        title='Vault Strategies Allocations'
+        extra={
+          <div>
+            <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
+            <Tooltip title='show all strategies added in vault'>
+              <span style={{ padding: 10 }}>Show All</span>
+            </Tooltip>
+          </div>
+        }
+        style={{
+          height: '100%',
+          marginTop: 32,
+        }}
+        {...responsiveConfig.cardProps}
+      >
+        <Table
+          rowKey={record => record.strategyAddress}
+          columns={columns}
+          dataSource={data}
+          pagination={{
+            style: {
+              marginBottom: 0,
+            },
+            pageSize: 10,
           }}
-        >
-          <Table
-            rowKey={record => record.strategyAddress}
-            columns={columns}
-            dataSource={data}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              pageSize: 10,
-            }}
-          />
-        </Card>
-      </Desktop>
-      <Tablet>
-        <Card
-          loading={loading}
-          bordered={false}
-          size='small'
-          title='Vault Strategies Allocations'
-          extra={
-            <div>
-              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-              <Tooltip title='show all strategies added in vault'>
-                <span style={{ padding: 10 }}>Show All</span>
-              </Tooltip>
-            </div>
-          }
-          style={{
-            height: '100%',
-            marginTop: 32,
-          }}
-        >
-          <Table
-            rowKey={record => record.strategyAddress}
-            size='small'
-            rowClassName='tablet-font-size'
-            columns={columns}
-            dataSource={data}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              pageSize: 10,
-            }}
-          />
-        </Card>
-      </Tablet>
-      <Mobile>
-        <Card
-          loading={loading}
-          bordered={false}
-          size='small'
-          title='Vault Strategies Allocations'
-          extra={
-            <div>
-              <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-              <Tooltip title='show all strategies added in vault'>
-                <span style={{ padding: 10 }}>Show All</span>
-              </Tooltip>
-            </div>
-          }
-          style={{
-            height: '100%',
-            marginTop: 32,
-          }}
-        >
-          <Table
-            rowKey={record => record.strategyAddress}
-            size='small'
-            rowClassName='mobile-font-size'
-            columns={columns}
-            dataSource={data}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              pageSize: 10,
-            }}
-          />
-        </Card>
-      </Mobile>
+          {...responsiveConfig.tableProps}
+        />
+      </Card>
     </div>
   )
 }

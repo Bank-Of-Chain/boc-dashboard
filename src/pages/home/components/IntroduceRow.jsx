@@ -1,13 +1,12 @@
-import {InfoCircleOutlined} from '@ant-design/icons';
-import {Col, Row, Tooltip} from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Col, Row, Tooltip } from 'antd';
 import numeral from 'numeral';
 import ChartCard from '@/components/ChartCard';
-import {useModel} from 'umi';
+import BN from 'bignumber.js';
+import { isNil } from 'lodash';
 
 // === Utils === //
-import {toFixed} from '@/utils/number-format';
-import {getDecimals} from '@/apollo/client';
-import {calVaultAPY} from "@/utils/apy";
+import { toFixed } from '@/utils/number-format';
 
 const topColResponsiveProps = {
   xs: 24,
@@ -17,10 +16,9 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
-const IntroduceRow = ({loading, visitData = {}}) => {
-  const {vaultDailyData = [], vaultDetail = {}} = visitData;
-  // const last7DaysTime = vaultDailyData.length > 0 ? Number(vaultDailyData[vaultDailyData.length - 1].id) - 7 * 24 * 3600 : 0;
-  // const vaultWeeklyData = vaultDailyData.filter(x => x.id >= last7DaysTime);
+const IntroduceRow = ({ loading, visitData = {} }) => {
+  const { apy30, usdi = {} } = visitData;
+
   return (
     <Row gutter={[24, 24]}>
       <Col {...topColResponsiveProps}>
@@ -29,28 +27,28 @@ const IntroduceRow = ({loading, visitData = {}}) => {
           title="Total Supply (USDi)"
           action={
             <Tooltip title="USDi Total Supply">
-              <InfoCircleOutlined/>
+              <InfoCircleOutlined />
             </Tooltip>
           }
           loading={loading}
-          total={() => toFixed(vaultDetail?.tvl, getDecimals(), 2)}
+          total={() => toFixed(usdi.totalSupply, BN(10 ** usdi.tokenInfo?.decimals), 2)}
           contentHeight={100}
-         />
+        />
       </Col>
 
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
           loading={loading}
-          title="Depositors"
+          title="Holders"
           action={
-            <Tooltip title="Number Of Holders">
-              <InfoCircleOutlined/>
+            <Tooltip title="Number Of USDi Holders">
+              <InfoCircleOutlined />
             </Tooltip>
           }
-          total={numeral(visitData?.vaultDetail?.holderCount).format('0,0')}
+          total={numeral(usdi?.holderCount).format('0,0')}
           contentHeight={70}
-         />
+        />
       </Col>
 
       <Col {...topColResponsiveProps}>
@@ -63,11 +61,12 @@ const IntroduceRow = ({loading, visitData = {}}) => {
               <InfoCircleOutlined />
             </Tooltip>
           }
-          total={() => numeral(calVaultAPY(vaultDailyData)* 100).format('0,0.00') +'%'}
+          total={() => isNil(apy30) ? '' : `${apy30}%`}
           contentHeight={70}
-         />
+        />
       </Col>
     </Row>
   );
 };
+
 export default IntroduceRow;

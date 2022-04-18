@@ -4,191 +4,107 @@ import React from 'react'
 import { useModel } from 'umi'
 
 // === Utils === //
+import BN from 'bignumber.js'
 import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
 import { toFixed } from '@/utils/number-format'
-import { getDecimals } from '@/apollo/client'
-import BN from 'bignumber.js'
-
-// === Components === //
-import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
+import { USDi_DECIMALS } from '@/constants/usdi'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Constants === //
 import STRATEGIES_MAP from '@/constants/strategies'
 
 const ProportionSales = ({ loading, visitData = {} }) => {
-  const { strategies = [], tvl } = visitData
+  const { strategies = [], totalValue } = visitData
   const { initialState } = useModel('@@initialState')
+  const deviceType = useDeviceType()
+
   if (!initialState.chain) return null
 
   const total = reduce(
     strategies,
     (rs, o) => {
-      return rs.plus(o.debt)
+      return rs.plus(o.totalValue)
     },
     BN(0),
   )
-  const vaultPoolValue = BN(tvl).minus(total)
+  const vaultPoolValue = BN(totalValue).minus(total)
   const groupData = groupBy(
-    filter(strategies, i => i.debt > 0),
-    'protocol.id',
+    filter(strategies, i => i.totalValue > 0),
+    'protocol',
   )
   if (isEmpty(groupData)) return <Empty />
+
   const tableData = [
     ...values(
       mapValues(groupData, (o, key) => {
         const amount = reduce(
           o,
           (rs, ob) => {
-            return rs.plus(ob.debt)
+            return rs.plus(ob.totalValue)
           },
           BN(0),
         )
         return {
           Protocol: STRATEGIES_MAP[initialState.chain][key],
-          amount: toFixed(amount, getDecimals(), 2),
+          amount: toFixed(amount, USDi_DECIMALS, 2),
         }
       }),
     ),
     {
       Protocol: 'Vault',
-      amount: toFixed(vaultPoolValue, getDecimals(), 2),
+      amount: toFixed(vaultPoolValue, USDi_DECIMALS, 2),
     },
   ]
+
+  const responsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {},
+    [DEVICE_TYPE.Mobile]: {
+      legendProps: {
+        position: 'top'
+      }
+    }
+  }[deviceType]
+
   return (
     <div>
-      <Desktop>
-        <Donut
-          forceFit
-          height={340}
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-          }}
-          radius={1}
-          innerRadius={0.75}
-          angleField='amount'
-          colorField='Protocol'
-          data={tableData}
-          legend={{
-            visible: true,
-            text: {
-              style: {
-                fill: '#fff',
-              },
+      <Donut
+        forceFit
+        height={340}
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        }}
+        radius={1}
+        innerRadius={0.75}
+        angleField='amount'
+        colorField='Protocol'
+        data={tableData}
+        legend={{
+          visible: true,
+          text: {
+            style: {
+              fill: '#fff',
             },
-          }}
-          label={{
-            visible: false,
-            type: 'spider',
-            offset: 20,
-            formatter: (text, item) => {
-              return `${item._origin.Protocol}: ${item._origin.amount}`
-            },
-          }}
-          tooltip={{
-            formatter: data => {
-              console.log('----------', data)
-              // `${(v.percent * 100).toFixed(0)}%`
-            },
-          }}
-          interactions={[{ type: 'element-selected' }, { type: 'element-active' }]}
-          statistic={{
-            visible: true,
-            content: {
-              value: toFixed(tvl, getDecimals(), 2),
-              name: 'TVL',
-            },
-          }}
-        />
-      </Desktop>
-      <Tablet>
-        <Donut
-          forceFit
-          height={340}
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-          }}
-          radius={1}
-          innerRadius={0.75}
-          angleField='amount'
-          colorField='Protocol'
-          data={tableData}
-          legend={{
-            visible: true,
-            text: {
-              style: {
-                fill: '#fff',
-              },
-            },
-          }}
-          label={{
-            visible: false,
-            type: 'spider',
-            offset: 20,
-            formatter: (text, item) => {
-              return `${item._origin.Protocol}: ${item._origin.amount}`
-            },
-          }}
-          tooltip={{
-            formatter: data => {
-              console.log('----------', data)
-              // `${(v.percent * 100).toFixed(0)}%`
-            },
-          }}
-          interactions={[{ type: 'element-selected' }, { type: 'element-active' }]}
-          statistic={{
-            visible: true,
-            content: {
-              value: toFixed(tvl, getDecimals(), 2),
-              name: 'TVL',
-            },
-          }}
-        />
-      </Tablet>
-      <Mobile>
-        <Donut
-          forceFit
-          height={340}
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-          }}
-          radius={1}
-          innerRadius={0.75}
-          angleField='amount'
-          colorField='Protocol'
-          data={tableData}
-          legend={{
-            position: 'top',
-            visible: true,
-            text: {
-              style: {
-                fill: '#fff',
-              },
-            },
-          }}
-          label={{
-            visible: false,
-            type: 'spider',
-            offset: 20,
-            formatter: (text, item) => {
-              return `${item._origin.Protocol}: ${item._origin.amount}`
-            },
-          }}
-          tooltip={{
-            formatter: data => {
-              console.log('----------', data)
-              // `${(v.percent * 100).toFixed(0)}%`
-            },
-          }}
-          interactions={[{ type: 'element-selected' }, { type: 'element-active' }]}
-          statistic={{
-            visible: true,
-            content: {
-              value: toFixed(tvl, getDecimals(), 2),
-              name: 'TVL',
-            },
-          }}
-        />
-      </Mobile>
+          },
+          ...responsiveConfig.legendProps
+        }}
+        label={{
+          visible: false,
+          type: 'spider',
+          offset: 20,
+          formatter: (text, item) => {
+            return `${item._origin.Protocol}: ${item._origin.amount}`
+          },
+        }}
+        interactions={[{ type: 'element-selected' }, { type: 'element-active' }]}
+        statistic={{
+          visible: true,
+          content: {
+            value: toFixed(totalValue, USDi_DECIMALS, 2),
+            name: 'TVL',
+          },
+        }}
+      />
     </div>
   )
 }
