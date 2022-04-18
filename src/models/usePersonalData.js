@@ -1,4 +1,6 @@
 import { useModel } from 'umi';
+
+// === Services === //
 import {
   getAccountDetail,
   getDaysAgoTimestamp,
@@ -9,6 +11,12 @@ import {
   getAccountDetailByDays,
   getVaultDailyByDays
 } from '@/services/dashboard-service';
+import {
+  getProfits,
+  getTvlArray,
+  getMonthProfits,
+  getAccountApyByAddress,
+} from '@/services/api-service';
 
 // === Utils === //
 import moment from 'moment';
@@ -128,8 +136,52 @@ const dataMerge = (account, requests) => {
     });
 };
 
+const dataMergeV2 = (account, chain, requests) => {
+  if(isEmpty(account)) return Promise.resolve({})
+
+  // 当前天的字符串，按0时区算
+  const date = moment().utc(0).format('yyyy-MM-DD')
+  return Promise.all([
+    // 获取7日apy数值
+    getAccountApyByAddress(chain, account, date, 'weekly'),
+    // 获取30日apy数值
+    getAccountApyByAddress(chain, account, date, 'monthly'),
+    // 获取tvl数据
+    getTvlArray(chain, account),
+    // 获取月度盈利数据
+    getMonthProfits(account, chain),
+    getProfits(chain, account),
+    ...requests
+  ])
+    .then((rs) => {
+      const [
+          day7Apy,
+          day30Apy,
+          tvls,
+          monthProfits,
+          profit,
+          balanceOfUsdi,
+        ] = rs;
+      const nextData = {
+        day7Apy,
+        day30Apy,
+        tvls,
+        monthProfits,
+        realizedProfit: profit.realizedProfit,
+        unrealizedProfit: profit.unrealizedProfit,
+        balanceOfUsdi
+      };
+      return nextData;
+    })
+    .catch((error) => {
+      console.error('PersonalV2数据初始化失败', error);
+      return {}
+    });
+}
+
 export default function usePersonalData() {
   const [data, setData] = useState({})
+  const [dataV2, setDataV2] = useState({})
   const [loading, setLoading] = useState(false)
   const {
     initialState
@@ -154,10 +206,26 @@ export default function usePersonalData() {
     dataMerge(initialState?.address?.toLowerCase(), requests).then(r => {
       setData(r)
       setLoading(false)
-    }).catch(() => setLoading(false))
+    }).finally(() => setLoading(false))
+
+  }, [initialState?.address, userProvider, initialState?.chain])
+
+  useEffect(() => {
+    setLoading(true)
+    const requests = []
+    if (!isEmpty(userProvider) && initialState?.address) {
+      const usdiAddress = USDI_ADDRESS[initialState?.chain]
+      const usdiContract = new ethers.Contract(usdiAddress, ABI, userProvider)
+      requests.push(usdiContract.balanceOf(initialState?.address).catch(() => BigNumber.from(0)))
+    }
+    dataMergeV2(initialState?.address?.toLowerCase(), initialState?.chain, requests).then(r => {
+      setDataV2(r)
+      setLoading(false)
+    }).finally(() => setLoading(false))
   }, [initialState?.address, userProvider, initialState?.chain])
 
   return {
+    dataV2,
     dataSource: data,
     loading: loading,
   };
