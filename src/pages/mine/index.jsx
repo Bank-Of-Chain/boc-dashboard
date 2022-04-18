@@ -1,6 +1,5 @@
 import React, {Suspense, useEffect, useState} from 'react'
 import {useModel} from 'umi'
-import {getDecimals} from '@/apollo/client'
 import numeral from 'numeral';
 
 // === Components === //
@@ -13,23 +12,14 @@ import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 
 // === Utils === //
 import moment from 'moment'
-import filter from 'lodash/filter'
 import isEqual from 'lodash/isEqual'
 import find from 'lodash/find'
-import last from 'lodash/last'
-import sumBy from 'lodash/sumBy'
 import _min from 'lodash/min'
 import _max from 'lodash/max'
 import isUndefined from 'lodash/isUndefined'
-import map from 'lodash/map'
-import groupBy from 'lodash/groupBy'
 import isEmpty from 'lodash/isEmpty'
-import compact from 'lodash/compact'
-import reduce from 'lodash/reduce'
-import isNull from 'lodash/isNull'
 import { findIndex, reverse } from 'lodash'
 import {toFixed} from '@/utils/number-format'
-import BN from 'bignumber.js'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {isProEnv} from "@/services/env-service"
 import * as ethers from "ethers"
@@ -49,131 +39,44 @@ const topColResponsiveProps = {
   lg: 8,
   xl: 8,
 }
+const usdDecimals = BigNumber.from(10).pow(18)
 
 const Personal = () => {
-  const [totalAssets, setTotalAssets] = useState(0)
-  const [liveTotalAssets, setLiveTotalAssets] = useState(BigNumber.from(0))
-  const [bocBalance, setBOCBalance] = useState(BigNumber.from(0))
-  const [profit, setProfit] = useState(0)
-  const [totalProfit, setTotalProfit] = useState(0)
-  const [depositedPercent, setDepositedPercent] = useState(0)
   const [showWarningModal, setShowWarningModal] = useState(false)
-  const {dataSource, loading} = useModel('usePersonalData')
+  const {dataV2, loading} = useModel('usePersonalData')
   const {initialState, setInitialState} = useModel('@@initialState')
   const { error: roleError } = useAdminRole(initialState.address)
 
-  const decimals = dataSource?.vaultSummary?.decimals
-  const sharePrice = dataSource?.vaultSummary?.pricePerShare
-  const totalShares = dataSource?.vaultSummary?.totalShares
-  const shares = dataSource?.accountDetail?.shares
-  const depositedUSDT = dataSource?.accountDetail?.depositedUSDT
-  const accumulatedProfit = dataSource?.accountDetail?.accumulatedProfit
-  const vaultLastUpdateTime = dataSource?.vaultLastUpdateTime
-  const liveAcountShares = dataSource?.liveAcountShares
-  const livePricePerShare = dataSource?.livePricePerShare
-  // 计算apy
-  const {accountDailyDatasInYear, vaultDailyDatesInYear} = dataSource
-  const yearData = map(accountDailyDatasInYear, (i, index) => {
-    return {
-      ...i,
-      ...vaultDailyDatesInYear[index],
-    }
-  })
-  const totalAccumulatedProfit = sumBy(yearData, o => {
-    if (o.hasOwnProperty('accumulatedProfit')) {
-      return +o.accumulatedProfit
-    }
-    return 0
-  })
-  const totalTvl = sumBy(yearData, i => {
-    if (isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return 0
-    return i.currentShares * i.pricePerShare
-  })
-  const accountApyInYear =
-    totalTvl === 0 ? 0 : (365 * 100 * totalAccumulatedProfit * 10 ** decimals) / totalTvl
-  useEffect(() => {
-    if (!sharePrice || !shares || !decimals) return
-    setTotalAssets((sharePrice * shares) / 10 ** decimals)
-  }, [sharePrice, shares, decimals])
+  const {
+    day7Apy,
+    day30Apy,
+    tvls = [],
+    monthProfits = [],
+    realizedProfit,
+    unrealizedProfit,
+    balanceOfUsdi
+  } = dataV2
 
-  useEffect(() => {
-    if (!liveAcountShares || !livePricePerShare) return
-    setLiveTotalAssets(liveAcountShares.mul(livePricePerShare).div(BigNumber.from(getDecimals().toString())))
-  }, [liveAcountShares, livePricePerShare])
 
-  useEffect(() => {
-    if (!liveAcountShares) return
-    setBOCBalance(liveAcountShares)
-  }, [liveAcountShares])
-
-  useEffect(() => {
-    if (!totalAssets || totalAssets === 0) return
-    setProfit(+totalAssets - +depositedUSDT)
-  }, [totalAssets, depositedUSDT])
-
-  useEffect(() => {
-    if (!profit || profit === 0 || !accumulatedProfit) return
-    setTotalProfit(+profit + +accumulatedProfit)
-  }, [profit, accumulatedProfit])
-
-  useEffect(() => {
-    if (!shares || !totalShares) return
-    setDepositedPercent((shares * 100) / totalShares)
-  }, [shares, totalShares])
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
-    // start 这一段似乎更好，但未经过测试
     // 加载异常，一定弹窗
-    // if (roleError) {
-    //     setShowWarningModal(true)
-    //     return
-    // }
-    // // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
-    // if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
-    //   if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
-    //     setShowWarningModal(false)
-    //     return
-    //   }
-    //   setShowWarningModal(true)
-    // }
-    // end
-    // 生产环境下
-    if (isProEnv(ENV_INDEX)) {
-      // 链不一致，必须提示
-      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+    if (roleError) {
         setShowWarningModal(true)
-      } else {
+        return
+    }
+    // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
+    if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+      if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
         setShowWarningModal(false)
+        return
       }
-    } else {
-      // 非生产环境下
-      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
-        // 链如果等于31337
-        if (isEqual(walletChainId, '31337')) {
-          if (roleError) {
-            setShowWarningModal(true)
-          } else {
-            setShowWarningModal(false)
-          }
-        } else {
-          setShowWarningModal(true)
-        }
-      } else {
-        setShowWarningModal(false)
-      }
+      setShowWarningModal(true)
     }
   }, [initialState, roleError])
 
   const monthOffset = moment().utcOffset(0).month() + 1
-  const groupByMonth = groupBy(
-    filter(yearData, i => i.currentShares > 0 && i.pricePerShare > 0 && i.currentDepositedUSDT > 0),
-    i =>
-      moment(1000 * i.id)
-        .utcOffset(0)
-        .locale('en')
-        .format('MMM'),
-  )
   const months = [
     'Jan',
     'Feb',
@@ -192,195 +95,7 @@ const Personal = () => {
   const array1 = months.splice(0, monthOffset)
   const nextMonths = [...array, ...array1]
 
-  const yearValidData = filter(yearData, i => BN(i.currentDepositedUSDT).gt(0))
-  // console.log('yearValidData=', yearValidData, groupByMonth)
-  const lastItem = last(yearValidData) || {
-    pricePerShare: 1,
-    currentShares: 0,
-    currentDepositedUSDT: 0,
-  }
 
-// 未实现的盈利
-  const value1 = BN(lastItem?.pricePerShare)
-    .multipliedBy(lastItem?.currentShares)
-    .div(10 ** decimals)
-    .minus(BN(lastItem?.currentDepositedUSDT))
-// 已实现的盈利
-  const value2 = reduce(
-    yearValidData,
-    (rs, item) => {
-      if (isEmpty(item.accumulatedProfit)) return rs
-      const nextValue = BN(item.accumulatedProfit)
-      return rs.plus(nextValue)
-    },
-    BN(0),
-  )
-
-  function calcAPY (day) {
-    const costChangeArray = [];
-    let lastPoint = {};
-    // 最新一天可能没数据，直接取 31 天数据
-    // let minId = getDaysAgoUtcTimestamp(30);
-    // let apyCalData = filter(yearData, i => i.id >= minId && i.id <=vaultLastUpdateTime);
-    let apyCalData = yearData.slice(-day - 1)
-    if(initialState.chain === '1')
-    {
-      apyCalData = filter(apyCalData, i => i.id >= 1644249600);
-    }
-    for (let i = 0; i < apyCalData.length; i++) {
-      let currentData = apyCalData[i];
-      // 优先使用释放后的单价进行计算
-      const pricePerShare = currentData.unlockedPricePerShare || currentData.pricePerShare
-      if (currentData.currentDepositedUSDT) {
-        // cost not change
-        if (lastPoint.userCost && lastPoint.userCost === currentData.currentDepositedUSDT) {
-          lastPoint.duration += currentData.id - lastPoint.endTime;
-          lastPoint.endTime = currentData.id;
-          lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
-          costChangeArray[costChangeArray.length - 1] = lastPoint;
-        } else if (lastPoint.userCost && lastPoint.userCost !== currentData.currentDepositedUSDT) {
-          lastPoint.duration += currentData.id - lastPoint.endTime;
-          lastPoint.endTime = currentData.id;
-          lastPoint.endValue = pricePerShare * lastPoint.shares / (10 ** decimals);
-          costChangeArray[costChangeArray.length - 1] = lastPoint;
-          lastPoint = {
-            beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-            endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-            shares: currentData.currentShares,
-            userCost: currentData.currentDepositedUSDT,
-            beginTime: currentData.id,
-            endTime: currentData.id,
-            duration: 0
-          };
-          costChangeArray.push(lastPoint);
-        } else {
-          lastPoint = {
-            beginValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-            endValue: pricePerShare * currentData.currentShares / (10 ** decimals),
-            shares: currentData.currentShares,
-            userCost: currentData.currentDepositedUSDT,
-            beginTime: currentData.id,
-            endTime: currentData.id,
-            duration: 0
-          };
-          costChangeArray.push(lastPoint);
-        }
-      } else {
-        lastPoint = {};
-      }
-    }
-
-    // console.log('costChangeArray',JSON.stringify(costChangeArray));
-    let APY = 0;
-    let userTotalTvl = 0;
-    let duration = 0;
-    let changeValue = 0;
-    for (let i = 0; i < costChangeArray.length; i++) {
-      userTotalTvl += costChangeArray[i].beginValue * costChangeArray[i].duration;
-      duration += costChangeArray[i].duration;
-      changeValue += costChangeArray[i].endValue - costChangeArray[i].beginValue;
-    }
-    if (userTotalTvl > 0) {
-      // console.log(changeValue, userTotalTvl, duration, userTotalTvl / duration, 365 * 24 * 3600 / duration)
-      APY = Math.pow(((changeValue) / (userTotalTvl / duration) + 1), 365 * 24 * 3600 / duration) - 1
-    }
-
-    return APY
-  }
-
-  const APY7 = calcAPY(7)
-  const APY30 = calcAPY(30)
-
-// 总盈利
-  const profitTotal = value1.plus(value2)
-
-// 平均tvl
-  const avgTvl = isEmpty(yearValidData)
-    ? BN(0)
-    : reduce(
-      yearValidData,
-      (rs, item) => {
-        const nextPricePerShare = BN(item.pricePerShare)
-        const nextCurrentShares = BN(item.currentShares)
-        if (nextPricePerShare.lt(0) || nextCurrentShares.lt(0)) return rs
-        const nextValue = nextCurrentShares.multipliedBy(nextPricePerShare).div(10 ** decimals)
-        return rs.plus(nextValue)
-      },
-      BN(0),
-    ).div(yearValidData.length)
-
-  const value5 = map(nextMonths, i =>
-    toFixed(
-      `${reduce(
-        groupByMonth[i],
-        (rs, item) => {
-          if (isEmpty(item.accumulatedProfit)) return rs
-          const nextValue = BN(item.accumulatedProfit)
-          return rs.plus(nextValue)
-        },
-        BN(0),
-      )}`,
-      10 ** decimals,
-      4,
-    ),
-  )
-  const profitOfLastDayOfMonth = map(nextMonths, i => {
-    const monthArray = groupByMonth[i]
-    if (isEmpty(monthArray)) return null
-    const lastItem = last(monthArray)
-    const lastDayProfit = BN(lastItem.currentShares)
-      .multipliedBy(BN(lastItem.pricePerShare))
-      .div(10 ** decimals)
-      .minus(lastItem.currentDepositedUSDT)
-      .div(10 ** decimals)
-    return toFixed(lastDayProfit, 1, 4)
-  })
-  const avgTvlOfMonth = map(nextMonths, i => {
-    const monthArray = groupByMonth[i]
-    if (isEmpty(monthArray)) return null
-    return toFixed(
-      reduce(
-        monthArray,
-        (rs, item) => {
-          const nextPricePerShare = BN(item.pricePerShare)
-          const nextCurrentShares = BN(item.currentShares)
-          if (nextPricePerShare.lt(0) || nextCurrentShares.lt(0)) return rs
-          const nextValue = nextCurrentShares.multipliedBy(nextPricePerShare).div(10 ** decimals)
-          return rs.plus(nextValue)
-        },
-        BN(0),
-      ).div(monthArray.length),
-      10 ** decimals,
-      4,
-    )
-  })
-  const monthProfitTotal = map(profitOfLastDayOfMonth, (i, index) => {
-    if (isNull(i) || isNull(value5[index])) return null
-    return sumBy([i, value5[index]], o => parseFloat(o)).toFixed(4)
-  })
-  const result = {
-    未实现的盈利: toFixed(value1, 10 ** decimals),
-    已实现的盈利: toFixed(value2, 10 ** decimals),
-    总盈利: toFixed(profitTotal, 10 ** decimals),
-    平均tvl: toFixed(avgTvl, 10 ** decimals),
-    apy: toFixed(
-      profitTotal
-        .multipliedBy(365)
-        .div(avgTvl)
-        .div(yearValidData.length),
-    ),
-    每月的已实现的盈利: value5.toString(),
-    每月最后一天未实现的盈利: profitOfLastDayOfMonth.toString(),
-    每月最后一天总盈利: monthProfitTotal.toString(),
-    每月单独的盈利: map(monthProfitTotal, (i, index) => {
-      if (index === 0) return i
-      if (isNull(i)) return null
-      if (isNull(profitOfLastDayOfMonth[index - 1])) return i
-      return (parseFloat(i) - parseFloat(profitOfLastDayOfMonth[index - 1])).toFixed(4)
-    }).toString(),
-    月平均锁仓: avgTvlOfMonth.toString(),
-  }
-  console.table(result)
   const option = {
     textStyle: {
       color: '#fff',
@@ -403,39 +118,20 @@ const Personal = () => {
         name: 'Total',
         type: 'bar',
         stack: 'one',
-        data: map(monthProfitTotal, (i, index) => {
-          if (index === 0) return i
-          if (isNull(i)) return null
-          if (isNull(profitOfLastDayOfMonth[index - 1])) return i
-          return (parseFloat(i) - parseFloat(profitOfLastDayOfMonth[index - 1])).toFixed(4)
-        }),
+        data: monthProfits,
       },
     ],
   }
-  const tvlArray = compact(
-    map(yearData, i => {
-      if (isUndefined(i.currentShares) || isUndefined(i.pricePerShare)) return
-      return {
-        date: 1000 * i.dayTimestamp,
-        tvl: parseFloat(
-          BN(i.currentShares)
-            .multipliedBy(BN(i.pricePerShare))
-            .div(BN(10).pow(decimals * 2))
-            .toFixed(4),
-        ),
-      }
-    }),
-  )
   // 参考 https://github.com/PiggyFinance/dashboard/issues/166
-  const reverseArray = reverse([...tvlArray])
+  const reverseArray = reverse([...tvls])
   const continuousIndex = findIndex(reverseArray, (item, index) => {
     if (index <= 2) return false
     if (index === reverseArray.length) return true
     return Math.abs(item.tvl - reverseArray[index - 1].tvl) > item.tvl * 0.005
   })
-  const startPercent = continuousIndex === -1 ?  0 : (100.5 - (100 * continuousIndex / tvlArray.length))
+  const startPercent = continuousIndex === -1 ?  0 : (100.5 - (100 * continuousIndex / tvls.length))
   const option1 = getLineEchartOpt(
-    tvlArray,
+    tvls,
     'tvl',
     'USDi',
     true,
@@ -543,7 +239,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(liveTotalAssets, getDecimals(), 2)}
+              total={() => toFixed(balanceOfUsdi, usdDecimals, 2)}
               contentHeight={100}
             />
           </Col>
@@ -557,7 +253,7 @@ const Personal = () => {
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${numeral(APY7 * 100).format('0,0.00')}%`}
+              total={`${numeral(day7Apy * 100).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>
@@ -571,7 +267,7 @@ const Personal = () => {
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${numeral(APY30 * 100).format('0,0.00')}%`}
+              total={`${numeral(day30Apy * 100).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>
@@ -586,7 +282,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(value1, getDecimals(), 2)}
+              total={() => toFixed(unrealizedProfit, usdDecimals, 2)}
               contentHeight={100}
             />
           </Col>
@@ -601,7 +297,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(sumBy(value5, o => parseFloat(o)).toString(), 1, 2)}
+              total={() => toFixed(realizedProfit, usdDecimals, 2)}
               contentHeight={100}
             />
           </Col>
