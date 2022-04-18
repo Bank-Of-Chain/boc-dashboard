@@ -2,8 +2,13 @@ import {
   request
 } from 'umi'
 import {
-  isNil
+  isNil,
+  isUndefined
 } from 'lodash';
+
+import {
+  BigNumber
+} from 'ethers'
 
 export const getStrategyApysInChain = (address, offset = 0, limit = 20) => {
   try {
@@ -121,5 +126,73 @@ export const getStrategyDetailsReports = ({
       offset,
       sort
     }
+  })
+}
+
+/**
+ * 获取用户apy
+ * @param {*} chainId
+ * @param {*} account
+ * @param {*} date
+ * @param {*} duration
+ * @returns
+ */
+export const getAccountApyByAddress = (chainId, account, date, duration) => {
+  if (isNil(chainId) || isNil(account)) return
+  const params = {
+    duration,
+    chainId
+  }
+  return request(`${API_SERVER}/apy/account_apy/accountAddress/${account}/date/${date}`, {
+    params
+  })
+}
+
+/**
+ * 获取用户的收益，包括已实现首页和未实现收益
+ * @param {*} chainId
+ * @param {*} account
+ * @returns
+ */
+export const getProfits = (chainId, account) => {
+  if (isNil(chainId) || isNil(account)) return
+  const params = {
+    chainId
+  }
+  return request(`${API_SERVER}/profit/account/${account}`, {
+    params
+  })
+}
+
+/**
+ * 获取总锁仓量数组，默认取2年
+ * @param {*} chainId
+ * @param {*} account
+ * @param {*} limit
+ * @returns
+ */
+export const getTvlArray = (chainId, account, limit = 365 * 2) => {
+  if (isNil(chainId) || isNil(account)) return []
+  const params = {
+    chainId,
+    limit
+  }
+  return request(`${API_SERVER}/v1/USDi/balance/account/${account}`, {
+    params
+  })
+}
+
+/**
+ * 获取用户月盈利
+ * @param {*} chainId
+ * @param {*} account
+ * @returns
+ */
+export const getMonthProfits = (chainId, account,) => {
+  const params = {}
+  return request(`${API_SERVER}/v1/aaa`, {
+    params
+  }).catch(() => {
+    return [null, null, null, null, null, null, null, null, '2.2064', '31.1406', '28.9539', '44.8245']
   })
 }

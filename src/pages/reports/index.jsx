@@ -177,7 +177,7 @@ const detailsColumns = [
 
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
-  const [showIndex, setShowIndex] = useState(0)
+  const [showIndex, setShowIndex] = useState(-1)
   const { userProvider } = useUserProvider()
   const [isRedUp, setIsRedUp] = useState(true)
 
