@@ -14,7 +14,7 @@ import { useDeviceType, MEDIA_TYPE } from '@/components/Container/Container'
 import STRATEGIES_MAP from '@/constants/strategies'
 
 const ProportionSales = ({ loading, visitData = {} }) => {
-  const { strategies = [], totalAssets } = visitData
+  const { strategies = [], totalValue } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
@@ -23,13 +23,13 @@ const ProportionSales = ({ loading, visitData = {} }) => {
   const total = reduce(
     strategies,
     (rs, o) => {
-      return rs.plus(o.debtRecordInVault)
+      return rs.plus(o.totalValue)
     },
     BN(0),
   )
-  const vaultPoolValue = BN(totalAssets).minus(total)
+  const vaultPoolValue = BN(totalValue).minus(total)
   const groupData = groupBy(
-    filter(strategies, i => i.debtRecordInVault > 0),
+    filter(strategies, i => i.totalValue > 0),
     'protocol',
   )
   if (isEmpty(groupData)) return <Empty />
@@ -40,7 +40,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         const amount = reduce(
           o,
           (rs, ob) => {
-            return rs.plus(ob.debtRecordInVault)
+            return rs.plus(ob.totalValue)
           },
           BN(0),
         )
@@ -100,7 +100,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         statistic={{
           visible: true,
           content: {
-            value: toFixed(totalAssets, getDecimals(), 2),
+            value: toFixed(totalValue, getDecimals(), 2),
             name: 'TVL',
           },
         }}

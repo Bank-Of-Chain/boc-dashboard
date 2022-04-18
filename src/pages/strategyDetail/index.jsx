@@ -136,7 +136,7 @@ const Strategy = props => {
   }, [apys, offChainApys])
 
   if (!initialState.chain || isEmpty(strategy)) return null
-  const { positionDetail, debtRecordInVault } = strategy
+  const { positionDetail, totalValue } = strategy
 
   const smallSizeProps = {
     cardProps: {
@@ -222,7 +222,7 @@ const Strategy = props => {
                   <CoinSuperPosition array={map(positionDetail, 'token.id')} />
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
-                  {toFixed(debtRecordInVault, getDecimals(), 2) + ' USD'}
+                  {toFixed(totalValue, getDecimals(), 2) + ' USD'}
                 </Descriptions.Item>
                 {/* <Descriptions.Item label='Total Investments'>
                   {toFixed(depositedAssets, getDecimals(), 2) + ' USDi'}

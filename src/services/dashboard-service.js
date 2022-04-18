@@ -46,11 +46,11 @@ query ($usdiAddress: Bytes, $valutAddress: Bytes) {
   }
   vault(id: $valutAddress) {
     id
-    totalAssets
+    totalValue
     strategies(where: {isAdded: true}) {
       id
       protocol
-      debtRecordInVault
+      totalValue
     }
   }
 }
@@ -229,7 +229,7 @@ query($strategyAddress: Bytes) {
       }
     }
     isAdded
-    debtRecordInVault
+    totalValue
   }
 }
 `;
