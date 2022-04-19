@@ -44,7 +44,7 @@ const usdDecimals = BigNumber.from(10).pow(18)
 
 const Personal = () => {
   const [showWarningModal, setShowWarningModal] = useState(false)
-  const {dataV2, loading} = useModel('usePersonalData')
+  const {dataV2, loading} = usePersonalData()
   const {initialState, setInitialState} = useModel('@@initialState')
   const { error: roleError } = useAdminRole(initialState.address)
 
