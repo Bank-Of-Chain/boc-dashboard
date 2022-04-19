@@ -93,7 +93,7 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
     limit,
     ...params
   }
-  return request(`${API_SERVER}/v1/apy/currentBaseApy`, {
+  return request(`${API_SERVER}/apy/currentBaseApy`, {
     params: nextParams,
   });
 }
@@ -105,7 +105,7 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
  */
 export const updateReportStatus = (reportId, isReject, headers) => {
   if (isNil(reportId)) return
-  return request(`${API_SERVER}/v1/allocation/report/${reportId}/${isReject}`, {
+  return request(`${API_SERVER}/allocation/report/${reportId}/${isReject}`, {
     method: 'patch',
     headers
   });
@@ -118,7 +118,7 @@ export const getStrategyDetailsReports = ({
   offset = 0,
   sort = 'fetch_timestamp desc'
 }) => {
-  return request(`${API_SERVER}/v1/strategy/assets`, {
+  return request(`${API_SERVER}/strategy/assets`, {
     params: {
       strategyAddress,
       chainId,
@@ -177,7 +177,7 @@ export const getTvlArray = (chainId, account, limit = 365 * 2) => {
     chainId,
     limit
   }
-  return request(`${API_SERVER}/v1/USDi/balance/account/${account}`, {
+  return request(`${API_SERVER}/USDi/balance/account/${account}`, {
     params
   })
 }
@@ -190,7 +190,7 @@ export const getTvlArray = (chainId, account, limit = 365 * 2) => {
  */
 export const getMonthProfits = (chainId, account,) => {
   const params = {}
-  return request(`${API_SERVER}/v1/aaa`, {
+  return request(`${API_SERVER}/aaa`, {
     params
   }).catch(() => {
     return [null, null, null, null, null, null, null, null, '2.2064', '31.1406', '28.9539', '44.8245']
