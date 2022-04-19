@@ -29,6 +29,7 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
+import usePersonalData from '@/hooks/usePersonalData'
 
 const { BigNumber } = ethers
 

@@ -3,9 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useModel } from 'umi'
 import BN from 'bignumber.js'
 
-// === Components === //
-import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
-
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { getStrategyDetailsReports } from '@/services/api-service'
 
 // === Utils === //
@@ -28,6 +26,7 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
     current: 1,
     pageSize: 10
   })
+  const deviceType = useDeviceType()
 
   const unit = dataSource[0] ? dataSource[0].lpTokenUnit : ''
 
@@ -129,94 +128,65 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
       ),
     },
   ]
+
+  const smallCardConfig = {
+    cardProps: {
+      size: 'small'
+    },
+    tableProps: {
+      size: 'small',
+      rowClassName: 'tablet-font-size',
+      scroll: { x: 900 }
+    }
+  }
+  const responsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: {
+      ...smallCardConfig,
+      tableProps: {
+        size: 'small',
+        rowClassName: 'tablet-font-size',
+        scroll: { x: 900 }
+      }
+    },
+    [DEVICE_TYPE.Mobile]: {
+      ...smallCardConfig,
+      tableProps: {
+        size: 'small',
+        rowClassName: 'mobile-font-size',
+        scroll: { x: 900 }
+      }
+    }
+  }[deviceType]
+
   return (
     <div>
-      <Desktop>
-        <Card
-          loading={loading}
-          bordered={false}
-          title='Reports'
-          extra={dropdownGroup}
-          style={{
-            height: '100%',
-            marginTop: 32,
+      <Card
+        loading={loading}
+        bordered={false}
+        title='Reports'
+        extra={dropdownGroup}
+        style={{
+          height: '100%',
+          marginTop: 32,
+        }}
+        {...responsiveConfig.cardProps}
+      >
+        <Table
+          rowKey={record => record.id}
+          columns={columns}
+          dataSource={dataSource}
+          loading={tableLoading}
+          onChange={handleTableChange}
+          pagination={{
+            style: {
+              marginBottom: 0,
+            },
+            ...pagination,
           }}
-        >
-          <Table
-            rowKey={record => record.id}
-            columns={columns}
-            dataSource={dataSource}
-            loading={tableLoading}
-            onChange={handleTableChange}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              ...pagination,
-            }}
-          />
-        </Card>
-      </Desktop>
-      <Tablet>
-        <Card
-          size='small'
-          loading={loading}
-          bordered={false}
-          title='Reports'
-          extra={dropdownGroup}
-          style={{
-            height: '100%',
-            marginTop: 32,
-          }}
-        >
-          <Table
-            rowKey={record => record.id}
-            size='small'
-            rowClassName='tablet-font-size'
-            scroll={{ x: 900 }}
-            columns={columns}
-            dataSource={dataSource}
-            loading={tableLoading}
-            onChange={handleTableChange}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              ...pagination,
-            }}
-          />
-        </Card>
-      </Tablet>
-      <Mobile>
-        <Card
-          size='small'
-          loading={loading}
-          bordered={false}
-          title='Reports'
-          extra={dropdownGroup}
-          style={{
-            height: '100%',
-            marginTop: 32,
-          }}
-        >
-          <Table
-            rowKey={record => record.id}
-            size='small'
-            rowClassName='mobile-font-size'
-            scroll={{ x: 900 }}
-            columns={columns}
-            dataSource={dataSource}
-            loading={tableLoading}
-            onChange={handleTableChange}
-            pagination={{
-              style: {
-                marginBottom: 0,
-              },
-              ...pagination,
-            }}
-          />
-        </Card>
-      </Mobile>
+          {...responsiveConfig.tableProps}
+        />
+      </Card>
     </div>
   )
 }
