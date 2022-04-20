@@ -1,6 +1,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { Col, Row, Card, Button, Tabs, Tooltip } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
+import classNames from 'classnames'
 import IntroduceRow from './components/IntroduceRow'
 import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
@@ -98,7 +99,8 @@ const Analysis = () => {
         size: 'small',
         style: { fontSize: '0.5rem' }
       },
-      chartWrapperClassName: styles.chartDivMobile
+      chartWrapperClassName: styles.chartDivMobile,
+      tabClassName: styles.tabMobile
     }
   }[deviceType]
 
@@ -132,6 +134,7 @@ const Analysis = () => {
             <Tabs
               animated
               size='small'
+              className={classNames(chartResponsiveConfig.tabClassName)}
               tabBarExtraContent={
                 <div>
                   <Tooltip title='last 7 days'>

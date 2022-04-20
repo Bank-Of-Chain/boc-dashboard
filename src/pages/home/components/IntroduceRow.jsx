@@ -24,12 +24,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
       <Col {...topColResponsiveProps}>
         <ChartCard
           bordered={false}
-          title="Total Supply (USDi)"
-          action={
-            <Tooltip title="USDi Total Supply">
-              <InfoCircleOutlined />
-            </Tooltip>
-          }
+          title="Total USDi Supply"
           loading={loading}
           total={() => toFixed(usdi.totalSupply, BN(10 ** usdi.tokenInfo?.decimals), 2)}
           contentHeight={100}
