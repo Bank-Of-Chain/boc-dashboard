@@ -7,7 +7,7 @@ import { useModel } from 'umi'
 import BN from 'bignumber.js'
 import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
 import { toFixed } from '@/utils/number-format'
-import { USDi_DECIMALS } from '@/constants/usdi'
+import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Constants === //
@@ -46,13 +46,13 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         )
         return {
           Protocol: STRATEGIES_MAP[initialState.chain][key],
-          amount: toFixed(amount, USDi_DECIMALS, 2),
+          amount: toFixed(amount, USDI_BN_DECIMALS, 2),
         }
       }),
     ),
     {
       Protocol: 'Vault',
-      amount: toFixed(vaultPoolValue, USDi_DECIMALS, 2),
+      amount: toFixed(vaultPoolValue, USDI_BN_DECIMALS, 2),
     },
   ]
 
@@ -100,7 +100,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         statistic={{
           visible: true,
           content: {
-            value: toFixed(totalValue, USDi_DECIMALS, 2),
+            value: toFixed(totalValue, USDI_BN_DECIMALS, 2),
             name: 'TVL',
           },
         }}

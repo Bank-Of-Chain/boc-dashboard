@@ -23,6 +23,7 @@ import {toFixed} from '@/utils/number-format'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {isProEnv} from "@/services/env-service"
 import * as ethers from "ethers"
+import { USDI_BN_DECIMALS } from "@/constants/usdi"
 
 // === Constants === //
 import CHAINS, { CHIANS_NAME } from '@/constants/chain'
@@ -31,8 +32,6 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 import useAdminRole from '@/hooks/useAdminRole'
 import usePersonalData from '@/hooks/usePersonalData'
 
-const { BigNumber } = ethers
-
 const topColResponsiveProps = {
   xs: 24,
   sm: 8,
@@ -40,11 +39,10 @@ const topColResponsiveProps = {
   lg: 8,
   xl: 8,
 }
-const usdDecimals = BigNumber.from(10).pow(18)
 
 const Personal = () => {
   const [showWarningModal, setShowWarningModal] = useState(false)
-  const {dataV2, loading} = usePersonalData()
+  const {dataSource, loading} = usePersonalData()
   const {initialState, setInitialState} = useModel('@@initialState')
   const { error: roleError } = useAdminRole(initialState.address)
 
@@ -56,9 +54,7 @@ const Personal = () => {
     realizedProfit,
     unrealizedProfit,
     balanceOfUsdi
-  } = dataV2
-
-
+  } = dataSource
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
@@ -96,7 +92,6 @@ const Personal = () => {
   const array1 = months.splice(0, monthOffset)
   const nextMonths = [...array, ...array1]
 
-
   const option = {
     textStyle: {
       color: '#fff',
@@ -128,12 +123,12 @@ const Personal = () => {
   const continuousIndex = findIndex(reverseArray, (item, index) => {
     if (index <= 2) return false
     if (index === reverseArray.length) return true
-    return Math.abs(item.tvl - reverseArray[index - 1].tvl) > item.tvl * 0.005
+    return Math.abs(item.balance - reverseArray[index - 1].balance) > item.balance * 0.005
   })
   const startPercent = continuousIndex === -1 ?  0 : (100.5 - (100 * continuousIndex / tvls.length))
   const option1 = getLineEchartOpt(
     tvls,
-    'tvl',
+    'balance',
     'USDi',
     true,
     {
@@ -240,7 +235,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(balanceOfUsdi, usdDecimals, 2)}
+              total={() => toFixed(balanceOfUsdi, USDI_BN_DECIMALS, 2)}
               contentHeight={100}
             />
           </Col>
@@ -254,7 +249,7 @@ const Personal = () => {
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${numeral(day7Apy * 100).format('0,0.00')}%`}
+              total={`${numeral(day7Apy?.apy).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>
@@ -268,7 +263,7 @@ const Personal = () => {
                   <InfoCircleOutlined/>
                 </Tooltip>
               }
-              total={`${numeral(day30Apy * 100).format('0,0.00')}%`}
+              total={`${numeral(day30Apy?.apy).format('0,0.00')}%`}
               contentHeight={70}
             />
           </Col>
@@ -283,7 +278,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(unrealizedProfit, usdDecimals, 2)}
+              total={() => toFixed(unrealizedProfit, USDI_BN_DECIMALS, 2)}
               contentHeight={100}
             />
           </Col>
@@ -298,7 +293,7 @@ const Personal = () => {
                 </Tooltip>
               }
               loading={loading}
-              total={() => toFixed(realizedProfit, usdDecimals, 2)}
+              total={() => toFixed(realizedProfit, USDI_BN_DECIMALS, 2)}
               contentHeight={100}
             />
           </Col>

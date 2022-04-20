@@ -7,4 +7,7 @@ export const RECENT_ACTIVITY_TYPE = {
   'Transfer': 'Transfer'
 }
 
-export const USDi_DECIMALS = BN(1e18)
+export const USDI_DECIMALS = 18
+
+export const USDI_BN_DECIMALS = BN(1e18)
+

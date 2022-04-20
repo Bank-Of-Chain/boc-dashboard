@@ -165,13 +165,13 @@ export const getProfits = (chainId, account) => {
 }
 
 /**
- * 获取总锁仓量数组，默认取2年
+ * 获取总锁仓量数组，默认取1年
  * @param {*} chainId
  * @param {*} account
  * @param {*} limit
  * @returns
  */
-export const getTvlArray = (chainId, account, limit = 365 * 2) => {
+export const getTvlArray = (chainId, account, limit = 365) => {
   if (isNil(chainId) || isNil(account)) return []
   const params = {
     chainId,
@@ -188,12 +188,12 @@ export const getTvlArray = (chainId, account, limit = 365 * 2) => {
  * @param {*} account
  * @returns
  */
-export const getMonthProfits = (chainId, account,) => {
-  const params = {}
-  return request(`${API_SERVER}/aaa`, {
+export const getMonthProfits = (chainId, account) => {
+  const params = {
+    chainId
+  }
+  return request(`${API_SERVER}/month_profit/account/${account}`, {
     params
-  }).catch(() => {
-    return [null, null, null, null, null, null, null, null, '2.2064', '31.1406', '28.9539', '44.8245']
   })
 }
 
