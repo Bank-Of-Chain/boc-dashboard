@@ -2,7 +2,7 @@ import { useModel } from 'umi';
 
 import {
   getProfits,
-  getTvlArray,
+  getPersonTvlArray,
   getMonthProfits,
   getAccountApyByAddress,
 } from '@/services/api-service';
@@ -47,7 +47,7 @@ const dataMerge = (account, chain, requests) => {
     // 获取30日apy数值
     getAccountApyByAddress(chain, account, date, 'monthly'),
     // 获取tvl数据
-    getTvlArray(chain, account),
+    getPersonTvlArray(chain, account),
     // 获取月度盈利数据
     getMonthProfits(chain, account),
     getProfits(chain, account),
@@ -99,6 +99,9 @@ export default function usePersonalData() {
   const { userProvider } = useUserProvider()
 
   useEffect(() => {
+    if (!initialState?.address || !userProvider || !initialState?.chain) {
+      return
+    }
     setLoading(true)
     const requests = []
     if (!isEmpty(userProvider) && initialState?.address) {

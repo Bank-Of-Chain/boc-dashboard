@@ -2,13 +2,12 @@ import { PageLoading } from '@ant-design/pro-layout';
 import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 
 // === Utils === //
 import { setClient } from './apollo/client';
 
 // === Constants === //
-import { ETH } from './constants/chain';
+import { MATIC } from './constants/chain';
 
 const isDev = process.env.NODE_ENV === 'development';
 /** 获取用户信息比较慢的时候会展示一个 loading */
@@ -40,7 +39,8 @@ export const layout = ({ initialState, setInitialState }) => {
           query: { chain },
         },
       } = history // 如果没有登录，重定向到 login
-      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : ETH.id)
+      // v1.5 先上 polygon，默认先调整为 polygon
+      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
       setClient(nextChainId)
       setInitialState({ chain: nextChainId })
     },

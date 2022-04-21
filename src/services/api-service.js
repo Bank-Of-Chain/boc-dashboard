@@ -3,12 +3,7 @@ import {
 } from 'umi'
 import {
   isNil,
-  isUndefined
 } from 'lodash';
-
-import {
-  BigNumber
-} from 'ethers'
 
 export const getStrategyApysInChain = (address, offset = 0, limit = 20) => {
   try {
@@ -171,7 +166,7 @@ export const getProfits = (chainId, account) => {
  * @param {*} limit
  * @returns
  */
-export const getTvlArray = (chainId, account, limit = 365) => {
+export const getPersonTvlArray = (chainId, account, limit = 365) => {
   if (isNil(chainId) || isNil(account)) return []
   const params = {
     chainId,
