@@ -77,3 +77,16 @@ export const usedPreValue = (array, valueKey = 'value', defaultValue) => {
     }
   });
 };
+
+export const appendDate = (array, valueKey = 'value', limit = 7, offset = 0) => {
+  const data = []
+  for (let i = 0; i < limit; i++) {
+    const date = moment().utcOffset(0).subtract(i + offset, 'days').format('YYYY-MM-DD')
+    const item = find(array, item => item.date === date) || {
+      date,
+      [valueKey]: 0
+    }
+    data.push(item)
+  }
+  return data
+}

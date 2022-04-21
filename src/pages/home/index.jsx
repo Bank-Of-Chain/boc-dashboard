@@ -24,6 +24,7 @@ import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { map, reverse } from 'lodash'
+import { appendDate } from "@/utils/array-append"
 
 // === Styles === //
 import styles from './style.less'
@@ -62,9 +63,10 @@ const Analysis = () => {
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
       offset: apyOffset,
-      limit: calDateRange + apyOffset
+      limit: calDateRange
     }).then(data => {
-      const result = map(reverse(data.content), ({date, apy}) => ({
+      const items = appendDate(data.content, 'apy', calDateRange, apyOffset)
+      const result = map(reverse(items), ({date, apy}) => ({
         date,
         apy: `${numeral(apy).format('0,0.00')}`
       }))
@@ -76,7 +78,8 @@ const Analysis = () => {
       chainId: initialState.chain,
       limit: calDateRange
     }).then(data => {
-      const result = map(reverse(data.content), ({date, totalSupply}) => ({
+      const items = appendDate(data.content, 'totalSupply', calDateRange)
+      const result = map(reverse(items), ({date, totalSupply}) => ({
         date,
         totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, 2),
       }))

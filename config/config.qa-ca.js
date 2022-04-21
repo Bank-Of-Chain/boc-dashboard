@@ -13,7 +13,7 @@ export default defineConfig({
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',
-      137: 'http://54.177.146.111:8000/subgraphs/name/boc-v1_5/subgraph'
+      137: 'https://inte.bankofchain.io/subgraph/subgraphs/name/boc-v1_5/subgraph'
     },
     VAULT_ADDRESS: {
       1: '0x66F625B8c4c635af8b74ECe2d7eD0D58b4af3C3d',
