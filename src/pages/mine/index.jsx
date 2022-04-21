@@ -16,13 +16,11 @@ import isEqual from 'lodash/isEqual'
 import find from 'lodash/find'
 import _min from 'lodash/min'
 import _max from 'lodash/max'
-import isUndefined from 'lodash/isUndefined'
 import isEmpty from 'lodash/isEmpty'
 import { findIndex, reverse } from 'lodash'
 import {toFixed} from '@/utils/number-format'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {isProEnv} from "@/services/env-service"
-import * as ethers from "ethers"
 import { USDI_BN_DECIMALS } from "@/constants/usdi"
 
 // === Constants === //
@@ -31,6 +29,7 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
 import usePersonalData from '@/hooks/usePersonalData'
+import useWallet from '@/hooks/useWallet'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -45,6 +44,7 @@ const Personal = () => {
   const {dataSource, loading} = usePersonalData()
   const {initialState, setInitialState} = useModel('@@initialState')
   const { error: roleError } = useAdminRole(initialState.address)
+  const { userProvider } = useWallet()
 
   const {
     day7Apy,
@@ -148,7 +148,9 @@ const Personal = () => {
     const targetNetwork = find(CHAINS, { id })
     console.log('targetNetwork=', targetNetwork)
     if (isEmpty(targetNetwork)) return
-    const ethereum = window.ethereum
+    if (!userProvider) {
+      return
+    }
     const data = [
       {
         chainId: `0x${Number(targetNetwork.id).toString(16)}`,
@@ -162,16 +164,10 @@ const Personal = () => {
 
     let switchTx
     try {
-      switchTx = await ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: data[0].chainId }],
-      })
+      switchTx = await userProvider.send("wallet_switchEthereumChain", [{ chainId: data[0].chainId }])
     } catch (switchError) {
       try {
-        switchTx = await ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: data,
-        })
+        switchTx = await userProvider.send("wallet_addEthereumChain", data)
       } catch (addError) {
         console.log('addError=', addError)
       }
@@ -188,10 +184,8 @@ const Personal = () => {
     return (
       <Result
         status='500'
-        title={isUndefined(window.ethereum) ? '' : 'No Connect!'}
-        subTitle={
-          isUndefined(window.ethereum) ? 'Please install Metamask first.' : 'Please connect metamask first.'
-        }
+        title={!!userProvider ? '' : 'No Connect!'}
+        subTitle="Please connect wallet first."
       />
     )
   }
@@ -390,7 +384,7 @@ const Personal = () => {
         </Mobile>
       </Suspense>
       <Modal
-        title="Set metamask's network to current?"
+        title="Set wallet's network to current?"
         visible={showWarningModal}
         onOk={() => changeNetwork(initialState.chain)}
         onCancel={hideModal}
@@ -398,7 +392,7 @@ const Personal = () => {
         cancelText='close'
       >
         <p>
-           Metamask Chain:{' '}
+           Wallet Chain:{' '}
           <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}</span>
         </p>
         <p>

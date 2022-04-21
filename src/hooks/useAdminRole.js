@@ -12,7 +12,7 @@ import * as ethers from "ethers";
 import isEmpty from 'lodash/isEmpty';
 
 // === Hooks === //
-import useUserProvider from './useUserProvider'
+import useWallet from './useWallet'
 
 const {
   Contract
@@ -49,7 +49,7 @@ const useAdminRole = (address) => {
   const [loading, setLoading] = useState(false);
   const {
     userProvider,
-  } = useUserProvider()
+  } = useWallet()
 
   const {
     initialState
