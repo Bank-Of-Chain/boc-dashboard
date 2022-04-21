@@ -6,9 +6,9 @@ import { useModel } from 'umi'
 import moment from 'moment'
 import map from 'lodash/map'
 import BN from 'bignumber.js'
-import { toFixed } from '@/utils/number-format'
+import { toLeastOneFixed } from '@/utils/number-format'
 
-import { USDi_DECIMALS } from '@/constants/usdi'
+import { USDI_DECIMALS } from '@/constants/usdi'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
@@ -88,16 +88,16 @@ const TransationsTable = ({ loading }) => {
       key: 'detail',
       render: (text, item) => {
         const { type, changeAmount, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
-        const changeValue = toFixed(changeAmount, USDi_DECIMALS, 2)
-        const absChangeValue = toFixed(BN(changeAmount).abs(), USDi_DECIMALS, 2)
-        const transferValue = toFixed(transferredAmount, USDi_DECIMALS, 2)
+        const changeValue = toLeastOneFixed(changeAmount, USDI_DECIMALS)
+        const absChangeValue = toLeastOneFixed(BN(changeAmount).abs(), USDI_DECIMALS)
+        const transferValue = toLeastOneFixed(transferredAmount, USDI_DECIMALS)
         const from = fromAccountUpdate?.account.id
         const to = toAccountUpdate?.account.id
         const fns = {
-          Mint: () => <>{type} {changeValue} USDi to {renderAddress(to)}</>,
-          Burn: () => <>{type} {absChangeValue} USDi from {renderAddress(from)}</>,
-          Rebase: () => <>{type} {changeValue} raw yield</>,
-          Transfer: () => <>{type} {transferValue} USDi from {renderAddress(from)} to {renderAddress(to)}</>,
+          Mint: () => <>{type} <span>{changeValue}</span> USDi to {renderAddress(to)}</>,
+          Burn: () => <>{type} <span>{absChangeValue}</span> USDi from {renderAddress(from)}</>,
+          Rebase: () => <>{type} <span>{changeValue}</span> raw yield</>,
+          Transfer: () => <>{type} <span>{transferValue}</span> USDi from {renderAddress(from)} to {renderAddress(to)}</>,
         }
         return (
           <span style={{ whiteSpace: 'normal' }}>{fns[item.type]()}</span>

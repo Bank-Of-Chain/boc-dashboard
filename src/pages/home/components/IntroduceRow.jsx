@@ -3,7 +3,6 @@ import { Col, Row, Tooltip } from 'antd';
 import numeral from 'numeral';
 import ChartCard from '@/components/ChartCard';
 import BN from 'bignumber.js';
-import { isNil } from 'lodash';
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format';
@@ -56,7 +55,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
               <InfoCircleOutlined />
             </Tooltip>
           }
-          total={() => isNil(apy30) ? '' : `${apy30}%`}
+          total={`${numeral(apy30).format('0,0.00')}%`}
           contentHeight={70}
         />
       </Col>

@@ -10,6 +10,7 @@ import ProportionSales from './components/ProportionSales'
 import { useModel } from 'umi'
 import _min from 'lodash/min'
 import _max from 'lodash/max'
+import numeral from 'numeral'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
@@ -21,7 +22,8 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
-import { USDi_DECIMALS } from '@/constants/usdi'
+import { USDI_BN_DECIMALS } from '@/constants/usdi'
+import { map, reverse } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
@@ -62,7 +64,10 @@ const Analysis = () => {
       offset: apyOffset,
       limit: calDateRange + apyOffset
     }).then(data => {
-      const result = data.content.reverse()
+      const result = map(reverse(data.content), ({date, apy}) => ({
+        date,
+        apy: `${numeral(apy).format('0,0.00')}`
+      }))
       setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
     }).catch((e) => {
       console.error(e)
@@ -71,9 +76,9 @@ const Analysis = () => {
       chainId: initialState.chain,
       limit: calDateRange
     }).then(data => {
-      const result = data.content.reverse().map((item) => ({
-        ...item,
-        totalSupply: toFixed(item.totalSupply, USDi_DECIMALS, 2),
+      const result = map(reverse(data.content), ({date, totalSupply}) => ({
+        date,
+        totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, 2),
       }))
       setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', false, params))
     }).catch((e) => {

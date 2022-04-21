@@ -26,12 +26,12 @@ export default defineConfig({
     VAULT_ADDRESS: {
       1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
       56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
-      137: '0x9fe653933300a05bf60d19901031da8008653a6e'
+      137: '0x204d2e5c581506e939295daf99079b590ace906e'
     },
-    USDi_ADDRESS: {
+    USDI_ADDRESS: {
       1: '',
       56: '',
-      137: '0x52c7a9ddc1fe319a98bd193b758eaa4735738ddb'
+      137: '0x6dc1bebb8e0881aca6f082f5f53dd740c2ddf379'
     }
   }
 });
