@@ -41,7 +41,8 @@ query ($usdiAddress: Bytes, $valutAddress: Bytes) {
     tokenInfo {
       decimals
     }
-    totalSupply
+    rebasingCreditsPerToken
+    rebasingCredits
     holderCount
   }
   vault(id: $valutAddress) {
