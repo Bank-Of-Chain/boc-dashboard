@@ -60,7 +60,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
     {
       name: 'Vault',
       amount: vaultPoolValue,
-      percent: vaultPoolValue.div(totalValue),
+      percent: totalValue === 0 ? 0 : vaultPoolValue.div(totalValue),
     },
   ]
 
