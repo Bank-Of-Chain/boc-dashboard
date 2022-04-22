@@ -24,7 +24,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null
-  const { strategies = [], totalValue } = visitData
+  const { strategies = [], totalValue = 0 } = visitData
   const total = reduce(
     strategies,
     (rs, o) => {

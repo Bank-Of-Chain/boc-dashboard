@@ -212,12 +212,12 @@ const Analysis = () => {
           >
             <Col xl={12} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
-                <ProportionSales loading={loading} visitData={dataSource.vault} />
+                <ProportionSales loading={loading} visitData={dataSource.vault || {}} />
               </Suspense>
             </Col>
             <Col xl={12} lg={24} md={24} sm={24} xs={24}>
               <Suspense fallback={null}>
-                <TopSearch loading={loading} visitData={dataSource.vault} />
+                <TopSearch loading={loading} visitData={dataSource.vault || {}} />
               </Suspense>
             </Col>
           </Row>
