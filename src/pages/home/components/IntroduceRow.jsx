@@ -7,6 +7,7 @@ import { CREDIT_DECEMALS } from '@/constants/usdi';
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format';
+import isEmpty from 'lodash/isEmpty'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -26,7 +27,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
           bordered={false}
           title="Total USDi Supply"
           loading={loading}
-          total={() => usdi ? toFixed(BN(usdi?.rebasingCredits).div(BN(usdi?.rebasingCreditsPerToken).div(BN(10 ** CREDIT_DECEMALS))), BN(10 ** CREDIT_DECEMALS), 2) : 0}
+          total={() => !isEmpty(usdi) ? toFixed(BN(usdi?.rebasingCredits).div(BN(usdi?.rebasingCreditsPerToken).div(BN(10 ** CREDIT_DECEMALS))), BN(10 ** CREDIT_DECEMALS), 2) : 0}
           contentHeight={100}
         />
       </Col>
