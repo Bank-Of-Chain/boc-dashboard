@@ -70,18 +70,7 @@ const TransationsTable = ({ loading }) => {
       key: 'type',
       ellipsis: {
         showTitle: false,
-      },
-      render: text => {
-        const prefix = {
-          [RECENT_ACTIVITY_TYPE.Mint]: '❇️',
-          [RECENT_ACTIVITY_TYPE.Burn]: '🌹',
-          [RECENT_ACTIVITY_TYPE.Rebase]: '🉑',
-          [RECENT_ACTIVITY_TYPE.Transfer]: '🔆',
-        }
-        return (
-          <span><span style={{ fontSize: 16 }}>{prefix[text]}</span>{text}</span>
-        )
-      },
+      }
     },
     {
       title: 'Detail',
@@ -96,7 +85,7 @@ const TransationsTable = ({ loading }) => {
         const fns = {
           Mint: () => <>{type} <span>{changeValue}</span> USDi to {renderAddress(to)}</>,
           Burn: () => <>{type} <span>{absChangeValue}</span> USDi from {renderAddress(from)}</>,
-          Rebase: () => <>{type} <span>{changeValue}</span> raw yield</>,
+          Rebase: () => <>{type} <span>{changeValue}</span> USDi</>,
           Transfer: () => <>{type} <span>{transferValue}</span> USDi from {renderAddress(from)} to {renderAddress(to)}</>,
         }
         return (
