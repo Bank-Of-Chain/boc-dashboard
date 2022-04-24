@@ -3,7 +3,6 @@ import { Col, Row, Tooltip } from 'antd';
 import numeral from 'numeral';
 import ChartCard from '@/components/ChartCard';
 import BN from 'bignumber.js';
-import { CREDIT_DECEMALS } from '@/constants/usdi';
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format';
@@ -27,7 +26,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
           bordered={false}
           title="Total USDi Supply"
           loading={loading}
-          total={() => !isEmpty(usdi) ? toFixed(BN(usdi?.rebasingCredits).div(BN(usdi?.rebasingCreditsPerToken).div(BN(10 ** CREDIT_DECEMALS))), BN(10 ** CREDIT_DECEMALS), 2) : 0}
+          total={() => !isEmpty(usdi) ? toFixed(usdi?.totalSupply, BN(10 ** usdi?.tokenInfo?.decimals), 2) : 0}
           contentHeight={100}
         />
       </Col>
