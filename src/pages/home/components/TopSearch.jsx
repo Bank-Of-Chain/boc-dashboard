@@ -78,7 +78,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
             placeholder={text}
             alt={text}
             style={{ backgroundColor: withoutBackgroundColor.includes(text) ? 'transparent' : '#fff', borderRadius: '50%' }}
-            fallback={`${IMAGE_ROOT}/default.webp`}
+            fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a className={styles.text}>{text}</a>
         </div>

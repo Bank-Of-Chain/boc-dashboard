@@ -195,7 +195,7 @@ const Strategy = props => {
                 src={`${IMAGE_ROOT}/images/amms/${
                   STRATEGIES_MAP[initialState.chain][strategy?.protocol]
                 }.png`}
-                fallback={`${IMAGE_ROOT}/default.webp`}
+                fallback={`${IMAGE_ROOT}/default.png`}
               />
             </Col>
             <Col xl={10} lg={10} md={10} sm={22} xs={22}>

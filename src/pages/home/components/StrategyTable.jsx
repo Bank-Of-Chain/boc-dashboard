@@ -46,7 +46,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
             placeholder={item.protocol}
             style={{ backgroundColor: '#fff', borderRadius: '50%' }}
             alt={STRATEGIES_MAP[initialState.chain][item.protocol]}
-            fallback={`https://bankofchain.io/default.webp`}
+            fallback={`https://bankofchain.io/default.png`}
           />
           <a
             target={'_blank'}
