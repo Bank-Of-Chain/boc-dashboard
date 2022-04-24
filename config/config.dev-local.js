@@ -21,7 +21,7 @@ export default defineConfig({
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
       56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',
-      137: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph'
+      137: 'http://192.168.67.39:8000/subgraphs/name/boc-v1_5/subgraph',
     },
     VAULT_ADDRESS: {
       1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
