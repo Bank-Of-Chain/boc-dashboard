@@ -17,7 +17,7 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getUsdiTotalSupplyList } from '@/services/api-service'
 
 // === Utils === //
-import { isEmpty} from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { APY_DURATION } from '@/constants/api'
@@ -52,7 +52,7 @@ const Analysis = () => {
         axisTick: {
           alignWithLabel: true,
         },
-      },
+      }
     }
     if (calDateRange > 7) {
       params.format = 'MM-DD'
@@ -68,7 +68,7 @@ const Analysis = () => {
       const items = appendDate(data.content, 'apy', calDateRange, apyOffset)
       const result = map(reverse(items), ({date, apy}) => ({
         date,
-        apy: `${numeral(apy).format('0,0.00')}`
+        apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
       setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
     }).catch((e) => {

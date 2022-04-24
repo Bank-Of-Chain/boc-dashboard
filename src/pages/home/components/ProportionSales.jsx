@@ -17,6 +17,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
   const { strategies = [], totalValue } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
+  const suffix = ' (USD)'
 
   if (!initialState.chain) return null
 
@@ -45,13 +46,13 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           BN(0),
         )
         return {
-          Protocol: STRATEGIES_MAP[initialState.chain][key],
+          Protocol: `${STRATEGIES_MAP[initialState.chain][key]}${suffix}`,
           amount: toFixed(amount, USDI_BN_DECIMALS, 2),
         }
       }),
     ),
     {
-      Protocol: 'Vault',
+      Protocol: `Vault${suffix}`,
       amount: toFixed(vaultPoolValue, USDI_BN_DECIMALS, 2),
     },
   ]
@@ -85,6 +86,9 @@ const ProportionSales = ({ loading, visitData = {} }) => {
             style: {
               fill: '#fff',
             },
+            formatter: (value) => {
+              return value.replace(suffix, '')
+            },
           },
           ...responsiveConfig.legendProps
         }}
@@ -101,7 +105,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
           visible: true,
           content: {
             value: toFixed(totalValue, USDI_BN_DECIMALS, 2),
-            name: 'TVL',
+            name: `TVL${suffix}`,
           },
         }}
       />

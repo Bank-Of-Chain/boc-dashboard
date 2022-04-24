@@ -84,7 +84,7 @@ export const appendDate = (array, valueKey = 'value', limit = 7, offset = 0) => 
     const date = moment().utcOffset(0).subtract(i + offset, 'days').format('YYYY-MM-DD')
     const item = find(array, item => item.date === date) || {
       date,
-      [valueKey]: 0
+      [valueKey]: undefined
     }
     data.push(item)
   }
