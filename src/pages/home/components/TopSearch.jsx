@@ -24,7 +24,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null
-  const { strategies = [], totalValue = 0 } = visitData
+  const { strategies = [], totalValue = '0' } = visitData
   const total = reduce(
     strategies,
     (rs, o) => {
@@ -60,7 +60,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
     {
       name: 'Vault',
       amount: vaultPoolValue,
-      percent: totalValue === 0 ? 0 : vaultPoolValue.div(totalValue),
+      percent: totalValue === '0' ? 0 : vaultPoolValue.div(totalValue),
     },
   ]
 
