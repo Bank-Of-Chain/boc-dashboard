@@ -33,7 +33,7 @@ import { getStrategyApysOffChain, getBaseApyByPage } from '@/services/api-servic
 import styles from './style.less'
 
 const Strategy = props => {
-  const { id } = props?.location?.query
+  const { id, official_daily_apy = false } = props?.location?.query
   const loading = false
   const [strategy, setStrategy] = useState({})
   const [apysEchartOpt, setApysEchartOpt] = useState({})
@@ -116,31 +116,31 @@ const Strategy = props => {
       const value3 = getWeeklyAvgApy(index)
       weeklyOfficialApy.push(isNil(value3) ? null : Number(value3 * 100).toFixed(2))
     })
+    const lengndData = ['Weekly APY', 'Official Weekly APY']
+    const data = [
+      {
+        seriesName: 'Weekly APY',
+        seriesData: bocApy,
+      },
+      {
+        seriesName: 'Official Weekly APY',
+        seriesData: weeklyOfficialApy,
+      }
+    ]
+    if (official_daily_apy) {
+      lengndData.push('Official Daily APY')
+      data.push({
+        seriesName: 'Official Daily APY',
+        seriesData: officialApy,
+      })
+    }
     let obj = {
       legend: {
-        data: ['Weekly APY', 'Official Weekly APY', 'Official APY'],
+        data: lengndData,
         textStyle: { color: '#fff' },
-        selected: {
-          'Weekly APY': true,
-          'Official Weekly APY': true,
-          'Official APY': false
-        }
       },
       xAxisData: dayArray,
-      data: [
-        {
-          seriesName: 'Weekly APY',
-          seriesData: bocApy,
-        },
-        {
-          seriesName: 'Official Weekly APY',
-          seriesData: weeklyOfficialApy,
-        },
-        {
-          seriesName: 'Official APY',
-          seriesData: officialApy,
-        },
-      ],
+      data
     }
     const option = multipleLine(obj)
     option.color = ['#5470c6', '#fac858', '#91cc75']
@@ -157,7 +157,7 @@ const Strategy = props => {
       },
     }
     setApysEchartOpt(option)
-  }, [apys, offChainApys])
+  }, [apys, offChainApys, official_daily_apy])
 
   if (!initialState.chain || isEmpty(strategy)) return null
   const { positionDetail, totalValue } = strategy
