@@ -18,12 +18,12 @@ export default defineConfig({
     VAULT_ADDRESS: {
       1: '0x66F625B8c4c635af8b74ECe2d7eD0D58b4af3C3d',
       56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
-      137: '0x7a6e91c3c4fcb9157a27eb901210aa1df9d05b45'
+      137: '0x7a6e91c3c4fcb9157a27eb901210aa1df9d05b45' // subgraph 查询需要小写
     },
     USDI_ADDRESS: {
       1: '',
       56: '',
-      137: '0xb334795bf50e4943d076dfb38d8c1a50f9f5a101'
+      137: '0xb334795bf50e4943d076dfb38d8c1a50f9f5a101' // subgraph 查询需要小写
     }
   },
 });
