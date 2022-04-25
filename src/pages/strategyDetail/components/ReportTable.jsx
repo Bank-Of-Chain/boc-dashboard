@@ -107,7 +107,7 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
       render: text => <span>{toFixed(text, decimal, 2)}</span>,
     },
     {
-      title: `Reward Asset ${unit ? `(${unit})` : ''}`,
+      title: `Reward Asset (USD)`,
       dataIndex: 'rewardAsset',
       key: 'rewardAsset',
       width: '8rem',
