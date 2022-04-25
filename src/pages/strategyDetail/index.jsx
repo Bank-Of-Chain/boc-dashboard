@@ -22,7 +22,7 @@ import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import moment from 'moment'
 import _union from 'lodash/union'
 import _find from 'lodash/find'
-import { get, isNil, keyBy } from 'lodash'
+import { get, isNil, keyBy, sum } from 'lodash'
 import { formatToUTC0 } from '@/utils/date'
 
 // === Services === //
@@ -82,10 +82,10 @@ const Strategy = props => {
   useEffect(() => {
     const startMoment = moment()
       .utcOffset(0)
-      .subtract(60, 'day')
+      .subtract(66, 'day')
       .startOf('day')
-    const dayArray = reduce(
-      new Array(60),
+    const calcArray = reduce(
+      new Array(66),
       (rs) => {
         const currentMoment = startMoment.subtract(-1, 'day')
         rs.push(currentMoment.format('yyyy-MM-DD'))
@@ -93,34 +93,57 @@ const Strategy = props => {
       },
       [],
     )
+    const dayArray = calcArray.slice(6)
     const apyMap = keyBy(apys, 'date')
 
     const officialApyMap = keyBy(offChainApys, 'date')
     const bocApy = []
     const officialApy = []
-    dayArray.forEach(i => {
-      const value1 = get(apyMap, `${i}.value`, null)
+    const weeklyOfficialApy = []
+    const getWeeklyAvgApy = (index) => {
+      const weeklyArray = calcArray.slice(index, index + 7)
+      const values = map(weeklyArray, (day) => get(officialApyMap, `${day}.value`, null)).filter(_ => !isNil(_))
+      if (values.length === 0) {
+        return
+      }
+      return sum(values) / values.length
+    }
+    dayArray.forEach((day, index) => {
+      const value1 = get(apyMap, `${day}.value`, null)
       bocApy.push(isNil(value1) ? null : Number(value1 * 100).toFixed(2))
-      const value2 = get(officialApyMap, `${i}.value`, null)
+      const value2 = get(officialApyMap, `${day}.value`, null)
       officialApy.push(isNil(value2) ? null : Number(value2 * 100).toFixed(2))
+      const value3 = getWeeklyAvgApy(index)
+      weeklyOfficialApy.push(isNil(value3) ? null : Number(value3 * 100).toFixed(2))
     })
     let obj = {
-      legend: { data: ['Weekly APY', 'Official APY'], textStyle: { color: '#fff' } },
+      legend: {
+        data: ['Weekly APY', 'Official Weekly APY', 'Official APY'],
+        textStyle: { color: '#fff' },
+        selected: {
+          'Weekly APY': true,
+          'Official Weekly APY': true,
+          'Official APY': false
+        }
+      },
       xAxisData: dayArray,
       data: [
         {
           seriesName: 'Weekly APY',
           seriesData: bocApy,
-          color: 'rgba(169, 204, 245, 1)',
+        },
+        {
+          seriesName: 'Official Weekly APY',
+          seriesData: weeklyOfficialApy,
         },
         {
           seriesName: 'Official APY',
           seriesData: officialApy,
-          color: 'rgba(86, 122, 246, 1)',
         },
       ],
     }
     const option = multipleLine(obj)
+    option.color = ['#5470c6', '#fac858', '#91cc75']
     option.series.forEach(serie => {
       serie.connectNulls = true
     })
