@@ -57,7 +57,7 @@ const Analysis = () => {
     if (calDateRange > 7) {
       params.format = 'MM-DD'
     }
-    // apy 是事件监听，会有当天数据，offset 为 1
+    // 展示到昨天，offset 为 1
     const apyOffset = 1
     getValutAPYList({
       chainId: initialState.chain,
@@ -76,9 +76,10 @@ const Analysis = () => {
     })
     getUsdiTotalSupplyList({
       chainId: initialState.chain,
-      limit: calDateRange
+      limit: calDateRange,
+      offset: apyOffset,
     }).then(data => {
-      const items = appendDate(data.content, 'totalSupply', calDateRange)
+      const items = appendDate(data.content, 'totalSupply', calDateRange, apyOffset)
       const result = map(reverse(items), ({date, totalSupply}) => ({
         date,
         totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, 2),

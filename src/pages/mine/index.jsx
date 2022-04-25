@@ -22,7 +22,6 @@ import { findIndex, reverse } from 'lodash'
 import {toFixed} from '@/utils/number-format'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import {isProEnv} from "@/services/env-service"
-import * as ethers from "ethers"
 import { USDI_BN_DECIMALS } from "@/constants/usdi"
 
 // === Constants === //
@@ -243,7 +242,7 @@ const Personal = () => {
             <ChartCard
               bordered={false}
               loading={loading}
-              title='APY(last 7 days)'
+              title='Current APY(last 7 days)'
               action={
                 <Tooltip title={`Yield over the past 1 week`}>
                   <InfoCircleOutlined/>
@@ -257,7 +256,7 @@ const Personal = () => {
             <ChartCard
               bordered={false}
               loading={loading}
-              title='APY(last 30 days)'
+              title='Current APY(last 30 days)'
               action={
                 <Tooltip title={`Yield over the past 1 month`}>
                   <InfoCircleOutlined/>

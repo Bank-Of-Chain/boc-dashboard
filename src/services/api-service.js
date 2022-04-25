@@ -53,7 +53,7 @@ export const getReports = (params, offset = 0, limit = 20) => {
     limit,
     ...params,
   }
-  return request(`${API_SERVER}/v1/allocation/report`, {
+  return request(`${API_SERVER}/allocation/report`, {
     params: nextParams,
   });
 }
@@ -168,9 +168,11 @@ export const getProfits = (chainId, account) => {
  */
 export const getPersonTvlArray = (chainId, account, limit = 365) => {
   if (isNil(chainId) || isNil(account)) return []
+  //  默认展示到昨天
   const params = {
     chainId,
-    limit
+    limit,
+    offset: 1,
   }
   return request(`${API_SERVER}/USDi/balance/account/${account}`, {
     params

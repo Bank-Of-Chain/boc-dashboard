@@ -12,7 +12,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
     format = 'MM-DD HH:mm',
     xAxis,
     yAxis,
-    smooth = true,
+    smooth = false,
     step,
     dataZoom,
     tootlTipSuffix = '(UTC)',
@@ -22,11 +22,12 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
   const seriesData = [];
   const xAxisLabels = {}
   data.forEach((o) => {
-    let value = moment(o.date).format(tootlTipFormat);
+    // 当天为 23:59 时的数据, 展示到明天 00:00，故加 1
+    let value = moment(o.date).add(1, 'days').format(tootlTipFormat);
     if (tootlTipSuffix) {
       value = `${value} ${tootlTipSuffix}`
     }
-    xAxisLabels[value] = moment(o.date).format(format);
+    xAxisLabels[value] = moment(o.date).add(1, 'days').format(format);
     xAxisData.push(value);
     seriesData.push(o[dataValueKey]);
   });

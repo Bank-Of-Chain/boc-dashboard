@@ -25,6 +25,11 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
         <ChartCard
           bordered={false}
           title="Total USDi Supply"
+          action={
+            <Tooltip title="Current total USDi supply">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
           loading={loading}
           total={() => !isEmpty(usdi) ? toFixed(usdi?.totalSupply, BN(10 ** usdi?.tokenInfo?.decimals), 2) : 0}
           contentHeight={100}
@@ -37,7 +42,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
           loading={loading}
           title="Holders"
           action={
-            <Tooltip title="Number Of USDi Holders">
+            <Tooltip title="Number Of USDi holders">
               <InfoCircleOutlined />
             </Tooltip>
           }
@@ -50,7 +55,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
         <ChartCard
           bordered={false}
           loading={loading}
-          title="APY (last 30 days)"
+          title="Current APY (last 30 days)"
           action={
             <Tooltip title={`Yield over the past 1 month`}>
               <InfoCircleOutlined />
