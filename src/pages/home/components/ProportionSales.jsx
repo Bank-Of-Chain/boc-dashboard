@@ -12,6 +12,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Constants === //
 import STRATEGIES_MAP from '@/constants/strategies'
+import styles from '../style.less'
 
 const ProportionSales = ({ loading, visitData = {} }) => {
   const { strategies = [], totalValue } = visitData
@@ -68,11 +69,15 @@ const ProportionSales = ({ loading, visitData = {} }) => {
   }[deviceType]
 
   return (
-    <div>
+    <div className={styles.chartWrapper}>
       <Donut
         forceFit
         height={340}
         style={{
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          transform: 'translate(0, -50%)',
           backgroundColor: 'rgba(0, 0, 0, 0.1)',
         }}
         radius={1}

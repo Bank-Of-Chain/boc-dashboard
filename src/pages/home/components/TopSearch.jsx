@@ -10,7 +10,7 @@ import STRATEGIES_MAP from '@/constants/strategies'
 import groupBy from 'lodash/groupBy'
 import reduce from 'lodash/reduce'
 import filter from 'lodash/filter'
-import { mapValues, values } from 'lodash'
+import { mapValues, values, sortBy } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import BN from 'bignumber.js'
@@ -40,7 +40,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
     'protocol',
   )
 
-  const tableData = [
+  const tableData = sortBy([
     ...values(
       mapValues(groupData, (o, key) => {
         const amount = reduce(
@@ -62,7 +62,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
       amount: vaultPoolValue,
       percent: totalValue === '0' ? 0 : vaultPoolValue.div(totalValue),
     },
-  ]
+  ], 'name')
 
   const columns = [
     {
