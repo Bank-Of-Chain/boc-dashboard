@@ -103,7 +103,7 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
       title: 'Weekly Profit',
       dataIndex: 'weeklyProfit',
       key: 'weeklyProfit',
-      render: (text, item) => <span>{`${toFixed(text || '0', decimals, 2)} ${text == '0' ? '' : item.tokenUnit}`}</span>
+      render: (text, item) => <span>{text ? `${toFixed(text, decimals, 2)} ${item.tokenUnit || ''}` : ''}</span>
     },
     {
       title: 'Strategy Address',

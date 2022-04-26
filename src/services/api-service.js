@@ -53,7 +53,7 @@ export const getReports = (params, offset = 0, limit = 20) => {
     limit,
     ...params,
   }
-  return request(`${API_SERVER}/allocation/report`, {
+  return request(`${API_SERVER}/allocation`, {
     params: nextParams,
   });
 }
@@ -100,7 +100,7 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
  */
 export const updateReportStatus = (reportId, isReject, headers) => {
   if (isNil(reportId)) return
-  return request(`${API_SERVER}/allocation/report/${reportId}/${isReject}`, {
+  return request(`${API_SERVER}/allocation/${reportId}/${isReject}`, {
     method: 'patch',
     headers
   });

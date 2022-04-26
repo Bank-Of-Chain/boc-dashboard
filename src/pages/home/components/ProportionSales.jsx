@@ -75,9 +75,10 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         height={340}
         style={{
           position: 'absolute',
+          width: '100%',
           top: '50%',
-          left: 0,
-          transform: 'translate(0, -50%)',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           backgroundColor: 'rgba(0, 0, 0, 0.1)',
         }}
         radius={1}
