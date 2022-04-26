@@ -55,7 +55,7 @@ query ($usdiAddress: Bytes, $valutAddress: Bytes) {
   }
 }
 `;
-export const getDashboardDetail = async (usdiAddress, valutAddress) => {
+export const getDashboardDetail = async (usdiAddress = '', valutAddress = '') => {
   const client = getClient()
   if (isEmpty(client)) return
   const {
@@ -63,8 +63,8 @@ export const getDashboardDetail = async (usdiAddress, valutAddress) => {
   } = await client.query({
     query: gql(DASHBOARD_DETAIL_QUERY),
     variables: {
-      usdiAddress,
-      valutAddress
+      usdiAddress: usdiAddress.toLowerCase(),
+      valutAddress: valutAddress.toLowerCase()
     }
   });
   return data
@@ -265,6 +265,9 @@ query($types: [USDiUpdateType], $first: Int) {
       account {
         id
       }
+    }
+    transaction {
+      id
     }
 		toAccountUpdate {
       account {

@@ -95,17 +95,16 @@ const TransationsTable = ({ loading }) => {
     },
     {
       title: 'Tx Address',
-      dataIndex: 'id',
-      key: 'id',
+      key: 'tx',
       ellipsis: {
         showTitle: false,
       },
       align: 'center',
-      render: text => (
+      render: (text, item) => (
         <a
           target="_blank"
           rel="noreferrer"
-          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${item.transaction.id}`}
         >
           <img width={21} src="./images/link.png" alt="link" />
         </a>
