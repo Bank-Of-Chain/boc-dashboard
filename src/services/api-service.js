@@ -22,15 +22,15 @@ export const getStrategyApysInChain = (address, offset = 0, limit = 20) => {
   }
 }
 
-export const getStrategyApysOffChain = (address, offset = 0, limit = 20) => {
+export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
   try {
-    const params = {
-      strategyAddress: address,
+    const nextParams = {
       offset,
-      limit
+      limit,
+      ...params,
     }
     return request(`${API_SERVER}/officialApy`, {
-      params,
+      params: nextParams,
     });
   } catch (error) {
     return {

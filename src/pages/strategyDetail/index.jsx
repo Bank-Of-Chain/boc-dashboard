@@ -46,8 +46,13 @@ const Strategy = props => {
     getStrategyById(id)
       .then(setStrategy)
       .catch(noop)
+    // eslint-disable-next-line
+  }, [id])
+
+  useEffect(() => {
+    if(isEmpty(strategy?.name)) return;
     getBaseApyByPage(
-      { chainId: initialState.chain, strategyAddress: id, sort: 'fetch_block desc' },
+      { chainId: initialState.chain, strategyName: strategy?.name, sort: 'fetch_block desc' },
       0,
       100,
     )
@@ -65,7 +70,7 @@ const Strategy = props => {
       })
       .then(setApys)
       .catch(noop)
-    getStrategyApysOffChain(id, 0, 100)
+    getStrategyApysOffChain({ chainId: initialState.chain, strategyName: strategy?.name, sort: 'fetch_time desc' }, 0, 100)
       .then(rs =>
         map(rs.content, i => {
           return {
@@ -76,8 +81,8 @@ const Strategy = props => {
       )
       .then(setOffChainApys)
       .catch(noop)
-    // eslint-disable-next-line
-  }, [id])
+
+  }, [strategy, strategy?.name])
 
   useEffect(() => {
     const startMoment = moment()
