@@ -80,7 +80,7 @@ const ReportTable = ({ loading, chainId, strategyName, dropdownGroup }) => {
       title: 'Txn Hash',
       dataIndex: 'txnHash',
       key: 'txnHash',
-      width: '20rem',
+      width: '8rem',
       ellipsis: {
         showTitle: false,
       },
@@ -131,7 +131,7 @@ const ReportTable = ({ loading, chainId, strategyName, dropdownGroup }) => {
       title: 'Date',
       dataIndex: 'fetchTimestamp',
       key: 'fetchTimestamp',
-      width: '5rem',
+      width: '6rem',
       render: text => (
         <Tooltip title={`${moment(1000 * text).utcOffset(0).format('yyyy-MM-DD HH:mm:ss')} (UTC)`}>
           {moment(1000 * text)
