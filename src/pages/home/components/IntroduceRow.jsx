@@ -55,7 +55,7 @@ const IntroduceRow = ({ loading, visitData = {} }) => {
         <ChartCard
           bordered={false}
           loading={loading}
-          title="Current APY (last 30 days)"
+          title="APY (last 30 days)"
           action={
             <Tooltip title={`Yield over the past 1 month`}>
               <InfoCircleOutlined />

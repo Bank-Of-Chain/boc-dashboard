@@ -40,7 +40,7 @@ const dataMerge = (account, chain, requests) => {
   if(isEmpty(account)) return Promise.resolve({})
 
   // 当前天的字符串，按0时区算
-  const date = moment().utc(0).format('yyyy-MM-DD')
+  const date = moment().subtract(1, 'days').utc(0).format('yyyy-MM-DD')
   return Promise.all([
     // 获取7日apy数值
     getAccountApyByAddress(chain, account, date, 'weekly'),

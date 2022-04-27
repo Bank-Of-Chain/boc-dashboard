@@ -242,7 +242,7 @@ const Personal = () => {
             <ChartCard
               bordered={false}
               loading={loading}
-              title='Current APY(last 7 days)'
+              title='APY(last 7 days)'
               action={
                 <Tooltip title={`Yield over the past 1 week`}>
                   <InfoCircleOutlined/>
@@ -256,7 +256,7 @@ const Personal = () => {
             <ChartCard
               bordered={false}
               loading={loading}
-              title='Current APY(last 30 days)'
+              title='APY(last 30 days)'
               action={
                 <Tooltip title={`Yield over the past 1 month`}>
                   <InfoCircleOutlined/>

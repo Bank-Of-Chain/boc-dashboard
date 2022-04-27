@@ -17,7 +17,7 @@ const dataMerge = (chain) => {
   return Promise.all([
     getDashboardDetail(usdiAddress, vaultAddress),
     getValutAPYByDate({
-      date: moment().utcOffset(0).format('YYYY-MM-DD'),
+      date: moment().subtract(1, 'days').utcOffset(0).format('YYYY-MM-DD'),
       duration: APY_DURATION.monthly,
       chainId: chain
     }).catch((error) => {
