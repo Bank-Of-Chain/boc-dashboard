@@ -241,35 +241,6 @@ const Personal = () => {
           <Col {...topColResponsiveProps}>
             <ChartCard
               bordered={false}
-              loading={loading}
-              title='APY(last 7 days)'
-              action={
-                <Tooltip title={`Yield over the past 1 week`}>
-                  <InfoCircleOutlined/>
-                </Tooltip>
-              }
-              total={`${numeral(day7Apy?.apy).format('0,0.00')}%`}
-              contentHeight={70}
-            />
-          </Col>
-          <Col {...topColResponsiveProps}>
-            <ChartCard
-              bordered={false}
-              loading={loading}
-              title='APY(last 30 days)'
-              action={
-                <Tooltip title={`Yield over the past 1 month`}>
-                  <InfoCircleOutlined/>
-                </Tooltip>
-              }
-              total={`${numeral(day30Apy?.apy).format('0,0.00')}%`}
-              contentHeight={70}
-            />
-          </Col>
-
-          <Col {...topColResponsiveProps}>
-            <ChartCard
-              bordered={false}
               title='Unrealized profits (USDi)'
               action={
                 <Tooltip title='Potential profit that has not been effected'>
@@ -294,6 +265,35 @@ const Personal = () => {
               loading={loading}
               total={() => toFixed(realizedProfit, USDI_BN_DECIMALS, 2)}
               contentHeight={100}
+            />
+          </Col>
+
+          <Col {...topColResponsiveProps}>
+            <ChartCard
+              bordered={false}
+              loading={loading}
+              title='APY(last 7 days)'
+              action={
+                <Tooltip title={`Yield over the past 1 week`}>
+                  <InfoCircleOutlined/>
+                </Tooltip>
+              }
+              total={`${numeral(day7Apy?.apy).format('0,0.00')}%`}
+              contentHeight={70}
+            />
+          </Col>
+          <Col {...topColResponsiveProps}>
+            <ChartCard
+              bordered={false}
+              loading={loading}
+              title='APY(last 30 days)'
+              action={
+                <Tooltip title={`Yield over the past 1 month`}>
+                  <InfoCircleOutlined/>
+                </Tooltip>
+              }
+              total={`${numeral(day30Apy?.apy).format('0,0.00')}%`}
+              contentHeight={70}
             />
           </Col>
 
