@@ -15,7 +15,7 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
-import { isEmpty, map, noop, reduce, groupBy, sortBy } from 'lodash'
+import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 
@@ -98,27 +98,39 @@ const Strategy = props => {
       },
       [],
     )
-    const dayArray = calcArray.slice(6)
+    const dayArray = calcArray.slice(-60)
     const apyMap = keyBy(apys, 'date')
 
     const officialApyMap = keyBy(offChainApys, 'date')
     const bocApy = []
     const officialApy = []
     const weeklyOfficialApy = []
-    const getWeeklyAvgApy = (index) => {
-      const weeklyArray = calcArray.slice(index, index + 7)
+    // 计算 7 天平均 APY，当天没点，查找最近一天有点开始
+    const getWeeklyAvgApy = (day) => {
+      const index = findIndex(calcArray, _ => _ === day)
+      let firstValidIndex = -1
+      for (let i = index; i >= 0; i--) {
+        if (get(officialApyMap, `${calcArray[i]}.value`, null)) {
+          firstValidIndex = i
+          break
+        }
+      }
+      if (firstValidIndex === -1) {
+        return
+      }
+      const weeklyArray = calcArray.slice(Math.max(0, firstValidIndex - 6), firstValidIndex + 1)
       const values = map(weeklyArray, (day) => get(officialApyMap, `${day}.value`, null)).filter(_ => !isNil(_))
       if (values.length === 0) {
         return
       }
       return sum(values) / values.length
     }
-    dayArray.forEach((day, index) => {
+    dayArray.forEach((day) => {
       const value1 = get(apyMap, `${day}.value`, null)
       bocApy.push(isNil(value1) ? null : Number(value1 * 100).toFixed(2))
       const value2 = get(officialApyMap, `${day}.value`, null)
       officialApy.push(isNil(value2) ? null : Number(value2 * 100).toFixed(2))
-      const value3 = getWeeklyAvgApy(index)
+      const value3 = getWeeklyAvgApy(day)
       weeklyOfficialApy.push(isNil(value3) ? null : Number(value3 * 100).toFixed(2))
     })
     const lengndData = ['Weekly APY', 'Official Weekly APY']

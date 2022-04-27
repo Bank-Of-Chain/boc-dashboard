@@ -34,7 +34,7 @@ import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import { toFixed } from '@/utils/number-format'
-import { getDecimals } from '@/apollo/client'
+import BN from 'bignumber.js'
 
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
@@ -50,7 +50,7 @@ import { isProEnv } from '@/services/env-service'
 // === Styles === //
 import styles from './style.less'
 
-const usdtDecimals = getDecimals()
+const fixedDecimals = BN(1e18)
 
 const detailsColumns = [
   {
@@ -72,7 +72,7 @@ const detailsColumns = [
     dataIndex: 'originalAmount',
     key: 'originalAmount',
     render: value => {
-      return <span>{toFixed(value, usdtDecimals, 2)}</span>
+      return <span>{toFixed(value, fixedDecimals, 2)}</span>
     },
   },
   {
@@ -80,7 +80,7 @@ const detailsColumns = [
     dataIndex: 'totalAmount',
     key: 'totalAmount',
     render: value => {
-      return <span>{toFixed(value, usdtDecimals, 2)}</span>
+      return <span>{toFixed(value, fixedDecimals, 2)}</span>
     },
   },
   {
@@ -88,7 +88,7 @@ const detailsColumns = [
     dataIndex: 'amount',
     key: 'amount',
     render: value => {
-      return <span>{toFixed(value, usdtDecimals, 2)}</span>
+      return <span>{toFixed(value, fixedDecimals, 2)}</span>
     },
   },
   {
