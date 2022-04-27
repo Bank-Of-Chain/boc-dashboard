@@ -365,7 +365,7 @@ const Reports = () => {
       title: 'Operation',
       width: '10rem',
       render: (text, record, index) => {
-        const { id, reject, rejectTime, rejecter, type, geneTime } = record
+        const { id, isReject, rejectTime, rejecter, type, geneTime } = record
         let rejectElement = null
         // 如果报告超过1天，则不能进行驳回
         if (moment(geneTime).isBetween(moment().subtract(1, 'days'), moment())) {
@@ -373,7 +373,7 @@ const Reports = () => {
             if (roleLoading) {
               rejectElement = <Spin size='small' />
             } else {
-              if (!reject) {
+              if (!isReject) {
                 rejectElement = (
                   <a className={styles.danger} onClick={() => reportCancel(id)}>
                     Reject
@@ -383,7 +383,7 @@ const Reports = () => {
             }
           }
         }
-        if (reject) {
+        if (isReject) {
           rejectElement = (
             <Tooltip
               title={
