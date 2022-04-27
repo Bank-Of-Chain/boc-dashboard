@@ -107,7 +107,7 @@ export const updateReportStatus = (reportId, isReject, headers) => {
 }
 
 export const getStrategyDetailsReports = ({
-  strategyAddress,
+  strategyName,
   chainId,
   limit = 10,
   offset = 0,
@@ -115,7 +115,7 @@ export const getStrategyDetailsReports = ({
 }) => {
   return request(`${API_SERVER}/strategy/assets`, {
     params: {
-      strategyAddress,
+      strategyName,
       chainId,
       limit,
       offset,

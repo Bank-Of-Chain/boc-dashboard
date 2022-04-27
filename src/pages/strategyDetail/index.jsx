@@ -156,6 +156,9 @@ const Strategy = props => {
     option.xAxis.axisLabel = {
       formatter: (value) => value.replace(' (UTC)', '')
     }
+    option.xAxis.axisTick = {
+      alignWithLabel: true,
+    }
     option.yAxis.splitLine = {
       lineStyle: {
         color: 'black',
@@ -183,7 +186,7 @@ const Strategy = props => {
 
   const chartStyle = {
     padding: '0 24px',
-    height: 280,
+    height: 400,
   }
   const chartResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
@@ -281,7 +284,7 @@ const Strategy = props => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <ReportTable chainId={initialState.chain} strategyAddress={id} loading={loading} />
+        <ReportTable chainId={initialState.chain} strategyName={strategy?.name} loading={loading} />
       </Suspense>
     </GridContent>
   )

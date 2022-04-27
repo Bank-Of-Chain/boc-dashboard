@@ -18,7 +18,7 @@ const OPERATION = {
   3: 'redeem'
 }
 
-const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
+const ReportTable = ({ loading, chainId, strategyName, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState')
   const [dataSource, setDataSource] = useState([])
   const [tableLoading, setTableLoading] = useState(false)
@@ -33,7 +33,7 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
   const fetch = async () => {
     setTableLoading(true)
     getStrategyDetailsReports({
-      strategyAddress,
+      strategyName,
       chainId,
       limit: pagination.pageSize,
       offset: (pagination.current - 1) * pagination.pageSize
@@ -53,9 +53,12 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
   }
 
   useEffect(() => {
+    if (!strategyName) {
+      return
+    }
     fetch()
     // eslint-disable-next-line
-  }, [pagination.current])
+  }, [pagination.current, strategyName])
 
   useEffect(() => {
     setPagination({
@@ -63,7 +66,7 @@ const ReportTable = ({ loading, chainId, strategyAddress, dropdownGroup }) => {
       current: 1
     })
     // eslint-disable-next-line
-  }, [chainId, strategyAddress])
+  }, [chainId, strategyName])
 
   const handleTableChange = (pagination) => {
     setPagination(pagination)
