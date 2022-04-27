@@ -78,10 +78,10 @@ export const usedPreValue = (array, valueKey = 'value', defaultValue) => {
   });
 };
 
-export const appendDate = (array, valueKey = 'value', limit = 7, offset = 0) => {
+export const appendDate = (array, valueKey = 'value', limit = 7) => {
   const data = []
   for (let i = 0; i < limit; i++) {
-    const lastestMoment = array[0] ? moment(array[0].date) : moment().utcOffset(0).subtract(offset, 'days')
+    const lastestMoment = array[0] ? moment(array[0].date) : moment().utcOffset(0).subtract(1, 'days') // 数据展示到昨天
     const date = lastestMoment.subtract(i, 'days').format('YYYY-MM-DD')
     const item = find(array, item => item.date === date) || {
       date,
