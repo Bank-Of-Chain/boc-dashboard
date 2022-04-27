@@ -57,15 +57,12 @@ const Analysis = () => {
     if (calDateRange > 7) {
       params.format = 'MM-DD'
     }
-    // 展示到昨天，offset 为 1
-    const apyOffset = 1
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
-      offset: apyOffset,
       limit: calDateRange
     }).then(data => {
-      const items = appendDate(data.content, 'apy', calDateRange, apyOffset)
+      const items = appendDate(data.content, 'apy', calDateRange)
       const result = map(reverse(items), ({date, apy}) => ({
         date,
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
@@ -76,10 +73,9 @@ const Analysis = () => {
     })
     getUsdiTotalSupplyList({
       chainId: initialState.chain,
-      limit: calDateRange,
-      offset: apyOffset,
+      limit: calDateRange
     }).then(data => {
-      const items = appendDate(data.content, 'totalSupply', calDateRange, apyOffset)
+      const items = appendDate(data.content, 'totalSupply', calDateRange)
       const result = map(reverse(items), ({date, totalSupply}) => ({
         date,
         totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, 2),

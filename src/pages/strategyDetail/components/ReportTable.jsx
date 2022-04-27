@@ -96,14 +96,18 @@ const ReportTable = ({ loading, chainId, strategyName, dropdownGroup }) => {
       ),
     },
     {
-      title: `Total Asset ${unit ? `(${unit})` : ''}`,
+      title: (
+        <Tooltip placement="top" title="Total number of stablecoins">Total Balance</Tooltip>
+      ),
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       width: '7rem',
       render: text => <span>{toFixed(text, decimal, 2)}</span>,
     },
     {
-      title: `Asset Changed ${unit ? `(${unit})` : ''}`,
+      title: (
+        <Tooltip placement="top" title="Number of Stablecoins Changed">Balance Changed</Tooltip>
+      ),
       dataIndex: 'assetChange',
       key: 'assetChange',
       width: '8rem',

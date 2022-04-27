@@ -168,11 +168,9 @@ export const getProfits = (chainId, account) => {
  */
 export const getPersonTvlArray = (chainId, account, limit = 365) => {
   if (isNil(chainId) || isNil(account)) return []
-  //  默认展示到昨天
   const params = {
     chainId,
     limit,
-    offset: 1,
   }
   return request(`${API_SERVER}/USDi/balance/account/${account}`, {
     params
