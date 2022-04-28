@@ -15,13 +15,13 @@ export default () => {
         {
           key: 'BOC Homepage',
           title: 'BOC Homepage',
-          href: 'https://web.bankofchain.io/',
+          href: 'https://web-v1.bankofchain.io/',
           blankTarget: true,
         },
         {
           key: 'BOC Dashboard',
           title: 'BOC Dashboard',
-          href: 'https://dashboard.bankofchain.io/',
+          href: 'https://dashboard-v1.bankofchain.io/',
           blankTarget: true,
         }
       ]}

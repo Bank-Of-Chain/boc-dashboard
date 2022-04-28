@@ -8,12 +8,27 @@ import isNaN from 'lodash/isNaN';
 import isUndefined from 'lodash/isUndefined';
 
 const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, options = {}) => {
-  const { format = 'MM-DD HH:mm', xAxis, yAxis, smooth = true, step, dataZoom, tootlTipSuffix = 'UTC' } = options
+  const {
+    format = 'MM-DD HH:mm',
+    xAxis,
+    yAxis,
+    smooth = false,
+    step,
+    dataZoom,
+    tootlTipSuffix = '(UTC)',
+    tootlTipFormat = 'YYYY-MM-DD HH:mm'
+  } = options
   const xAxisData = [];
   const seriesData = [];
+  const xAxisLabels = {}
   data.forEach((o) => {
-    const value = moment(Number(o.date)).utcOffset(0).format(format);
-    xAxisData.push(tootlTipSuffix ? `${value} (${tootlTipSuffix})` : value);
+    // 当天为 23:59 时的数据, 展示到明天 00:00，故加 1
+    let value = moment(o.date).add(1, 'days').format(tootlTipFormat);
+    if (tootlTipSuffix) {
+      value = `${value} ${tootlTipSuffix}`
+    }
+    xAxisLabels[value] = moment(o.date).add(1, 'days').format(format);
+    xAxisData.push(value);
     seriesData.push(o[dataValueKey]);
   });
   const option = lineSimple({
@@ -29,9 +44,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
   }
   option.xAxis = {
     axisLabel: {
-      formatter: (value) => {
-        return tootlTipSuffix ? value.replace(` (${tootlTipSuffix})`, '') : value
-      }
+      formatter: (value, index) => xAxisLabels[value]
     },
     ...option.xAxis,
     ...xAxis,

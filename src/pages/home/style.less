@@ -1,0 +1,94 @@
+@import '~antd/es/style/themes/default.less';
+
+.salesCard {
+  .salesBar {
+    padding: 0 0 32px 32px;
+  }
+  .salesRank {
+    padding: 0 32px 32px 72px;
+  }
+  :global {
+    .ant-tabs-bar,
+    .ant-tabs-nav-wrap {
+      padding-left: 16px;
+      .ant-tabs-nav .ant-tabs-tab {
+        padding-top: 16px;
+        padding-bottom: 14px;
+        line-height: 24px;
+      }
+    }
+    .ant-tabs-extra-content {
+      padding-right: 24px;
+      line-height: 55px;
+    }
+    .ant-card-head {
+      position: relative;
+    }
+    .ant-card-head-title {
+      align-items: normal;
+    }
+  }
+}
+
+.salesCardExtra {
+  height: inherit;
+}
+
+.vaultKeyCard{
+  .tabMobile {
+    :global(.ant-tabs-tab + .ant-tabs-tab) {
+      margin: 0 0 0 24px;
+    }
+  }
+  .chartDiv {
+    height: 300px;
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+  .chartDivMobile {
+    height: 250px;
+    padding: 0 0.5rem 0.5rem 0.5rem;
+  }
+  :global {
+    .ant-tabs-nav {
+      padding: 0 1.25rem;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.tableCell {
+  :global {
+    .ant-image {
+      vertical-align: middle;
+    }
+  }
+  .text {
+    padding-left: 10px;
+  }
+}
+
+.trendText {
+  margin-left: 8px;
+  color: @heading-color;
+}
+
+:global {
+  .ring-guide-name {
+    color: @text-color !important;
+  }
+  .ring-guide-value {
+    color: @text-color !important;
+    font-size: 24px !important;
+  }
+  .ant-pro-top-nav-header-logo {
+    h1 {
+      color: @text-color !important;
+    }
+  }
+}
+
+.chartWrapper {
+  position: relative;
+  min-height: 340px;
+  height: calc(100% - 48px);
+}
