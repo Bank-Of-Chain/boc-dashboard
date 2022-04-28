@@ -1,16 +1,17 @@
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
 export default defineConfig({
-  base: '/dashboard/',
-  publicPath: '/dashboard/',
+  base: '/',
+  publicPath: '/',
   define:{
-    ENV_INDEX: 'inte',
-    API_SERVER: 'http://192.168.60.40:8080',
-    DASHBOARD_ROOT: 'http://192.168.60.40/dashboard',
-    IMAGE_ROOT:'http://192.168.60.40',
+    ENV_INDEX: 'stage-sg',
+    API_SERVER: 'http://service-stage-sg.bankofchain.io',
+    DASHBOARD_ROOT: 'http://dashboard-stage-sg.bankofchain.io',
+    IMAGE_ROOT:'http://stage-sg.bankofchain.io',
     SUB_GRAPH_URL: {
-      1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
-      137: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph'
+      1: 'http://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph/graphql',
+      56: 'http://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph/graphql',
+      137: 'http://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph/graphql'
     }
   },
 });
