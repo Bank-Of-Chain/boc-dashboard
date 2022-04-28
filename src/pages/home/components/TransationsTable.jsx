@@ -24,10 +24,14 @@ const TransationsTable = ({ loading }) => {
     ...RECENT_ACTIVITY_TYPE
   }
   const [filter, setFilter] = useState(FILTER_OPTIONS.All)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     const types = filter === FILTER_OPTIONS.All ? Object.values(RECENT_ACTIVITY_TYPE) : [filter]
-    getRecentActivity(types).then(setData)
+    getRecentActivity(types).then(data => {
+      setCurrentPage(1)
+      setData(data)
+    })
     // eslint-disable-next-line
   }, [filter])
 
@@ -171,10 +175,15 @@ const TransationsTable = ({ loading }) => {
           columns={columns}
           dataSource={data}
           pagination={{
+            showSizeChanger: false,
             style: {
               marginBottom: 0,
             },
+            current: currentPage,
             pageSize: 10,
+            onChange: (page) => {
+              setCurrentPage(page)
+            }
           }}
           {...responsiveConfig.tableProps}
         />
