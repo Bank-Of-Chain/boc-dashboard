@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import { setClient } from './apollo/client';
 
 // === Constants === //
-import { MATIC } from './constants/chain';
+import { BSC } from './constants/chain';
 
 const isDev = process.env.NODE_ENV === 'development';
 /** 获取用户信息比较慢的时候会展示一个 loading */
@@ -40,7 +40,7 @@ export const layout = ({ initialState, setInitialState }) => {
         },
       } = history // 如果没有登录，重定向到 login
       // v1.5 先上 polygon，默认先调整为 polygon
-      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
+      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : BSC.id)
       setClient(nextChainId)
       setInitialState({ chain: nextChainId })
     },
