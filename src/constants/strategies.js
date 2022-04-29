@@ -22,7 +22,8 @@ const BSC_STRATEGIES_MAP = [
   'Belt',
   'Dodo',
   'DForce',
-  'Synapse'
+  'Synapse',
+  'Stargate'
 ]
 
 const MATIC_STRATEGIES_MAP = [

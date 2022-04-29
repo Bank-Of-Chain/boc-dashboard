@@ -7,9 +7,9 @@ export default defineConfig({
   publicPath: '/dashboard/',
   define: {
     ENV_INDEX: 'debug',
-    API_SERVER: 'http://192.168.60.12/server',
-    DASHBOARD_ROOT: 'http://192.168.60.12/dashboard',
-    IMAGE_ROOT: 'http://192.168.60.12',
+    API_SERVER: 'http://192.168.75.50/server',
+    DASHBOARD_ROOT: 'http://192.168.75.50/dashboard',
+    IMAGE_ROOT: 'http://192.168.75.50',
     SUB_GRAPH_URL: {
       1: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-eth',
       56: 'http://192.168.75.33:8000/subgraphs/name/boc-v1_5/subgraph',
