@@ -5,13 +5,13 @@ export default defineConfig({
   publicPath: '/',
   define:{
     ENV_INDEX: 'stage-sg',
-    API_SERVER: 'http://service-stage-sg.bankofchain.io',
-    DASHBOARD_ROOT: 'http://dashboard-stage-sg.bankofchain.io',
-    IMAGE_ROOT:'http://stage-sg.bankofchain.io',
+    API_SERVER: 'https://service-stage-sg.bankofchain.io',
+    DASHBOARD_ROOT: 'https://dashboard-stage-sg.bankofchain.io',
+    IMAGE_ROOT:'https://stage-sg.bankofchain.io',
     SUB_GRAPH_URL: {
-      1: 'http://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-      56: 'http://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-      137: 'http://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph'
+      1: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
+      56: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
+      137: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph'
     }
   },
 });
