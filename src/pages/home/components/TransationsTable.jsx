@@ -17,6 +17,7 @@ import { getRecentActivity } from '@/services/dashboard-service'
 const TransationsTable = ({ loading }) => {
   const { initialState } = useModel('@@initialState')
   const [data, setData] = useState([])
+  const [tableLoading, setTableLoading] = useState(false)
   const deviceType = useDeviceType()
 
   const FILTER_OPTIONS = {
@@ -28,9 +29,12 @@ const TransationsTable = ({ loading }) => {
 
   useEffect(() => {
     const types = filter === FILTER_OPTIONS.All ? Object.values(RECENT_ACTIVITY_TYPE) : [filter]
+    setTableLoading(true)
     getRecentActivity(types).then(data => {
       setCurrentPage(1)
       setData(data)
+    }).finally(() => {
+      setTableLoading(false)
     })
     // eslint-disable-next-line
   }, [filter])
@@ -174,6 +178,7 @@ const TransationsTable = ({ loading }) => {
           rowKey={record => record.id}
           columns={columns}
           dataSource={data}
+          loading={tableLoading}
           pagination={{
             showSizeChanger: false,
             style: {
