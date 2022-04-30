@@ -10,7 +10,7 @@ export default defineConfig({
     IMAGE_ROOT:'https://web-v1.bankofchain.io',
     SUB_GRAPH_URL: {
       1: '',
-      56: '',
+      56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
       137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon'
     },
     VAULT_ADDRESS: {
