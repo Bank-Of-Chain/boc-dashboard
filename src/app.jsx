@@ -7,7 +7,8 @@ import Footer from '@/components/Footer';
 import { setClient } from './apollo/client';
 
 // === Constants === //
-import { BSC, MATIC } from './constants/chain';
+import { ETH } from './constants/chain';
+import { VAULT_TYPE } from '@/constants/vault';
 
 const isDev = process.env.NODE_ENV === 'development';
 /** 获取用户信息比较慢的时候会展示一个 loading */
@@ -36,13 +37,15 @@ export const layout = ({ initialState, setInitialState }) => {
     onPageChange: () => {
       const {
         location: {
-          query: { chain },
+          query: { chain, vault },
         },
       } = history // 如果没有登录，重定向到 login
-      // v1.5 先上 polygon，默认先调整为 polygon
-      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
+      let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : ETH.id)
+      if (vault === VAULT_TYPE.ETHi) {
+        nextChainId = ETH.id
+      }
       setClient(nextChainId)
-      setInitialState({ chain: nextChainId })
+      setInitialState({ chain: nextChainId, vault: vault || VAULT_TYPE.USDi })
     },
     links: [],
     menuHeaderRender: undefined,
