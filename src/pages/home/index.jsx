@@ -14,7 +14,7 @@ import numeral from 'numeral'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
-import { getValutAPYList, getUsdiTotalSupplyList } from '@/services/api-service'
+import { getValutAPYList, getUsdiTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
 import { isEmpty, isNil } from 'lodash';
@@ -85,6 +85,12 @@ const Analysis = () => {
       console.error(e)
     })
   }, [calDateRange, initialState.chain])
+
+  useEffect(() => {
+    return () => {
+      clearAPICache()
+    }
+  }, [])
 
   if (isEmpty(initialState.chain)) return null
 

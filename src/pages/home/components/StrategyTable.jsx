@@ -40,13 +40,13 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
           <Image
             preview={false}
             width={30}
-            src={`https://bankofchain.io/images/amms/${
+            src={`${IMAGE_ROOT}/images/amms/${
               STRATEGIES_MAP[initialState.chain][item.protocol]
             }.png`}
             placeholder={item.protocol}
             style={{ backgroundColor: '#fff', borderRadius: '50%' }}
             alt={STRATEGIES_MAP[initialState.chain][item.protocol]}
-            fallback={`https://bankofchain.io/default.png`}
+            fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a
             target={'_blank'}

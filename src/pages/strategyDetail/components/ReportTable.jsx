@@ -193,6 +193,7 @@ const ReportTable = ({ loading, chainId, strategyName, dropdownGroup }) => {
           loading={tableLoading}
           onChange={handleTableChange}
           pagination={{
+            showSizeChanger: false,
             style: {
               marginBottom: 0,
             },
