@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import { setClient } from './apollo/client';
 
 // === Constants === //
-import { MATIC } from './constants/chain';
+import { BSC, MATIC } from './constants/chain';
 
 const isDev = process.env.NODE_ENV === 'development';
 /** 获取用户信息比较慢的时候会展示一个 loading */

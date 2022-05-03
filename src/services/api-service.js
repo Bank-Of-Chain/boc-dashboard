@@ -205,12 +205,18 @@ export const getValutAPYByDate = ({
   })
 }
 
+let apyListCache = {}
 export const getValutAPYList = ({
   chainId,
   duration,
   offset = 0,
-  limit
+  limit,
+  useCache = true
 }) => {
+  const cacheKey = `${chainId}-${duration}-${offset}-${limit}`
+  if (useCache && apyListCache[cacheKey]) {
+    return Promise.resolve(apyListCache[cacheKey])
+  }
   return request(`${API_SERVER}/apy/vault_apy`, {
     params: {
       chainId,
@@ -218,19 +224,36 @@ export const getValutAPYList = ({
       offset,
       limit
     }
+  }).then((data) => {
+    apyListCache[cacheKey] = data
+    return data
   })
 }
 
+let usdiTotalSupplyCache = {}
 export const getUsdiTotalSupplyList = ({
   chainId,
   offset = 0,
-  limit
+  limit,
+  useCache = true
 }) => {
+  const cacheKey = `${chainId}-${offset}-${limit}`
+  if (useCache && usdiTotalSupplyCache[cacheKey]) {
+    return Promise.resolve(usdiTotalSupplyCache[cacheKey])
+  }
   return request(`${API_SERVER}/USDi/totalSupply`, {
     params: {
       chainId,
       offset,
       limit
     }
+  }).then((data) => {
+    usdiTotalSupplyCache[cacheKey] = data
+    return data
   })
+}
+
+export const clearAPICache = () => {
+  apyListCache = {}
+  usdiTotalSupplyCache = {}
 }
