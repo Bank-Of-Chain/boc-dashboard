@@ -8,14 +8,14 @@ import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import map from 'lodash/map';
 
-const USDT_IMAGE = 'https://bankofchain.io/images/0xdAC17F958D2ee523a2206206994597C13D831ec7.png';
-const DAI_IMAGE = 'https://bankofchain.io/images/0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3.png';
-const USDC_IMAGE = 'https://bankofchain.io/images/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174.png';
-const TUSD_IMAGE = 'https://bankofchain.io/images/0x14016E85a25aeb13065688cAFB43044C2ef86784.png';
-const USDP_IMAGE = 'https://bankofchain.io/images/0x8E870D67F660D95d5be530380D0eC0bd388289E1.png';
-const BUSD_IMAGE = 'https://bankofchain.io/images/0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56.png';
-const MIM_IMAGE = 'https://bankofchain.io/images/0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3.png';
-const LUSD_IMAGE = 'https://bankofchain.io/images/0x5f98805a4e8be255a32880fdec7f6728c6568ba0.png';
+const USDT_IMAGE = `${IMAGE_ROOT}/images/0xdAC17F958D2ee523a2206206994597C13D831ec7.png`;
+const DAI_IMAGE = `${IMAGE_ROOT}/images/0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3.png`;
+const USDC_IMAGE = `${IMAGE_ROOT}/images/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174.png`;
+const TUSD_IMAGE = `${IMAGE_ROOT}/images/0x14016E85a25aeb13065688cAFB43044C2ef86784.png`;
+const USDP_IMAGE = `${IMAGE_ROOT}/images/0x8E870D67F660D95d5be530380D0eC0bd388289E1.png`;
+const BUSD_IMAGE = `${IMAGE_ROOT}/images/0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56.png`;
+const MIM_IMAGE = `${IMAGE_ROOT}/images/0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3.png`;
+const LUSD_IMAGE = `${IMAGE_ROOT}/images/0x5f98805A4E8be255a32880FDeC7F6728C6568bA0.png`;
 
 const addressMap = {
   '0x55d398326f99059ff775485246999027b3197955': USDT_IMAGE,
@@ -42,10 +42,11 @@ const addressMap = {
   '0x0000000000085d4780b73119b644ae5ecd22b376': TUSD_IMAGE,
   '0x14016e85a25aeb13065688cafb43044c2ef86784': TUSD_IMAGE,
   '0x2e1ad108ff1d8c782fcbbb89aad783ac49586756': TUSD_IMAGE,
+  '0x5f98805a4e8be255a32880fdec7f6728c6568ba0': TUSD_IMAGE,
 
   '0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3': MIM_IMAGE,
 
-  '0x5f98805a4e8be255a32880fdec7f6728c6568ba0': LUSD_IMAGE
+  '0x5f98805a4e8be255a32880fdec7f6728c6568ba0': LUSD_IMAGE,
 };
 const DEFAULT = '/default.png';
 
