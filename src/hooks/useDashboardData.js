@@ -14,7 +14,7 @@ const dataMerge = (vault, chain) => {
   if(isEmpty(tokenAddress) || isEmpty(vaultAddress))
     return Promise.reject(new Error('usdi地址或vault地址获取失败'))
   return Promise.all([
-    getDashboardDetail(tokenAddress, vaultAddress),
+    getDashboardDetail(vault, chain, tokenAddress, vaultAddress),
     getValutAPYByDate({
       date: moment().subtract(1, 'days').utcOffset(0).format('YYYY-MM-DD'),
       duration: APY_DURATION.monthly,

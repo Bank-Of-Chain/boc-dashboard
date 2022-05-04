@@ -43,7 +43,7 @@ const Strategy = props => {
   const deviceType = useDeviceType()
 
   useEffect(() => {
-    getStrategyById(id)
+    getStrategyById(initialState.vault, initialState.chain, id)
       .then(setStrategy)
       .catch(noop)
     // eslint-disable-next-line

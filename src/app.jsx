@@ -3,11 +3,8 @@ import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 
-// === Utils === //
-import { setClient } from './apollo/client';
-
 // === Constants === //
-import { ETH } from './constants/chain';
+import { ETH, MATIC } from './constants/chain';
 import { VAULT_TYPE } from '@/constants/vault';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -40,11 +37,10 @@ export const layout = ({ initialState, setInitialState }) => {
           query: { chain, vault },
         },
       } = history // 如果没有登录，重定向到 login
-      let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : ETH.id)
+      let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
       if (vault === VAULT_TYPE.ETHi) {
         nextChainId = ETH.id
       }
-      setClient(nextChainId)
       setInitialState({ chain: nextChainId, vault: vault || VAULT_TYPE.USDi })
     },
     links: [],

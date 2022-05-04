@@ -30,7 +30,7 @@ const TransationsTable = ({ loading, decimals = USDI_DECIMALS, token = 'USDi' })
   useEffect(() => {
     const types = filter === FILTER_OPTIONS.All ? Object.values(RECENT_ACTIVITY_TYPE) : [filter]
     setTableLoading(true)
-    getRecentActivity(types).then(data => {
+    getRecentActivity(initialState.vault, initialState.chain, types).then(data => {
       setCurrentPage(1)
       setData(data)
     }).finally(() => {
