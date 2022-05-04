@@ -22,11 +22,11 @@ import { isEmpty, isNil } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
-import { ETHI_BN_DECIMALS } from '@/constants/ethi'
+import { ETHI_BN_DECIMALS, ETHI_DECIMALS } from '@/constants/ethi'
 import { map, reverse } from 'lodash'
 import { appendDate } from "@/utils/array-append"
 
-const Analysis = () => {
+const ETHiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [apyEchartOpt, setApyEchartOpt] = useState({})
@@ -131,10 +131,10 @@ const Analysis = () => {
         <StrategyTable strategyMap={STRATEGIES_MAP} loading={loading} />
       </Suspense>
       <Suspense fallback={null}>
-        <TransationsTable loading={loading} />
+        <TransationsTable token="ETHi" decimals={ETHI_DECIMALS} loading={loading} />
       </Suspense>
     </GridContent>
   )
 }
 
-export default Analysis
+export default ETHiHome

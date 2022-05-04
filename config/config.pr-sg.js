@@ -13,7 +13,7 @@ export default defineConfig({
       56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
       137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon'
     },
-    VAULT_ADDRESS: {
+    USDI_VAULT_ADDRESS: {
       1: '',
       56: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
       137: '0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A'
@@ -22,6 +22,12 @@ export default defineConfig({
       1: '',
       56: '0xCFC6E8577a414f561D459fC4a030e3463A500d29',
       137: '0x8DEb399a86f28f62f0F24daF56c4aDD8e57EEcD5'
+    },
+    ETHI_VAULT_ADDRESS: {
+      1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+    },
+    EHI_ADDRESS: {
+      1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
     }
   },
 });

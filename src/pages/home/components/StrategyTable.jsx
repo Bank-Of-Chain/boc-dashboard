@@ -48,7 +48,7 @@ const StrategyTable = ({ loading, strategyMap }) => {
           <a
             target={'_blank'}
             rel='noreferrer'
-            href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}`}
+            href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}&vault=${initialState.vault}`}
             className={styles.text}
           >
             {text}

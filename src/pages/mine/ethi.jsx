@@ -1,6 +1,7 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense } from 'react'
 import {useModel} from 'umi'
-import numeral from 'numeral';
+import { Skeleton } from 'antd'
+import numeral from 'numeral'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -20,6 +21,7 @@ import { ETHI_BN_DECIMALS } from "@/constants/ethi"
 
 // === Hooks === //
 import usePersonalData from '@/hooks/usePersonalData'
+import useEthPrice from "@/hooks/useEthPrice"
 
 import styles from './style.less'
 
@@ -33,7 +35,7 @@ const topColResponsiveProps = {
 
 const Personal = () => {
   const {dataSource, loading} = usePersonalData()
-  const [ratio, setRatio] = useState(1)
+  const { loading: priceLoading, value: usdPrice } = useEthPrice()
   const {initialState, setInitialState} = useModel('@@initialState')
 
   const {
@@ -41,31 +43,33 @@ const Personal = () => {
     day30Apy,
     realizedProfit,
     unrealizedProfit,
-    balanceOfUsdi
+    balanceOfToken
   } = dataSource
 
-  useEffect(() => {
-    setRatio(1)
-  }, [])
+  const renderEstimate = (value) => {
+    if (loading || priceLoading) {
+      return <Skeleton title={false} paragraph={{ rows: 1 }} />
+    }
+    return usdPrice ? `≈$${toFixed(value.mul(usdPrice), ETHI_BN_DECIMALS, 2)}` : ''
+  }
 
-  console.log(ratio)
   const introduceData = [{
     title: 'Balance (ETHi)',
     tip: 'The balance of ETHi',
-    content: toFixed(balanceOfUsdi, ETHI_BN_DECIMALS, 2),
-    estimateContent: '≈$16,560.15',
+    content: toFixed(balanceOfToken, ETHI_BN_DECIMALS, 2),
+    estimateContent: renderEstimate(balanceOfToken),
     loading,
   }, {
     title: 'Unrealized profits (ETHi)',
     tip: 'Potential profit that has not been effected',
     content: toFixed(unrealizedProfit, ETHI_BN_DECIMALS, 2),
-    estimateContent: '≈$16,560.15',
+    estimateContent: renderEstimate(unrealizedProfit),
     loading,
   }, {
     title: 'Realized profits (ETHi)',
     tip: 'The profits that have been actualized',
     content: toFixed(realizedProfit, ETHI_BN_DECIMALS, 2),
-    estimateContent: '≈$1500.15',
+    estimateContent: renderEstimate(realizedProfit),
     loading,
   }, {
     title: 'APY(last 7 days)',

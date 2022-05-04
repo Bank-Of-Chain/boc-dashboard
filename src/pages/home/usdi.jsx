@@ -25,9 +25,8 @@ import { toFixed } from '@/utils/number-format';
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { map, reverse } from 'lodash'
 import { appendDate } from "@/utils/array-append"
-import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
-const Analysis = () => {
+const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [apyEchartOpt, setApyEchartOpt] = useState({})
@@ -138,4 +137,4 @@ const Analysis = () => {
   )
 }
 
-export default Analysis
+export default USDiHome

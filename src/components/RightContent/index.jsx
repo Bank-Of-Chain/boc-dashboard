@@ -10,6 +10,7 @@ import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 import map from 'lodash/map'
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
+import { setClient } from '@/apollo/client';
 
 // === Contansts === //
 import CHAINS, { ETH } from '@/constants/chain'
@@ -96,9 +97,12 @@ const GlobalHeaderRight = () => {
   const changeVault = (value) => {
     const pathname = history.location.pathname
     const query = history.location.query
-    if (query.chain && value === VAULT_TYPE.ETHi) {
+    query.chain = query.chain || ETH.id
+    if (value === VAULT_TYPE.ETHi) {
       query.chain = ETH.id
     }
+    setClient(query.chain)
+    setInitialState({ ...initialState, chain: query.chain, vault: value })
     history.push({
       pathname: pathname,
       query: {
@@ -106,9 +110,6 @@ const GlobalHeaderRight = () => {
         vault: value
       }
     })
-    setTimeout(() => {
-      location.reload()
-    }, 1)
   }
 
   const goToMine = () => {

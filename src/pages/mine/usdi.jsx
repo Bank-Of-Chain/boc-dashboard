@@ -38,13 +38,13 @@ const Personal = () => {
     day30Apy,
     realizedProfit,
     unrealizedProfit,
-    balanceOfUsdi
+    balanceOfToken
   } = dataSource
 
   const introduceData = [{
     title: 'Balance (USDi)',
     tip: 'The balance of USDi',
-    content: () => toFixed(balanceOfUsdi, USDI_BN_DECIMALS, 2),
+    content: () => toFixed(balanceOfToken, USDI_BN_DECIMALS, 2),
     loading,
   }, {
     title: 'Unrealized profits (USDi)',

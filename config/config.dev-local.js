@@ -32,6 +32,12 @@ export default defineConfig({
       1: '',
       56: '0xE3e7A4B35574Ce4b9Bc661cD93e8804Da548932a',
       137: '0x6dc1bebb8e0881aca6f082f5f53dd740c2ddf379'
+    },
+    ETHI_VAULT_ADDRESS: {
+      1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+    },
+    EHI_ADDRESS: {
+      1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
     }
   }
 });

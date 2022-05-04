@@ -15,7 +15,7 @@ export default defineConfig({
       56: 'https://api.thegraph.com/subgraphs/name/naruduo/my-subgraph-bsc',
       137: 'https://inte.bankofchain.io/subgraph/subgraphs/name/boc-v1_5/subgraph'
     },
-    VAULT_ADDRESS: {
+    USDI_VAULT_ADDRESS: {
       1: '0x66F625B8c4c635af8b74ECe2d7eD0D58b4af3C3d',
       56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
       137: '0x7a6e91c3c4fcb9157a27eb901210aa1df9d05b45'
@@ -24,6 +24,12 @@ export default defineConfig({
       1: '',
       56: '',
       137: '0xb334795bf50e4943d076dfb38d8c1a50f9f5a101'
+    },
+    ETHI_VAULT_ADDRESS: {
+      1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+    },
+    EHI_ADDRESS: {
+      1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
     }
   },
 });

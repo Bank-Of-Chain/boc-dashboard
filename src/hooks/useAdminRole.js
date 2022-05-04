@@ -10,6 +10,7 @@ import {
 // === Utils === //
 import * as ethers from "ethers";
 import isEmpty from 'lodash/isEmpty';
+import { getVaultConfig } from "@/utils/vault";
 
 // === Hooks === //
 import useUserProvider from './useUserProvider'
@@ -56,7 +57,7 @@ const useAdminRole = (address) => {
   } = useModel('@@initialState');
 
   const roleFetch = async (userAddress) => {
-    const vaultAddress = VAULT_ADDRESS[initialState.chain]
+    const { vaultAddress } = getVaultConfig(initialState.vault, initialState.chain)
     if (isEmpty(vaultAddress)) return
     setLoading(true)
     const vaultContract = new Contract(vaultAddress, MIX_ABI, userProvider)
@@ -82,10 +83,10 @@ const useAdminRole = (address) => {
   }
 
   useEffect(() => {
-    if (isEmpty(initialState.chain) || isEmpty(address) || isEmpty(userProvider)) return
+    if (isEmpty(initialState.chain) || isEmpty(address) || isEmpty(userProvider) || isEmpty(initialState.vault)) return
     //TODO: 此处地址待修改
     roleFetch(address)
-  }, [address, initialState.chain, userProvider]);
+  }, [address, initialState.chain, userProvider, initialState.vault]);
 
   return {
     isAdmin,
