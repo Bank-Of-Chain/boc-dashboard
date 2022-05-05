@@ -1,6 +1,5 @@
 import { Card, Table, Image, Switch, Tooltip } from 'antd'
 import React, { useState } from 'react'
-import styles from '../style.less'
 import { useModel, useRequest } from 'umi'
 import { filter } from 'lodash'
 
@@ -14,6 +13,8 @@ import BN from 'bignumber.js'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
+
+import styles from '../style.less'
 
 const StrategyTable = ({ loading, strategyMap }) => {
   const [showAll, setShowAll] = useState(true)

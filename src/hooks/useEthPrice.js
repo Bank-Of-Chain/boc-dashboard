@@ -47,13 +47,15 @@ export default function useEthPrice() {
       return
     }
     setLoading(true)
-    const vaultContract = new Contract(ETHI_VAULT_ADDRESS[1], VAULT_ABI, userProvider)
+    const vaultContract = new Contract(ETHI.VAULT_ADDRESS[1], VAULT_ABI, userProvider)
     vaultContract.priceProvider()
       .then((priceProviderAddress) => {
         const priceProviderContract = new Contract(priceProviderAddress, PRICE_PROVIDER_ABI, userProvider)
         return priceProviderContract.ethPriceInUsd()
       })
-      .then(setValue)
+      .then((result) => {
+        setValue(result.div(1e8))
+      })
       .catch(setError)
       .finally(() => setLoading(false))
   }, [userProvider])

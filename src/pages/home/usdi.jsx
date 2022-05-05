@@ -11,11 +11,12 @@ import _max from 'lodash/max'
 import numeral from 'numeral'
 
 // === Constants === //
-import STRATEGIES_MAP from '@/constants/strategies'
+import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
+import { TOKEN_TYPE } from '@/constants/api'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
-import { getValutAPYList, getUsdiTotalSupplyList, clearAPICache } from '@/services/api-service'
+import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
 import { isEmpty, isNil } from 'lodash';
@@ -30,11 +31,12 @@ const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [apyEchartOpt, setApyEchartOpt] = useState({})
+  const [apy30, setApy30] = useState(0)
 
   const { initialState } = useModel('@@initialState')
 
-  const { dataSource = {}, loading } = useDashboardData()
-  const { apy30, usdi = {} } = dataSource;
+  const { dataSource = {}, loading } = useDashboardData();
+  const { usdi = {} } = dataSource;
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -53,20 +55,23 @@ const USDiHome = () => {
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
-      limit: calDateRange
+      limit: calDateRange,
+      tokenType: TOKEN_TYPE.usdi
     }).then(data => {
       const items = appendDate(data.content, 'apy', calDateRange)
       const result = map(reverse(items), ({date, apy}) => ({
         date,
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
+      setApy30(data[0] ? data[0].apy : 0)
       setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
     }).catch((e) => {
       console.error(e)
     })
-    getUsdiTotalSupplyList({
+    getTokenTotalSupplyList({
       chainId: initialState.chain,
-      limit: calDateRange
+      limit: calDateRange,
+      tokenType: TOKEN_TYPE.usdi
     }).then(data => {
       const items = appendDate(data.content, 'totalSupply', calDateRange)
       const result = map(reverse(items), ({date, totalSupply}) => ({
@@ -121,14 +126,14 @@ const USDiHome = () => {
       <Suspense fallback={null}>
         <ProtocolAllocation
           loading={loading}
-          strategyMap={STRATEGIES_MAP}
+          strategyMap={USDI_STRATEGIES_MAP}
           tokenDecimals={USDI_BN_DECIMALS}
           vault={dataSource.vault}
         />
       </Suspense>
 
       <Suspense fallback={null}>
-        <StrategyTable strategyMap={STRATEGIES_MAP} loading={loading} />
+        <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
       </Suspense>
       <Suspense fallback={null}>
         <TransationsTable loading={loading} />

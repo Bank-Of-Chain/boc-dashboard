@@ -9,6 +9,7 @@ import { Col, Row, Tooltip, Input } from 'antd'
 import ChartCard from '@/components/ChartCard'
 import DailyTvl from './components/DailyChart'
 import MonthProfit from './components/MonthProfit'
+import { TOKEN_TYPE } from '@/constants/api'
 
 // === Utils === //
 import _min from 'lodash/min'
@@ -30,7 +31,7 @@ const topColResponsiveProps = {
 }
 
 const Personal = () => {
-  const {dataSource, loading} = usePersonalData()
+  const {dataSource, loading} = usePersonalData(TOKEN_TYPE.usdi)
   const {initialState, setInitialState} = useModel('@@initialState')
 
   const {

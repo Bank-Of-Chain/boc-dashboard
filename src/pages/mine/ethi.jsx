@@ -3,6 +3,9 @@ import {useModel} from 'umi'
 import { Skeleton } from 'antd'
 import numeral from 'numeral'
 
+import * as ethers from "ethers";
+const { BigNumber } = ethers
+
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { GridContent } from '@ant-design/pro-layout'
@@ -18,6 +21,7 @@ import map from 'lodash/map'
 import { toFixed } from '@/utils/number-format'
 import { isProEnv } from "@/services/env-service"
 import { ETHI_BN_DECIMALS } from "@/constants/ethi"
+import { TOKEN_TYPE } from '@/constants/api'
 
 // === Hooks === //
 import usePersonalData from '@/hooks/usePersonalData'
@@ -34,7 +38,7 @@ const topColResponsiveProps = {
 }
 
 const Personal = () => {
-  const {dataSource, loading} = usePersonalData()
+  const {dataSource, loading} = usePersonalData(TOKEN_TYPE.ethi)
   const { loading: priceLoading, value: usdPrice } = useEthPrice()
   const {initialState, setInitialState} = useModel('@@initialState')
 
@@ -47,10 +51,13 @@ const Personal = () => {
   } = dataSource
 
   const renderEstimate = (value) => {
-    if (loading || priceLoading) {
+    if (!value) {
+      return null
+    }
+    if (priceLoading) {
       return <Skeleton title={false} paragraph={{ rows: 1 }} />
     }
-    return usdPrice ? `≈$${toFixed(value.mul(usdPrice), ETHI_BN_DECIMALS, 2)}` : ''
+    return usdPrice ? `≈$${toFixed(usdPrice.mul(value), ETHI_BN_DECIMALS, 2)}` : ''
   }
 
   const introduceData = [{

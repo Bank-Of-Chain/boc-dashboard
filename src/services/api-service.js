@@ -109,18 +109,12 @@ export const getStrategyDetailsReports = ({
 
 /**
  * 获取用户apy
- * @param {*} chainId
  * @param {*} account
  * @param {*} date
- * @param {*} duration
+ * @param {*} params
  * @returns
  */
-export const getAccountApyByAddress = (chainId, account, date, duration) => {
-  if (isNil(chainId) || isNil(account)) return
-  const params = {
-    duration,
-    chainId
-  }
+export const getAccountApyByAddress = (account, date, params) => {
   return request(`${API_SERVER}/apy/account_apy/accountAddress/${account}/date/${date}`, {
     params
   })
@@ -128,15 +122,11 @@ export const getAccountApyByAddress = (chainId, account, date, duration) => {
 
 /**
  * 获取用户的收益，包括已实现首页和未实现收益
- * @param {*} chainId
  * @param {*} account
+ * @param {*} params
  * @returns
  */
-export const getProfits = (chainId, account) => {
-  if (isNil(chainId) || isNil(account)) return
-  const params = {
-    chainId
-  }
+export const getProfits = (account, params) => {
   return request(`${API_SERVER}/profit/account/${account}`, {
     params
   })
@@ -144,59 +134,42 @@ export const getProfits = (chainId, account) => {
 
 /**
  * 获取总锁仓量数组，默认取1年
- * @param {*} chainId
  * @param {*} account
- * @param {*} limit
+ * @param {*} params
  * @returns
  */
-export const getPersonTvlArray = (chainId, account, limit = 365) => {
-  if (isNil(chainId) || isNil(account)) return []
-  const params = {
-    chainId,
-    limit,
-  }
-  return request(`${API_SERVER}/USDi/balance/account/${account}`, {
-    params
+export const getPersonTvlArray = (account, params) => {
+
+  return request(`${API_SERVER}/token/balance/account/${account}`, {
+    params: {
+      limit: 365,
+      ...params
+    }
   })
 }
 
 /**
  * 获取用户月盈利
- * @param {*} chainId
  * @param {*} account
+ * @param {*} params
  * @returns
  */
-export const getMonthProfits = (chainId, account) => {
-  const params = {
-    chainId
-  }
+export const getMonthProfits = (account, params) => {
   return request(`${API_SERVER}/month_profit/account/${account}`, {
     params
-  })
-}
-
-export const getValutAPYByDate = ({
-  date,
-  chainId,
-  duration
-}) => {
-  return request(`${API_SERVER}/apy/vault_apy/date/${date}`, {
-    params: {
-      chainId,
-      duration
-    }
   })
 }
 
 let apyListCache = {}
 export const getValutAPYList = ({
   chainId,
+  tokenType,
   duration,
   offset = 0,
   limit,
   useCache = true
 }) => {
-  const cacheKey = `${chainId}-${duration}-${offset}-${limit}`
+  const cacheKey = `${chainId}-${duration}-${tokenType}-${offset}-${limit}`
   if (useCache && apyListCache[cacheKey]) {
     return Promise.resolve(apyListCache[cacheKey])
   }
@@ -205,7 +178,8 @@ export const getValutAPYList = ({
       chainId,
       duration,
       offset,
-      limit
+      limit,
+      tokenType
     }
   }).then((data) => {
     apyListCache[cacheKey] = data
@@ -213,30 +187,32 @@ export const getValutAPYList = ({
   })
 }
 
-let usdiTotalSupplyCache = {}
-export const getUsdiTotalSupplyList = ({
+let tokenTotalSupplyCache = {}
+export const getTokenTotalSupplyList = ({
   chainId,
   offset = 0,
   limit,
+  tokenType,
   useCache = true
 }) => {
-  const cacheKey = `${chainId}-${offset}-${limit}`
-  if (useCache && usdiTotalSupplyCache[cacheKey]) {
-    return Promise.resolve(usdiTotalSupplyCache[cacheKey])
+  const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`
+  if (useCache && tokenTotalSupplyCache[cacheKey]) {
+    return Promise.resolve(tokenTotalSupplyCache[cacheKey])
   }
-  return request(`${API_SERVER}/USDi/totalSupply`, {
+  return request(`${API_SERVER}/token/totalSupply`, {
     params: {
       chainId,
       offset,
-      limit
+      limit,
+      tokenType
     }
   }).then((data) => {
-    usdiTotalSupplyCache[cacheKey] = data
+    tokenTotalSupplyCache[cacheKey] = data
     return data
   })
 }
 
 export const clearAPICache = () => {
   apyListCache = {}
-  usdiTotalSupplyCache = {}
+  tokenTotalSupplyCache = {}
 }

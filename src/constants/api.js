@@ -4,3 +4,8 @@ export const APY_DURATION = {
   weekly: 'weekly',
   yearly: 'yearly'
 }
+
+export const TOKEN_TYPE = {
+  usdi: 'USDi',
+  ethi: 'ETHi'
+}
