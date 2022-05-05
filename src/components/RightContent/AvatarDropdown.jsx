@@ -28,7 +28,7 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
   }
 
   const menuHeaderDropdown = (
-    <Menu className={styles.menu}>
+    <Menu className={styles.avatarMenu}>
       <Menu.Item key='logout' onClick={logoutOfWeb3Modal}>
         <LogoutOutlined />
         Disconnect

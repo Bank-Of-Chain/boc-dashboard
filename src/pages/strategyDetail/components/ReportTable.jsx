@@ -65,7 +65,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       current: 1
     })
     // eslint-disable-next-line
-  }, [chainId, strategyName])
+  }, [initialState.chain, strategyName])
 
   const handleTableChange = (pagination) => {
     setPagination(pagination)

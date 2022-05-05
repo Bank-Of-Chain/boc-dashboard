@@ -39,10 +39,10 @@ export const layout = ({ initialState, setInitialState }) => {
         },
       } = history // 如果没有登录，重定向到 login
       let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
+      let nextVault = !!initialState.vault ? initialState.vault : (!!vault ? vault : VAULT_TYPE.USDi)
       if (vault === VAULT_TYPE.ETHi) {
         nextChainId = ETH.id
       }
-      const nextVault = vault || VAULT_TYPE.USDi
       setInitialState({ chain: nextChainId, vault: nextVault, ...getVaultConfig(nextChainId, nextVault) })
     },
     links: [],

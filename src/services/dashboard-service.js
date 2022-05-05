@@ -120,6 +120,11 @@ export const getRecentActivity = async (vault, chain, types, total = 100) => {
     [VAULT_TYPE.ETHi]: ETHI_ACTIVITY_QUERY,
   }[vault]
 
+  const key = {
+    [VAULT_TYPE.USDi]: 'usdiUpdates',
+    [VAULT_TYPE.ETHi]: 'ethiUpdates',
+  }[vault]
+
   return await client
     .query({
       query: gql(QUERY),
@@ -128,5 +133,5 @@ export const getRecentActivity = async (vault, chain, types, total = 100) => {
         first: total
       },
     })
-    .then((res) => res.data.usdiUpdates);
+    .then((res) => res.data[key]);
 };

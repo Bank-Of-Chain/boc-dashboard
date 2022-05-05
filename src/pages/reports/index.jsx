@@ -188,16 +188,16 @@ const Reports = () => {
 
   const [showWarningModal, setShowWarningModal] = useState(false)
 
-  const { data, error, loading, pagination, refresh } = useRequest(
+  const { data, error, run, loading, pagination, refresh } = useRequest(
     ({ current, pageSize }) => {
-      return getReports({
-        chainId: initialState.chain,
-        vaultAddress: initialState.vaultAddress
-      },
-      (current - 1) * pageSize,
-      pageSize)
+      return getReports(
+        {chainId: initialState.chain, vaultAddress: initialState.vaultAddress},
+        (current - 1) * pageSize,
+        pageSize
+      )
     },
     {
+      manual: true,
       paginated: true,
       formatResult: resp => {
         const { content } = resp
@@ -214,6 +214,14 @@ const Reports = () => {
       },
     },
   )
+
+  useEffect(() => {
+    run({
+      ...pagination,
+      current: 1,
+    })
+  }, [initialState.vault])
+
   const { isAdmin, loading: roleLoading, error: roleError } = useAdminRole(initialState.address)
   /**
    * 驳回调仓报告
@@ -304,7 +312,7 @@ const Reports = () => {
     }
   }, [initialState, roleError])
 
-  if (loading) {
+  if (!data) {
     return <div>loading...</div>
   }
   if (error) {
@@ -489,14 +497,14 @@ const Reports = () => {
       <Suspense fallback={null}>
         <Desktop>
           <Card
-            loading={loading}
             bordered={false}
             title='Allocation Reports'
-          >
+            >
             <Table
               rowKey={record => record.id}
               columns={columns}
               dataSource={data.list}
+              loading={loading}
               pagination={{
                 ...pagination,
                 showSizeChanger: false,
@@ -506,16 +514,16 @@ const Reports = () => {
         </Desktop>
         <Tablet>
           <Card
-            loading={loading}
             bordered={false}
             title='Allocation Reports'
             size='small'
-          >
+            >
             <Table
               rowKey={record => record.id}
               columns={columns}
               size='small'
               dataSource={data.list}
+              loading={loading}
               pagination={{
                 ...pagination,
                 showSizeChanger: false,
@@ -525,15 +533,15 @@ const Reports = () => {
         </Tablet>
         <Mobile>
           <Card
-            loading={loading}
             bordered={false}
             title='Allocation Reports'
             size='small'
-          >
+            >
             <Table
               rowKey={record => record.id}
               columns={columns}
               size='small'
+              loading={loading}
               dataSource={data.list}
               pagination={{
                 ...pagination,

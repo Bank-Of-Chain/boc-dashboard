@@ -1,4 +1,4 @@
-import { Space, Select, Button } from 'antd'
+import { Space, Select, Button, Menu } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect } from 'react'
 
@@ -36,16 +36,19 @@ const GlobalHeaderRight = () => {
 
   const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
+  const [current, setCurrent] = useState(initialState.vault)
 
   const { userProvider, loadWeb3Modal, logoutOfWeb3Modal } = useUserProvider()
   const address = useUserAddress(userProvider)
   const { vault: curVault } = initialState
 
   const changeChain = value => {
+    const { vault } = history.location.query
     changeNetwork(value).then(() => {
       history.push({
         query: {
           chain: value,
+          vault
         },
       })
       setTimeout(() => {
@@ -53,6 +56,7 @@ const GlobalHeaderRight = () => {
       }, 1)
     })
   }
+
   const changeNetwork = id => {
     return new Promise(async resolve => {
       const targetNetwork = find(CHAINS, { id })
@@ -94,24 +98,26 @@ const GlobalHeaderRight = () => {
     })
   }
 
-  const changeVault = (value) => {
+  const handleMenuClick = (e) => {
+    const vault = e.key
+    setCurrent(vault)
     const pathname = history.location.pathname
     const query = history.location.query
     query.chain = query.chain || ETH.id
-    if (value === VAULT_TYPE.ETHi) {
+    if (vault === VAULT_TYPE.ETHi) {
       query.chain = ETH.id
     }
     setInitialState({
       ...initialState,
       chain: query.chain,
-      vault: value,
-      ...getVaultConfig(query.chain, value)
+      vault,
+      ...getVaultConfig(query.chain, vault)
     })
     history.push({
       pathname: pathname,
       query: {
         ...query,
-        vault: value
+        vault
       }
     })
   }
@@ -131,58 +137,64 @@ const GlobalHeaderRight = () => {
     })
   }, [userProvider, address, history.location.pathname])
 
+  useEffect(() => {
+    setCurrent(initialState.vault)
+  }, [initialState.vault])
+
   return (
-    <Space className={className}>
-      {!disabledChangeChainRoute.includes(history.location.pathname) && curVault === VAULT_TYPE.USDi && (
-        <Select
-          value={initialState.chain}
-          defaultValue={ETH.id}
-          style={{ width: '7.5rem' }}
-          onChange={changeChain}
+    <div className={styles.header}>
+      {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
+        <Menu
+          className={styles.headerMenu}
+          onClick={handleMenuClick}
+          selectedKeys={[current]}
+          mode="horizontal"
         >
-          {map(CHAINS, i => (
-            <Option key={i.id} value={i.id}>
-              {i.name}
-            </Option>
-          ))}
-        </Select>
-      )}
-      {!disabledChangeVaultRoute.includes(history.location.pathname) && (
-        <Select
-          value={curVault}
-          onChange={changeVault}
-          style={{ width: '5rem' }}
-        >
-          {map(VAULT_TYPE, (value, key) => (
-            <Option key={key} value={value}>{key}</Option>
-          ))}
-        </Select>
-      )}
-      {isLoading ? (
-        <LoadingOutlined style={{ fontSize: 24 }} spin />
-      ) : !isEmpty(address) ? ([
-        <Avatar
-          key="avatar"
-          menu
-          address={address}
-          logoutOfWeb3Modal={() =>
-            logoutOfWeb3Modal().then(() => {
-              setTimeout(() => {
-                window.location.reload()
-              }, 1)
-            })
-          }
-        />,
-        <Button key="mine" icon={<AreaChartOutlined />} type="primary" onClick={goToMine}>
-          My Dashboard
-        </Button>
-      ]
-      ) : window.ethereum ? (
-        <Button type='primary' onClick={loadWeb3Modal}>
-          Connect
-        </Button>
-      ) : null}
-    </Space>
+          <Menu.Item key="usdi">USDi</Menu.Item>
+          <Menu.Item key="ethi">ETHi</Menu.Item>
+        </Menu>
+      ) : <span/>}
+      <Space className={className}>
+        {!disabledChangeChainRoute.includes(history.location.pathname) && curVault === VAULT_TYPE.USDi && (
+          <Select
+            value={initialState.chain}
+            defaultValue={ETH.id}
+            className={styles.chainSelect}
+            onChange={changeChain}
+          >
+            {map(CHAINS, i => (
+              <Option key={i.id} value={i.id}>
+                {i.name}
+              </Option>
+            ))}
+          </Select>
+        )}
+        {isLoading ? (
+          <LoadingOutlined style={{ fontSize: 24 }} spin />
+        ) : !isEmpty(address) ? ([
+          <Avatar
+            key="avatar"
+            menu
+            address={address}
+            logoutOfWeb3Modal={() =>
+              logoutOfWeb3Modal().then(() => {
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1)
+              })
+            }
+          />,
+          <Button className={styles.myDasboardBtn} key="mine" icon={<AreaChartOutlined />} type="primary" onClick={goToMine}>
+            My Dashboard
+          </Button>
+        ]
+        ) : window.ethereum ? (
+          <Button type='primary' onClick={loadWeb3Modal}>
+            Connect
+          </Button>
+        ) : null}
+      </Space>
+    </div>
   )
 }
 window.ethereum &&
