@@ -10,11 +10,9 @@ import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 import map from 'lodash/map'
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
-import { getVaultConfig } from '@/utils/vault';
 
 // === Contansts === //
 import CHAINS, { ETH } from '@/constants/chain'
-import { VAULT_TYPE } from '@/constants/vault'
 
 // === Hooks === //
 import useUserAddress from '@/hooks/useUserAddress'
@@ -26,10 +24,7 @@ import styles from './index.less'
 const { Option } = Select
 
 // 以下路由时，不展示头部的切链下拉框
-const disabledChangeChainRoute = ['/strategy']
-
-// 以下路由时，不展示头部的切 vault 下拉框
-const disabledChangeVaultRoute = ['/strategy']
+const enabledChangeChainRoute = ['/strategy']
 
 const GlobalHeaderRight = () => {
   const className = `${styles.right}  ${styles.dark}`
@@ -39,7 +34,6 @@ const GlobalHeaderRight = () => {
 
   const { userProvider, loadWeb3Modal, logoutOfWeb3Modal } = useUserProvider()
   const address = useUserAddress(userProvider)
-  const { vault: curVault } = initialState
 
   const changeChain = value => {
     changeNetwork(value).then(() => {
@@ -94,32 +88,6 @@ const GlobalHeaderRight = () => {
     })
   }
 
-  const changeVault = (value) => {
-    const pathname = history.location.pathname
-    const query = history.location.query
-    query.chain = query.chain || ETH.id
-    if (value === VAULT_TYPE.ETHi) {
-      query.chain = ETH.id
-    }
-    setInitialState({
-      ...initialState,
-      chain: query.chain,
-      vault: value,
-      ...getVaultConfig(query.chain, value)
-    })
-    history.push({
-      pathname: pathname,
-      query: {
-        ...query,
-        vault: value
-      }
-    })
-  }
-
-  const goToMine = () => {
-    history.push(`/mine?chain=${initialState.chain}&vault=${initialState.vault}`)
-  }
-
   useEffect(() => {
     if (isEmpty(userProvider)) return
     setIsLoading(true)
@@ -133,7 +101,7 @@ const GlobalHeaderRight = () => {
 
   return (
     <Space className={className}>
-      {!disabledChangeChainRoute.includes(history.location.pathname) && curVault === VAULT_TYPE.USDi && (
+      {!enabledChangeChainRoute.includes(history.location.pathname) && (
         <Select
           value={initialState.chain}
           defaultValue={ETH.id}
@@ -144,17 +112,6 @@ const GlobalHeaderRight = () => {
             <Option key={i.id} value={i.id}>
               {i.name}
             </Option>
-          ))}
-        </Select>
-      )}
-      {!disabledChangeVaultRoute.includes(history.location.pathname) && (
-        <Select
-          value={curVault}
-          onChange={changeVault}
-          style={{ width: '5rem' }}
-        >
-          {map(VAULT_TYPE, (value, key) => (
-            <Option key={key} value={value}>{key}</Option>
           ))}
         </Select>
       )}
@@ -173,7 +130,7 @@ const GlobalHeaderRight = () => {
             })
           }
         />,
-        <Button key="mine" icon={<AreaChartOutlined />} type="primary" onClick={goToMine}>
+        <Button key="mine" icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
           My Dashboard
         </Button>
       ]

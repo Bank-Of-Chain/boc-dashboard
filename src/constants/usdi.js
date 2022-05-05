@@ -10,3 +10,4 @@ export const RECENT_ACTIVITY_TYPE = {
 export const USDI_DECIMALS = 18
 
 export const USDI_BN_DECIMALS = BN(1e18)
+

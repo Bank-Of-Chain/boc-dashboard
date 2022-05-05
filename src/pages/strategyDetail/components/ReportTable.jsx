@@ -18,7 +18,7 @@ const OPERATION = {
   3: 'redeem'
 }
 
-const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
+const ReportTable = ({ loading, chainId, strategyName, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState')
   const [dataSource, setDataSource] = useState([])
   const [tableLoading, setTableLoading] = useState(false)
@@ -28,12 +28,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   })
   const deviceType = useDeviceType()
 
+  const unit = dataSource[0] ? dataSource[0].lpTokenUnit : ''
+
   const fetch = async () => {
     setTableLoading(true)
     getStrategyDetailsReports({
       strategyName,
-      chainId: initialState.chain,
-      vaultAddress: initialState.vaultAddress,
+      chainId,
       limit: pagination.pageSize,
       offset: (pagination.current - 1) * pagination.pageSize
     }).then((data) => {

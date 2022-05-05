@@ -1,14 +1,15 @@
 import { PageLoading } from '@ant-design/pro-layout';
-import { history } from 'umi';
+import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 
+// === Utils === //
+import { setClient } from './apollo/client';
+
 // === Constants === //
-import { ETH, MATIC } from './constants/chain';
-import { VAULT_TYPE } from '@/constants/vault';
+import { ETH } from './constants/chain';
 
-import { getVaultConfig } from '@/utils/vault';
-
+const isDev = process.env.NODE_ENV === 'development';
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
   loading: <PageLoading />,
@@ -35,15 +36,13 @@ export const layout = ({ initialState, setInitialState }) => {
     onPageChange: () => {
       const {
         location: {
-          query: { chain, vault },
+          query: { chain },
         },
       } = history // 如果没有登录，重定向到 login
-      let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
-      if (vault === VAULT_TYPE.ETHi) {
-        nextChainId = ETH.id
-      }
-      const nextVault = vault || VAULT_TYPE.USDi
-      setInitialState({ chain: nextChainId, vault: nextVault, ...getVaultConfig(nextChainId, nextVault) })
+      // v1.5 先上 polygon，默认先调整为 polygon
+      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : ETH.id)
+      setClient(nextChainId)
+      setInitialState({ chain: nextChainId })
     },
     links: [],
     menuHeaderRender: undefined,

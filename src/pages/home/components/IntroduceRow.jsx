@@ -1,8 +1,12 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Tooltip } from 'antd';
+import numeral from 'numeral';
 import ChartCard from '@/components/ChartCard';
+import BN from 'bignumber.js';
 
-import { map } from 'lodash';
+// === Utils === //
+import { toFixed } from '@/utils/number-format';
+import isEmpty from 'lodash/isEmpty'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -12,24 +16,55 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
-const IntroduceRow = ({ data = [] }) => {
+const IntroduceRow = ({ loading, visitData = {} }) => {
+  const { apy30, usdi = {} } = visitData;
+
   return (
     <Row gutter={[24, 24]}>
-      {map(data, ({ title, tip, loading, content }) => (
-        <Col key={title} {...topColResponsiveProps}>
-          <ChartCard
-            bordered={false}
-            title={title}
-            action={
-              <Tooltip title={tip}>
-                <InfoCircleOutlined />
-              </Tooltip>
-            }
-            loading={loading}
-            total={content}
-          />
-        </Col>
-      ))}
+      <Col {...topColResponsiveProps}>
+        <ChartCard
+          bordered={false}
+          title="Total USDi Supply"
+          action={
+            <Tooltip title="Current total USDi supply">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
+          loading={loading}
+          total={() => !isEmpty(usdi) ? toFixed(usdi?.totalSupply, BN(10 ** usdi?.tokenInfo?.decimals), 2) : 0}
+          contentHeight={100}
+        />
+      </Col>
+
+      <Col {...topColResponsiveProps}>
+        <ChartCard
+          bordered={false}
+          loading={loading}
+          title="Holders"
+          action={
+            <Tooltip title="Number Of USDi holders">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
+          total={numeral(usdi?.holderCount).format('0,0')}
+          contentHeight={70}
+        />
+      </Col>
+
+      <Col {...topColResponsiveProps}>
+        <ChartCard
+          bordered={false}
+          loading={loading}
+          title="APY (last 30 days)"
+          action={
+            <Tooltip title={`Yield over the past 1 month`}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
+          total={`${numeral(apy30).format('0,0.00')}%`}
+          contentHeight={70}
+        />
+      </Col>
     </Row>
   );
 };
