@@ -9,35 +9,48 @@ import {
   MATIC
 } from '../constants/chain'
 
-import { VAULT_TYPE } from '@/constants/vault'
+export const maticClient = new ApolloClient({
+  uri: SUB_GRAPH_URL[MATIC.id],
+  cache: new InMemoryCache(),
+});
 
-const USDI_SUB_GRAPH_URL = USDI.SUB_GRAPH_URL
-const USDI_CLIENT = {
-  [MATIC.id]: new ApolloClient({
-    uri: USDI_SUB_GRAPH_URL[MATIC.id],
-    cache: new InMemoryCache(),
-  }),
-  [BSC.id]: new ApolloClient({
-    uri: USDI_SUB_GRAPH_URL[BSC.id],
-    cache: new InMemoryCache(),
-  }),
-  [ETH.id]: new ApolloClient({
-    uri: USDI_SUB_GRAPH_URL[ETH.id],
-    cache: new InMemoryCache(),
-  })
+export const bscClient = new ApolloClient({
+  uri: SUB_GRAPH_URL[BSC.id],
+  cache: new InMemoryCache(),
+});
+
+export const ethClient = new ApolloClient({
+  uri: SUB_GRAPH_URL[ETH.id],
+  cache: new InMemoryCache(),
+});
+
+const CLIENT = {
+  [MATIC.id]: maticClient,
+  [BSC.id]: bscClient,
+  [ETH.id]: ethClient
+}
+let CHAIN_ID = ''
+
+export const setClient = chain => {
+  CHAIN_ID = chain
 }
 
-const ETHI_CLIENT = {
-  [ETH.id]: new ApolloClient({
-    uri: ETHI.SUB_GRAPH_URL[ETH.id],
-    cache: new InMemoryCache(),
-  })
+export const getClient = chain => {
+  if (chain) {
+    return CLIENT[chain]
+  }
+  return CLIENT[CHAIN_ID]
 }
 
-export const getClient = (vault, chain) => {
-  const vaultClient = {
-    [VAULT_TYPE.USDi]: USDI_CLIENT,
-    [VAULT_TYPE.ETHi]: ETHI_CLIENT
-  }[vault]
-  return vaultClient[chain]
+const DECIMALS = {
+  [MATIC.id]: MATIC.decimals,
+  [BSC.id]: BSC.decimals,
+  [ETH.id]: ETH.decimals
+}
+
+export const getDecimals = chain => {
+  if (chain) {
+    return DECIMALS[chain]
+  }
+  return DECIMALS[CHAIN_ID]
 }

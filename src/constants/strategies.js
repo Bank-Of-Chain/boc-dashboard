@@ -1,4 +1,4 @@
-const USDI_ETH_STRATEGIES_MAP = [
+const ETH_STRATEGIES_MAP = [
   'Balancer',
   'UniswapV2',
   'Dodo',
@@ -16,7 +16,7 @@ const USDI_ETH_STRATEGIES_MAP = [
   'Synapse'
 ]
 
-const USDI_BSC_STRATEGIES_MAP = [
+const BSC_STRATEGIES_MAP = [
   'Bunny',
   'Pancake',
   'Alpaca',
@@ -29,7 +29,7 @@ const USDI_BSC_STRATEGIES_MAP = [
   'Stargate'
 ]
 
-const USDI_MATIC_STRATEGIES_MAP = [
+const MATIC_STRATEGIES_MAP = [
   'Curve',
   'Aave',
   'Balancer',
@@ -41,25 +41,16 @@ const USDI_MATIC_STRATEGIES_MAP = [
   'Synapse',
   'Dodo'
 ]
-
-const ETHI_ETH_STRATEGIES_MAP = [
-  'Balancer',
-  'UniswapV2',
-]
-
-export const USDI_STRATEGIES_MAP = {
-  1: USDI_ETH_STRATEGIES_MAP,
-  56: USDI_BSC_STRATEGIES_MAP,
-  137: USDI_MATIC_STRATEGIES_MAP,
+const STRATEGIES_MAP = {
+  1: ETH_STRATEGIES_MAP,
+  56: BSC_STRATEGIES_MAP,
+  137: MATIC_STRATEGIES_MAP,
 }
 
-export const ETHI_STRATEGIES_MAP = {
-  1: ETHI_ETH_STRATEGIES_MAP,
-}
+export default STRATEGIES_MAP
 
 export {
-  USDI_ETH_STRATEGIES_MAP,
-  USDI_BSC_STRATEGIES_MAP,
-  USDI_MATIC_STRATEGIES_MAP,
-  ETHI_ETH_STRATEGIES_MAP
+  ETH_STRATEGIES_MAP,
+  BSC_STRATEGIES_MAP,
+  MATIC_STRATEGIES_MAP
 }

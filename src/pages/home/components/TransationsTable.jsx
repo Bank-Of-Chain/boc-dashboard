@@ -14,12 +14,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
 import { getRecentActivity } from '@/services/dashboard-service'
 
-const TransationsTable = ({
-  loading,
-  decimals = USDI_DECIMALS,
-  token = 'USDi',
-  filterOptions = RECENT_ACTIVITY_TYPE
-}) => {
+const TransationsTable = ({ loading }) => {
   const { initialState } = useModel('@@initialState')
   const [data, setData] = useState([])
   const [tableLoading, setTableLoading] = useState(false)
@@ -27,15 +22,15 @@ const TransationsTable = ({
 
   const FILTER_OPTIONS = {
     All: "All",
-    ...filterOptions
+    ...RECENT_ACTIVITY_TYPE
   }
   const [filter, setFilter] = useState(FILTER_OPTIONS.All)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : [filter]
+    const types = filter === FILTER_OPTIONS.All ? Object.values(RECENT_ACTIVITY_TYPE) : [filter]
     setTableLoading(true)
-    getRecentActivity(initialState.vault, initialState.chain, types).then(data => {
+    getRecentActivity(types).then(data => {
       setCurrentPage(1)
       setData(data)
     }).finally(() => {
@@ -90,16 +85,16 @@ const TransationsTable = ({
       key: 'detail',
       render: (text, item) => {
         const { type, changeAmount, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
-        const changeValue = toLeastOneFixed(changeAmount, decimals)
-        const absChangeValue = toLeastOneFixed(BN(changeAmount).abs(), decimals)
-        const transferValue = toLeastOneFixed(transferredAmount, decimals)
+        const changeValue = toLeastOneFixed(changeAmount, USDI_DECIMALS)
+        const absChangeValue = toLeastOneFixed(BN(changeAmount).abs(), USDI_DECIMALS)
+        const transferValue = toLeastOneFixed(transferredAmount, USDI_DECIMALS)
         const from = fromAccountUpdate?.account.id
         const to = toAccountUpdate?.account.id
         const fns = {
-          Mint: () => <>{type} <span>{changeValue}</span> {token} to {renderAddress(to)}</>,
-          Burn: () => <>{type} <span>{absChangeValue}</span> {token} from {renderAddress(from)}</>,
-          Rebase: () => <>{type} <span>{changeValue}</span> {token}</>,
-          Transfer: () => <>{type} <span>{transferValue}</span> {token} from {renderAddress(from)} to {renderAddress(to)}</>,
+          Mint: () => <>{type} <span>{changeValue}</span> USDi to {renderAddress(to)}</>,
+          Burn: () => <>{type} <span>{absChangeValue}</span> USDi from {renderAddress(from)}</>,
+          Rebase: () => <>{type} <span>{changeValue}</span> USDi</>,
+          Transfer: () => <>{type} <span>{transferValue}</span> USDi from {renderAddress(from)} to {renderAddress(to)}</>,
         }
         return (
           <span style={{ whiteSpace: 'normal' }}>{fns[item.type]()}</span>

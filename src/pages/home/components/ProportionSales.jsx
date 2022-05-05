@@ -7,11 +7,14 @@ import { useModel } from 'umi'
 import BN from 'bignumber.js'
 import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
 import { toFixed } from '@/utils/number-format'
+import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
+// === Constants === //
+import STRATEGIES_MAP from '@/constants/strategies'
 import styles from '../style.less'
 
-const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
+const ProportionSales = ({ loading, visitData = {} }) => {
   const { strategies = [], totalValue } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
@@ -44,14 +47,14 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
           BN(0),
         )
         return {
-          Protocol: `${strategyMap[initialState.chain][key]}${suffix}`,
-          amount: toFixed(amount, tokenDecimals, 2),
+          Protocol: `${STRATEGIES_MAP[initialState.chain][key]}${suffix}`,
+          amount: toFixed(amount, USDI_BN_DECIMALS, 2),
         }
       }),
     ),
     {
       Protocol: `Vault${suffix}`,
-      amount: toFixed(vaultPoolValue, tokenDecimals, 2),
+      amount: toFixed(vaultPoolValue, USDI_BN_DECIMALS, 2),
     },
   ]
 
@@ -107,7 +110,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
         statistic={{
           visible: true,
           content: {
-            value: toFixed(totalValue, tokenDecimals, 2),
+            value: toFixed(totalValue, USDI_BN_DECIMALS, 2),
             name: `TVL${suffix}`,
           },
         }}

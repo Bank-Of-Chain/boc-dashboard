@@ -190,12 +190,7 @@ const Reports = () => {
 
   const { data, error, loading, pagination, refresh } = useRequest(
     ({ current, pageSize }) => {
-      return getReports({
-        chainId: initialState.chain,
-        vaultAddress: initialState.vaultAddress
-      },
-      (current - 1) * pageSize,
-      pageSize)
+      return getReports({ chainId: initialState.chain }, (current - 1) * pageSize, pageSize)
     },
     {
       paginated: true,
@@ -223,7 +218,7 @@ const Reports = () => {
     const signer = userProvider.getSigner()
     const close = message.loading('on submit', 60 * 60)
     const headers = await getSignatureHeader(initialState.address, signer).catch(close)
-    updateReportStatus(initialState.chain, initialState.vaultAddress, id, true, headers)
+    updateReportStatus(id, true, headers)
       .then(refresh)
       .catch(noop)
       .finally(close)

@@ -56,7 +56,7 @@ const useAdminRole = (address) => {
   } = useModel('@@initialState');
 
   const roleFetch = async (userAddress) => {
-    const { vaultAddress } = initialState
+    const vaultAddress = VAULT_ADDRESS[initialState.chain]
     if (isEmpty(vaultAddress)) return
     setLoading(true)
     const vaultContract = new Contract(vaultAddress, MIX_ABI, userProvider)
@@ -82,10 +82,10 @@ const useAdminRole = (address) => {
   }
 
   useEffect(() => {
-    if (isEmpty(initialState.chain) || isEmpty(address) || isEmpty(userProvider) || isEmpty(initialState.vault)) return
+    if (isEmpty(initialState.chain) || isEmpty(address) || isEmpty(userProvider)) return
     //TODO: 此处地址待修改
     roleFetch(address)
-  }, [address, initialState.chain, userProvider, initialState.vault]);
+  }, [address, initialState.chain, userProvider]);
 
   return {
     isAdmin,
