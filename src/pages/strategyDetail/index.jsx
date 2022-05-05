@@ -8,7 +8,8 @@ import { LineEchart } from '@/components/echarts'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 
 // === Constants === //
-import STRATEGIES_MAP from '@/constants/strategies'
+import { USDI_STRATEGIES_MAP, ETHI_STRATEGIES_MAP } from '@/constants/strategies'
+import { VAULT_TYPE } from '@/constants/vault'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
@@ -18,6 +19,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
+import { ETHI_BN_DECIMALS } from '@/constants/ethi'
 
 import moment from 'moment'
 import _union from 'lodash/union'
@@ -42,8 +44,11 @@ const Strategy = props => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
+  const isUSDi = VAULT_TYPE.USDi === initialState.vault
+  const decimals = isUSDi ? USDI_BN_DECIMALS : ETHI_BN_DECIMALS
+
   useEffect(() => {
-    getStrategyById(id)
+    getStrategyById(initialState.vault, initialState.chain, id)
       .then(setStrategy)
       .catch(noop)
     // eslint-disable-next-line
@@ -52,7 +57,12 @@ const Strategy = props => {
   useEffect(() => {
     if(isEmpty(strategy?.name)) return;
     getBaseApyByPage(
-      { chainId: initialState.chain, strategyName: strategy?.name, sort: 'fetch_block desc' },
+      {
+        chainId: initialState.chain,
+        vaultAddress: initialState.vaultAddress,
+        strategyName: strategy?.name,
+        sort: 'fetch_block desc'
+      },
       0,
       100,
     )
@@ -221,6 +231,8 @@ const Strategy = props => {
     }
   }[deviceType]
 
+  const strategiesMap = isUSDi ? USDI_STRATEGIES_MAP : ETHI_STRATEGIES_MAP
+
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -236,7 +248,7 @@ const Strategy = props => {
                 width={200}
                 style={{ backgroundColor: '#fff', borderRadius: '50%' }}
                 src={`${IMAGE_ROOT}/images/amms/${
-                  STRATEGIES_MAP[initialState.chain][strategy?.protocol]
+                  strategiesMap[initialState.chain][strategy?.protocol]
                 }.png`}
                 fallback={`${IMAGE_ROOT}/default.png`}
               />
@@ -266,11 +278,8 @@ const Strategy = props => {
                   <CoinSuperPosition array={map(positionDetail, 'token.id')} />
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
-                  {toFixed(totalValue, USDI_BN_DECIMALS, 2) + ' USD'}
+                  {toFixed(totalValue, decimals, 2) + ' USD'}
                 </Descriptions.Item>
-                {/* <Descriptions.Item label='Total Investments'>
-                  {toFixed(depositedAssets, USDI_BN_DECIMALS, 2) + ' USDi'}
-                </Descriptions.Item> */}
                 <Descriptions.Item label='Status'>
                   {strategy.isAdded ? 'Active' : 'Inactive'}
                 </Descriptions.Item>
@@ -296,7 +305,7 @@ const Strategy = props => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <ReportTable chainId={initialState.chain} strategyName={strategy?.name} loading={loading} />
+        <ReportTable strategyName={strategy?.name} loading={loading} />
       </Suspense>
     </GridContent>
   )

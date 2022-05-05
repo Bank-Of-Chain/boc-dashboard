@@ -1,11 +1,7 @@
-import { Card, Table, Image, Button, Switch, Tooltip } from 'antd'
+import { Card, Table, Image, Switch, Tooltip } from 'antd'
 import React, { useState } from 'react'
-import styles from '../style.less'
 import { useModel, useRequest } from 'umi'
 import { filter } from 'lodash'
-
-// === Constants === //
-import STRATEGIES_MAP from '@/constants/strategies'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
@@ -18,11 +14,13 @@ import BN from 'bignumber.js'
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
 
-const StrategyTable = ({ dropdownGroup, loading }) => {
+import styles from '../style.less'
+
+const StrategyTable = ({ loading, strategyMap }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
-  const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, 0, 100), {
+  const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100), {
     formatResult: resp => resp.content,
   })
   if (!initialState.chain) return null
@@ -41,17 +39,17 @@ const StrategyTable = ({ dropdownGroup, loading }) => {
             preview={false}
             width={30}
             src={`${IMAGE_ROOT}/images/amms/${
-              STRATEGIES_MAP[initialState.chain][item.protocol]
+              strategyMap[initialState.chain][item.protocol]
             }.png`}
             placeholder={item.protocol}
             style={{ backgroundColor: '#fff', borderRadius: '50%' }}
-            alt={STRATEGIES_MAP[initialState.chain][item.protocol]}
+            alt={strategyMap[initialState.chain][item.protocol]}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a
             target={'_blank'}
             rel='noreferrer'
-            href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}`}
+            href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}&vault=${initialState.vault}`}
             className={styles.text}
           >
             {text}
