@@ -11,6 +11,9 @@ const USDI_ETH_STRATEGIES_MAP = [
   'YearnV2',
   'YearnIron',
   'GUni',
+  'Stargate',
+  'DForce',
+  'Synapse'
 ]
 
 const USDI_BSC_STRATEGIES_MAP = [
