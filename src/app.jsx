@@ -40,7 +40,7 @@ export const layout = ({ initialState, setInitialState }) => {
         },
       } = history // 如果没有登录，重定向到 login
       // v1.5 先上 polygon，默认先调整为 polygon
-      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
+      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : BSC.id)
       setClient(nextChainId)
       setInitialState({ chain: nextChainId })
     },
