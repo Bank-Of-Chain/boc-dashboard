@@ -3,9 +3,9 @@ import { gql } from '@apollo/client';
 import { isEmpty } from 'lodash';
 import { VAULT_TYPE } from '@/constants/vault'
 
-const USDI_DASHBOARD_DETAIL_QUERY = `
+const getDashboardDetailQuery = (token) => `
 query ($tokenAddress: Bytes, $valutAddress: Bytes) {
-  usdi(id: $tokenAddress) {
+  ${token}(id: $tokenAddress) {
     tokenInfo {
       decimals
     }
@@ -23,27 +23,8 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes) {
   }
 }
 `;
-
-const ETHI_DASHBOARD_DETAIL_QUERY = `
-query ($tokenAddress: Bytes, $valutAddress: Bytes) {
-  ethi(id: $tokenAddress) {
-    tokenInfo {
-      decimals
-    }
-    totalSupply
-    holderCount
-  }
-  vault(id: $valutAddress) {
-    id
-    totalValue
-    strategies(where: {isAdded: true}) {
-      id
-      protocol
-      totalValue
-    }
-  }
-}
-`;
+const USDI_DASHBOARD_DETAIL_QUERY = getDashboardDetailQuery('usdi')
+const ETHI_DASHBOARD_DETAIL_QUERY = getDashboardDetailQuery('ethi')
 
 export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutAddress = '') => {
   const client = getClient(vault, chain)
@@ -95,9 +76,9 @@ export const getStrategyById = async (vault, chain, strategyAddress) => {
     .then((data) => data.data.strategy);
 };
 
-const USDI_ACTIVITY_QUERY = `
-query($types: [USDiUpdateType], $first: Int) {
-  usdiUpdates(
+const getRecentActivityQuery = (entity, type) => `
+query($types: [${type}], $first: Int) {
+  ${entity}(
     orderBy: timestamp,
     orderDirection: desc,
     first: $first,
@@ -126,38 +107,8 @@ query($types: [USDiUpdateType], $first: Int) {
   }
 }
 `;
-
-const ETHI_ACTIVITY_QUERY = `
-query($types: [USDiUpdateType], $first: Int) {
-  usdiUpdates(
-    orderBy: timestamp,
-    orderDirection: desc,
-    first: $first,
-    where: {
-      type_in: $types
-    },
-  ) {
-    id
-    type
-    transferredAmount
-    changeAmount
-    timestamp
-    fromAccountUpdate {
-      account {
-        id
-      }
-    }
-    transaction {
-      id
-    }
-		toAccountUpdate {
-      account {
-        id
-      }
-    }
-  }
-}
-`;
+const USDI_ACTIVITY_QUERY = getRecentActivityQuery('usdiUpdates', 'USDiUpdateType')
+const ETHI_ACTIVITY_QUERY = getRecentActivityQuery('ethiUpdates', 'ETHiUpdateType')
 
 export const getRecentActivity = async (vault, chain, types, total = 100) => {
   const client = getClient(vault, chain)

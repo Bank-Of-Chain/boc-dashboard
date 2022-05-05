@@ -19,7 +19,7 @@ const StrategyTable = ({ loading, strategyMap }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
-  const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, 0, 100), {
+  const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100), {
     formatResult: resp => resp.content,
   })
   if (!initialState.chain) return null

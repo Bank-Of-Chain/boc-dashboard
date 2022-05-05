@@ -7,12 +7,12 @@ import { APY_DURATION } from '@/constants/api'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty';
-import { getVaultConfig } from "@/utils/vault";
 
-const dataMerge = (vault, chain) => {
-  const { vaultAddress, tokenAddress } = getVaultConfig(vault, chain)
-  if(isEmpty(tokenAddress) || isEmpty(vaultAddress))
+const dataMerge = (initialState) => {
+  const { vault, chain, vaultAddress, tokenAddress } = initialState
+  if(isEmpty(tokenAddress) || isEmpty(vaultAddress)) {
     return Promise.reject(new Error('usdi地址或vault地址获取失败'))
+  }
   return Promise.all([
     getDashboardDetail(vault, chain, tokenAddress, vaultAddress),
     getValutAPYByDate({
@@ -46,7 +46,7 @@ export default function useDashboardData() {
   useEffect(() => {
     if (initialState?.chain) {
       setLoading(true)
-      dataMerge(initialState.vault, initialState.chain)
+      dataMerge(initialState)
         .then(setData)
         .finally(() => {
           setLoading(false)

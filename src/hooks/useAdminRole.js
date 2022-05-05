@@ -10,7 +10,6 @@ import {
 // === Utils === //
 import * as ethers from "ethers";
 import isEmpty from 'lodash/isEmpty';
-import { getVaultConfig } from "@/utils/vault";
 
 // === Hooks === //
 import useUserProvider from './useUserProvider'
@@ -57,7 +56,7 @@ const useAdminRole = (address) => {
   } = useModel('@@initialState');
 
   const roleFetch = async (userAddress) => {
-    const { vaultAddress } = getVaultConfig(initialState.vault, initialState.chain)
+    const { vaultAddress } = initialState
     if (isEmpty(vaultAddress)) return
     setLoading(true)
     const vaultContract = new Contract(vaultAddress, MIX_ABI, userProvider)

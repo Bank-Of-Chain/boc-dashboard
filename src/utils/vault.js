@@ -1,6 +1,6 @@
 import { VAULT_TYPE } from '@/constants/vault'
 
-export const getVaultConfig = (vault, chain) => {
+export const getVaultConfig = (chain, vault) => {
   return {
     [VAULT_TYPE.USDi]: {
       vaultAddress: USDI.VAULT_ADDRESS[chain],

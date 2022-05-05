@@ -22,7 +22,7 @@ import { isEmpty, isNil } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
-import { ETHI_BN_DECIMALS, ETHI_DECIMALS } from '@/constants/ethi'
+import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE } from '@/constants/ethi'
 import { map, reverse } from 'lodash'
 import { appendDate } from "@/utils/array-append"
 
@@ -131,7 +131,7 @@ const ETHiHome = () => {
         <StrategyTable strategyMap={STRATEGIES_MAP} loading={loading} />
       </Suspense>
       <Suspense fallback={null}>
-        <TransationsTable token="ETHi" decimals={ETHI_DECIMALS} loading={loading} />
+        <TransationsTable token="ETHi" decimals={ETHI_DECIMALS} filterOptions={RECENT_ACTIVITY_TYPE} loading={loading} />
       </Suspense>
     </GridContent>
   )

@@ -14,7 +14,12 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
 import { getRecentActivity } from '@/services/dashboard-service'
 
-const TransationsTable = ({ loading, decimals = USDI_DECIMALS, token = 'USDi' }) => {
+const TransationsTable = ({
+  loading,
+  decimals = USDI_DECIMALS,
+  token = 'USDi',
+  filterOptions = RECENT_ACTIVITY_TYPE
+}) => {
   const { initialState } = useModel('@@initialState')
   const [data, setData] = useState([])
   const [tableLoading, setTableLoading] = useState(false)
@@ -22,13 +27,13 @@ const TransationsTable = ({ loading, decimals = USDI_DECIMALS, token = 'USDi' })
 
   const FILTER_OPTIONS = {
     All: "All",
-    ...RECENT_ACTIVITY_TYPE
+    ...filterOptions
   }
   const [filter, setFilter] = useState(FILTER_OPTIONS.All)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    const types = filter === FILTER_OPTIONS.All ? Object.values(RECENT_ACTIVITY_TYPE) : [filter]
+    const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : [filter]
     setTableLoading(true)
     getRecentActivity(initialState.vault, initialState.chain, types).then(data => {
       setCurrentPage(1)

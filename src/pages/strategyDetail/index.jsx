@@ -52,7 +52,12 @@ const Strategy = props => {
   useEffect(() => {
     if(isEmpty(strategy?.name)) return;
     getBaseApyByPage(
-      { chainId: initialState.chain, strategyName: strategy?.name, sort: 'fetch_block desc' },
+      {
+        chainId: initialState.chain,
+        vaultAddress: initialState.vaultAddress,
+        strategyName: strategy?.name,
+        sort: 'fetch_block desc'
+      },
       0,
       100,
     )
@@ -296,7 +301,7 @@ const Strategy = props => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <ReportTable chainId={initialState.chain} strategyName={strategy?.name} loading={loading} />
+        <ReportTable strategyName={strategy?.name} loading={loading} />
       </Suspense>
     </GridContent>
   )

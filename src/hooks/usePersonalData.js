@@ -14,7 +14,6 @@ import map from 'lodash/map';
 import { reverse, find } from 'lodash'
 import { useEffect, useState } from 'react';
 import * as ethers from "ethers";
-import { getVaultConfig } from "@/utils/vault";
 import useUserProvider from '@/hooks/useUserProvider'
 import {toFixed} from '@/utils/number-format'
 import { USDI_BN_DECIMALS } from "@/constants/usdi"
@@ -106,8 +105,7 @@ export default function usePersonalData() {
     setLoading(true)
     const requests = []
     if (!isEmpty(userProvider) && initialState?.address) {
-      const { tokenAddress } = getVaultConfig(initialState.vault, initialState.chain)
-      const tokenContract = new ethers.Contract(tokenAddress, ABI, userProvider)
+      const tokenContract = new ethers.Contract(initialState.tokenAddress, ABI, userProvider)
       requests.push(tokenContract.balanceOf(initialState?.address).catch(() => BigNumber.from(0)))
     }
     dataMerge(initialState?.address?.toLowerCase(), initialState?.chain, requests).then(r => {

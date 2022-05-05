@@ -5,23 +5,6 @@ import {
   isNil,
 } from 'lodash';
 
-export const getStrategyApysInChain = (address, offset = 0, limit = 20) => {
-  try {
-    const params = {
-      strategyAddress: address,
-      offset,
-      limit
-    }
-    return request(`${API_SERVER}/v1/apy-in-chain`, {
-      params,
-    });
-  } catch (error) {
-    return {
-      content: []
-    }
-  }
-}
-
 export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
   try {
     const nextParams = {
@@ -47,13 +30,13 @@ export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
  * @returns
  */
 export const getReports = (params, offset = 0, limit = 20) => {
+  const { chainId, vaultAddress } = params
   const nextParams = {
     sort: 'gene_time desc',
     offset,
     limit,
-    ...params,
   }
-  return request(`${API_SERVER}/allocation`, {
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation`, {
     params: nextParams,
   });
 }
@@ -65,12 +48,12 @@ export const getReports = (params, offset = 0, limit = 20) => {
  * @param {number} limit
  * @returns
  */
-export const getStrategyDetails = (chainId, offset = 0, limit = 20) => {
+export const getStrategyDetails = (chainId, vaultAddress, offset = 0, limit = 20) => {
   const nextParams = {
     offset,
     limit,
   }
-  return request(`${API_SERVER}/strategy/detail/list/${chainId}`, {
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/detail/list`, {
     params: nextParams,
   });
 }
@@ -83,13 +66,13 @@ export const getStrategyDetails = (chainId, offset = 0, limit = 20) => {
  * @returns
  */
 export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
-  const nextParams = {
-    offset,
-    limit,
-    ...params
-  }
-  return request(`${API_SERVER}/weeklyApy`, {
-    params: nextParams,
+  const { chainId, vaultAddress, ...restParams } = params
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/weeklyApy`, {
+    params: {
+      offset,
+      limit,
+      restParams
+    },
   });
 }
 
@@ -98,9 +81,9 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
  * @param {*} reportId
  * @returns
  */
-export const updateReportStatus = (reportId, isReject, headers) => {
+export const updateReportStatus = (chainId, vaultAddress, reportId, isReject, headers) => {
   if (isNil(reportId)) return
-  return request(`${API_SERVER}/allocation/${reportId}/${isReject}`, {
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${reportId}/${isReject}`, {
     method: 'patch',
     headers
   });
@@ -108,15 +91,15 @@ export const updateReportStatus = (reportId, isReject, headers) => {
 
 export const getStrategyDetailsReports = ({
   strategyName,
+  vaultAddress,
   chainId,
   limit = 10,
   offset = 0,
   sort = 'fetch_timestamp desc'
 }) => {
-  return request(`${API_SERVER}/strategy/assets`, {
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/assets`, {
     params: {
       strategyName,
-      chainId,
       limit,
       offset,
       sort

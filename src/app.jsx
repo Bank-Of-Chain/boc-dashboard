@@ -1,5 +1,5 @@
 import { PageLoading } from '@ant-design/pro-layout';
-import { history, Link } from 'umi';
+import { history } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 
@@ -7,7 +7,8 @@ import Footer from '@/components/Footer';
 import { ETH, MATIC } from './constants/chain';
 import { VAULT_TYPE } from '@/constants/vault';
 
-const isDev = process.env.NODE_ENV === 'development';
+import { getVaultConfig } from '@/utils/vault';
+
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
   loading: <PageLoading />,
@@ -41,7 +42,8 @@ export const layout = ({ initialState, setInitialState }) => {
       if (vault === VAULT_TYPE.ETHi) {
         nextChainId = ETH.id
       }
-      setInitialState({ chain: nextChainId, vault: vault || VAULT_TYPE.USDi })
+      const nextVault = vault || VAULT_TYPE.USDi
+      setInitialState({ chain: nextChainId, vault: nextVault, ...getVaultConfig(nextChainId, nextVault) })
     },
     links: [],
     menuHeaderRender: undefined,
