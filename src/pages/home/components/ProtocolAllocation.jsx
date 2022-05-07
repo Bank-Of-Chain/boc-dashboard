@@ -10,7 +10,8 @@ export default function ProtocolAllocation({
   loading = false,
   tokenDecimals,
   strategyMap = {},
-  vault = {}
+  vault = {},
+  unit = 'USD'
 }) {
   const deviceType = useDeviceType()
 
@@ -53,6 +54,7 @@ export default function ProtocolAllocation({
               strategyMap={strategyMap}
               tokenDecimals={tokenDecimals}
               visitData={vault || {}}
+              unit={unit}
             />
           </Suspense>
         </Col>
@@ -63,6 +65,7 @@ export default function ProtocolAllocation({
               strategyMap={strategyMap}
               tokenDecimals={tokenDecimals}
               visitData={vault || {}}
+              unit={unit}
             />
           </Suspense>
         </Col>

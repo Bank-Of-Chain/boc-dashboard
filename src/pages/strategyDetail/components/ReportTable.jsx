@@ -5,6 +5,7 @@ import BN from 'bignumber.js'
 
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { getStrategyDetailsReports } from '@/services/api-service'
+import { VAULT_TYPE } from '@/constants/vault'
 
 // === Utils === //
 import moment from 'moment'
@@ -27,6 +28,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     pageSize: 10
   })
   const deviceType = useDeviceType()
+  const isETHi = VAULT_TYPE.ETHi === initialState.vault
 
   const fetch = async () => {
     setTableLoading(true)
@@ -141,6 +143,11 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       ),
     },
   ]
+
+  // ETHi dont have "Reward Asset"
+  if (isETHi) {
+    columns.splice(3, 1)
+  }
 
   const smallCardConfig = {
     cardProps: {

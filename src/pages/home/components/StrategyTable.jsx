@@ -16,7 +16,7 @@ import { getStrategyDetails } from '@/services/api-service'
 
 import styles from '../style.less'
 
-const StrategyTable = ({ loading, strategyMap }) => {
+const StrategyTable = ({ loading, strategyMap, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
@@ -65,7 +65,7 @@ const StrategyTable = ({ loading, strategyMap }) => {
       render: text => <CoinSuperPosition array={text} />,
     },
     {
-      title: 'Asset (USD)',
+      title: `Asset (${unit})`,
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       showSorterTooltip: false,

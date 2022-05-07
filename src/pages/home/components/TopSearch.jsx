@@ -15,7 +15,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // 列表中的平台图标，直接使用透明背景即可
 const withoutBackgroundColor = ['Vault']
 
-const TopSearch = ({ tokenDecimals, strategyMap , visitData = {} }) => {
+const TopSearch = ({ tokenDecimals, strategyMap , visitData = {}, unit }) => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
@@ -81,7 +81,7 @@ const TopSearch = ({ tokenDecimals, strategyMap , visitData = {} }) => {
       ),
     },
     {
-      title: 'Asset (USD)',
+      title: `Asset (${unit})`,
       dataIndex: 'amount',
       key: 'amount',
       showSorterTooltip: false,

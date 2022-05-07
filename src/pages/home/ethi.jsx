@@ -24,7 +24,7 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE } from '@/constants/ethi'
-import { map, reverse } from 'lodash'
+import { map, reverse, cloneDeep } from 'lodash'
 import { appendDate } from "@/utils/array-append"
 
 const ETHiHome = () => {
@@ -109,6 +109,12 @@ const ETHiHome = () => {
     loading,
   }]
 
+  const vault = cloneDeep(dataSource.vault)
+  if (vault) {
+    vault.totalValue = vault.totalAssets
+    vault.strategies.map(item => item.totalValue = item.debtRecordInVault)
+  }
+
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -128,12 +134,13 @@ const ETHiHome = () => {
           loading={loading}
           strategyMap={ETHI_STRATEGIES_MAP}
           tokenDecimals={ETHI_BN_DECIMALS}
-          vault={dataSource.vault}
+          vault={vault}
+          unit="ETH"
         />
       </Suspense>
 
       <Suspense fallback={null}>
-        <StrategyTable strategyMap={ETHI_STRATEGIES_MAP} loading={loading} />
+        <StrategyTable strategyMap={ETHI_STRATEGIES_MAP} loading={loading} unit="ETH" />
       </Suspense>
       <Suspense fallback={null}>
         <TransationsTable token="ETHi" decimals={ETHI_DECIMALS} filterOptions={RECENT_ACTIVITY_TYPE} loading={loading} />

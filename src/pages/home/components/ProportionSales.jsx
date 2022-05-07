@@ -11,11 +11,11 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import styles from '../style.less'
 
-const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
+const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {}, unit }) => {
   const { strategies = [], totalValue } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
-  const suffix = ' (USD)'
+  const suffix = ` (${unit})`
 
   if (!initialState.chain) return null
 

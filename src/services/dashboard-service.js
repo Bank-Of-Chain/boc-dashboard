@@ -3,9 +3,9 @@ import { gql } from '@apollo/client';
 import { isEmpty } from 'lodash';
 import { VAULT_TYPE } from '@/constants/vault'
 
-const getDashboardDetailQuery = (token) => `
+const USDI_DASHBOARD_DETAIL_QUERY = `
 query ($tokenAddress: Bytes, $valutAddress: Bytes) {
-  ${token}(id: $tokenAddress) {
+  usdi(id: $tokenAddress) {
     tokenInfo {
       decimals
     }
@@ -23,8 +23,26 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes) {
   }
 }
 `;
-const USDI_DASHBOARD_DETAIL_QUERY = getDashboardDetailQuery('usdi')
-const ETHI_DASHBOARD_DETAIL_QUERY = getDashboardDetailQuery('ethi')
+const ETHI_DASHBOARD_DETAIL_QUERY = `
+query ($tokenAddress: Bytes, $valutAddress: Bytes) {
+  ethi(id: $tokenAddress) {
+    tokenInfo {
+      decimals
+    }
+    totalSupply
+    holderCount
+  }
+  vault(id: $valutAddress) {
+    id
+    totalAssets
+    strategies(where: {isAdded: true}) {
+      id
+      protocol
+      debtRecordInVault
+    }
+  }
+}
+`;
 
 export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutAddress = '') => {
   const client = getClient(vault, chain)
@@ -44,36 +62,6 @@ export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutA
     }
   });
   return data
-};
-
-const STRATEGY_DETAIL_QUERY = `
-query($strategyAddress: Bytes) {
-  strategy(id: $strategyAddress) {
-    id
-    name
-    protocol
-    positionDetail {
-      token {
-        id
-        symbol
-      }
-    }
-    isAdded
-    totalValue
-  }
-}
-`;
-export const getStrategyById = async (vault, chain, strategyAddress) => {
-  const client = getClient(vault, chain)
-  if (isEmpty(client)) return
-  return await client
-    .query({
-      query: gql(STRATEGY_DETAIL_QUERY),
-      variables: {
-        strategyAddress,
-      },
-    })
-    .then((data) => data.data.strategy);
 };
 
 const getRecentActivityQuery = (entity, type) => `
