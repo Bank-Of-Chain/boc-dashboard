@@ -3,23 +3,19 @@ import React from 'react'
 import styles from '../style.less'
 import { useModel } from 'umi'
 
-// === Constants === //
-import STRATEGIES_MAP from '@/constants/strategies'
-
 // === Utils === //
 import groupBy from 'lodash/groupBy'
 import reduce from 'lodash/reduce'
 import filter from 'lodash/filter'
 import { mapValues, values } from 'lodash'
 import { toFixed } from '@/utils/number-format'
-import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import BN from 'bignumber.js'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // 列表中的平台图标，直接使用透明背景即可
 const withoutBackgroundColor = ['Vault']
 
-const TopSearch = ({ loading, visitData = {} }) => {
+const TopSearch = ({ tokenDecimals, strategyMap , visitData = {} }) => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
@@ -51,7 +47,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
           BN(0),
         )
         return {
-          name: STRATEGIES_MAP[initialState.chain][key],
+          name: strategyMap[initialState.chain][key],
           amount,
           percent: amount.div(totalValue),
         }
@@ -92,7 +88,7 @@ const TopSearch = ({ loading, visitData = {} }) => {
       sorter: (a, b) => {
         return a.amount.minus(b.amount)
       },
-      render: text => toFixed(text.toString(), USDI_BN_DECIMALS, 2),
+      render: text => toFixed(text.toString(), tokenDecimals, 2),
     },
     {
       title: 'Asset Ratio',

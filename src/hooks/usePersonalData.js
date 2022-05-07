@@ -17,6 +17,7 @@ import * as ethers from "ethers";
 import useUserProvider from '@/hooks/useUserProvider'
 import {toFixed} from '@/utils/number-format'
 import { USDI_BN_DECIMALS } from "@/constants/usdi"
+import { APY_DURATION } from "@/constants/api"
 
 const { BigNumber } = ethers
 
@@ -36,32 +37,42 @@ const ABI = [{
   "type": "function"
 }]
 
-const dataMerge = (account, chain, requests) => {
+const dataMerge = (account, chain, tokenType, requests) => {
   if(isEmpty(account)) return Promise.resolve({})
 
+  const params = {
+    chainId: chain,
+    tokenType
+  }
   // 当前天的字符串，按0时区算
   const date = moment().subtract(1, 'days').utc(0).format('yyyy-MM-DD')
   return Promise.all([
     // 获取7日apy数值
-    getAccountApyByAddress(chain, account, date, 'weekly'),
+    getAccountApyByAddress(account, date, {
+      duration: APY_DURATION.weekly,
+      ...params
+    }),
     // 获取30日apy数值
-    getAccountApyByAddress(chain, account, date, 'monthly'),
+    getAccountApyByAddress(account, date, {
+      duration: APY_DURATION.monthly,
+      ...params
+    }),
     // 获取tvl数据
-    getPersonTvlArray(chain, account),
+    getPersonTvlArray(account, params),
     // 获取月度盈利数据
-    getMonthProfits(chain, account),
-    getProfits(chain, account),
+    getMonthProfits(account, params),
+    getProfits(account, params),
     ...requests
   ])
     .then((rs) => {
       const [
-          day7Apy,
-          day30Apy,
-          tvls,
-          monthProfits,
-          profit,
-          balanceOfUsdi,
-        ] = rs;
+        day7Apy,
+        day30Apy,
+        tvls,
+        monthProfits,
+        profit,
+        balanceOfToken,
+      ] = rs;
 
       const monthProfitsData = []
       for (let i = 0; i < 12; i++) {
@@ -79,7 +90,7 @@ const dataMerge = (account, chain, requests) => {
         monthProfits: reverse(monthProfitsData),
         realizedProfit: profit.realizedProfit,
         unrealizedProfit: profit.unrealizedProfit,
-        balanceOfUsdi
+        balanceOfToken
       };
 
       return nextData;
@@ -90,7 +101,7 @@ const dataMerge = (account, chain, requests) => {
     });
 }
 
-export default function usePersonalData() {
+export default function usePersonalData(tokenType) {
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(false)
   const {
@@ -105,11 +116,10 @@ export default function usePersonalData() {
     setLoading(true)
     const requests = []
     if (!isEmpty(userProvider) && initialState?.address) {
-      const usdiAddress = USDI_ADDRESS[initialState?.chain]
-      const usdiContract = new ethers.Contract(usdiAddress, ABI, userProvider)
-      requests.push(usdiContract.balanceOf(initialState?.address).catch(() => BigNumber.from(0)))
+      const tokenContract = new ethers.Contract(initialState.tokenAddress, ABI, userProvider)
+      requests.push(tokenContract.balanceOf(initialState?.address).catch(() => BigNumber.from(0)))
     }
-    dataMerge(initialState?.address?.toLowerCase(), initialState?.chain, requests).then(r => {
+    dataMerge(initialState?.address?.toLowerCase(), initialState?.chain, tokenType, requests).then(r => {
       setData(r)
       setLoading(false)
     }).finally(() => setLoading(false))

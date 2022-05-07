@@ -87,25 +87,38 @@ export default defineConfig({
     API_SERVER: 'https://service.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard.bankofchain.io',
     IMAGE_ROOT: 'https://web.bankofchain.io',
-    SUB_GRAPH_URL: {
-      1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
-      56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
-      137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-matic',
-    },
     CHAIN_BROWSER_URL: {
       1: 'https://etherscan.io',
       56: 'https://bscscan.com',
       137: 'https://polygonscan.com',
     },
-    VAULT_ADDRESS: {
-      1: '0x008586B7f6768EDc269D9e5cd276316d33CECE6d',
-      56: '0x699F86dd50224544E6c23670Af44682CAe9db3c5',
-      137: '0xFB7f340A7DEfD3bB0072844db6D5EbdFAD765dea'
+    USDI: {
+      SUB_GRAPH_URL: {
+        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
+        56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
+        137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-matic',
+      },
+      USDI_VAULT_ADDRESS: {
+        1: '0x008586B7f6768EDc269D9e5cd276316d33CECE6d',
+        56: '0x699F86dd50224544E6c23670Af44682CAe9db3c5',
+        137: '0xFB7f340A7DEfD3bB0072844db6D5EbdFAD765dea'
+      },
+      USDI_ADDRESS:{
+        1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
+        56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
+        137: '0xe47F0396CfCB8134A791246924171950f1a83053'
+      },
     },
-    USDI_ADDRESS:{
-      1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
-      56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
-      137: '0xe47F0396CfCB8134A791246924171950f1a83053'
-    },
+    ETHI: {
+      SUB_GRAPH_URL: {
+        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
+      },
+      VAULT_ADDRESS: {
+        1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+      },
+      ETHI_ADDRESS: {
+        1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+      }
+    }
   },
 });
