@@ -21,6 +21,7 @@ const MATIC = {
   blockExplorer: "https://explorer-mainnet.maticvigil.com/",
 }
 // const CHAINS = [ETH, BSC, MATIC]
+
 const CHAINS = [ETH, BSC, MATIC]
 
 export const CHIANS_NAME = {
