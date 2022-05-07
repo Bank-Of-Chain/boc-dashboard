@@ -39,7 +39,8 @@ const MATIC_STRATEGIES_MAP = [
   'Quickswap',
   'Sushi',
   'Synapse',
-  'Dodo'
+  'Dodo',
+  'Stargate'
 ]
 const STRATEGIES_MAP = {
   1: ETH_STRATEGIES_MAP,
