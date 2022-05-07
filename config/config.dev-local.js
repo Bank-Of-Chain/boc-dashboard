@@ -16,7 +16,7 @@ export default defineConfig({
   define:{
     ENV_INDEX: 'dev',
     // API_SERVER: 'http://192.168.75.50/server',
-    API_SERVER: 'http://192.168.75.33:8080',
+    API_SERVER: 'http://192.168.75.32:8080',
     DASHBOARD_ROOT: '.',
     IMAGE_ROOT:'http://192.168.75.50',
     USDI: {
@@ -41,10 +41,10 @@ export default defineConfig({
         1: 'http://192.168.75.33:8000/subgraphs/name/boc-v1_5/subgraph-ethi',
       },
       VAULT_ADDRESS: {
-        1: '0xeF31027350Be2c7439C1b0BE022d49421488b72C',
+        1: '0x63fea6E447F120B8Faf85B53cdaD8348e645D80E',
       },
       ETHI_ADDRESS: {
-        1: '0x63fea6E447F120B8Faf85B53cdaD8348e645D80E',
+        1: '0x38A70c040CA5F5439ad52d0e821063b0EC0B52b6',
       }
     }
   }

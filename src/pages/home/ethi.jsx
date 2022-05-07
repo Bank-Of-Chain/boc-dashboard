@@ -63,7 +63,7 @@ const ETHiHome = () => {
         date,
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
-      setApy30(data[0] ? data[0].apy : 0)
+      setApy30(data.content[0] ? data.content[0].apy : 0)
       setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
     }).catch((e) => {
       console.error(e)

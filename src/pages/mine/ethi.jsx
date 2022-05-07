@@ -1,10 +1,6 @@
 import React, { Suspense } from 'react'
 import {useModel} from 'umi'
-import { Skeleton } from 'antd'
 import numeral from 'numeral'
-
-import * as ethers from "ethers";
-const { BigNumber } = ethers
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -51,11 +47,8 @@ const Personal = () => {
   } = dataSource
 
   const renderEstimate = (value) => {
-    if (!value) {
+    if (!value || priceLoading) {
       return null
-    }
-    if (priceLoading) {
-      return <Skeleton title={false} paragraph={{ rows: 1 }} />
     }
     return usdPrice ? `≈$${toFixed(usdPrice.mul(value), ETHI_BN_DECIMALS, 2)}` : ''
   }
