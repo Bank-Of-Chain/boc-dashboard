@@ -16,8 +16,8 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
-const IntroduceRow = ({ loading, visitData = {} }) => {
-  const { apy30, usdi = {} } = visitData;
+const IntroduceRow = ({ loading, apy30, visitData = {} }) => {
+  const { usdi = {} } = visitData;
 
   return (
     <Row gutter={[24, 24]}>

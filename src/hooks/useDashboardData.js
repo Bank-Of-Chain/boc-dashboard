@@ -16,19 +16,11 @@ const dataMerge = (chain) => {
     return Promise.reject(new Error('usdi地址或vault地址获取失败'))
   return Promise.all([
     getDashboardDetail(usdiAddress, vaultAddress),
-    getValutAPYByDate({
-      date: moment().subtract(1, 'days').utcOffset(0).format('YYYY-MM-DD'),
-      duration: APY_DURATION.monthly,
-      chainId: chain
-    }).catch((error) => {
-      console.log(error)
-    })
   ])
     .then((rs) => {
-      const [dashboardDetail = {}, valutApy = {}] = rs;
+      const [dashboardDetail = {}] = rs;
       return {
         ...dashboardDetail,
-        apy30: valutApy.apy
       };
     })
     .catch((error) => {
