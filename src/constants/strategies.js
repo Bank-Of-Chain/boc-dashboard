@@ -39,7 +39,8 @@ const USDI_MATIC_STRATEGIES_MAP = [
   'Quickswap',
   'Sushi',
   'Synapse',
-  'Dodo'
+  'Dodo',
+  'Stargate'
 ]
 
 const ETHI_ETH_STRATEGIES_MAP = [
