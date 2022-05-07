@@ -23,13 +23,34 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 
 .headerMenu {
+  position: absolute;
+  left: 50%;
+  top: 0;
   min-width: 150px;
   border-bottom: 0;
+  transform: translate(-50%, 0);
+  font-size: 16px;
+
+  :global(.ant-menu-item) {
+    position: relative;
+  }
+
+  :global(.ant-menu-item:first-child:before) {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    height: 18px;
+    width: 1px;
+    margin-top: 2px;
+    transform: translate(0, -50%);
+    background-color: #434343;
+  }
 }
 
 .avatarMenu {
@@ -142,5 +163,18 @@
 
   .chainSelect {
     width: 5rem;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .header {
+    justify-content: space-between;
+  }
+
+  .headerMenu {
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
   }
 }
