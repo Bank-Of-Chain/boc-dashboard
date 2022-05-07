@@ -18,6 +18,9 @@ const MIM_IMAGE = `${IMAGE_ROOT}/images/0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17
 const LUSD_IMAGE = `${IMAGE_ROOT}/images/0x5f98805A4E8be255a32880FDeC7F6728C6568bA0.png`;
 const ETH_IMAGE = `${IMAGE_ROOT}/images/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE.png`;
 const STETH_IMAGE = `${IMAGE_ROOT}/images/0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84.png`;
+const RETH_IMAGE = `${IMAGE_ROOT}/images/0xae78736Cd615f374D3085123A210448E74Fc6393.png`;
+const WSTETH_IMAGE = `${IMAGE_ROOT}/images/0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0.png`;
+const WETH_IMAGE = `${IMAGE_ROOT}/images/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2.png`;
 
 const addressMap = {
   '0x55d398326f99059ff775485246999027b3197955': USDT_IMAGE,
@@ -50,9 +53,11 @@ const addressMap = {
 
   '0x5f98805a4e8be255a32880fdec7f6728c6568ba0': LUSD_IMAGE,
 
+  '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': ETH_IMAGE,
   '0xae7ab96520de3a18e5e111b5eaab095312d7fe84': STETH_IMAGE,
-
-  '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': ETH_IMAGE
+  '0xae78736cd615f374d3085123a210448e74fc6393': RETH_IMAGE,
+  '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0': WSTETH_IMAGE,
+  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': WETH_IMAGE,
 };
 const DEFAULT = '/default.png';
 
