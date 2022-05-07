@@ -19,8 +19,8 @@ import {
   Switch,
 } from 'antd'
 import Address from '@/components/Address'
-import { Desktop, Tablet, Mobile } from '@/components/Container/Container'
 import { FallOutlined, RiseOutlined } from '@ant-design/icons'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Services === //
 import { getReports, updateReportStatus } from '@/services/api-service'
@@ -180,6 +180,7 @@ const Reports = () => {
   const [showIndex, setShowIndex] = useState(-1)
   const { userProvider } = useUserProvider()
   const [isRedUp, setIsRedUp] = useState(true)
+  const deviceType = useDeviceType()
 
   const styleMap = {
     [isRedUp]: styles.danger,
@@ -492,64 +493,74 @@ const Reports = () => {
   const sumOriginalGain = sum(originalGain)
   const sumNewGain = sum(newGain)
   const sumGainVariation = sumNewGain - sumOriginalGain
+
+  const smallConfig = {
+    cardProps: {
+      size: 'small',
+    },
+    tableProps: {
+      size: 'small'
+    }
+  }
+  const listResponsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: smallConfig,
+    [DEVICE_TYPE.Mobile]: smallConfig
+  }[deviceType]
+
+  const detailHeaderResponsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {
+      firstDescProps: {},
+      lastDescProps: {
+        column: 4
+      }
+    },
+    [DEVICE_TYPE.Tablet]: {
+      firstDescProps: {
+        size: 'small',
+        style: {
+          fontSize: '0.7rem'
+        }
+      },
+      lastDescProps: {}
+    },
+    [DEVICE_TYPE.Mobile]: {
+      firstDescProps: {
+        size: 'small',
+        style: {
+          fontSize: '0.7rem'
+        }
+      },
+      lastDescProps: {}
+    }
+  }[deviceType]
+
+  const detailTableResponsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Tablet]: smallConfig,
+    [DEVICE_TYPE.Mobile]: smallConfig
+  }[deviceType]
+
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Desktop>
-          <Card
-            bordered={false}
-            title='Allocation Reports'
-            >
-            <Table
-              rowKey={record => record.id}
-              columns={columns}
-              dataSource={data.list}
-              loading={loading}
-              pagination={{
-                ...pagination,
-                showSizeChanger: false,
-              }}
-            />
-          </Card>
-        </Desktop>
-        <Tablet>
-          <Card
-            bordered={false}
-            title='Allocation Reports'
-            size='small'
-            >
-            <Table
-              rowKey={record => record.id}
-              columns={columns}
-              size='small'
-              dataSource={data.list}
-              loading={loading}
-              pagination={{
-                ...pagination,
-                showSizeChanger: false,
-              }}
-            />
-          </Card>
-        </Tablet>
-        <Mobile>
-          <Card
-            bordered={false}
-            title='Allocation Reports'
-            size='small'
-            >
-            <Table
-              rowKey={record => record.id}
-              columns={columns}
-              size='small'
-              loading={loading}
-              dataSource={data.list}
-              pagination={{
-                ...pagination,
-                showSizeChanger: false,
-              }}
-            />
-          </Card>
-        </Mobile>
+        <Card
+          bordered={false}
+          title='Allocation Reports'
+          {...listResponsiveConfig.cardProps}
+          >
+          <Table
+            rowKey={record => record.id}
+            columns={columns}
+            dataSource={data.list}
+            loading={loading}
+            pagination={{
+              ...pagination,
+              showSizeChanger: false,
+            }}
+            {...listResponsiveConfig.tableProps}
+          />
+        </Card>
       </Suspense>
       <Modal
         title={''}
@@ -561,307 +572,107 @@ const Reports = () => {
       >
         <Row>
           <Col span={24}>
-            <Desktop>
-              <Descriptions
-                title={
-                  <span style={{ color: '#fff' }}>
-                    Report Details
-                    <Switch
-                      style={{ float: 'right', marginRight: '50px' }}
-                      checkedChildren='红升绿降'
-                      unCheckedChildren='绿升红降'
-                      onChange={setIsRedUp}
-                    />
-                  </span>
-                }
-                labelStyle={{ color: '#fff' }}
-                contentStyle={{ color: '#fff' }}
+            <Descriptions
+              title={
+                <span style={{ color: '#fff' }}>
+                  Report Details
+                  <Switch
+                    style={{ float: 'right', marginRight: '50px' }}
+                    checkedChildren='红升绿降'
+                    unCheckedChildren='绿升红降'
+                    onChange={setIsRedUp}
+                  />
+                </span>
+              }
+              size={detailHeaderResponsiveConfig.firstDescProps.size}
+              labelStyle={{ color: '#fff', ...detailHeaderResponsiveConfig.firstDescProps.style }}
+              contentStyle={{ color: '#fff', ...detailHeaderResponsiveConfig.firstDescProps.style }}
+            >
+              <Descriptions.Item
+                label='Recommendation'
+                contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
               >
-                <Descriptions.Item
-                  label='Recommendation'
-                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
-                >
-                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
-                  {isExec === 1 && 'Execute'}
-                </Descriptions.Item>
-                <Descriptions.Item label='Calculation Period'>
-                  {durationDays} days
-                </Descriptions.Item>
-                <Descriptions.Item label='Report Time'>
-                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
-                </Descriptions.Item>
-              </Descriptions>
-              <Divider orientation='left' plain>
-                Before and after
-              </Divider>
-              <Descriptions>
-                <Descriptions.Item label='APR'>
-                  <span className={styleMap[aprVariation > 0]}>
-                    {aprVariation}% {aprVariation !== 0 && iconRender(aprVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='APR Before'>
-                  <span className={styleMap[false]}>{aprBefore}%</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='APR After'>
-                  <span className={styleMap[true]}>{aprAfter}%</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits'>
-                  <span className={styleMap[sumGainVariation > 0]}>
-                    {sumGainVariation.toFixed(6)}{' '}
-                    {sumGainVariation !== 0 && iconRender(sumGainVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits Before'>
-                  <span className={styleMap[false]}>{sumOriginalGain.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits After'>
-                  <span className={styleMap[true]}>{sumNewGain.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee'>
-                  <span className={styleMap[sumHarvestFeeVariation > 0]}>
-                    {sumHarvestFeeVariation.toFixed(6)}{' '}
-                    {sumHarvestFeeVariation !== 0 && iconRender(sumHarvestFeeVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Before'>
-                  <span className={styleMap[false]}>{sumOriginalHarvestFee.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee After'>
-                  <span className={styleMap[true]}>{sumHarvestFee.toFixed(6)}</span>
-                </Descriptions.Item>
-              </Descriptions>
-              <Divider orientation='left' plain>
-                Profit
-              </Divider>
-              <Descriptions column={4}>
-                <Descriptions.Item label='Allocation Profit'>
-                  {(-1 * fun).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Operate Gas Fee'>
-                  {sum(operateFee).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Exchange Loss'>
-                  {sum(exchangeLoss).toFixed(6)}
-                </Descriptions.Item>
-              </Descriptions>
-            </Desktop>
-            <Tablet>
-              <Descriptions
-                size='small'
-                title={
-                  <span style={{ color: '#fff' }}>
-                    Report Details
-                    <Switch
-                      style={{ float: 'right', marginRight: '50px' }}
-                      checkedChildren='红升绿降'
-                      unCheckedChildren='绿升红降'
-                      onChange={setIsRedUp}
-                    />
-                  </span>
-                }
-                labelStyle={{ color: '#fff', fontSize: '0.7rem' }}
-                contentStyle={{ color: '#fff', fontSize: '0.7rem' }}
-              >
-                <Descriptions.Item
-                  label='Recommendation'
-                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
-                >
-                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
-                  {isExec === 1 && 'Execute'}
-                </Descriptions.Item>
-                <Descriptions.Item label='Calculation Period'>
-                  {durationDays} days
-                </Descriptions.Item>
-                <Descriptions.Item label='Report Time'>
-                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
-                </Descriptions.Item>
-              </Descriptions>
-              <Divider orientation='left' plain>
-                Before and after
-              </Divider>
-              <Descriptions>
-                <Descriptions.Item label='APR'>
-                  <span className={styleMap[aprVariation > 0]}>
-                    {aprVariation}% {aprVariation !== 0 && iconRender(aprVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='APR Before'>
-                  <span className={styleMap[false]}>{aprBefore}%</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='APR After'>
-                  <span className={styleMap[true]}>{aprAfter}%</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits'>
-                  <span className={styleMap[sumGainVariation > 0]}>
-                    {sumGainVariation.toFixed(6)}{' '}
-                    {sumGainVariation !== 0 && iconRender(sumGainVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits Before'>
-                  <span className={styleMap[false]}>{sumOriginalGain.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits After'>
-                  <span className={styleMap[true]}>{sumNewGain.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee'>
-                  <span className={styleMap[sumHarvestFeeVariation > 0]}>
-                    {sumHarvestFeeVariation.toFixed(6)}{' '}
-                    {sumHarvestFeeVariation !== 0 && iconRender(sumHarvestFeeVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Before'>
-                  <span className={styleMap[false]}>{sumOriginalHarvestFee.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee After'>
-                  <span className={styleMap[true]}>{sumHarvestFee.toFixed(6)}</span>
-                </Descriptions.Item>
-              </Descriptions>
-              <Divider orientation='left' plain>
-                Profit
-              </Divider>
-              <Descriptions>
-                <Descriptions.Item label='Allocation Profit'>
-                  {(-1 * fun).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Operate Gas Fee'>
-                  {sum(operateFee).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Exchange Loss'>
-                  {sum(exchangeLoss).toFixed(6)}
-                </Descriptions.Item>
-              </Descriptions>
-            </Tablet>
-            <Mobile>
-              <Descriptions
-                size='small'
-                title={
-                  <span style={{ color: '#fff' }}>
-                    Report Details
-                    <Switch
-                      style={{ float: 'right', marginRight: '50px' }}
-                      checkedChildren='红升绿降'
-                      unCheckedChildren='绿升红降'
-                      onChange={setIsRedUp}
-                    />
-                  </span>
-                }
-                labelStyle={{ color: '#fff' }}
-                contentStyle={{ color: '#fff' }}
-              >
-                <Descriptions.Item
-                  label='Recommendation'
-                  contentStyle={{ color: isExec === 1 ? 'green' : 'red', fontWeight: 'bold' }}
-                >
-                  {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
-                  {isExec === 1 && 'Execute'}
-                </Descriptions.Item>
-                <Descriptions.Item label='Calculation Period'>
-                  {durationDays} days
-                </Descriptions.Item>
-                <Descriptions.Item label='Report Time'>
-                  {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
-                </Descriptions.Item>
-              </Descriptions>
-              <Divider orientation='left' plain>
-                Before and after
-              </Divider>
-              <Descriptions>
-                <Descriptions.Item label='APR'>
-                  <span className={styleMap[aprVariation > 0]}>
-                    {aprVariation}% {aprVariation !== 0 && iconRender(aprVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='APR Before'>
-                  <span className={styleMap[false]}>{aprBefore}%</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='APR After'>
-                  <span className={styleMap[true]}>{aprAfter}%</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits'>
-                  <span className={styleMap[sumGainVariation > 0]}>
-                    {sumGainVariation.toFixed(6)}{' '}
-                    {sumGainVariation !== 0 && iconRender(sumGainVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits Before'>
-                  <span className={styleMap[false]}>{sumOriginalGain.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Profits After'>
-                  <span className={styleMap[true]}>{sumNewGain.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee'>
-                  <span className={styleMap[sumHarvestFeeVariation > 0]}>
-                    {sumHarvestFeeVariation.toFixed(6)}{' '}
-                    {sumHarvestFeeVariation !== 0 && iconRender(sumHarvestFeeVariation > 0)}
-                  </span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee Before'>
-                  <span className={styleMap[false]}>{sumOriginalHarvestFee.toFixed(6)}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label='Harvest Fee After'>
-                  <span className={styleMap[true]}>{sumHarvestFee.toFixed(6)}</span>
-                </Descriptions.Item>
-              </Descriptions>
-              <Divider orientation='left' plain>
-                Profit
-              </Divider>
-              <Descriptions>
-                <Descriptions.Item label='Allocation Profit'>
-                  {(-1 * fun).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Allocation Cost'>
-                  {sum(operateLoss).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Operate Gas Fee'>
-                  {sum(operateFee).toFixed(6)}
-                </Descriptions.Item>
-                <Descriptions.Item label='Exchange Loss'>
-                  {sum(exchangeLoss).toFixed(6)}
-                </Descriptions.Item>
-              </Descriptions>
-            </Mobile>
+                {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
+                {isExec === 1 && 'Execute'}
+              </Descriptions.Item>
+              <Descriptions.Item label='Calculation Period'>
+                {durationDays} days
+              </Descriptions.Item>
+              <Descriptions.Item label='Report Time'>
+                {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
+              </Descriptions.Item>
+            </Descriptions>
+            <Divider orientation='left' plain>
+              Before and after
+            </Divider>
+            <Descriptions>
+              <Descriptions.Item label='APR'>
+                <span className={styleMap[aprVariation > 0]}>
+                  {aprVariation}% {aprVariation !== 0 && iconRender(aprVariation > 0)}
+                </span>
+              </Descriptions.Item>
+              <Descriptions.Item label='APR Before'>
+                <span className={styleMap[false]}>{aprBefore}%</span>
+              </Descriptions.Item>
+              <Descriptions.Item label='APR After'>
+                <span className={styleMap[true]}>{aprAfter}%</span>
+              </Descriptions.Item>
+              <Descriptions.Item label='Profits'>
+                <span className={styleMap[sumGainVariation > 0]}>
+                  {sumGainVariation.toFixed(6)}{' '}
+                  {sumGainVariation !== 0 && iconRender(sumGainVariation > 0)}
+                </span>
+              </Descriptions.Item>
+              <Descriptions.Item label='Profits Before'>
+                <span className={styleMap[false]}>{sumOriginalGain.toFixed(6)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label='Profits After'>
+                <span className={styleMap[true]}>{sumNewGain.toFixed(6)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label='Harvest Fee'>
+                <span className={styleMap[sumHarvestFeeVariation > 0]}>
+                  {sumHarvestFeeVariation.toFixed(6)}{' '}
+                  {sumHarvestFeeVariation !== 0 && iconRender(sumHarvestFeeVariation > 0)}
+                </span>
+              </Descriptions.Item>
+              <Descriptions.Item label='Harvest Fee Before'>
+                <span className={styleMap[false]}>{sumOriginalHarvestFee.toFixed(6)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label='Harvest Fee After'>
+                <span className={styleMap[true]}>{sumHarvestFee.toFixed(6)}</span>
+              </Descriptions.Item>
+            </Descriptions>
+            <Divider orientation='left' plain>
+              Profit
+            </Divider>
+            <Descriptions {...detailHeaderResponsiveConfig.lastDescProps}>
+              <Descriptions.Item label='Allocation Profit'>
+                {(-1 * fun).toFixed(6)}
+              </Descriptions.Item>
+              <Descriptions.Item label='Allocation Cost'>
+                {sum(operateLoss).toFixed(6)}
+              </Descriptions.Item>
+              <Descriptions.Item label='Operate Gas Fee'>
+                {sum(operateFee).toFixed(6)}
+              </Descriptions.Item>
+              <Descriptions.Item label='Exchange Loss'>
+                {sum(exchangeLoss).toFixed(6)}
+              </Descriptions.Item>
+            </Descriptions>
           </Col>
 
           <Col span={24}>
             <Divider orientation='left' plain>
               Details
             </Divider>
-            <Desktop>
-              <Table
-                bordered
-                columns={detailsColumns}
-                dataSource={displayData}
-                scroll={{ x: 1400, y: 400 }}
-                pagination={false}
-              />
-            </Desktop>
-            <Tablet>
-              <Table
-                bordered
-                size='small'
-                columns={detailsColumns}
-                dataSource={displayData}
-                scroll={{ x: 1400, y: 400 }}
-                pagination={false}
-              />
-            </Tablet>
-            <Mobile>
-              <Table
-                bordered
-                size='small'
-                columns={detailsColumns}
-                dataSource={displayData}
-                scroll={{ x: 1400, y: 400 }}
-                pagination={false}
-              />
-            </Mobile>
+            <Table
+              bordered
+              columns={detailsColumns}
+              dataSource={displayData}
+              scroll={{ x: 1400, y: 400 }}
+              pagination={false}
+              {...detailTableResponsiveConfig.tableProps}
+            />
           </Col>
         </Row>
       </Modal>
