@@ -150,8 +150,8 @@ const GlobalHeaderRight = () => {
           selectedKeys={[current]}
           mode="horizontal"
         >
-          <Menu.Item key="usdi">USDi</Menu.Item>
           <Menu.Item key="ethi">ETHi</Menu.Item>
+          <Menu.Item key="usdi">USDi</Menu.Item>
         </Menu>
       ) : <span/>}
       <Space className={className}>
