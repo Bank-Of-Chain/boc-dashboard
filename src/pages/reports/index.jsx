@@ -286,32 +286,22 @@ const Reports = () => {
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
-    // 生产环境下
-    if (isProEnv(ENV_INDEX)) {
-      // 链不一致，必须提示
-      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
-        setShowWarningModal(true)
-      } else {
+    // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
+    if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
+      if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
         setShowWarningModal(false)
+        return
       }
-    } else {
-      // 非生产环境下
-      if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
-        // 链如果等于31337
-        if (isEqual(walletChainId, '31337')) {
-          if (roleError) {
-            setShowWarningModal(true)
-          } else {
-            setShowWarningModal(false)
-          }
-        } else {
-          setShowWarningModal(true)
-        }
-      } else {
-        setShowWarningModal(false)
-      }
+      setShowWarningModal(true)
     }
-  }, [initialState, roleError])
+  }, [initialState])
+
+  useEffect(() => {
+    // 加载异常，一定弹窗, 角色会在切换 token 后重新获取
+    if (roleError) {
+      setShowWarningModal(true)
+    }
+  }, [roleError])
 
   if (!data) {
     return <div>loading...</div>

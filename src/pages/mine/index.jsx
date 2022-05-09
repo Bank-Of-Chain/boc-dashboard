@@ -20,11 +20,6 @@ export default function Home() {
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
-    // 加载异常，一定弹窗
-    if (roleError) {
-        setShowWarningModal(true)
-        return
-    }
     // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
     if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
       if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
@@ -33,7 +28,14 @@ export default function Home() {
       }
       setShowWarningModal(true)
     }
-  }, [initialState, roleError])
+  }, [initialState])
+
+  useEffect(() => {
+    // 加载异常，一定弹窗
+    if (roleError) {
+      setShowWarningModal(true)
+    }
+  }, [roleError])
 
   const changeNetwork = async id => {
     const targetNetwork = find(CHAINS, { id })
