@@ -14,6 +14,7 @@ import MonthProfit from './components/MonthProfit'
 import _min from 'lodash/min'
 import _max from 'lodash/max'
 import map from 'lodash/map'
+import isString from 'lodash/isString'
 import { toFixed } from '@/utils/number-format'
 import { isProEnv } from "@/services/env-service"
 import { ETHI_BN_DECIMALS } from "@/constants/ethi"
@@ -50,7 +51,14 @@ const Personal = () => {
     if (!value || priceLoading) {
       return null
     }
-    return usdPrice ? `≈$${toFixed(usdPrice.mul(value), ETHI_BN_DECIMALS, 2)}` : ''
+    let displayValue = value
+    let sign = ''
+    if (isString(value)) {
+      const isNegative = value.indexOf('-') === 0
+      sign = isNegative ? '-' : ''
+      displayValue = value.substring(1)
+    }
+    return usdPrice ? `≈${sign}$${toFixed(usdPrice.mul(displayValue), ETHI_BN_DECIMALS, 2)}` : ''
   }
 
   const introduceData = [{

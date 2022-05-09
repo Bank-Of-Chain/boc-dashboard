@@ -13,7 +13,7 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 import ETHi from './ethi'
 import USDi from './usdi'
 
-export default function Home() {
+export default function Mine() {
   const { initialState } = useModel('@@initialState')
   const [showWarningModal, setShowWarningModal] = useState(false)
   const { error: roleError } = useAdminRole(initialState.address)
