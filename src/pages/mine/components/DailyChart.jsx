@@ -27,7 +27,6 @@ export default function DailyChart({
     tvls,
     'balance',
     'USDi',
-    true,
     {
       format: 'MM-DD',
       dataZoom: [{

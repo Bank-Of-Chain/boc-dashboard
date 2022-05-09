@@ -64,7 +64,10 @@ const USDiHome = () => {
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
       setApy30(data[0] ? data[0].apy : 0)
-      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
+      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', {
+        ...params,
+        needMinMax: false
+      }))
     }).catch((e) => {
       console.error(e)
     })
@@ -78,7 +81,11 @@ const USDiHome = () => {
         date,
         totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, 2),
       }))
-      setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', false, params))
+      setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', {
+        ...params,
+        yAxisMin: (value) => Math.floor(value.min * 0.998),
+        yAxisMax: (value) => Math.ceil(value.max * 1.001),
+      }))
     }).catch((e) => {
       console.error(e)
     })
