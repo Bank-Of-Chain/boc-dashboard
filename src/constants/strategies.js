@@ -45,7 +45,7 @@ const USDI_MATIC_STRATEGIES_MAP = [
 
 const ETHI_ETH_STRATEGIES_MAP = [
   'Balancer',
-  'UniswapV2',
+  'UniswapV2'
 ]
 
 export const USDI_STRATEGIES_MAP = {
