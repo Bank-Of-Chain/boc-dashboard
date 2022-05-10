@@ -16,6 +16,8 @@ const USDP_IMAGE = `${IMAGE_ROOT}/images/0x8E870D67F660D95d5be530380D0eC0bd38828
 const BUSD_IMAGE = `${IMAGE_ROOT}/images/0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56.png`;
 const MIM_IMAGE = `${IMAGE_ROOT}/images/0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3.png`;
 const LUSD_IMAGE = `${IMAGE_ROOT}/images/0x5f98805A4E8be255a32880FDeC7F6728C6568bA0.png`;
+const ETH_IMAGE = `${IMAGE_ROOT}/images/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE.png`;
+const STETH_IMAGE = `${IMAGE_ROOT}/images/0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84.png`;
 
 const addressMap = {
   '0x55d398326f99059ff775485246999027b3197955': USDT_IMAGE,
@@ -47,6 +49,10 @@ const addressMap = {
   '0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3': MIM_IMAGE,
 
   '0x5f98805a4e8be255a32880fdec7f6728c6568ba0': LUSD_IMAGE,
+
+  '0xae7ab96520de3a18e5e111b5eaab095312d7fe84': STETH_IMAGE,
+
+  '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': ETH_IMAGE
 };
 const DEFAULT = '/default.png';
 

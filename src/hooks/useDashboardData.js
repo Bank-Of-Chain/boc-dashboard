@@ -1,28 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useModel } from 'umi';
-import moment from 'moment'
 import { getDashboardDetail } from '@/services/dashboard-service';
-import { getValutAPYByDate } from '@/services/api-service';
-import { APY_DURATION } from '@/constants/api'
 
 // === Utils === //
-import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
-const dataMerge = (chain) => {
-  const usdiAddress = get(USDI_ADDRESS, chain, '')
-  const vaultAddress = get(VAULT_ADDRESS, chain, '')
-  if(isEmpty(usdiAddress) || isEmpty(vaultAddress))
-    return Promise.reject(new Error('usdi地址或vault地址获取失败'))
-  return Promise.all([
-    getDashboardDetail(usdiAddress, vaultAddress),
-  ])
-    .then((rs) => {
-      const [dashboardDetail = {}] = rs;
-      return {
-        ...dashboardDetail,
-      };
-    })
+const dataMerge = (initialState) => {
+  const { vault, chain, vaultAddress, tokenAddress } = initialState
+  if(isEmpty(tokenAddress) || isEmpty(vaultAddress)) {
+    return Promise.reject(new Error('token地址或vault地址获取失败'))
+  }
+  return getDashboardDetail(vault, chain, tokenAddress, vaultAddress)
     .catch((error) => {
       console.error('DashBoard数据初始化失败', error);
       return {}
@@ -39,13 +27,13 @@ export default function useDashboardData() {
   useEffect(() => {
     if (initialState?.chain) {
       setLoading(true)
-      dataMerge(initialState.chain)
+      dataMerge(initialState)
         .then(setData)
         .finally(() => {
           setLoading(false)
         })
     }
-  }, [initialState?.chain])
+  }, [initialState?.chain, initialState?.vault])
 
   return {
     dataSource: data,

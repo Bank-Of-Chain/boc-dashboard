@@ -2,7 +2,58 @@
 
 @pro-header-hover-bg: rgba(0, 0, 0, 0.025);
 
-.menu {
+:global(.ant-pro-global-header > div) {
+  display: none;
+}
+
+:global(.ant-pro-global-header) {
+  .header {
+    display: flex;
+  }
+}
+
+:global(.ant-pro-top-nav-header .ant-pro-top-nav-header-menu) {
+  width: 0;
+  flex: 0 !important;
+}
+
+:global(.ant-pro-right-content) {
+  flex: 1
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+.headerMenu {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  min-width: 150px;
+  border-bottom: 0;
+  transform: translate(-50%, 0);
+  font-size: 16px;
+
+  :global(.ant-menu-item) {
+    position: relative;
+  }
+
+  :global(.ant-menu-item:first-child:before) {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    height: 18px;
+    width: 1px;
+    margin-top: 2px;
+    transform: translate(0, -50%);
+    background-color: #434343;
+  }
+}
+
+.avatarMenu {
   :global(.anticon) {
     margin-right: 8px;
   }
@@ -13,9 +64,7 @@
 
 .right {
   display: flex;
-  float: right;
   height: 48px;
-  margin-left: auto;
   overflow: hidden;
   .action {
     display: flex;
@@ -65,6 +114,10 @@
   }
 }
 
+.chainSelect {
+  width: 6.5rem;
+}
+
 @media only screen and (max-width: @screen-md) {
   :global(.ant-divider-vertical) {
     vertical-align: unset;
@@ -85,5 +138,43 @@
     .search {
       display: none;
     }
+  }
+}
+
+@media screen and (max-width: 554px) {
+  .myDasboardBtn {
+    > span {
+      display: none;
+    }
+    :global(.anticon) {
+      display: inline-block;
+    }
+  }
+
+  .headerMenu {
+    :global(.ant-menu-item.ant-menu-overflow-item) {
+      padding: 0 6px
+    }
+    :global(.ant-menu-item.ant-menu-overflow-item:after) {
+      left: 6px;
+      right: 6px
+    }
+  }
+
+  .chainSelect {
+    width: 5rem;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .header {
+    justify-content: space-between;
+  }
+
+  .headerMenu {
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
   }
 }

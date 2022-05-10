@@ -1,4 +1,4 @@
-import { Space, Select, Button } from 'antd'
+import { Space, Select, Button, Menu } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect } from 'react'
 
@@ -10,9 +10,11 @@ import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 import map from 'lodash/map'
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
+import { getVaultConfig } from '@/utils/vault';
 
 // === Contansts === //
 import CHAINS, { ETH } from '@/constants/chain'
+import { VAULT_TYPE } from '@/constants/vault'
 
 // === Hooks === //
 import useUserAddress from '@/hooks/useUserAddress'
@@ -24,22 +26,29 @@ import styles from './index.less'
 const { Option } = Select
 
 // 以下路由时，不展示头部的切链下拉框
-const enabledChangeChainRoute = ['/strategy']
+const disabledChangeChainRoute = ['/strategy']
+
+// 以下路由时，不展示头部的切 vault 下拉框
+const disabledChangeVaultRoute = ['/strategy']
 
 const GlobalHeaderRight = () => {
   const className = `${styles.right}  ${styles.dark}`
 
   const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
+  const [current, setCurrent] = useState(initialState.vault)
 
   const { userProvider, loadWeb3Modal, logoutOfWeb3Modal } = useUserProvider()
   const address = useUserAddress(userProvider)
+  const { vault: curVault } = initialState
 
   const changeChain = value => {
+    const { vault } = history.location.query
     changeNetwork(value).then(() => {
       history.push({
         query: {
           chain: value,
+          vault
         },
       })
       setTimeout(() => {
@@ -47,6 +56,7 @@ const GlobalHeaderRight = () => {
       }, 1)
     })
   }
+
   const changeNetwork = id => {
     return new Promise(async resolve => {
       const targetNetwork = find(CHAINS, { id })
@@ -88,6 +98,34 @@ const GlobalHeaderRight = () => {
     })
   }
 
+  const handleMenuClick = (e) => {
+    const vault = e.key
+    setCurrent(vault)
+    const pathname = history.location.pathname
+    const query = history.location.query
+    query.chain = query.chain || ETH.id
+    if (vault === VAULT_TYPE.ETHi) {
+      query.chain = ETH.id
+    }
+    setInitialState({
+      ...initialState,
+      chain: query.chain,
+      vault,
+      ...getVaultConfig(query.chain, vault)
+    })
+    history.push({
+      pathname: pathname,
+      query: {
+        ...query,
+        vault
+      }
+    })
+  }
+
+  const goToMine = () => {
+    history.push(`/mine?chain=${initialState.chain}&vault=${initialState.vault}`)
+  }
+
   useEffect(() => {
     if (isEmpty(userProvider)) return
     setIsLoading(true)
@@ -99,47 +137,64 @@ const GlobalHeaderRight = () => {
     })
   }, [userProvider, address, history.location.pathname])
 
+  useEffect(() => {
+    setCurrent(initialState.vault)
+  }, [initialState.vault])
+
   return (
-    <Space className={className}>
-      {!enabledChangeChainRoute.includes(history.location.pathname) && (
-        <Select
-          value={initialState.chain}
-          defaultValue={ETH.id}
-          style={{ width: '7.5rem' }}
-          onChange={changeChain}
+    <div className={styles.header}>
+      {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
+        <Menu
+          className={styles.headerMenu}
+          onClick={handleMenuClick}
+          selectedKeys={[current]}
+          mode="horizontal"
         >
-          {map(CHAINS, i => (
-            <Option key={i.id} value={i.id}>
-              {i.name}
-            </Option>
-          ))}
-        </Select>
-      )}
-      {isLoading ? (
-        <LoadingOutlined style={{ fontSize: 24 }} spin />
-      ) : !isEmpty(address) ? ([
-        <Avatar
-          key="avatar"
-          menu
-          address={address}
-          logoutOfWeb3Modal={() =>
-            logoutOfWeb3Modal().then(() => {
-              setTimeout(() => {
-                window.location.reload()
-              }, 1)
-            })
-          }
-        />,
-        <Button key="mine" icon={<AreaChartOutlined />} type="primary" onClick={() => history.push(`/mine?chain=${initialState.chain}`)}>
-          My Dashboard
-        </Button>
-      ]
-      ) : window.ethereum ? (
-        <Button type='primary' onClick={loadWeb3Modal}>
-          Connect
-        </Button>
-      ) : null}
-    </Space>
+          <Menu.Item key="usdi">USDi</Menu.Item>
+          <Menu.Item key="ethi">ETHi</Menu.Item>
+        </Menu>
+      ) : <span/>}
+      <Space className={className}>
+        {!disabledChangeChainRoute.includes(history.location.pathname) && curVault === VAULT_TYPE.USDi && (
+          <Select
+            value={initialState.chain}
+            defaultValue={ETH.id}
+            className={styles.chainSelect}
+            onChange={changeChain}
+          >
+            {map(CHAINS, i => (
+              <Option key={i.id} value={i.id}>
+                {i.name}
+              </Option>
+            ))}
+          </Select>
+        )}
+        {isLoading ? (
+          <LoadingOutlined style={{ fontSize: 24 }} spin />
+        ) : !isEmpty(address) ? ([
+          <Avatar
+            key="avatar"
+            menu
+            address={address}
+            logoutOfWeb3Modal={() =>
+              logoutOfWeb3Modal().then(() => {
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1)
+              })
+            }
+          />,
+          <Button className={styles.myDasboardBtn} key="mine" icon={<AreaChartOutlined />} type="primary" onClick={goToMine}>
+            My Dashboard
+          </Button>
+        ]
+        ) : window.ethereum ? (
+          <Button type='primary' onClick={loadWeb3Modal}>
+            Connect
+          </Button>
+        ) : null}
+      </Space>
+    </div>
   )
 }
 window.ethereum &&

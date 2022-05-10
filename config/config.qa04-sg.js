@@ -7,13 +7,13 @@ export default defineConfig({
   publicPath: '/',
   define: {
     ENV_INDEX: 'debug',
-    API_SERVER: 'https://service-qa02-sg.bankofchain.io',
-    DASHBOARD_ROOT: 'https://dashboard-qa02-sg.bankofchain.io',
-    IMAGE_ROOT: 'https://qa02-sg.bankofchain.io',
+    API_SERVER: 'https://service-qa04-sg.bankofchain.io',
+    DASHBOARD_ROOT: 'https://dashboard-qa04-sg.bankofchain.io',
+    IMAGE_ROOT: 'https://qa04-sg.bankofchain.io',
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-        56: 'http://192.168.75.33:8000/subgraphs/name/boc-v1_5/subgraph',
+        1: 'https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
+        56: 'http://192.168.75.32:8000/subgraphs/name/boc-v1_5/subgraph',
         137: 'http://192.168.67.39:8000/subgraphs/name/boc-v1_5/subgraph',
       },
       VAULT_ADDRESS: {
@@ -29,13 +29,13 @@ export default defineConfig({
     },
     ETHI: {
       SUB_GRAPH_URL: {
-        1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
+        1: 'https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi',
       },
       VAULT_ADDRESS: {
-        1: '0x9BcC604D4381C5b0Ad12Ff3Bf32bEdE063416BC7',
+        1: '0xc66ab83418c20a65c3f8e83b3d11c8c3a6097b6f',
       },
       ETHI_ADDRESS: {
-        1: '0xf090f16dEc8b6D24082Edd25B1C8D26f2bC86128',
+        1: '0xac47e91215fb80462139756f43438402998e4a3a',
       }
     }
   },
