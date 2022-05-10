@@ -37,6 +37,7 @@ const Analysis = () => {
   const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [apyEchartOpt, setApyEchartOpt] = useState({});
+  const [apy30, setApy30] = useState()
   const deviceType = useDeviceType()
 
   const { initialState } = useModel('@@initialState')
@@ -67,6 +68,7 @@ const Analysis = () => {
         date,
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
+      setApy30(data.content[0] ? data.content[0].apy : 0)
       setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
     }).catch((e) => {
       console.error(e)
@@ -132,7 +134,7 @@ const Analysis = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <IntroduceRow loading={loading} visitData={dataSource} />
+        <IntroduceRow loading={loading} apy30={apy30} visitData={dataSource} />
       </Suspense>
       <Suspense fallback={null}>
         <Card
