@@ -31,7 +31,8 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {}, unit }) =
     filter(strategies, i => i.totalValue > 0),
     'protocol',
   )
-  if (isEmpty(groupData)) return <Empty />
+  const vaultDisplayValue = toFixed(vaultPoolValue, tokenDecimals, 2)
+  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty />
 
   const tableData = [
     ...values(
