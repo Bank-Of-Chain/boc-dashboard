@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import { setClient } from './apollo/client';
 
 // === Constants === //
-import { ETH } from './constants/chain';
+import { BSC } from './constants/chain';
 
 const isDev = process.env.NODE_ENV === 'development';
 /** 获取用户信息比较慢的时候会展示一个 loading */
@@ -39,7 +39,7 @@ export const layout = ({ initialState, setInitialState }) => {
           query: { chain },
         },
       } = history // 如果没有登录，重定向到 login
-      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : ETH.id)
+      const nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : BSC.id)
       setClient(nextChainId)
       setInitialState({ chain: nextChainId })
     },
