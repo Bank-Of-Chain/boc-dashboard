@@ -1,5 +1,5 @@
 import { Suspense, useState, useEffect } from 'react'
-import { Col, Row, Card, Image, Descriptions } from 'antd'
+import { Col, Row, Card, Image, Descriptions, Spin } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import ReportTable from './components/ReportTable'
 import { history, useModel } from 'umi'
@@ -34,7 +34,7 @@ import styles from './style.less'
 
 const Strategy = props => {
   const { id, official_daily_apy = false } = props?.location?.query
-  const loading = false
+  const [loading, setLoading] = useState(false)
   const [strategy, setStrategy] = useState({})
   const [apysEchartOpt, setApysEchartOpt] = useState({})
   const [apys, setApys] = useState([])
@@ -56,12 +56,16 @@ const Strategy = props => {
   }[initialState.vault]
 
   useEffect(() => {
+    setLoading(true)
     getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100)
       .then((resp) => {
         const strategy = _find(resp.content, (item) => item.strategyAddress === id)
         setStrategy(strategy)
       })
       .catch(noop)
+      .finally(() => {
+        setLoading(false)
+      })
     // eslint-disable-next-line
   }, [id])
 
@@ -200,7 +204,11 @@ const Strategy = props => {
     setApysEchartOpt(option)
   }, [apys, offChainApys, official_daily_apy])
 
+  if (loading) {
+    return <div className={styles.loadingContainer}><Spin size="large" /></div>
+  }
   if (!initialState.chain || isEmpty(strategy)) return null
+
   const { underlyingTokens, totalAsset } = strategy
 
   const smallSizeProps = {
@@ -277,7 +285,7 @@ const Strategy = props => {
                   <a
                     target={'_blank'}
                     rel='noreferrer'
-                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.id}`}
+                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
                   >
                     {strategy.strategyName}
                   </a>

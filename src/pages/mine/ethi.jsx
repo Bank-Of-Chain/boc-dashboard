@@ -56,7 +56,7 @@ const Personal = () => {
     if (isString(value)) {
       const isNegative = value.indexOf('-') === 0
       sign = isNegative ? '-' : ''
-      displayValue = value.substring(1)
+      displayValue = isNegative ? value.substring(1) : displayValue
     }
     return usdPrice ? `≈${sign}$${toFixed(usdPrice.mul(displayValue), ETHI_BN_DECIMALS, 2)}` : ''
   }
