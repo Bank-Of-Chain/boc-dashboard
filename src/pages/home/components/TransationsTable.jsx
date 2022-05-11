@@ -6,7 +6,7 @@ import { useModel } from 'umi'
 import moment from 'moment'
 import map from 'lodash/map'
 import BN from 'bignumber.js'
-import { toLeastOneFixed } from '@/utils/number-format'
+import { toLeastOneFixed, toFixed } from '@/utils/number-format'
 
 import { USDI_DECIMALS } from '@/constants/usdi'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
@@ -16,6 +16,7 @@ import { getRecentActivity } from '@/services/dashboard-service'
 
 const TransationsTable = ({
   loading,
+  dispalyDecimal = 2,
   decimals = USDI_DECIMALS,
   token = 'USDi',
   filterOptions = RECENT_ACTIVITY_TYPE
@@ -90,16 +91,19 @@ const TransationsTable = ({
       key: 'detail',
       render: (text, item) => {
         const { type, changeAmount, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
-        const changeValue = toLeastOneFixed(changeAmount, decimals)
-        const absChangeValue = toLeastOneFixed(BN(changeAmount).abs(), decimals)
-        const transferValue = toLeastOneFixed(transferredAmount, decimals)
+        const changeValue = toLeastOneFixed(changeAmount, decimals, dispalyDecimal)
+        const absChangeValue = toLeastOneFixed(BN(changeAmount).abs(), decimals, dispalyDecimal)
+        const transferValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
+        const changeValueTitle = toFixed(changeAmount, BN(10 ** decimals))
+        const absChangeValueTitle = toFixed(BN(changeAmount).abs(), BN(10 ** decimals))
+        const transferValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
         const from = fromAccountUpdate?.account.id
         const to = toAccountUpdate?.account.id
         const fns = {
-          Mint: () => <>{type} <span>{changeValue}</span> {token} to {renderAddress(to)}</>,
-          Burn: () => <>{type} <span>{absChangeValue}</span> {token} from {renderAddress(from)}</>,
-          Rebase: () => <>{type} <span>{changeValue}</span> {token}</>,
-          Transfer: () => <>{type} <span>{transferValue}</span> {token} from {renderAddress(from)} to {renderAddress(to)}</>,
+          Mint: () => <>{type} <span title={changeValueTitle}>{changeValue}</span> {token} to {renderAddress(to)}</>,
+          Burn: () => <>{type} <span title={absChangeValueTitle}>{absChangeValue}</span> {token} from {renderAddress(from)}</>,
+          Rebase: () => <>{type} <span title={changeValueTitle}>{changeValue}</span> {token}</>,
+          Transfer: () => <>{type} <span title={transferValueTitle}>{transferValue}</span> {token} from {renderAddress(from)} to {renderAddress(to)}</>,
         }
         return (
           <span style={{ whiteSpace: 'normal' }}>{fns[item.type]()}</span>

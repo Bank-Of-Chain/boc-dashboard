@@ -150,7 +150,13 @@ const ETHiHome = () => {
         <StrategyTable strategyMap={ETHI_STRATEGIES_MAP} loading={loading} unit="ETH" />
       </Suspense>
       <Suspense fallback={null}>
-        <TransationsTable token="ETHi" decimals={ETHI_DECIMALS} filterOptions={RECENT_ACTIVITY_TYPE} loading={loading} />
+        <TransationsTable
+        token="ETHi"
+        decimals={ETHI_DECIMALS}
+        dispalyDecimal={6}
+        filterOptions={RECENT_ACTIVITY_TYPE}
+        loading={loading}
+      />
       </Suspense>
     </GridContent>
   )

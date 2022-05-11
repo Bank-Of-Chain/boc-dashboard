@@ -149,7 +149,7 @@ const Personal = () => {
         </Row>
       </Suspense>
       <Suspense fallback={null}>
-        <DailyTvl title="Daily ETHi" data={dataSource} loading={loading} />
+        <DailyTvl title="Daily ETHi" token="ETHi" data={dataSource} loading={loading} />
       </Suspense>
       <Suspense fallback={null}>
         <MonthProfit title="Monthly Profit" data={dataSource} loading={loading} />
