@@ -9,7 +9,8 @@ import multipleLine from '@/components/echarts/options/line/multipleLine'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP, ETHI_STRATEGIES_MAP } from '@/constants/strategies'
-import { VAULT_TYPE } from '@/constants/vault'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
@@ -53,6 +54,11 @@ const Strategy = props => {
   const strategiesMap = {
     [VAULT_TYPE.USDi]: USDI_STRATEGIES_MAP,
     [VAULT_TYPE.ETHi]: ETHI_STRATEGIES_MAP
+  }[initialState.vault]
+
+  const displayDecimals = {
+    [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
+    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
   }[initialState.vault]
 
   useEffect(() => {
@@ -295,7 +301,7 @@ const Strategy = props => {
                   <CoinSuperPosition array={underlyingTokens} />
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
-                  {toFixed(totalAsset, decimals, 2) + ` ${unit}`}
+                  {toFixed(totalAsset, decimals, displayDecimals) + ` ${unit}`}
                 </Descriptions.Item>
                 <Descriptions.Item label='Status'>
                   Active

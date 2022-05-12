@@ -17,7 +17,7 @@ import map from 'lodash/map'
 import isString from 'lodash/isString'
 import { toFixed } from '@/utils/number-format'
 import { isProEnv } from "@/services/env-service"
-import { ETHI_BN_DECIMALS } from "@/constants/ethi"
+import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from "@/constants/ethi"
 import { TOKEN_TYPE } from '@/constants/api'
 
 // === Hooks === //
@@ -64,19 +64,19 @@ const Personal = () => {
   const introduceData = [{
     title: 'Balance (ETHi)',
     tip: 'The balance of ETHi',
-    content: toFixed(balanceOfToken, ETHI_BN_DECIMALS, 2),
+    content: toFixed(balanceOfToken, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
     estimateContent: renderEstimate(balanceOfToken),
     loading,
   }, {
     title: 'Unrealized profits (ETHi)',
     tip: 'Potential profit that has not been effected',
-    content: toFixed(unrealizedProfit, ETHI_BN_DECIMALS, 2),
+    content: toFixed(unrealizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
     estimateContent: renderEstimate(unrealizedProfit),
     loading,
   }, {
     title: 'Realized profits (ETHi)',
     tip: 'The profits that have been actualized',
-    content: toFixed(realizedProfit, ETHI_BN_DECIMALS, 2),
+    content: toFixed(realizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
     estimateContent: renderEstimate(realizedProfit),
     loading,
   }, {

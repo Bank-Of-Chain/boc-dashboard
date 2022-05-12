@@ -23,7 +23,7 @@ import { isEmpty, isNil } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
-import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE } from '@/constants/ethi'
+import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import { map, reverse, cloneDeep } from 'lodash'
 import { appendDate } from "@/utils/array-append"
 
@@ -79,7 +79,7 @@ const ETHiHome = () => {
       const items = appendDate(data.content, 'totalSupply', calDateRange)
       const result = map(reverse(items), ({date, totalSupply}) => ({
         date,
-        totalSupply: toFixed(totalSupply, ETHI_BN_DECIMALS, 2),
+        totalSupply: toFixed(totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
       }))
       setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'ETHi', {
         ...params,
@@ -102,7 +102,7 @@ const ETHiHome = () => {
   const introduceData = [{
     title: 'Total ETHi Supply',
     tip: 'Current total ETHi supply',
-    content: !isEmpty(ethi) ? toFixed(ethi?.totalSupply, ETHI_BN_DECIMALS, 2) : 0,
+    content: !isEmpty(ethi) ? toFixed(ethi?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS) : 0,
     loading,
   }, {
     title: 'Holders',
@@ -116,10 +116,10 @@ const ETHiHome = () => {
     loading,
   }]
 
-  const vault = cloneDeep(dataSource.vault)
-  if (vault) {
-    vault.totalValue = vault.totalAssets
-    vault.strategies.map(item => item.totalValue = item.debtRecordInVault)
+  const vaultData = cloneDeep(dataSource.vault)
+  if (vaultData) {
+    vaultData.totalValue = vaultData.totalAssets
+    vaultData.strategies.map(item => item.totalValue = item.debtRecordInVault)
   }
 
   return (
@@ -141,22 +141,28 @@ const ETHiHome = () => {
           loading={loading}
           strategyMap={ETHI_STRATEGIES_MAP}
           tokenDecimals={ETHI_BN_DECIMALS}
-          vault={vault}
+          displayDecimals={ETHI_DISPLAY_DECIMALS}
+          vaultData={vaultData}
           unit="ETH"
         />
       </Suspense>
 
       <Suspense fallback={null}>
-        <StrategyTable strategyMap={ETHI_STRATEGIES_MAP} loading={loading} unit="ETH" />
+        <StrategyTable
+          unit="ETH"
+          loading={loading}
+          strategyMap={ETHI_STRATEGIES_MAP}
+          displayDecimals={ETHI_DISPLAY_DECIMALS}
+        />
       </Suspense>
       <Suspense fallback={null}>
         <TransationsTable
-        token="ETHi"
-        decimals={ETHI_DECIMALS}
-        dispalyDecimal={6}
-        filterOptions={RECENT_ACTIVITY_TYPE}
-        loading={loading}
-      />
+          token="ETHi"
+          decimals={ETHI_DECIMALS}
+          dispalyDecimal={ETHI_DISPLAY_DECIMALS}
+          filterOptions={RECENT_ACTIVITY_TYPE}
+          loading={loading}
+        />
       </Suspense>
     </GridContent>
   )

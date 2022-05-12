@@ -13,6 +13,7 @@ import numeral from 'numeral'
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE } from '@/constants/api'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
@@ -79,7 +80,7 @@ const USDiHome = () => {
       const items = appendDate(data.content, 'totalSupply', calDateRange)
       const result = map(reverse(items), ({date, totalSupply}) => ({
         date,
-        totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, 2),
+        totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
       }))
       setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', {
         ...params,
@@ -102,7 +103,7 @@ const USDiHome = () => {
   const introduceData = [{
     title: 'Total USDi Supply',
     tip: 'Current total USDi supply',
-    content: !isEmpty(usdi) ? toFixed(usdi?.totalSupply, USDI_BN_DECIMALS, 2) : 0,
+    content: !isEmpty(usdi) ? toFixed(usdi?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS) : 0,
     loading,
   }, {
     title: 'Holders',
@@ -135,7 +136,7 @@ const USDiHome = () => {
           loading={loading}
           strategyMap={USDI_STRATEGIES_MAP}
           tokenDecimals={USDI_BN_DECIMALS}
-          vault={dataSource.vault}
+          vaultData={dataSource.vault}
         />
       </Suspense>
 

@@ -42,6 +42,8 @@ import useUserProvider from '@/hooks/useUserProvider'
 
 // === Constants === //
 import CHAINS, { CHIANS_NAME } from '@/constants/chain'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Services === //
 import { getSignatureHeader } from '@/services/signer-service'
@@ -51,129 +53,6 @@ import { isProEnv } from '@/services/env-service'
 import styles from './style.less'
 
 const fixedDecimals = BN(1e18)
-
-const detailsColumns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    width: '14rem',
-    ellipsis: true,
-    render: (text, item, index) => {
-      return (
-        <a title={text} key={index}>
-          {text}
-        </a>
-      )
-    },
-  },
-  {
-    title: 'Assets (Before)',
-    dataIndex: 'originalAmount',
-    key: 'originalAmount',
-    render: value => {
-      return <span>{toFixed(value, fixedDecimals, 2)}</span>
-    },
-  },
-  {
-    title: 'Assets (After)',
-    dataIndex: 'totalAmount',
-    key: 'totalAmount',
-    render: value => {
-      return <span>{toFixed(value, fixedDecimals, 2)}</span>
-    },
-  },
-  {
-    title: 'Change Assets',
-    dataIndex: 'amount',
-    key: 'amount',
-    render: value => {
-      return <span>{toFixed(value, fixedDecimals, 2)}</span>
-    },
-  },
-  {
-    title: 'APR (Before)',
-    dataIndex: 'originalApr',
-    key: 'originalApr',
-    width: '6rem',
-    render: value => {
-      return <span>{(100 * value).toFixed(4)}%</span>
-    },
-  },
-  {
-    title: 'APR (After)',
-    dataIndex: 'newApr',
-    key: 'newApr',
-    width: '6rem',
-    render: value => {
-      return <span>{(100 * value).toFixed(4)}%</span>
-    },
-  },
-  {
-    title: 'Profit (Before)',
-    dataIndex: 'originalGain',
-    key: 'originalGain',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'Profit (After)',
-    dataIndex: 'newGain',
-    key: 'newGain',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'Change Profits',
-    dataIndex: 'deltaGain',
-    key: 'deltaGain',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'Operate Gas Fee',
-    dataIndex: 'operateFee',
-    key: 'operateFee',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'Exchange Loss',
-    dataIndex: 'exchangeLoss',
-    key: 'exchangeLoss',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'Allocation Cost',
-    dataIndex: 'operateLoss',
-    key: 'operateLoss',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'Harvest Gas Fee (Before)',
-    dataIndex: 'originalHarvestFee',
-    key: 'originalHarvestFee',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-  {
-    title: 'Harvest Gas Fee (After)',
-    dataIndex: 'harvestFee',
-    key: 'harvestFee',
-    render: value => {
-      return <span>{value.toFixed(2)}</span>
-    },
-  },
-]
 
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
@@ -186,6 +65,11 @@ const Reports = () => {
     [isRedUp]: styles.danger,
     [!isRedUp]: styles.success,
   }
+
+  const displayDecimals = {
+    [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
+    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+  }[initialState.vault]
 
   const [showWarningModal, setShowWarningModal] = useState(false)
 
@@ -415,6 +299,128 @@ const Reports = () => {
             <Col md={12}>{rejectElement}</Col>
           </Row>
         )
+      },
+    },
+  ]
+  const detailsColumns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      width: '14rem',
+      ellipsis: true,
+      render: (text, item, index) => {
+        return (
+          <a title={text} key={index}>
+            {text}
+          </a>
+        )
+      },
+    },
+    {
+      title: 'Assets (Before)',
+      dataIndex: 'originalAmount',
+      key: 'originalAmount',
+      render: value => {
+        return <span>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Assets (After)',
+      dataIndex: 'totalAmount',
+      key: 'totalAmount',
+      render: value => {
+        return <span>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Change Assets',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: value => {
+        return <span>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'APR (Before)',
+      dataIndex: 'originalApr',
+      key: 'originalApr',
+      width: '6rem',
+      render: value => {
+        return <span>{(100 * value).toFixed(4)}%</span>
+      },
+    },
+    {
+      title: 'APR (After)',
+      dataIndex: 'newApr',
+      key: 'newApr',
+      width: '6rem',
+      render: value => {
+        return <span>{(100 * value).toFixed(4)}%</span>
+      },
+    },
+    {
+      title: 'Profit (Before)',
+      dataIndex: 'originalGain',
+      key: 'originalGain',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Profit (After)',
+      dataIndex: 'newGain',
+      key: 'newGain',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Change Profits',
+      dataIndex: 'deltaGain',
+      key: 'deltaGain',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Operate Gas Fee',
+      dataIndex: 'operateFee',
+      key: 'operateFee',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Exchange Loss',
+      dataIndex: 'exchangeLoss',
+      key: 'exchangeLoss',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Allocation Cost',
+      dataIndex: 'operateLoss',
+      key: 'operateLoss',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Harvest Gas Fee (Before)',
+      dataIndex: 'originalHarvestFee',
+      key: 'originalHarvestFee',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
+      },
+    },
+    {
+      title: 'Harvest Gas Fee (After)',
+      dataIndex: 'harvestFee',
+      key: 'harvestFee',
+      render: value => {
+        return <span>{value.toFixed(displayDecimals)}</span>
       },
     },
   ]

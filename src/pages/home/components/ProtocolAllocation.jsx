@@ -3,6 +3,7 @@ import { Col, Row, Card } from 'antd'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import TopSearch from './TopSearch'
 import ProportionSales from './ProportionSales'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 import styles from '../style.less'
 
@@ -10,8 +11,9 @@ export default function ProtocolAllocation({
   loading = false,
   tokenDecimals,
   strategyMap = {},
-  vault = {},
-  unit = 'USD'
+  vaultData = {},
+  unit = 'USD',
+  displayDecimals = TOKEN_DISPLAY_DECIMALS
 }) {
   const deviceType = useDeviceType()
 
@@ -53,7 +55,8 @@ export default function ProtocolAllocation({
               loading={loading}
               strategyMap={strategyMap}
               tokenDecimals={tokenDecimals}
-              visitData={vault || {}}
+              displayDecimals={displayDecimals}
+              visitData={vaultData || {}}
               unit={unit}
             />
           </Suspense>
@@ -64,7 +67,8 @@ export default function ProtocolAllocation({
               loading={loading}
               strategyMap={strategyMap}
               tokenDecimals={tokenDecimals}
-              visitData={vault || {}}
+              displayDecimals={displayDecimals}
+              visitData={vaultData || {}}
               unit={unit}
             />
           </Suspense>

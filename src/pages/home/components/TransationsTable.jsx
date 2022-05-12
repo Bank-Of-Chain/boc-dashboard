@@ -9,6 +9,7 @@ import BN from 'bignumber.js'
 import { toLeastOneFixed, toFixed } from '@/utils/number-format'
 
 import { USDI_DECIMALS } from '@/constants/usdi'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
@@ -16,7 +17,7 @@ import { getRecentActivity } from '@/services/dashboard-service'
 
 const TransationsTable = ({
   loading,
-  dispalyDecimal = 2,
+  dispalyDecimal = TOKEN_DISPLAY_DECIMALS,
   decimals = USDI_DECIMALS,
   token = 'USDi',
   filterOptions = RECENT_ACTIVITY_TYPE

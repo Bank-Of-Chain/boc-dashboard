@@ -5,7 +5,8 @@ import BN from 'bignumber.js'
 
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { getStrategyDetailsReports } from '@/services/api-service'
-import { VAULT_TYPE } from '@/constants/vault'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Utils === //
 import moment from 'moment'
@@ -29,6 +30,10 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   })
   const deviceType = useDeviceType()
   const isETHi = VAULT_TYPE.ETHi === initialState.vault
+  const displayDecimals = {
+    [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
+    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+  }[initialState.vault]
 
   const fetch = async () => {
     setTableLoading(true)
@@ -103,7 +108,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       width: '7rem',
-      render: text => <span>{toFixed(text, decimal, 2)}</span>,
+      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
       title: (
@@ -112,7 +117,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       dataIndex: 'assetChange',
       key: 'assetChange',
       width: '8rem',
-      render: text => <span>{toFixed(text, decimal, 2)}</span>,
+      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
       title: `Reward Asset (USD)`,

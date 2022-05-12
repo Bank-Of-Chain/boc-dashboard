@@ -11,7 +11,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import styles from '../style.less'
 
-const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {}, unit }) => {
+const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {
   const { strategies = [], totalValue } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
@@ -31,7 +31,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {}, unit }) =
     filter(strategies, i => i.totalValue > 0),
     'protocol',
   )
-  const vaultDisplayValue = toFixed(vaultPoolValue, tokenDecimals, 2)
+  const vaultDisplayValue = toFixed(vaultPoolValue, tokenDecimals, displayDecimals)
   if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty />
 
   const tableData = [
@@ -46,13 +46,13 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {}, unit }) =
         )
         return {
           Protocol: `${strategyMap[initialState.chain][key]}${suffix}`,
-          amount: toFixed(amount, tokenDecimals, 2),
+          amount: toFixed(amount, tokenDecimals, displayDecimals),
         }
       }),
     ),
     {
       Protocol: `Vault${suffix}`,
-      amount: toFixed(vaultPoolValue, tokenDecimals, 2),
+      amount: toFixed(vaultPoolValue, tokenDecimals, displayDecimals),
     },
   ]
 
@@ -108,7 +108,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {}, unit }) =
         statistic={{
           visible: true,
           content: {
-            value: toFixed(totalValue, tokenDecimals, 2),
+            value: toFixed(totalValue, tokenDecimals, displayDecimals),
             name: `TVL${suffix}`,
           },
         }}

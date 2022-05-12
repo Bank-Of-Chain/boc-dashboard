@@ -10,6 +10,7 @@ import ChartCard from '@/components/ChartCard'
 import DailyTvl from './components/DailyChart'
 import MonthProfit from './components/MonthProfit'
 import { TOKEN_TYPE } from '@/constants/api'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 // === Utils === //
 import _min from 'lodash/min'
@@ -45,17 +46,17 @@ const Personal = () => {
   const introduceData = [{
     title: 'Balance (USDi)',
     tip: 'The balance of USDi',
-    content: () => toFixed(balanceOfToken, USDI_BN_DECIMALS, 2),
+    content: () => toFixed(balanceOfToken, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
     loading,
   }, {
     title: 'Unrealized profits (USDi)',
     tip: 'Potential profit that has not been effected',
-    content: () => toFixed(unrealizedProfit, USDI_BN_DECIMALS, 2),
+    content: () => toFixed(unrealizedProfit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
     loading,
   }, {
     title: 'Realized profits (USDi)',
     tip: 'The profits that have been actualized',
-    content: () => toFixed(realizedProfit, USDI_BN_DECIMALS, 2),
+    content: () => toFixed(realizedProfit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
     loading,
   }, {
     title: 'APY(last 7 days)',

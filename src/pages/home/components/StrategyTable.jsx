@@ -13,10 +13,11 @@ import BN from 'bignumber.js'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 import styles from '../style.less'
 
-const StrategyTable = ({ loading, strategyMap, unit = 'USD' }) => {
+const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
@@ -73,7 +74,7 @@ const StrategyTable = ({ loading, strategyMap, unit = 'USD' }) => {
       sorter: (a, b) => {
         return BN(a.totalAsset || '0').minus(BN(b.totalAsset || '0'))
       },
-      render: text => <span>{toFixed(text || '0', decimals, 2)}</span>,
+      render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>,
     },
     {
       title: <Tooltip title='Official weekly average APY'>
@@ -101,7 +102,7 @@ const StrategyTable = ({ loading, strategyMap, unit = 'USD' }) => {
       title: 'Weekly Profit',
       dataIndex: 'weeklyProfit',
       key: 'weeklyProfit',
-      render: (text, item) => <span>{text ? `${toFixed(text, decimals, 2)} ${item.tokenUnit || ''}` : ''}</span>
+      render: (text, item) => <span>{text ? `${toFixed(text, decimals, displayDecimals)} ${item.tokenUnit || ''}` : ''}</span>
     },
     {
       title: 'Strategy Address',

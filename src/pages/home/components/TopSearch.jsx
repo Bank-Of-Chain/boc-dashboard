@@ -15,7 +15,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // 列表中的平台图标，直接使用透明背景即可
 const withoutBackgroundColor = ['Vault']
 
-const TopSearch = ({ tokenDecimals, strategyMap , visitData = {}, unit }) => {
+const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}, unit }) => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
@@ -88,7 +88,7 @@ const TopSearch = ({ tokenDecimals, strategyMap , visitData = {}, unit }) => {
       sorter: (a, b) => {
         return a.amount.minus(b.amount)
       },
-      render: text => toFixed(text.toString(), tokenDecimals, 2),
+      render: text => toFixed(text.toString(), tokenDecimals, displayDecimals),
     },
     {
       title: 'Asset Ratio',
