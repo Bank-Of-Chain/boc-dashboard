@@ -46,7 +46,7 @@ query ($usdiAddress: Bytes, $valutAddress: Bytes) {
   }
   vault(id: $valutAddress) {
     id
-    totalValue
+    totalValueInVault
     strategies(where: {isAdded: true}) {
       id
       protocol

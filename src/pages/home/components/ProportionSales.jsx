@@ -15,7 +15,7 @@ import STRATEGIES_MAP from '@/constants/strategies'
 import styles from '../style.less'
 
 const ProportionSales = ({ loading, visitData = {} }) => {
-  const { strategies = [], totalValue } = visitData
+  const { strategies = [], totalValueInVault = '0' } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
   const suffix = ' (USD)'
@@ -29,7 +29,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
     },
     BN(0),
   )
-  const vaultPoolValue = BN(totalValue).minus(total)
+  const tvl = BN(totalValueInVault).plus(total)
   const groupData = groupBy(
     filter(strategies, i => i.totalValue > 0),
     'protocol',
@@ -54,7 +54,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
     ),
     {
       Protocol: `Vault${suffix}`,
-      amount: toFixed(vaultPoolValue, USDI_BN_DECIMALS, 2),
+      amount: toFixed(totalValueInVault, USDI_BN_DECIMALS, 2),
     },
   ]
 
@@ -110,7 +110,7 @@ const ProportionSales = ({ loading, visitData = {} }) => {
         statistic={{
           visible: true,
           content: {
-            value: toFixed(totalValue, USDI_BN_DECIMALS, 2),
+            value: toFixed(tvl, USDI_BN_DECIMALS, 2),
             name: `TVL${suffix}`,
           },
         }}
