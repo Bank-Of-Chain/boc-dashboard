@@ -1,4 +1,4 @@
-import { Space, Select, Button, Menu } from 'antd'
+import { Space, Button, Menu } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect } from 'react'
 
@@ -7,7 +7,6 @@ import Avatar from './AvatarDropdown'
 import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 
 // === Utils === //
-import map from 'lodash/map'
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
 import { getVaultConfig } from '@/utils/vault';
@@ -23,11 +22,6 @@ import useUserProvider from '@/hooks/useUserProvider'
 // === Styles === //
 import styles from './index.less'
 
-const { Option } = Select
-
-// 以下路由时，不展示头部的切链下拉框
-const disabledChangeChainRoute = ['/strategy']
-
 // 以下路由时，不展示头部的切 vault 下拉框
 const disabledChangeVaultRoute = ['/strategy']
 
@@ -42,23 +36,9 @@ const GlobalHeaderRight = () => {
   const address = useUserAddress(userProvider)
   const { vault: curVault } = initialState
 
-  const changeChain = value => {
-    const { vault } = history.location.query
-    changeNetwork(value).then(() => {
-      history.push({
-        query: {
-          chain: value,
-          vault
-        },
-      })
-      setTimeout(() => {
-        location.reload()
-      }, 1)
-    })
-  }
 
   const changeNetwork = id => {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
       const targetNetwork = find(CHAINS, { id })
       console.log('targetNetwork=', targetNetwork)
       if (isEmpty(targetNetwork)) return
@@ -81,6 +61,9 @@ const GlobalHeaderRight = () => {
           params: [{ chainId: data[0].chainId }],
         })
       } catch (switchError) {
+        if (switchError.code === 4001) {
+          reject()
+        }
         try {
           switchTx = await ethereum.request({
             method: 'wallet_addEthereumChain',
@@ -100,25 +83,31 @@ const GlobalHeaderRight = () => {
 
   const handleMenuClick = (e) => {
     const vault = e.key
-    setCurrent(vault)
-    const pathname = history.location.pathname
-    const query = history.location.query
-    query.chain = query.chain || ETH.id
-    if (vault === VAULT_TYPE.ETHi) {
-      query.chain = ETH.id
+    let promise = Promise.resolve()
+    if ((history.location.pathname === '/mine' || history.location.pathname === '/reports') && vault === 'ethi') {
+      promise = changeNetwork("1")
     }
-    setInitialState({
-      ...initialState,
-      chain: query.chain,
-      vault,
-      ...getVaultConfig(query.chain, vault)
-    })
-    history.push({
-      pathname: pathname,
-      query: {
-        ...query,
-        vault
+    promise.then(() => {
+      setCurrent(vault)
+      const pathname = history.location.pathname
+      const query = history.location.query
+      query.chain = query.chain || ETH.id
+      if (vault === VAULT_TYPE.ETHi) {
+        query.chain = ETH.id
       }
+      setInitialState({
+        ...initialState,
+        chain: query.chain,
+        vault,
+        ...getVaultConfig(query.chain, vault)
+      })
+      history.push({
+        pathname: pathname,
+        query: {
+          ...query,
+          vault
+        }
+      })
     })
   }
 
@@ -155,20 +144,6 @@ const GlobalHeaderRight = () => {
         </Menu>
       ) : <span/>}
       <Space className={className}>
-        {!disabledChangeChainRoute.includes(history.location.pathname) && curVault === VAULT_TYPE.USDi && (
-          <Select
-            value={initialState.chain}
-            defaultValue={ETH.id}
-            className={styles.chainSelect}
-            onChange={changeChain}
-          >
-            {map(CHAINS, i => (
-              <Option key={i.id} value={i.id}>
-                {i.name}
-              </Option>
-            ))}
-          </Select>
-        )}
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
         ) : !isEmpty(address) ? ([
@@ -197,15 +172,4 @@ const GlobalHeaderRight = () => {
     </div>
   )
 }
-window.ethereum &&
-  (() => {
-    function reload () {
-      setTimeout(() => {
-        window.location.reload()
-      }, 1)
-    }
-    window.ethereum.on('chainChanged', reload)
-    window.ethereum.on('accountsChanged', reload)
-  })()
-
 export default GlobalHeaderRight

@@ -11,6 +11,7 @@ import DailyTvl from './components/DailyChart'
 import MonthProfit from './components/MonthProfit'
 import { TOKEN_TYPE } from '@/constants/api'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import ChainChange from "@/components/ChainChange"
 
 // === Utils === //
 import _min from 'lodash/min'
@@ -72,6 +73,7 @@ const Personal = () => {
 
   return (
     <GridContent>
+      <ChainChange shouldChangeChain />
       <Suspense fallback={null}>
         <Row gutter={[24, 24]} style={{ display: isProEnv(ENV_INDEX) ? 'none' : '' }}>
           <Col>

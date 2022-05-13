@@ -27,6 +27,8 @@ export default function Mine() {
         return
       }
       setShowWarningModal(true)
+    } else {
+      setShowWarningModal(false)
     }
   }, [initialState])
 

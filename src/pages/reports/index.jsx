@@ -21,6 +21,7 @@ import {
 import Address from '@/components/Address'
 import { FallOutlined, RiseOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import ChainChange from "@/components/ChainChange"
 
 // === Services === //
 import { getReports, updateReportStatus } from '@/services/api-service'
@@ -79,7 +80,7 @@ const Reports = () => {
         {chainId: initialState.chain, vaultAddress: initialState.vaultAddress},
         (current - 1) * pageSize,
         pageSize
-      )
+      ).catch(() => [])
     },
     {
       manual: true,
@@ -177,6 +178,8 @@ const Reports = () => {
         return
       }
       setShowWarningModal(true)
+    } else {
+      setShowWarningModal(false)
     }
   }, [initialState])
 
@@ -539,6 +542,7 @@ const Reports = () => {
 
   return (
     <GridContent>
+      { initialState.vault === 'usdi' && <ChainChange shouldChangeChain /> }
       <Suspense fallback={null}>
         <Card
           bordered={false}
