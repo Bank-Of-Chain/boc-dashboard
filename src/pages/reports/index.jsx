@@ -21,6 +21,7 @@ import {
 import Address from '@/components/Address'
 import { FallOutlined, RiseOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import ChainChange from "@/components/ChainChange"
 
 // === Services === //
 import { getReports, updateReportStatus } from '@/services/api-service'
@@ -539,6 +540,7 @@ const Reports = () => {
 
   return (
     <GridContent>
+      <ChainChange />
       <Suspense fallback={null}>
         <Card
           bordered={false}
@@ -671,32 +673,6 @@ const Reports = () => {
             />
           </Col>
         </Row>
-      </Modal>
-      <Modal
-        title="Set metamask's network to current?"
-        visible={showWarningModal}
-        onOk={() => changeNetwork(initialState.chain)}
-        onCancel={hideModal}
-        okText='ok'
-        cancelText='close'
-      >
-        <p>
-          Metamask Chain:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>
-            {CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}
-          </span>
-        </p>
-        <p>
-          Current Chain:{' '}
-          <span style={{ color: 'red', fontWeight: 'bold' }}>
-            {CHIANS_NAME[initialState.chain] || initialState.chain}
-          </span>
-        </p>
-        {!isEmpty(roleError) && (
-          <p>
-            Message：<span style={{ color: 'red', fontWeight: 'bold' }}>Error Vault address!</span>
-          </p>
-        )}
       </Modal>
     </GridContent>
   )

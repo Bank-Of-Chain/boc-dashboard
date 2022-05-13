@@ -10,6 +10,9 @@ import _min from 'lodash/min'
 import _max from 'lodash/max'
 import numeral from 'numeral'
 
+// === Components === //
+import ChainChange from '../../components/ChainChange'
+
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE } from '@/constants/api'
@@ -119,6 +122,9 @@ const USDiHome = () => {
 
   return (
     <GridContent>
+      <Suspense fallback={null}>
+        <ChainChange />
+      </Suspense>
       <Suspense fallback={null}>
         <IntroduceRow data={introduceData} />
       </Suspense>
