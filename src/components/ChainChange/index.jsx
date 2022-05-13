@@ -14,13 +14,18 @@ import isEmpty from 'lodash/isEmpty'
 
 const { TabPane } = Tabs
 
-export default function ChainChange () {
+export default function ChainChange (props) {
+  const { shouldChangeChain } = props
 
   const { initialState } = useModel('@@initialState')
 
   const changeChain = value => {
     const { vault } = history.location.query
-    changeNetwork(value).then(() => {
+    let promise = Promise.resolve()
+    if (shouldChangeChain){
+      promise = changeNetwork(value)
+    }
+    promise.then(() => {
       history.push({
         query: {
           chain: value,

@@ -12,8 +12,6 @@ import { VAULT_TYPE } from '@/constants/vault'
 import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 import ETHi from './ethi'
 import USDi from './usdi'
-// === Components === //
-import ChainChange from "@/components/ChainChange"
 
 export default function Mine() {
   const { initialState } = useModel('@@initialState')
@@ -29,6 +27,8 @@ export default function Mine() {
         return
       }
       setShowWarningModal(true)
+    } else {
+      setShowWarningModal(false)
     }
   }, [initialState])
 
@@ -98,8 +98,29 @@ export default function Mine() {
 
   return (
     <GridContent>
-      <ChainChange />
       <Comp />
+      <Modal
+        title="Set metamask's network to current?"
+        visible={showWarningModal}
+        onOk={() => changeNetwork(initialState.chain)}
+        onCancel={hideModal}
+        okText='ok'
+        cancelText='close'
+      >
+        <p>
+           Metamask Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}</span>
+        </p>
+        <p>
+          Current Chain:{' '}
+          <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.chain] || initialState.chain}</span>
+        </p>
+        {!isEmpty(roleError) && (
+          <p>
+            Message：<span style={{ color: 'red', fontWeight: 'bold' }}>Error Vault address!</span>
+          </p>
+        )}
+      </Modal>
     </GridContent>
   )
 }

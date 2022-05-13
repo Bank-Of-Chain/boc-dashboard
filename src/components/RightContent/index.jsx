@@ -83,25 +83,31 @@ const GlobalHeaderRight = () => {
 
   const handleMenuClick = (e) => {
     const vault = e.key
-    setCurrent(vault)
-    const pathname = history.location.pathname
-    const query = history.location.query
-    query.chain = query.chain || ETH.id
-    if (vault === VAULT_TYPE.ETHi) {
-      query.chain = ETH.id
+    let promise = Promise.resolve()
+    if ((history.location.pathname === '/mine' || history.location.pathname === '/reports') && vault === 'ethi') {
+      promise = changeNetwork("1")
     }
-    setInitialState({
-      ...initialState,
-      chain: query.chain,
-      vault,
-      ...getVaultConfig(query.chain, vault)
-    })
-    history.push({
-      pathname: pathname,
-      query: {
-        ...query,
-        vault
+    promise.then(() => {
+      setCurrent(vault)
+      const pathname = history.location.pathname
+      const query = history.location.query
+      query.chain = query.chain || ETH.id
+      if (vault === VAULT_TYPE.ETHi) {
+        query.chain = ETH.id
       }
+      setInitialState({
+        ...initialState,
+        chain: query.chain,
+        vault,
+        ...getVaultConfig(query.chain, vault)
+      })
+      history.push({
+        pathname: pathname,
+        query: {
+          ...query,
+          vault
+        }
+      })
     })
   }
 
@@ -166,15 +172,4 @@ const GlobalHeaderRight = () => {
     </div>
   )
 }
-window.ethereum &&
-  (() => {
-    function reload () {
-      setTimeout(() => {
-        window.location.reload()
-      }, 1)
-    }
-    window.ethereum.on('chainChanged', reload)
-    window.ethereum.on('accountsChanged', reload)
-  })()
-
 export default GlobalHeaderRight
