@@ -12,26 +12,26 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import styles from '../style.less'
 
 const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {
-  const { strategies = [], totalValueInVault = '0' } = visitData
+  const { strategies = [], totalAssets } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
-  const suffix = ` (${unit})`
+  const suffix = unit ? ` (${unit})` : ''
 
   if (!initialState.chain) return null
 
   const total = reduce(
     strategies,
     (rs, o) => {
-      return rs.plus(o.totalValue)
+      return rs.plus(o.debtRecordInVault)
     },
     BN(0),
   )
-  const tvl = BN(totalValueInVault).plus(total)
+  const vaultPoolValue = BN(totalAssets).minus(total)
   const groupData = groupBy(
-    filter(strategies, i => i.totalValue > 0),
+    filter(strategies, i => i.debtRecordInVault > 0),
     'protocol',
   )
-  const vaultDisplayValue = toFixed(tvl, tokenDecimals, displayDecimals)
+  const vaultDisplayValue = toFixed(vaultPoolValue, tokenDecimals, displayDecimals)
   if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty />
 
   const tableData = [
@@ -40,7 +40,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
         const amount = reduce(
           o,
           (rs, ob) => {
-            return rs.plus(ob.totalValue)
+            return rs.plus(ob.debtRecordInVault)
           },
           BN(0),
         )
@@ -52,7 +52,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     ),
     {
       Protocol: `Vault${suffix}`,
-      amount: toFixed(totalValueInVault, tokenDecimals, displayDecimals),
+      amount: toFixed(vaultPoolValue, tokenDecimals, displayDecimals),
     },
   ]
 
@@ -108,7 +108,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
         statistic={{
           visible: true,
           content: {
-            value: toFixed(tvl, tokenDecimals, displayDecimals),
+            value: toFixed(totalAssets, tokenDecimals, displayDecimals),
             name: `TVL${suffix}`,
           },
         }}
