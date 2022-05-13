@@ -24,7 +24,8 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
-import { map, reverse, cloneDeep } from 'lodash'
+import { map, reverse, cloneDeep, reduce } from 'lodash'
+import BN from 'bignumber.js'
 import { appendDate } from "@/utils/array-append"
 
 const ETHiHome = () => {
@@ -118,7 +119,14 @@ const ETHiHome = () => {
 
   const vaultData = cloneDeep(dataSource.vault)
   if (vaultData) {
-    vaultData.totalValue = vaultData.totalAssets
+    const strategyTotal = reduce(
+      vaultData.strategies,
+      (rs, o) => {
+        return rs.plus(o.debtRecordInVault)
+      },
+      BN(0),
+    )
+    vaultData.totalValueInVault = BN(vaultData.totalAssets).minus(strategyTotal).toString()
     vaultData.strategies.map(item => item.totalValue = item.debtRecordInVault)
   }
 

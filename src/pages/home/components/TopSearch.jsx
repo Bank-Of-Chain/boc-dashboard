@@ -20,7 +20,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null
-  const { strategies = [], totalValue = '0' } = visitData
+  const { strategies = [], totalValueInVault = '0' } = visitData
   const total = reduce(
     strategies,
     (rs, o) => {
@@ -29,7 +29,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
     BN(0),
   )
 
-  const vaultPoolValue = BN(totalValue).minus(total)
+  const tvl = BN(totalValueInVault).plus(total)
 
   const groupData = groupBy(
     filter(strategies, i => i.totalValue > 0),
@@ -49,14 +49,14 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
         return {
           name: strategyMap[initialState.chain][key],
           amount,
-          percent: amount.div(totalValue),
+          percent: amount.div(tvl),
         }
       }),
     ),
     {
       name: 'Vault',
-      amount: vaultPoolValue,
-      percent: totalValue === '0' ? 0 : vaultPoolValue.div(totalValue),
+      amount: BN(totalValueInVault),
+      percent: tvl.eq(0) ? '0' : BN(totalValueInVault).div(tvl),
     },
   ]
 

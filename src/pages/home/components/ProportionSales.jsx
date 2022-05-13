@@ -12,7 +12,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import styles from '../style.less'
 
 const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {
-  const { strategies = [], totalValue } = visitData
+  const { strategies = [], totalValueInVault = '0' } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
   const suffix = ` (${unit})`
@@ -26,12 +26,12 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     },
     BN(0),
   )
-  const vaultPoolValue = BN(totalValue).minus(total)
+  const tvl = BN(totalValueInVault).plus(total)
   const groupData = groupBy(
     filter(strategies, i => i.totalValue > 0),
     'protocol',
   )
-  const vaultDisplayValue = toFixed(vaultPoolValue, tokenDecimals, displayDecimals)
+  const vaultDisplayValue = toFixed(tvl, tokenDecimals, displayDecimals)
   if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty />
 
   const tableData = [
@@ -52,7 +52,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     ),
     {
       Protocol: `Vault${suffix}`,
-      amount: toFixed(vaultPoolValue, tokenDecimals, displayDecimals),
+      amount: toFixed(totalValueInVault, tokenDecimals, displayDecimals),
     },
   ]
 
@@ -108,7 +108,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
         statistic={{
           visible: true,
           content: {
-            value: toFixed(totalValue, tokenDecimals, displayDecimals),
+            value: toFixed(tvl, tokenDecimals, displayDecimals),
             name: `TVL${suffix}`,
           },
         }}
