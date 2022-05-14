@@ -12,6 +12,9 @@ import map from 'lodash/map'
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
 
+// === Styles === //
+import styles from './index.less'
+
 const { TabPane } = Tabs
 
 export default function ChainChange (props) {
@@ -82,7 +85,7 @@ export default function ChainChange (props) {
   }
 
   return (
-    <Tabs activeKey={initialState.chain} centered onChange={changeChain}>
+    <Tabs activeKey={initialState.chain} className={styles.tabs} centered onChange={changeChain}>
       {map(CHAINS, i => (
         <TabPane tab={<span style={{ fontSize: '1.125rem' }}>{i.name}</span>} key={i.id} />
       ))}
