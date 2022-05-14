@@ -35,6 +35,8 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
   }[initialState.vault]
 
+  const unit = dataSource[0]?.lpTokenUnit ? `(${dataSource[0]?.lpTokenUnit})` : ''
+
   const fetch = async () => {
     setTableLoading(true)
     getStrategyDetailsReports({
@@ -102,7 +104,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       ),
     },
     {
-      title: (
+      title: isETHi ? `Total Asset${unit}` : (
         <Tooltip placement="top" title="Total number of stablecoins">Total Balance</Tooltip>
       ),
       dataIndex: 'totalAsset',
@@ -111,7 +113,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
-      title: (
+      title: isETHi ? `Asset Changed${unit}` : (
         <Tooltip placement="top" title="Number of Stablecoins Changed">Balance Changed</Tooltip>
       ),
       dataIndex: 'assetChange',
