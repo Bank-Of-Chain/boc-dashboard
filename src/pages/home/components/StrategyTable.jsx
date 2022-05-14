@@ -67,12 +67,12 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
     },
     {
       title: `Asset (${unit})`,
-      dataIndex: 'totalAsset',
-      key: 'totalAsset',
+      dataIndex: 'totalAssetBaseUsd',
+      key: 'totalAssetBaseUsd',
       showSorterTooltip: false,
       defaultSortOrder: 'descend',
       sorter: (a, b) => {
-        return BN(a.totalAsset || '0').minus(BN(b.totalAsset || '0'))
+        return BN(a.totalAssetBaseUsd || '0').minus(BN(b.totalAssetBaseUsd || '0'))
       },
       render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>,
     },
