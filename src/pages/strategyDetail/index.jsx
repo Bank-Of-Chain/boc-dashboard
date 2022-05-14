@@ -215,7 +215,7 @@ const Strategy = props => {
   }
   if (!initialState.chain || isEmpty(strategy)) return null
 
-  const { underlyingTokens, totalAsset } = strategy
+  const { underlyingTokens, totalAssetBaseUsd } = strategy
 
   const smallSizeProps = {
     cardProps: {
@@ -301,7 +301,7 @@ const Strategy = props => {
                   <CoinSuperPosition array={underlyingTokens} />
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
-                  {toFixed(totalAsset, decimals, displayDecimals) + ` ${unit}`}
+                  {toFixed(totalAssetBaseUsd, decimals, displayDecimals) + ` ${unit}`}
                 </Descriptions.Item>
                 <Descriptions.Item label='Status'>
                   Active
