@@ -20,19 +20,19 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null
-  const { strategies = [], totalAssets = '0' } = visitData
+  const { strategies = [], totalValueInVault = '0' } = visitData
   const total = reduce(
     strategies,
     (rs, o) => {
-      return rs.plus(o.debtRecordInVault)
+      return rs.plus(o.totalValue)
     },
     BN(0),
   )
 
-  const vaultPoolValue = BN(totalAssets).minus(total)
+  const tvl = BN(totalValueInVault).plus(total)
 
   const groupData = groupBy(
-    filter(strategies, i => i.debtRecordInVault > 0),
+    filter(strategies, i => i.totalValue > 0),
     'protocol',
   )
 
@@ -42,21 +42,21 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
         const amount = reduce(
           o,
           (rs, ob) => {
-            return rs.plus(ob.debtRecordInVault)
+            return rs.plus(ob.totalValue)
           },
           BN(0),
         )
         return {
           name: strategyMap[initialState.chain][key],
           amount,
-          percent: amount.div(totalAssets),
+          percent: amount.div(tvl),
         }
       }),
     ),
     {
       name: 'Vault',
-      amount: vaultPoolValue,
-      percent: totalAssets === '0' ? 0 : vaultPoolValue.div(totalAssets),
+      amount: BN(totalValueInVault),
+      percent: tvl.eq(0) ? '0' : BN(totalValueInVault).div(tvl),
     },
   ]
 
@@ -81,7 +81,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
       ),
     },
     {
-      title: unit ? `Asset (${unit})` : 'Asset Amount',
+      title: `Asset (${unit})`,
       dataIndex: 'amount',
       key: 'amount',
       showSorterTooltip: false,

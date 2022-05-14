@@ -14,11 +14,11 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes) {
   }
   vault(id: $valutAddress) {
     id
-    totalAssets
+    totalValueInVault
     strategies(where: {isAdded: true}) {
       id
       protocol
-      debtRecordInVault
+      totalValue
     }
   }
 }

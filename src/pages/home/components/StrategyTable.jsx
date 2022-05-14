@@ -17,7 +17,7 @@ import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 import styles from '../style.less'
 
-const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = '' }) => {
+const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
@@ -66,7 +66,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: text => <CoinSuperPosition array={text} />,
     },
     {
-      title: unit ? `Asset (${unit})` : 'Asset Amount',
+      title: `Asset (${unit})`,
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       showSorterTooltip: false,

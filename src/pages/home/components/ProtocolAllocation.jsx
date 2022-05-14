@@ -12,7 +12,7 @@ export default function ProtocolAllocation({
   tokenDecimals,
   strategyMap = {},
   vaultData = {},
-  unit = '',
+  unit = 'USD',
   displayDecimals = TOKEN_DISPLAY_DECIMALS
 }) {
   const deviceType = useDeviceType()

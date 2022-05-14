@@ -24,7 +24,8 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
-import { map, reverse } from 'lodash'
+import { map, reverse, cloneDeep, reduce } from 'lodash'
+import BN from 'bignumber.js'
 import { appendDate } from "@/utils/array-append"
 
 const ETHiHome = () => {
@@ -116,6 +117,19 @@ const ETHiHome = () => {
     loading,
   }]
 
+  const vaultData = cloneDeep(dataSource.vault)
+  if (vaultData) {
+    const strategyTotal = reduce(
+      vaultData.strategies,
+      (rs, o) => {
+        return rs.plus(o.debtRecordInVault)
+      },
+      BN(0),
+    )
+    vaultData.totalValueInVault = BN(vaultData.totalAssets).minus(strategyTotal).toString()
+    vaultData.strategies.map(item => item.totalValue = item.debtRecordInVault)
+  }
+
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -132,12 +146,12 @@ const ETHiHome = () => {
       </Suspense>
       <Suspense fallback={null}>
         <ProtocolAllocation
-          unit="ETH"
           loading={loading}
           strategyMap={ETHI_STRATEGIES_MAP}
           tokenDecimals={ETHI_BN_DECIMALS}
           displayDecimals={ETHI_DISPLAY_DECIMALS}
-          vaultData={dataSource.vault}
+          vaultData={vaultData}
+          unit="ETH"
         />
       </Suspense>
 
