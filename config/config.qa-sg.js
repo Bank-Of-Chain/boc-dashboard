@@ -32,10 +32,10 @@ export default defineConfig({
         1: 'https://qa-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi',
       },
       VAULT_ADDRESS: {
-        1: '0xaC47e91215fb80462139756f43438402998E4A3a',
+        1: '0xaC9fCBA56E42d5960f813B9D0387F3D3bC003338',
       },
       ETHI_ADDRESS: {
-        1: '0xdFdE6B33f13de2CA1A75A6F7169f50541B14f75b' ,
+        1: '0xf090f16dEc8b6D24082Edd25B1C8D26f2bC86128' ,
       }
     },
   },
