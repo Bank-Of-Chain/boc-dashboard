@@ -487,7 +487,7 @@ const Reports = () => {
 
   const sumOriginalHarvestFee = sum(originalHarvestFee)
   const sumHarvestFee = sum(harvestFee)
-  const sumHarvestFeeVariation = sumOriginalHarvestFee - sumHarvestFee
+  const sumHarvestFeeVariation = sumHarvestFee - sumOriginalHarvestFee
 
   const sumOriginalGain = sum(originalGain)
   const sumNewGain = sum(newGain)
