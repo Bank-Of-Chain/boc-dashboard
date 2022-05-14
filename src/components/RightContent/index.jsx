@@ -34,8 +34,6 @@ const GlobalHeaderRight = () => {
 
   const { userProvider, loadWeb3Modal, logoutOfWeb3Modal } = useUserProvider()
   const address = useUserAddress(userProvider)
-  const { vault: curVault } = initialState
-
 
   const changeNetwork = id => {
     return new Promise(async (resolve, reject) => {

@@ -51,6 +51,22 @@
     transform: translate(0, -50%);
     background-color: #434343;
   }
+
+  :global(.ant-menu-item.ant-menu-item-active) {
+    color: white;
+  }
+
+  :global(.ant-menu-item.ant-menu-item-active:after) {
+    border-bottom: 0;
+  }
+
+  :global(.ant-menu-item.ant-menu-item-selected) {
+    color: @primary-color;
+  }
+
+  :global(.ant-menu-item.ant-menu-item-selected:after) {
+    border-bottom: 2px solid @primary-color;
+  }
 }
 
 .avatarMenu {
