@@ -30,10 +30,10 @@ export default defineConfig({
         1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi',
       },
       VAULT_ADDRESS: {
-        1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+        1: '0xDae16f755941cbC0C9D240233a6F581d1734DaA2',
       },
       ETHI_ADDRESS: {
-        1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+        1: '0x8cB9Aca95D1EdebBfe6BD9Da4DC4a2024457bD32',
       }
     }
   },
