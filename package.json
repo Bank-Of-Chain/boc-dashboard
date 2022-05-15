@@ -10,6 +10,7 @@
     "build:qa-sg": "cross-env UMI_ENV=qa-sg umi build",
     "build:qa02-sg": "cross-env UMI_ENV=qa02-sg umi build",
     "build:qa03-sg": "cross-env UMI_ENV=qa03-sg umi build",
+    "build:qa04-sg": "cross-env UMI_ENV=qa04-sg umi build",
     "build:stage-sg": "cross-env UMI_ENV=stage-sg umi build",
     "build:stage-ca": "cross-env UMI_ENV=stage-ca umi build",
     "build:pr-sg": "cross-env UMI_ENV=pr-sg umi build",

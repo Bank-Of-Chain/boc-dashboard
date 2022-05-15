@@ -18,6 +18,8 @@ import useUserProvider from '@/hooks/useUserProvider'
 import {toFixed} from '@/utils/number-format'
 import { USDI_BN_DECIMALS } from "@/constants/usdi"
 import { APY_DURATION } from "@/constants/api"
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 const { BigNumber } = ethers
 
@@ -37,7 +39,7 @@ const ABI = [{
   "type": "function"
 }]
 
-const dataMerge = (account, chain, tokenType, requests) => {
+const dataMerge = (account, chain, vault, tokenType, requests) => {
   if(isEmpty(account)) return Promise.resolve({})
 
   const params = {
@@ -74,18 +76,23 @@ const dataMerge = (account, chain, tokenType, requests) => {
         balanceOfToken,
       ] = rs;
 
+      const displayDecimals = {
+        [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
+        [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+      }[vault]
+
       const monthProfitsData = []
       for (let i = 0; i < 12; i++) {
         const month = moment().utcOffset(0).subtract(i, 'months').format('YYYY-MM')
         const profit = find(monthProfits, item => item.month === month)?.profit || 0
-        monthProfitsData.push(toFixed(profit, USDI_BN_DECIMALS, 2))
+        monthProfitsData.push(toFixed(profit, USDI_BN_DECIMALS, displayDecimals))
       }
       const nextData = {
         day7Apy,
         day30Apy,
         tvls: reverse(map(tvls.content, item => ({
           date: item.date,
-          balance: toFixed(item.balance, USDI_BN_DECIMALS, 2)
+          balance: toFixed(item.balance, USDI_BN_DECIMALS, displayDecimals)
         }))),
         monthProfits: reverse(monthProfitsData),
         realizedProfit: profit.realizedProfit,
@@ -119,7 +126,7 @@ export default function usePersonalData(tokenType) {
       const tokenContract = new ethers.Contract(initialState.tokenAddress, ABI, userProvider)
       requests.push(tokenContract.balanceOf(initialState?.address).catch(() => BigNumber.from(0)))
     }
-    dataMerge(initialState?.address?.toLowerCase(), initialState?.chain, tokenType, requests).then(r => {
+    dataMerge(initialState?.address?.toLowerCase(), initialState?.chain, initialState?.vault, tokenType, requests).then(r => {
       setData(r)
       setLoading(false)
     }).finally(() => setLoading(false))

@@ -15,12 +15,12 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // 列表中的平台图标，直接使用透明背景即可
 const withoutBackgroundColor = ['Vault']
 
-const TopSearch = ({ tokenDecimals, strategyMap , visitData = {} }) => {
+const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}, unit }) => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null
-  const { strategies = [], totalValue = '0' } = visitData
+  const { strategies = [], totalValueInVault = '0' } = visitData
   const total = reduce(
     strategies,
     (rs, o) => {
@@ -29,7 +29,7 @@ const TopSearch = ({ tokenDecimals, strategyMap , visitData = {} }) => {
     BN(0),
   )
 
-  const vaultPoolValue = BN(totalValue).minus(total)
+  const tvl = BN(totalValueInVault).plus(total)
 
   const groupData = groupBy(
     filter(strategies, i => i.totalValue > 0),
@@ -49,14 +49,14 @@ const TopSearch = ({ tokenDecimals, strategyMap , visitData = {} }) => {
         return {
           name: strategyMap[initialState.chain][key],
           amount,
-          percent: amount.div(totalValue),
+          percent: amount.div(tvl),
         }
       }),
     ),
     {
       name: 'Vault',
-      amount: vaultPoolValue,
-      percent: totalValue === '0' ? 0 : vaultPoolValue.div(totalValue),
+      amount: BN(totalValueInVault),
+      percent: tvl.eq(0) ? '0' : BN(totalValueInVault).div(tvl),
     },
   ]
 
@@ -81,14 +81,14 @@ const TopSearch = ({ tokenDecimals, strategyMap , visitData = {} }) => {
       ),
     },
     {
-      title: 'Asset (USD)',
+      title: `Asset (${unit})`,
       dataIndex: 'amount',
       key: 'amount',
       showSorterTooltip: false,
       sorter: (a, b) => {
         return a.amount.minus(b.amount)
       },
-      render: text => toFixed(text.toString(), tokenDecimals, 2),
+      render: text => toFixed(text.toString(), tokenDecimals, displayDecimals),
     },
     {
       title: 'Asset Ratio',

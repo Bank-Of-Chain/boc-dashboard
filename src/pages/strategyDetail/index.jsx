@@ -1,5 +1,5 @@
 import { Suspense, useState, useEffect } from 'react'
-import { Col, Row, Card, Image, Descriptions } from 'antd'
+import { Col, Row, Card, Image, Descriptions, Spin } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import ReportTable from './components/ReportTable'
 import { history, useModel } from 'umi'
@@ -9,7 +9,8 @@ import multipleLine from '@/components/echarts/options/line/multipleLine'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP, ETHI_STRATEGIES_MAP } from '@/constants/strategies'
-import { VAULT_TYPE } from '@/constants/vault'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
@@ -18,25 +19,23 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Utils === //
 import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex } from 'lodash'
 import { toFixed } from '@/utils/number-format'
-import { USDI_BN_DECIMALS } from '@/constants/usdi'
-import { ETHI_BN_DECIMALS } from '@/constants/ethi'
 
 import moment from 'moment'
 import _union from 'lodash/union'
 import _find from 'lodash/find'
+import BN from 'bignumber.js'
 import { get, isNil, keyBy, sum } from 'lodash'
 import { formatToUTC0 } from '@/utils/date'
 
 // === Services === //
-import { getStrategyById } from '@/services/dashboard-service'
-import { getStrategyApysOffChain, getBaseApyByPage } from '@/services/api-service'
+import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails } from '@/services/api-service'
 
 // === Styles === //
 import styles from './style.less'
 
 const Strategy = props => {
   const { id, official_daily_apy = false } = props?.location?.query
-  const loading = false
+  const [loading, setLoading] = useState(false)
   const [strategy, setStrategy] = useState({})
   const [apysEchartOpt, setApysEchartOpt] = useState({})
   const [apys, setApys] = useState([])
@@ -44,23 +43,45 @@ const Strategy = props => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
-  const isUSDi = VAULT_TYPE.USDi === initialState.vault
-  const decimals = isUSDi ? USDI_BN_DECIMALS : ETHI_BN_DECIMALS
+  const unit = {
+    [VAULT_TYPE.USDi]: 'USD',
+    [VAULT_TYPE.ETHi]: 'ETH'
+  }[initialState.vault]
+
+  // boc-service fixed the number to 6
+  const decimals = BN(1e6)
+
+  const strategiesMap = {
+    [VAULT_TYPE.USDi]: USDI_STRATEGIES_MAP,
+    [VAULT_TYPE.ETHi]: ETHI_STRATEGIES_MAP
+  }[initialState.vault]
+
+  const displayDecimals = {
+    [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
+    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+  }[initialState.vault]
 
   useEffect(() => {
-    getStrategyById(initialState.vault, initialState.chain, id)
-      .then(setStrategy)
+    setLoading(true)
+    getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100)
+      .then((resp) => {
+        const strategy = _find(resp.content, (item) => item.strategyAddress === id)
+        setStrategy(strategy)
+      })
       .catch(noop)
+      .finally(() => {
+        setLoading(false)
+      })
     // eslint-disable-next-line
   }, [id])
 
   useEffect(() => {
-    if(isEmpty(strategy?.name)) return;
+    if(isEmpty(strategy?.strategyName)) return;
     getBaseApyByPage(
       {
         chainId: initialState.chain,
         vaultAddress: initialState.vaultAddress,
-        strategyName: strategy?.name,
+        strategyName: strategy?.strategyName,
         sort: 'fetch_block desc'
       },
       0,
@@ -80,7 +101,7 @@ const Strategy = props => {
       })
       .then(setApys)
       .catch(noop)
-    getStrategyApysOffChain({ chainId: initialState.chain, strategyName: strategy?.name, sort: 'fetch_time desc' }, 0, 100)
+    getStrategyApysOffChain({ chainId: initialState.chain, strategyName: strategy?.strategyName, sort: 'fetch_time desc' }, 0, 100)
       .then(rs =>
         map(rs.content, i => {
           return {
@@ -92,7 +113,7 @@ const Strategy = props => {
       .then(setOffChainApys)
       .catch(noop)
 
-  }, [strategy, strategy?.name])
+  }, [strategy, strategy?.strategyName])
 
   useEffect(() => {
     const startMoment = moment()
@@ -189,8 +210,12 @@ const Strategy = props => {
     setApysEchartOpt(option)
   }, [apys, offChainApys, official_daily_apy])
 
+  if (loading) {
+    return <div className={styles.loadingContainer}><Spin size="large" /></div>
+  }
   if (!initialState.chain || isEmpty(strategy)) return null
-  const { positionDetail, totalValue } = strategy
+
+  const { underlyingTokens, totalAssetBaseUsd } = strategy
 
   const smallSizeProps = {
     cardProps: {
@@ -231,8 +256,6 @@ const Strategy = props => {
     }
   }[deviceType]
 
-  const strategiesMap = isUSDi ? USDI_STRATEGIES_MAP : ETHI_STRATEGIES_MAP
-
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -268,20 +291,20 @@ const Strategy = props => {
                   <a
                     target={'_blank'}
                     rel='noreferrer'
-                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.id}`}
+                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
                   >
-                    {strategy.name}
+                    {strategy.strategyName}
                   </a>
                 </Descriptions.Item>
                 <Descriptions.Item label='Underlying Token'>
                   &nbsp;&nbsp;
-                  <CoinSuperPosition array={map(positionDetail, 'token.id')} />
+                  <CoinSuperPosition array={underlyingTokens} />
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
-                  {toFixed(totalValue, decimals, 2) + ' USD'}
+                  {toFixed(totalAssetBaseUsd, decimals, displayDecimals) + ` ${unit}`}
                 </Descriptions.Item>
                 <Descriptions.Item label='Status'>
-                  {strategy.isAdded ? 'Active' : 'Inactive'}
+                  Active
                 </Descriptions.Item>
               </Descriptions>
             </Col>
@@ -305,7 +328,7 @@ const Strategy = props => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <ReportTable strategyName={strategy?.name} loading={loading} />
+        <ReportTable strategyName={strategy?.strategyName} loading={loading} />
       </Suspense>
     </GridContent>
   )

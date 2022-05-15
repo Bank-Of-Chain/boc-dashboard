@@ -51,6 +51,22 @@
     transform: translate(0, -50%);
     background-color: #434343;
   }
+
+  :global(.ant-menu-item.ant-menu-item-active) {
+    color: white;
+  }
+
+  :global(.ant-menu-item.ant-menu-item-active:after) {
+    border-bottom: 0;
+  }
+
+  :global(.ant-menu-item.ant-menu-item-selected) {
+    color: @primary-color;
+  }
+
+  :global(.ant-menu-item.ant-menu-item-selected:after) {
+    border-bottom: 2px solid @primary-color;
+  }
 }
 
 .avatarMenu {
@@ -152,6 +168,7 @@
   }
 
   .headerMenu {
+    font-size: 1.25rem;
     :global(.ant-menu-item.ant-menu-overflow-item) {
       padding: 0 6px
     }
@@ -166,15 +183,3 @@
   }
 }
 
-@media screen and (max-width: 1200px) {
-  .header {
-    justify-content: space-between;
-  }
-
-  .headerMenu {
-    position: relative;
-    left: 0;
-    top: 0;
-    transform: none;
-  }
-}

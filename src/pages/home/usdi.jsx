@@ -10,9 +10,13 @@ import _min from 'lodash/min'
 import _max from 'lodash/max'
 import numeral from 'numeral'
 
+// === Components === //
+import ChainChange from '../../components/ChainChange'
+
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE } from '@/constants/api'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
@@ -64,7 +68,10 @@ const USDiHome = () => {
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
       setApy30(data[0] ? data[0].apy : 0)
-      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
+      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', {
+        ...params,
+        needMinMax: false
+      }))
     }).catch((e) => {
       console.error(e)
     })
@@ -76,9 +83,13 @@ const USDiHome = () => {
       const items = appendDate(data.content, 'totalSupply', calDateRange)
       const result = map(reverse(items), ({date, totalSupply}) => ({
         date,
-        totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, 2),
+        totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
       }))
-      setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', false, params))
+      setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'USDi', {
+        ...params,
+        yAxisMin: (value) => Math.floor(value.min * 0.998),
+        yAxisMax: (value) => Math.ceil(value.max * 1.001),
+      }))
     }).catch((e) => {
       console.error(e)
     })
@@ -95,7 +106,7 @@ const USDiHome = () => {
   const introduceData = [{
     title: 'Total USDi Supply',
     tip: 'Current total USDi supply',
-    content: !isEmpty(usdi) ? toFixed(usdi?.totalSupply, USDI_BN_DECIMALS, 2) : 0,
+    content: !isEmpty(usdi) ? toFixed(usdi?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS) : 0,
     loading,
   }, {
     title: 'Holders',
@@ -111,6 +122,9 @@ const USDiHome = () => {
 
   return (
     <GridContent>
+      <Suspense fallback={null}>
+        <ChainChange />
+      </Suspense>
       <Suspense fallback={null}>
         <IntroduceRow data={introduceData} />
       </Suspense>
@@ -128,7 +142,7 @@ const USDiHome = () => {
           loading={loading}
           strategyMap={USDI_STRATEGIES_MAP}
           tokenDecimals={USDI_BN_DECIMALS}
-          vault={dataSource.vault}
+          vaultData={dataSource.vault}
         />
       </Suspense>
 

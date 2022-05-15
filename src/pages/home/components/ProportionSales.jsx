@@ -11,11 +11,11 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import styles from '../style.less'
 
-const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
-  const { strategies = [], totalValue } = visitData
+const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {
+  const { strategies = [], totalValueInVault = '0' } = visitData
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
-  const suffix = ' (USD)'
+  const suffix = ` (${unit})`
 
   if (!initialState.chain) return null
 
@@ -26,12 +26,13 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
     },
     BN(0),
   )
-  const vaultPoolValue = BN(totalValue).minus(total)
+  const tvl = BN(totalValueInVault).plus(total)
   const groupData = groupBy(
     filter(strategies, i => i.totalValue > 0),
     'protocol',
   )
-  if (isEmpty(groupData)) return <Empty />
+  const vaultDisplayValue = toFixed(tvl, tokenDecimals, displayDecimals)
+  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty />
 
   const tableData = [
     ...values(
@@ -45,13 +46,13 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
         )
         return {
           Protocol: `${strategyMap[initialState.chain][key]}${suffix}`,
-          amount: toFixed(amount, tokenDecimals, 2),
+          amount: toFixed(amount, tokenDecimals, displayDecimals),
         }
       }),
     ),
     {
       Protocol: `Vault${suffix}`,
-      amount: toFixed(vaultPoolValue, tokenDecimals, 2),
+      amount: toFixed(totalValueInVault, tokenDecimals, displayDecimals),
     },
   ]
 
@@ -107,7 +108,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, visitData = {} }) => {
         statistic={{
           visible: true,
           content: {
-            value: toFixed(totalValue, tokenDecimals, 2),
+            value: toFixed(tvl, tokenDecimals, displayDecimals),
             name: `TVL${suffix}`,
           },
         }}

@@ -10,3 +10,5 @@ export const ETHI_DECIMALS = 18
 
 export const ETHI_BN_DECIMALS = BN(1e18)
 
+export const ETHI_DISPLAY_DECIMALS = 4
+

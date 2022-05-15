@@ -4,7 +4,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 
 // === Constants === //
-import { ETH, MATIC } from './constants/chain';
+import { ETH } from './constants/chain';
 import { VAULT_TYPE } from '@/constants/vault';
 
 import { getVaultConfig } from '@/utils/vault';
@@ -38,7 +38,8 @@ export const layout = ({ initialState, setInitialState }) => {
           query: { chain, vault },
         },
       } = history // 如果没有登录，重定向到 login
-      let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : MATIC.id)
+      let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : ETH.id)
+      //TODO: 默认选中 usdi
       let nextVault = !!initialState.vault ? initialState.vault : (!!vault ? vault : VAULT_TYPE.USDi)
       if (vault === VAULT_TYPE.ETHi) {
         nextChainId = ETH.id

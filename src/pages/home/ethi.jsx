@@ -23,8 +23,9 @@ import { isEmpty, isNil } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
-import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE } from '@/constants/ethi'
-import { map, reverse } from 'lodash'
+import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { map, reverse, cloneDeep, reduce } from 'lodash'
+import BN from 'bignumber.js'
 import { appendDate } from "@/utils/array-append"
 
 const ETHiHome = () => {
@@ -64,7 +65,10 @@ const ETHiHome = () => {
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
       setApy30(data.content[0] ? data.content[0].apy : 0)
-      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', false, params))
+      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', {
+        ...params,
+        needMinMax: false
+      }))
     }).catch((e) => {
       console.error(e)
     })
@@ -76,9 +80,13 @@ const ETHiHome = () => {
       const items = appendDate(data.content, 'totalSupply', calDateRange)
       const result = map(reverse(items), ({date, totalSupply}) => ({
         date,
-        totalSupply: toFixed(totalSupply, ETHI_BN_DECIMALS, 2),
+        totalSupply: toFixed(totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
       }))
-      setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'ETHi', false, params))
+      setTvlEchartOpt(getLineEchartOpt(result, 'totalSupply', 'ETHi', {
+        ...params,
+        yAxisMin: (value) => Math.floor(value.min * 0.998),
+        yAxisMax: (value) => Math.ceil(value.max * 1.001),
+      }))
     }).catch((e) => {
       console.error(e)
     })
@@ -95,7 +103,7 @@ const ETHiHome = () => {
   const introduceData = [{
     title: 'Total ETHi Supply',
     tip: 'Current total ETHi supply',
-    content: !isEmpty(ethi) ? toFixed(ethi?.totalSupply, ETHI_BN_DECIMALS, 2) : 0,
+    content: !isEmpty(ethi) ? toFixed(ethi?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS) : 0,
     loading,
   }, {
     title: 'Holders',
@@ -108,6 +116,19 @@ const ETHiHome = () => {
     content: `${numeral(apy30).format('0,0.00')}%`,
     loading,
   }]
+
+  const vaultData = cloneDeep(dataSource.vault)
+  if (vaultData) {
+    const strategyTotal = reduce(
+      vaultData.strategies,
+      (rs, o) => {
+        return rs.plus(o.debtRecordInVault)
+      },
+      BN(0),
+    )
+    vaultData.totalValueInVault = BN(vaultData.totalAssets).minus(strategyTotal).toString()
+    vaultData.strategies.map(item => item.totalValue = item.debtRecordInVault)
+  }
 
   return (
     <GridContent>
@@ -128,15 +149,28 @@ const ETHiHome = () => {
           loading={loading}
           strategyMap={ETHI_STRATEGIES_MAP}
           tokenDecimals={ETHI_BN_DECIMALS}
-          vault={dataSource.vault}
+          displayDecimals={ETHI_DISPLAY_DECIMALS}
+          vaultData={vaultData}
+          unit="ETH"
         />
       </Suspense>
 
       <Suspense fallback={null}>
-        <StrategyTable strategyMap={ETHI_STRATEGIES_MAP} loading={loading} />
+        <StrategyTable
+          unit="ETH"
+          loading={loading}
+          strategyMap={ETHI_STRATEGIES_MAP}
+          displayDecimals={ETHI_DISPLAY_DECIMALS}
+        />
       </Suspense>
       <Suspense fallback={null}>
-        <TransationsTable token="ETHi" decimals={ETHI_DECIMALS} filterOptions={RECENT_ACTIVITY_TYPE} loading={loading} />
+        <TransationsTable
+          token="ETHi"
+          decimals={ETHI_DECIMALS}
+          dispalyDecimal={ETHI_DISPLAY_DECIMALS}
+          filterOptions={RECENT_ACTIVITY_TYPE}
+          loading={loading}
+        />
       </Suspense>
     </GridContent>
   )

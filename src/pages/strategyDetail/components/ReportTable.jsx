@@ -5,6 +5,8 @@ import BN from 'bignumber.js'
 
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { getStrategyDetailsReports } from '@/services/api-service'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Utils === //
 import moment from 'moment'
@@ -27,6 +29,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     pageSize: 10
   })
   const deviceType = useDeviceType()
+  const isETHi = VAULT_TYPE.ETHi === initialState.vault
+  const displayDecimals = {
+    [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
+    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+  }[initialState.vault]
+
+  const unit = dataSource[0]?.lpTokenUnit ? `(${dataSource[0]?.lpTokenUnit})` : ''
 
   const fetch = async () => {
     setTableLoading(true)
@@ -95,22 +104,22 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       ),
     },
     {
-      title: (
+      title: isETHi ? `Total Asset${unit}` : (
         <Tooltip placement="top" title="Total number of stablecoins">Total Balance</Tooltip>
       ),
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       width: '7rem',
-      render: text => <span>{toFixed(text, decimal, 2)}</span>,
+      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
-      title: (
+      title: isETHi ? `Asset Changed${unit}` : (
         <Tooltip placement="top" title="Number of Stablecoins Changed">Balance Changed</Tooltip>
       ),
       dataIndex: 'assetChange',
       key: 'assetChange',
       width: '8rem',
-      render: text => <span>{toFixed(text, decimal, 2)}</span>,
+      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
       title: `Reward Asset (USD)`,
@@ -141,6 +150,11 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       ),
     },
   ]
+
+  // ETHi dont have "Reward Asset"
+  if (isETHi) {
+    columns.splice(3, 1)
+  }
 
   const smallCardConfig = {
     cardProps: {

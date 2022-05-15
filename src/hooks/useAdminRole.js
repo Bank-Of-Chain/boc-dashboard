@@ -83,7 +83,7 @@ const useAdminRole = (address) => {
 
   useEffect(() => {
     if (isEmpty(initialState.chain) || isEmpty(address) || isEmpty(userProvider) || isEmpty(initialState.vault)) return
-    //TODO: 此处地址待修改
+    setError(undefined)
     roleFetch(address)
   }, [address, initialState.chain, userProvider, initialState.vault]);
 

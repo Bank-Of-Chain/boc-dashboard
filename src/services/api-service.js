@@ -71,7 +71,7 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
     params: {
       offset,
       limit,
-      restParams
+      ...restParams
     },
   });
 }
