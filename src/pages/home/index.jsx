@@ -1,5 +1,6 @@
 import React from 'react'
 import { useModel } from 'umi'
+
 import ETHi from './ethi'
 import USDi from './usdi'
 import { VAULT_TYPE } from '@/constants/vault';

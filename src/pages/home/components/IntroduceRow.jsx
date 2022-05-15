@@ -12,6 +12,7 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
+
 const IntroduceRow = ({ data = [] }) => {
   return (
     <Row gutter={[24, 24]}>

@@ -20,6 +20,7 @@ const MATIC = {
   rpcUrl: "https://polygon-rpc.com/",
   blockExplorer: "https://explorer-mainnet.maticvigil.com/",
 }
+
 const CHAINS = [ETH, BSC, MATIC]
 
 export const CHIANS_NAME = {
