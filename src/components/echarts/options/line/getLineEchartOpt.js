@@ -7,7 +7,7 @@ import forEach from 'lodash/forEach';
 import isNaN from 'lodash/isNaN';
 import isUndefined from 'lodash/isUndefined';
 
-const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, options = {}) => {
+const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
   const {
     format = 'MM-DD HH:mm',
     xAxis,
@@ -15,6 +15,9 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
     smooth = false,
     step,
     dataZoom,
+    needMinMax = true,
+    yAxisMin = (value) => parseInt(value.min * 0.9999 * 10 ** 4) / 10 ** 4,
+    yAxisMax = (value) => parseInt(value.max * 1.0001 * 10 ** 4) / 10 ** 4,
     tootlTipSuffix = '(UTC)',
     tootlTipFormat = 'YYYY-MM-DD HH:mm'
   } = options
@@ -55,8 +58,8 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, needMinMax = true, opt
     }
   };
   if (needMinMax) {
-    option.yAxis.min = (value) => parseInt(value.min * 0.9999 * 10 ** 4) / 10 ** 4
-    option.yAxis.max = (value) => parseInt(value.max * 1.0001 * 10 ** 4) / 10 ** 4
+    option.yAxis.min = yAxisMin
+    option.yAxis.max = yAxisMax
   }
   option.series[0].connectNulls = true;
   if (step) {

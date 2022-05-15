@@ -8,7 +8,8 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 export default function DailyChart({
   title,
   data,
-  loading
+  loading,
+  token = 'USDi'
 }) {
   const deviceType = useDeviceType()
   const {
@@ -26,8 +27,7 @@ export default function DailyChart({
   const option1 = getLineEchartOpt(
     tvls,
     'balance',
-    'USDi',
-    true,
+    token,
     {
       format: 'MM-DD',
       dataZoom: [{

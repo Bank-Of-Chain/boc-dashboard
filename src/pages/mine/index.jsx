@@ -13,18 +13,13 @@ import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 import ETHi from './ethi'
 import USDi from './usdi'
 
-export default function Home() {
+export default function Mine() {
   const { initialState } = useModel('@@initialState')
   const [showWarningModal, setShowWarningModal] = useState(false)
   const { error: roleError } = useAdminRole(initialState.address)
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
-    // 加载异常，一定弹窗
-    if (roleError) {
-        setShowWarningModal(true)
-        return
-    }
     // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
     if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
       if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
@@ -32,8 +27,17 @@ export default function Home() {
         return
       }
       setShowWarningModal(true)
+    } else {
+      setShowWarningModal(false)
     }
-  }, [initialState, roleError])
+  }, [initialState])
+
+  useEffect(() => {
+    // 加载异常，一定弹窗
+    if (roleError) {
+      setShowWarningModal(true)
+    }
+  }, [roleError])
 
   const changeNetwork = async id => {
     const targetNetwork = find(CHAINS, { id })
