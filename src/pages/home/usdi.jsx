@@ -6,6 +6,7 @@ import ProtocolAllocation from './components/ProtocolAllocation'
 import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
 import { useModel } from 'umi'
+import get from 'lodash/get'
 import _min from 'lodash/min'
 import _max from 'lodash/max'
 import numeral from 'numeral'
@@ -67,7 +68,8 @@ const USDiHome = () => {
         date,
         apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
       }))
-      setApy30(data[0] ? data[0].apy : 0)
+      const nextApy30 = get(data, 'content.[0].apy', 0)
+      setApy30(nextApy30)
       setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', {
         ...params,
         needMinMax: false
