@@ -6,7 +6,7 @@ export default defineConfig({
   base: '/dashboard/',
   publicPath: '/dashboard/',
   define: {
-    ENV_INDEX: 'debug',
+    ENV_INDEX: 'qa-local',
     API_SERVER: 'http://192.168.75.50/server',
     DASHBOARD_ROOT: 'http://192.168.75.50/dashboard',
     IMAGE_ROOT: 'http://192.168.75.50',

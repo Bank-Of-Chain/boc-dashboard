@@ -4,7 +4,7 @@ export default defineConfig({
   base: '/',
   publicPath: '/',
   define:{
-    ENV_INDEX: 'pro',
+    ENV_INDEX: 'pr-sg',
     API_SERVER: 'https://service-v1.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-v1.bankofchain.io',
     IMAGE_ROOT:'https://web-v1.bankofchain.io',

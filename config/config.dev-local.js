@@ -14,11 +14,11 @@ export default defineConfig({
     babelOptions: {},
   },
   define:{
-    ENV_INDEX: 'dev',
+    ENV_INDEX: 'dev-local',
     // API_SERVER: 'http://192.168.75.50/server',
     API_SERVER: 'http://192.168.75.32:8080',
     DASHBOARD_ROOT: '.',
-    IMAGE_ROOT:'http://192.168.75.50',
+    IMAGE_ROOT:'http://192.168.75.50:3001',
     USDI: {
       SUB_GRAPH_URL: {
         1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
