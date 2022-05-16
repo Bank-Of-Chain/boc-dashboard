@@ -8,7 +8,7 @@ const ETH = {
 }
 const BSC = {
   id: '56',
-  name: 'BNB Chain',
+  name: 'BNB',
   decimals: BN(1e18),
   rpcUrl: `https://bsc-dataseed.binance.org/`,
   blockExplorer: "https://bscscan.com/",
