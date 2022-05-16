@@ -6,7 +6,7 @@ export default defineConfig({
   base: '/',
   publicPath: '/',
   define: {
-    ENV_INDEX: 'debug',
+    ENV_INDEX: 'qa04-sg',
     API_SERVER: 'https://service-qa04-sg.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-qa04-sg.bankofchain.io',
     IMAGE_ROOT: 'https://qa04-sg.bankofchain.io',

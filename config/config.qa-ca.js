@@ -6,7 +6,7 @@ export default defineConfig({
   base: '/',
   publicPath: '/',
   define: {
-    ENV_INDEX: 'debug',
+    ENV_INDEX: 'qa-ca',
     API_SERVER: 'https://service-inte.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-inte.bankofchain.io',
     IMAGE_ROOT:'https://inte.bankofchain.io',
