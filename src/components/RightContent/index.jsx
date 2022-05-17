@@ -130,8 +130,7 @@ const GlobalHeaderRight = () => {
 
   return (
     <div className={styles.header}>
-      {/*TODO: 暂时隐藏，等ethi上线几周后，开启 */}
-      {/* {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
+      {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
         <Menu
           className={styles.headerMenu}
           onClick={handleMenuClick}
@@ -141,7 +140,7 @@ const GlobalHeaderRight = () => {
           <Menu.Item key="ethi">ETHi</Menu.Item>
           <Menu.Item key="usdi">USDi</Menu.Item>
         </Menu>
-      ) : <span/>} */}
+      ) : <span/>}
       <Space className={className}>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />

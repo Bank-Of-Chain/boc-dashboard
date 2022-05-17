@@ -39,8 +39,7 @@ export const layout = ({ initialState, setInitialState }) => {
         },
       } = history // 如果没有登录，重定向到 login
       let nextChainId = !!initialState.chain ? initialState.chain : (!!chain ? chain : ETH.id)
-      //TODO: 默认选中 usdi
-      let nextVault = !!initialState.vault ? initialState.vault : (!!vault ? vault : VAULT_TYPE.USDi)
+      let nextVault = !!initialState.vault ? initialState.vault : (!!vault ? vault : VAULT_TYPE.ETHi)
       if (vault === VAULT_TYPE.ETHi) {
         nextChainId = ETH.id
       }
