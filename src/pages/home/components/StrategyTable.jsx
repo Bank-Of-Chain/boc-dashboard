@@ -96,7 +96,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       sorter: (a, b) => {
         return a.apyLP - b.apyLP
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>,
+      render: (text = 0) => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
       title: 'Weekly Profit',
@@ -113,7 +113,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       sorter: (a, b) => {
         return a.estimate_apy - b.estimate_apy
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>,
+      render: (text = 0) => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
       title: 'Next Weekly Profit',
