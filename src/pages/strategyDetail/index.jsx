@@ -42,10 +42,6 @@ const Strategy = props => {
   const { id, official_daily_apy = false } = props?.location?.query
   const [loading, setLoading] = useState(false)
   const [strategy, setStrategy] = useState({})
-  //TODO: 旧的逻辑，待删除
-  const [apysEchartOpt, setApysEchartOpt] = useState({})
-  const [apys, setApys] = useState([])
-  const [offChainApys, setOffChainApys] = useState([])
   // 用于存放所有的apy数据，取代上面的apys和offchainApys
   const [apyArray, setApyArray] = useState([])
   const { initialState } = useModel('@@initialState')
@@ -95,20 +91,6 @@ const Strategy = props => {
         0,
         100,
       )
-        .then(rs => {
-          // TODO: 旧的逻辑，待删除
-          // 一天可能返回两个值，取 timestamp 大的
-          const baseApys = map(rs.content, i => {
-            return {
-              value: i.lpApy,
-              timestamp: i.fetchTimestamp,
-              date: formatToUTC0(1000 * i.fetchTimestamp, 'yyyy-MM-DD'),
-            }
-          })
-          const groupApys = groupBy(baseApys, item => item.date)
-          setApys(map(groupApys, group => sortBy(group, o => o.timestamp).pop()))
-          return rs
-        })
         .catch(() => {}),
       getStrategyApysOffChain(
         {
@@ -119,18 +101,6 @@ const Strategy = props => {
         0,
         100,
       )
-        .then(rs => {
-          // TODO: 旧的逻辑，待删除
-          setOffChainApys(
-            map(rs.content, i => {
-              return {
-                value: i.apy,
-                date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
-              }
-            }),
-          )
-          return rs
-        })
         .catch(() => {}),
       getStrategyEstimateApys(
         initialState.chain,
@@ -223,105 +193,6 @@ const Strategy = props => {
       setApyArray(nextApyArray.slice(-67))
     })
   }, [strategy, strategy?.strategyName])
-
-  // TODO: 旧的逻辑，待删除
-  // useEffect(() => {
-  //   const startMoment = moment()
-  //     .utcOffset(0)
-  //     .subtract(66, 'day')
-  //     .startOf('day')
-  //   const calcArray = reduce(
-  //     new Array(66),
-  //     rs => {
-  //       const currentMoment = startMoment.subtract(-1, 'day')
-  //       rs.push(currentMoment.format('yyyy-MM-DD'))
-  //       return rs
-  //     },
-  //     [],
-  //   )
-  //   const dayArray = calcArray.slice(-60)
-  //   const apyMap = keyBy(apys, 'date')
-
-  //   const officialApyMap = keyBy(offChainApys, 'date')
-  //   const bocApy = []
-  //   const officialApy = []
-  //   const weeklyOfficialApy = []
-  //   // 计算 7 天平均 APY，当天没点，查找最近一天有点开始
-  //   const getWeeklyAvgApy = day => {
-  //     const index = findIndex(calcArray, _ => _ === day)
-  //     let firstValidIndex = -1
-  //     for (let i = index; i >= 0; i--) {
-  //       if (get(officialApyMap, `${calcArray[i]}.value`, null)) {
-  //         firstValidIndex = i
-  //         break
-  //       }
-  //     }
-  //     if (firstValidIndex === -1) {
-  //       return
-  //     }
-  //     const weeklyArray = calcArray.slice(Math.max(0, firstValidIndex - 6), firstValidIndex + 1)
-  //     const values = map(weeklyArray, day => get(officialApyMap, `${day}.value`, null)).filter(
-  //       _ => !isNil(_),
-  //     )
-  //     if (values.length === 0) {
-  //       return
-  //     }
-  //     return sum(values) / values.length
-  //   }
-  //   dayArray.forEach(day => {
-  //     const value1 = get(apyMap, `${day}.value`, null)
-  //     bocApy.push(isNil(value1) ? null : Number(value1 * 100).toFixed(2))
-  //     const value2 = get(officialApyMap, `${day}.value`, null)
-  //     officialApy.push(isNil(value2) ? null : Number(value2 * 100).toFixed(2))
-  //     const value3 = getWeeklyAvgApy(day)
-  //     weeklyOfficialApy.push(isNil(value3) ? null : Number(value3 * 100).toFixed(2))
-  //   })
-  //   const lengndData = ['Weekly APY', 'Official Weekly APY']
-  //   const data = [
-  //     {
-  //       seriesName: 'Weekly APY',
-  //       seriesData: bocApy,
-  //     },
-  //     {
-  //       seriesName: 'Official Weekly APY',
-  //       seriesData: weeklyOfficialApy,
-  //     }
-  //   ]
-  //   if (official_daily_apy) {
-  //     lengndData.push('Official Daily APY')
-  //     data.push({
-  //       seriesName: 'Official Daily APY',
-  //       seriesData: officialApy,
-  //     })
-  //   }
-  //   let obj = {
-  //     legend: {
-  //       data: lengndData,
-  //       textStyle: { color: '#fff' },
-  //     },
-  //     xAxisData: dayArray,
-  //     data,
-  //   }
-  //   const option = multipleLine(obj)
-  //   option.color = ['#5470c6', '#fac858', '#91cc75']
-  //   option.series.forEach(serie => {
-  //     serie.connectNulls = true
-  //   })
-  //   option.xAxis.data = option.xAxis.data.map(item => `${item} (UTC)`)
-  //   option.xAxis.axisLabel = {
-  //     formatter: value => value.replace(' (UTC)', ''),
-  //   }
-  //   option.xAxis.axisTick = {
-  //     alignWithLabel: true,
-  //   }
-  //   option.yAxis.splitLine = {
-  //     lineStyle: {
-  //       color: 'black',
-  //     },
-  //   }
-  //   setApysEchartOpt(option)
-  // }, [apys, offChainApys, official_daily_apy])
-
 
   const lengndData = ['Weekly APY', 'Official Weekly APY', 'UnRealized APY']
   const data = [
