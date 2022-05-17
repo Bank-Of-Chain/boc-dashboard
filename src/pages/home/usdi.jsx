@@ -21,11 +21,12 @@ import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
-import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
+import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getEstimateApys } from '@/services/api-service'
 
 // === Utils === //
 import { isEmpty, isNil } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
+import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
@@ -57,12 +58,15 @@ const USDiHome = () => {
     if (calDateRange > 7) {
       params.format = 'MM-DD'
     }
-    getValutAPYList({
-      chainId: initialState.chain,
-      duration: APY_DURATION.monthly,
-      limit: calDateRange,
-      tokenType: TOKEN_TYPE.usdi
-    }).then(data => {
+    Promise.all([
+      getValutAPYList({
+        chainId: initialState.chain,
+        duration: APY_DURATION.monthly,
+        limit: calDateRange,
+        tokenType: TOKEN_TYPE.usdi
+      }),
+      getEstimateApys(initialState.vaultAddress)
+    ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
       const result = map(reverse(items), ({date, apy}) => ({
         date,
@@ -70,10 +74,56 @@ const USDiHome = () => {
       }))
       const nextApy30 = get(data, 'content.[0].apy', 0)
       setApy30(nextApy30)
-      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', {
-        ...params,
-        needMinMax: false
-      }))
+
+      // TODO: 加入逻辑处理一下当天的点数据，要不然会出现两条线断开的展示效果
+      const reverseIt = map(estimateApys.content, i => {
+        return {
+          date: i.date,
+          unrealize_apy: i.apy,
+          apy: null
+        }
+      })
+      const nextArray = [...result, ...reverseIt]
+
+      // 多条折现配置
+      const lengndData = ['APY', 'UnRealized APY']
+      const columeArray = [
+        {
+          seriesName: 'APY',
+          seriesData: map(nextArray, 'apy'),
+        },
+        {
+          seriesName: 'UnRealized APY',
+          seriesData: map(nextArray, 'unrealize_apy'),
+        }
+      ]
+      const obj = {
+        legend: {
+          data: lengndData,
+          textStyle: { color: '#fff' },
+        },
+        xAxisData: map(nextArray, 'date'),
+        data: columeArray
+      }
+      const option = multipleLine(obj)
+      option.color = ['#5470c6', '#fac858']
+      option.series.forEach(serie => {
+        serie.connectNulls = true
+      })
+      option.grid= {left: '0%', right: '2%', bottom: '0%', containLabel: true}
+      option.xAxis.data = option.xAxis.data.map(item => `${item} (UTC)`)
+      option.xAxis.axisLabel = {
+        formatter: (value) => value.replace(' (UTC)', '')
+      }
+      option.xAxis.axisTick = {
+        alignWithLabel: true,
+      }
+      option.yAxis.splitLine = {
+        lineStyle: {
+          color: 'black',
+        },
+      }
+      setApyEchartOpt(option)
     }).catch((e) => {
       console.error(e)
     })
