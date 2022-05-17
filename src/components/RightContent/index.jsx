@@ -16,6 +16,7 @@ import { isInMobileWalletApp } from "@/utils/device"
 // === Contansts === //
 import CHAINS, { ETH } from '@/constants/chain'
 import { VAULT_TYPE } from '@/constants/vault'
+import { WALLET_OPTIONS } from '@/constants/wallet'
 
 // === Hooks === //
 import useUserAddress from '@/hooks/useUserAddress'
@@ -35,7 +36,7 @@ const GlobalHeaderRight = () => {
   const [current, setCurrent] = useState(initialState.vault)
   const [walletModalVisible, setWalletModalVisible] = useState(false)
 
-  const { userProvider, connect, disconnect, getWalletName, displayWalletList } = useWallet()
+  const { userProvider, connect, disconnect, getWalletName } = useWallet()
   const address = useUserAddress(userProvider)
 
   const handleClickConnect = () => {
@@ -75,6 +76,7 @@ const GlobalHeaderRight = () => {
       console.log('targetNetwork=', targetNetwork)
       if (isEmpty(targetNetwork)) return
       if (!userProvider) {
+        rejcet()
         return
       }
       const data = [
@@ -197,7 +199,7 @@ const GlobalHeaderRight = () => {
         onCancel={handleCancel}
         connectTo={connectTo}
         selected={getWalletName()}
-        displayWalletList={displayWalletList}
+        walletOptions={WALLET_OPTIONS}
       />
     </div>
   )

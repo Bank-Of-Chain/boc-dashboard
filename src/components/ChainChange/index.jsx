@@ -11,6 +11,7 @@ import CHAINS from '@/constants/chain'
 import map from 'lodash/map'
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
+import useWallet from '@/hooks/useWallet'
 
 // === Styles === //
 import styles from './index.less'
@@ -21,6 +22,7 @@ export default function ChainChange (props) {
   const { shouldChangeChain } = props
 
   const { initialState } = useModel('@@initialState')
+  const { userProvider } = useWallet()
 
   const changeChain = value => {
     const { vault } = history.location.query
@@ -45,7 +47,10 @@ export default function ChainChange (props) {
     return new Promise(async (resolve, reject) => {
       const targetNetwork = find(CHAINS, { id })
       if (isEmpty(targetNetwork)) return
-      const ethereum = window.ethereum
+      if (!userProvider) {
+        rejcet()
+        return
+      }
       const data = [
         {
           chainId: `0x${Number(targetNetwork.id).toString(16)}`,
@@ -57,20 +62,14 @@ export default function ChainChange (props) {
       ]
       let switchTx
       try {
-        switchTx = await ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: data[0].chainId }],
-        })
+        switchTx = await userProvider.send("wallet_switchEthereumChain", [{ chainId: data[0].chainId }])
       } catch (switchError) {
         console.log('switchError=', switchTx, switchError)
         if (switchError.code === 4001) {
           reject()
         }
         try {
-          switchTx = await ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: data,
-          })
+          switchTx = await userProvider.send("wallet_addEthereumChain", data)
         } catch (addError) {
           console.log('addError=', addError)
           reject()

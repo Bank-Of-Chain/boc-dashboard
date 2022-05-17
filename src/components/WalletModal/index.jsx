@@ -9,7 +9,7 @@ export default function WalletModal({
   onCancel,
   connectTo,
   selected,
-  displayWalletList = []
+  walletOptions = []
 }) {
 
   const handleConnect = (name) => {
@@ -24,7 +24,7 @@ export default function WalletModal({
       title="Select a Wallet"
     >
       <div className={styles.content}>
-        {map(displayWalletList, (wallet) => (
+        {map(walletOptions, (wallet) => (
           <div
             key={wallet.value}
             className={classNames(styles.walletItemWrapper, {

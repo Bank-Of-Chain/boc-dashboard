@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as ethers from "ethers";
-import useUserProvider from './useUserProvider'
+import useWallet from './useWallet'
 
 const {
   Contract
@@ -40,7 +40,7 @@ export default function useEthPrice() {
   const [loading, setLoading] = useState(false)
   const {
     userProvider,
-  } = useUserProvider()
+  } = useWallet()
 
   useEffect(() => {
     if (!userProvider) {

@@ -7,7 +7,6 @@ function useWallet() {
     provider,
     setCurrentProvider,
     userProvider,
-    displayWalletList,
   } =  useModel('wallet')
 
   const connectTo = useCallback(async (name) => {
@@ -118,7 +117,6 @@ function useWallet() {
     disconnectPassive,
     getChainId,
     getWalletName,
-    displayWalletList
   }
 }
 
