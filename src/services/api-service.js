@@ -2,6 +2,7 @@ import {
   request
 } from 'umi'
 import {
+  isEmpty,
   isNil,
 } from 'lodash';
 
@@ -30,7 +31,10 @@ export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
  * @returns
  */
 export const getReports = (params, offset = 0, limit = 20) => {
-  const { chainId, vaultAddress } = params
+  const {
+    chainId,
+    vaultAddress
+  } = params
   const nextParams = {
     sort: 'gene_time desc',
     offset,
@@ -66,7 +70,11 @@ export const getStrategyDetails = (chainId, vaultAddress, offset = 0, limit = 20
  * @returns
  */
 export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
-  const { chainId, vaultAddress, ...restParams } = params
+  const {
+    chainId,
+    vaultAddress,
+    ...restParams
+  } = params
   return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/weeklyApy`, {
     params: {
       offset,
@@ -215,4 +223,37 @@ export const getTokenTotalSupplyList = ({
 export const clearAPICache = () => {
   apyListCache = {}
   tokenTotalSupplyCache = {}
+}
+
+/**
+ * 获取vault的预估apy
+ * @param {string} vaultAddress vault地址
+ */
+export const getEstimateApys = (vaultAddress) => {
+  if (isEmpty(vaultAddress))
+    return Promise.reject("vaultAddress不可为空")
+
+  // return request(`${API_SERVER}/apy/vault_estimate_apy`)
+  return request(`/apy/vault_estimate_apy`)
+}
+
+/**
+ * 获取策略的apy
+ * @param {string} chainId
+ * @param {string} vaultAddress
+ * @param {string} strategyAddress
+ * @returns
+ */
+export const getStrategyEstimateApys = (chainId, vaultAddress, strategyAddress) => {
+  if (isEmpty(chainId))
+    return Promise.reject("chainId不可为空")
+
+  if (isEmpty(vaultAddress))
+    return Promise.reject("vaultAddress不可为空")
+
+  if (isEmpty(strategyAddress))
+    return Promise.reject("strategyAddress不可为空")
+
+  // return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_apy`)
+  return request(`/chains/${chainId}/vaults/${vaultAddress}/strategy_apy`)
 }
