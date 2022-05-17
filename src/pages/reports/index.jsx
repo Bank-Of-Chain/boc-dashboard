@@ -39,7 +39,7 @@ import BN from 'bignumber.js'
 
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
-import useUserProvider from '@/hooks/useUserProvider'
+import useWallet from '@/hooks/useWallet'
 
 // === Constants === //
 import CHAINS, { CHIANS_NAME } from '@/constants/chain'
@@ -58,7 +58,7 @@ const fixedDecimals = BN(1e18)
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
   const [showIndex, setShowIndex] = useState(-1)
-  const { userProvider } = useUserProvider()
+  const { userProvider } = useWallet()
   const [isRedUp, setIsRedUp] = useState(true)
   const deviceType = useDeviceType()
 
@@ -127,7 +127,9 @@ const Reports = () => {
     const targetNetwork = find(CHAINS, { id })
     console.log('targetNetwork=', targetNetwork)
     if (isEmpty(targetNetwork)) return
-    const ethereum = window.ethereum
+    if (!userProvider) {
+      return
+    }
     const data = [
       {
         chainId: `0x${Number(targetNetwork.id).toString(16)}`,
@@ -141,16 +143,10 @@ const Reports = () => {
 
     let switchTx
     try {
-      switchTx = await ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: data[0].chainId }],
-      })
+      switchTx = await userProvider.send("wallet_switchEthereumChain", [{ chainId: data[0].chainId }])
     } catch (switchError) {
       try {
-        switchTx = await ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: data,
-        })
+        switchTx = await userProvider.send("wallet_addEthereumChain", data)
       } catch (addError) {
         console.log('addError=', addError)
       }
@@ -677,7 +673,7 @@ const Reports = () => {
         </Row>
       </Modal>
       <Modal
-        title="Set metamask's network to current?"
+        title="Set wallet's network to current?"
         visible={showWarningModal}
         onOk={() => changeNetwork(initialState.chain)}
         onCancel={hideModal}
@@ -685,7 +681,7 @@ const Reports = () => {
         cancelText='close'
       >
         <p>
-          Metamask Chain:{' '}
+          Wallet Chain:{' '}
           <span style={{ color: 'red', fontWeight: 'bold' }}>
             {CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}
           </span>

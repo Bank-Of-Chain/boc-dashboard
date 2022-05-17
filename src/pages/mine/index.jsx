@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useModel } from 'umi'
 import { Modal, Result } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
-import isUndefined from 'lodash/isUndefined'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import find from 'lodash/find'
 import { isProEnv } from "@/services/env-service"
 import useAdminRole from '@/hooks/useAdminRole'
+import useWallet from '@/hooks/useWallet'
 import { VAULT_TYPE } from '@/constants/vault'
 import CHAINS, { CHIANS_NAME } from '@/constants/chain'
 import ETHi from './ethi'
@@ -17,6 +17,7 @@ export default function Mine() {
   const { initialState } = useModel('@@initialState')
   const [showWarningModal, setShowWarningModal] = useState(false)
   const { error: roleError } = useAdminRole(initialState.address)
+  const { userProvider } = useWallet()
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
@@ -43,7 +44,9 @@ export default function Mine() {
     const targetNetwork = find(CHAINS, { id })
     console.log('targetNetwork=', targetNetwork)
     if (isEmpty(targetNetwork)) return
-    const ethereum = window.ethereum
+    if (!userProvider) {
+      return
+    }
     const data = [
       {
         chainId: `0x${Number(targetNetwork.id).toString(16)}`,
@@ -57,16 +60,10 @@ export default function Mine() {
 
     let switchTx
     try {
-      switchTx = await ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: data[0].chainId }],
-      })
+      switchTx = await userProvider.send("wallet_switchEthereumChain", [{ chainId: data[0].chainId }])
     } catch (switchError) {
       try {
-        switchTx = await ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: data,
-        })
+        switchTx = await userProvider.send("wallet_addEthereumChain", data)
       } catch (addError) {
         console.log('addError=', addError)
       }
@@ -83,10 +80,8 @@ export default function Mine() {
     return (
       <Result
         status='500'
-        title={isUndefined(window.ethereum) ? '' : 'No Connect!'}
-        subTitle={
-          isUndefined(window.ethereum) ? 'Please install Metamask first.' : 'Please connect metamask first.'
-        }
+        title={!!userProvider ? '' : 'No Connect!'}
+        subTitle="Please connect wallet first."
       />
     )
   }
@@ -100,7 +95,7 @@ export default function Mine() {
     <GridContent>
       <Comp />
       <Modal
-        title="Set metamask's network to current?"
+        title="Set wallet's network to current?"
         visible={showWarningModal}
         onOk={() => changeNetwork(initialState.chain)}
         onCancel={hideModal}
@@ -108,7 +103,7 @@ export default function Mine() {
         cancelText='close'
       >
         <p>
-           Metamask Chain:{' '}
+           Wallet Chain:{' '}
           <span style={{ color: 'red', fontWeight: 'bold' }}>{CHIANS_NAME[initialState.walletChainId] || initialState.walletChainId}</span>
         </p>
         <p>

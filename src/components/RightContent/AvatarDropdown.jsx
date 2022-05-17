@@ -1,7 +1,7 @@
 import React from 'react'
-import { LogoutOutlined } from '@ant-design/icons'
-import { Avatar, Menu, Spin, Button } from 'antd'
-import { useModel, history } from 'umi'
+import { LogoutOutlined, WalletOutlined } from '@ant-design/icons'
+import { Avatar, Menu, Spin } from 'antd'
+import { useModel } from 'umi'
 
 // === Components === //
 import HeaderDropdown from '../HeaderDropdown'
@@ -9,7 +9,7 @@ import Address from './../Address'
 
 import styles from './index.less'
 
-const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
+const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet }) => {
   const { initialState } = useModel('@@initialState')
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
@@ -29,6 +29,12 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address }) => {
 
   const menuHeaderDropdown = (
     <Menu className={styles.avatarMenu}>
+      {showChangeWallet && (
+        <Menu.Item key='change' onClick={onChangeWallet}>
+          <WalletOutlined />
+          Change Wallet
+        </Menu.Item>
+      )}
       <Menu.Item key='logout' onClick={logoutOfWeb3Modal}>
         <LogoutOutlined />
         Disconnect

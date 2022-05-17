@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react'
 
 // === Components === //
 import Avatar from './AvatarDropdown'
+import WalletModal from "../WalletModal"
 import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
 import { getVaultConfig } from '@/utils/vault';
+import { isInMobileWalletApp } from "@/utils/device"
 
 // === Contansts === //
 import CHAINS, { ETH } from '@/constants/chain'
@@ -17,7 +19,7 @@ import { VAULT_TYPE } from '@/constants/vault'
 
 // === Hooks === //
 import useUserAddress from '@/hooks/useUserAddress'
-import useUserProvider from '@/hooks/useUserProvider'
+import useWallet from '@/hooks/useWallet'
 
 // === Styles === //
 import styles from './index.less'
@@ -31,16 +33,50 @@ const GlobalHeaderRight = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
   const [current, setCurrent] = useState(initialState.vault)
+  const [walletModalVisible, setWalletModalVisible] = useState(false)
 
-  const { userProvider, loadWeb3Modal, logoutOfWeb3Modal } = useUserProvider()
+  const { userProvider, connect, disconnect, getWalletName, displayWalletList } = useWallet()
   const address = useUserAddress(userProvider)
 
+  const handleClickConnect = () => {
+    if (isInMobileWalletApp) {
+      connect()
+    } else {
+      setWalletModalVisible(true)
+    }
+  }
+
+  const handleCancel = () => {
+    setWalletModalVisible(false)
+  }
+
+  const connectTo = async (name) => {
+    const provider = await connect(name)
+    if (provider) {
+      handleCancel()
+    }
+  }
+
+  const changeChain = value => {
+    changeNetwork(value).then(() => {
+      history.push({
+        query: {
+          chain: value,
+        },
+      })
+      setTimeout(() => {
+        location.reload()
+      }, 1)
+    })
+  }
   const changeNetwork = id => {
     return new Promise(async (resolve, reject) => {
       const targetNetwork = find(CHAINS, { id })
       console.log('targetNetwork=', targetNetwork)
       if (isEmpty(targetNetwork)) return
-      const ethereum = window.ethereum
+      if (!userProvider) {
+        return
+      }
       const data = [
         {
           chainId: `0x${Number(targetNetwork.id).toString(16)}`,
@@ -54,19 +90,13 @@ const GlobalHeaderRight = () => {
 
       let switchTx
       try {
-        switchTx = await ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: data[0].chainId }],
-        })
+        switchTx = await userProvider.send("wallet_switchEthereumChain", [{ chainId: data[0].chainId }])
       } catch (switchError) {
         if (switchError.code === 4001) {
           reject()
         }
         try {
-          switchTx = await ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: data,
-          })
+          switchTx = await userProvider.send("wallet_addEthereumChain", data)
         } catch (addError) {
           console.log('addError=', addError)
         }
@@ -144,29 +174,31 @@ const GlobalHeaderRight = () => {
       <Space className={className}>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
-        ) : !isEmpty(address) ? ([
+        ) : isEmpty(address) ? (
+          <Button type='primary' onClick={handleClickConnect}>
+            Connect
+          </Button>
+        ) : ([
           <Avatar
             key="avatar"
             menu
+            showChangeWallet={!isInMobileWalletApp}
+            onChangeWallet={handleClickConnect}
             address={address}
-            logoutOfWeb3Modal={() =>
-              logoutOfWeb3Modal().then(() => {
-                setTimeout(() => {
-                  window.location.reload()
-                }, 1)
-              })
-            }
+            logoutOfWeb3Modal={disconnect}
           />,
           <Button className={styles.myDasboardBtn} key="mine" icon={<AreaChartOutlined />} type="primary" onClick={goToMine}>
             My Dashboard
           </Button>
-        ]
-        ) : window.ethereum ? (
-          <Button type='primary' onClick={loadWeb3Modal}>
-            Connect
-          </Button>
-        ) : null}
+        ])}
       </Space>
+      <WalletModal
+        visible={walletModalVisible}
+        onCancel={handleCancel}
+        connectTo={connectTo}
+        selected={getWalletName()}
+        displayWalletList={displayWalletList}
+      />
     </div>
   )
 }
