@@ -69,18 +69,15 @@ function useWallet() {
     if (!provider) {
       return
     }
-    const chainChanged = chainId => {
+    const chainChanged = async (chainId) => {
       console.log(`chain changed to ${chainId}! updating providers`)
-      localStorage.REACT_APP_NETWORK_TYPE = parseInt(chainId)
-      setTimeout(() => {
-        window.location.reload()
-      }, 1)
+      const provider = await web3Modal.requestProvider()
+      setCurrentProvider(provider)
     }
-    const accountsChanged = (accounts) => {
+    const accountsChanged = async (accounts) => {
       console.log(`account changed!`, accounts)
-      setTimeout(() => {
-        window.location.reload()
-      }, 1)
+      const provider = await web3Modal.requestProvider()
+      setCurrentProvider(provider)
     }
 
     const disconnect = async (code, reason) => {

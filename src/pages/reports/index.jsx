@@ -31,18 +31,18 @@ import get from 'lodash/get'
 import map from 'lodash/map'
 import sum from 'lodash/sum'
 import noop from 'lodash/noop'
-import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import { toFixed } from '@/utils/number-format'
 import BN from 'bignumber.js'
+import { changeNetwork } from "@/utils/network"
 
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
 import useWallet from '@/hooks/useWallet'
 
 // === Constants === //
-import CHAINS, { CHIANS_NAME } from '@/constants/chain'
+import { CHIANS_NAME } from '@/constants/chain'
 import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
@@ -58,7 +58,7 @@ const fixedDecimals = BN(1e18)
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
   const [showIndex, setShowIndex] = useState(-1)
-  const { userProvider } = useWallet()
+  const { userProvider, getWalletName } = useWallet()
   const [isRedUp, setIsRedUp] = useState(true)
   const deviceType = useDeviceType()
 
@@ -109,6 +109,7 @@ const Reports = () => {
   }, [initialState.vault])
 
   const { isAdmin, loading: roleLoading, error: roleError } = useAdminRole(initialState.address)
+
   /**
    * 驳回调仓报告
    * @param {string} id
@@ -121,40 +122,6 @@ const Reports = () => {
       .then(refresh)
       .catch(noop)
       .finally(close)
-  }
-
-  const changeNetwork = async id => {
-    const targetNetwork = find(CHAINS, { id })
-    console.log('targetNetwork=', targetNetwork)
-    if (isEmpty(targetNetwork)) return
-    if (!userProvider) {
-      return
-    }
-    const data = [
-      {
-        chainId: `0x${Number(targetNetwork.id).toString(16)}`,
-        chainName: targetNetwork.name,
-        nativeCurrency: targetNetwork.nativeCurrency,
-        rpcUrls: [targetNetwork.rpcUrl],
-        blockExplorerUrls: [targetNetwork.blockExplorer],
-      },
-    ]
-    console.log('data', data)
-
-    let switchTx
-    try {
-      switchTx = await userProvider.send("wallet_switchEthereumChain", [{ chainId: data[0].chainId }])
-    } catch (switchError) {
-      try {
-        switchTx = await userProvider.send("wallet_addEthereumChain", data)
-      } catch (addError) {
-        console.log('addError=', addError)
-      }
-    }
-
-    if (switchTx) {
-      console.log(switchTx)
-    }
   }
 
   const hideModal = () => {
@@ -675,7 +642,7 @@ const Reports = () => {
       <Modal
         title="Set wallet's network to current?"
         visible={showWarningModal}
-        onOk={() => changeNetwork(initialState.chain)}
+        onOk={() => changeNetwork(initialState.chain, userProvider, getWalletName())}
         onCancel={hideModal}
         okText='ok'
         cancelText='close'

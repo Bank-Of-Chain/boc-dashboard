@@ -15,10 +15,14 @@ export default defineConfig({
   },
   define:{
     ENV_INDEX: 'dev-local',
-    // API_SERVER: 'http://192.168.75.50/server',
-    API_SERVER: 'http://192.168.75.32:8080',
-    DASHBOARD_ROOT: '.',
-    IMAGE_ROOT:'http://192.168.75.50:3001',
+    API_SERVER: 'https://service-v1.bankofchain.io',
+    DASHBOARD_ROOT: 'https://dashboard-v1.bankofchain.io',
+    IMAGE_ROOT:'https://web-v1.bankofchain.io',
+    JSON_RPC: {
+      1: "http://localhost:8545",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://rpc-mainnet.maticvigil.com"
+    },
     USDI: {
       SUB_GRAPH_URL: {
         1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
@@ -26,12 +30,12 @@ export default defineConfig({
         137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon'
       },
       VAULT_ADDRESS: {
-        1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
+        1: '0x94fFA1C7330845646CE9128450F8e6c3B5e44F86',
         56: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
         137: '0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A'
       },
       USDI_ADDRESS: {
-        1: '0xE3e7A4B35574Ce4b9Bc661cD93e8804Da548932a',
+        1: '0xB22C255250d74B0ADD1bfB936676D2a299BF48Bd',
         56: '0xCFC6E8577a414f561D459fC4a030e3463A500d29',
         137: '0x8DEb399a86f28f62f0F24daF56c4aDD8e57EEcD5'
       },
@@ -41,10 +45,10 @@ export default defineConfig({
         1: 'http://192.168.75.33:8000/subgraphs/name/boc-v1_5/subgraph-ethi',
       },
       VAULT_ADDRESS: {
-        1: '0x63fea6E447F120B8Faf85B53cdaD8348e645D80E',
+        1: '0xDae16f755941cbC0C9D240233a6F581d1734DaA2',
       },
       ETHI_ADDRESS: {
-        1: '0x38A70c040CA5F5439ad52d0e821063b0EC0B52b6',
+        1: '0x8cB9Aca95D1EdebBfe6BD9Da4DC4a2024457bD32',
       }
     }
   }

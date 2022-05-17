@@ -20,13 +20,9 @@ export const WALLETS = {
     },
     getProviderOption: () => ({
       walletconnect: {
-        package: WalletConnectProvider, // required
+        package: WalletConnectProvider,
         options: {
-          rpc: {
-            1: "https://eth-mainnet.alchemyapi.io/v2/cDrbyA3BIcXQcF3EYjsf_PX8qC6YBlhV",
-            56: "https://bsc-dataseed.binance.org/",
-            137: "https://rpc-mainnet.maticvigil.com"
-          }
+          rpc: JSON_RPC
         }
       }
     })

@@ -8,13 +8,13 @@ import WalletModal from "../WalletModal"
 import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 
 // === Utils === //
-import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
 import { getVaultConfig } from '@/utils/vault';
 import { isInMobileWalletApp } from "@/utils/device"
+import { changeNetwork } from "@/utils/network"
 
 // === Contansts === //
-import CHAINS, { ETH } from '@/constants/chain'
+import { ETH } from '@/constants/chain'
 import { VAULT_TYPE } from '@/constants/vault'
 import { WALLET_OPTIONS } from '@/constants/wallet'
 
@@ -58,64 +58,11 @@ const GlobalHeaderRight = () => {
     }
   }
 
-  const changeChain = value => {
-    changeNetwork(value).then(() => {
-      history.push({
-        query: {
-          chain: value,
-        },
-      })
-      setTimeout(() => {
-        location.reload()
-      }, 1)
-    })
-  }
-  const changeNetwork = id => {
-    return new Promise(async (resolve, reject) => {
-      const targetNetwork = find(CHAINS, { id })
-      console.log('targetNetwork=', targetNetwork)
-      if (isEmpty(targetNetwork)) return
-      if (!userProvider) {
-        rejcet()
-        return
-      }
-      const data = [
-        {
-          chainId: `0x${Number(targetNetwork.id).toString(16)}`,
-          chainName: targetNetwork.name,
-          nativeCurrency: targetNetwork.nativeCurrency,
-          rpcUrls: [targetNetwork.rpcUrl],
-          blockExplorerUrls: [targetNetwork.blockExplorer],
-        },
-      ]
-      console.log('data', data)
-
-      let switchTx
-      try {
-        switchTx = await userProvider.send("wallet_switchEthereumChain", [{ chainId: data[0].chainId }])
-      } catch (switchError) {
-        if (switchError.code === 4001) {
-          reject()
-        }
-        try {
-          switchTx = await userProvider.send("wallet_addEthereumChain", data)
-        } catch (addError) {
-          console.log('addError=', addError)
-        }
-      }
-
-      if (switchTx) {
-        console.log(switchTx)
-      }
-      resolve()
-    })
-  }
-
   const handleMenuClick = (e) => {
     const vault = e.key
     let promise = Promise.resolve()
-    if ((history.location.pathname === '/mine' || history.location.pathname === '/reports') && vault === 'ethi') {
-      promise = changeNetwork("1")
+    if ((history.location.pathname === '/reports') && vault === 'ethi') {
+      promise = changeNetwork("1", userProvider, getWalletName(), { resolveWhenUnsupport: true })
     }
     promise.then(() => {
       setCurrent(vault)
