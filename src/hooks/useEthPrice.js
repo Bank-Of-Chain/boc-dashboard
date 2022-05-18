@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import * as ethers from "ethers";
-import useUserProvider from './useUserProvider'
+import { getJsonRpcProvider } from '@/utils/json-provider'
+import { ETH } from '@/constants/chain'
 
 const {
   Contract
@@ -38,19 +39,18 @@ export default function useEthPrice() {
   const [value, setValue] = useState()
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
-  const {
-    userProvider,
-  } = useUserProvider()
+  const jsonRpcProvider = getJsonRpcProvider(ETH.id)
 
   useEffect(() => {
-    if (!userProvider) {
+    if (!jsonRpcProvider) {
+      console.error('JSON RPC is empty')
       return
     }
     setLoading(true)
-    const vaultContract = new Contract(ETHI.VAULT_ADDRESS[1], VAULT_ABI, userProvider)
+    const vaultContract = new Contract(ETHI.VAULT_ADDRESS[1], VAULT_ABI, jsonRpcProvider)
     vaultContract.priceProvider()
       .then((priceProviderAddress) => {
-        const priceProviderContract = new Contract(priceProviderAddress, PRICE_PROVIDER_ABI, userProvider)
+        const priceProviderContract = new Contract(priceProviderAddress, PRICE_PROVIDER_ABI, jsonRpcProvider)
         return priceProviderContract.ethPriceInUsd()
       })
       .then((result) => {
@@ -58,7 +58,7 @@ export default function useEthPrice() {
       })
       .catch(setError)
       .finally(() => setLoading(false))
-  }, [userProvider])
+  }, [])
 
   return {
     value,

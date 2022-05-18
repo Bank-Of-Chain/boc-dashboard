@@ -10,6 +10,11 @@ export default defineConfig({
     API_SERVER: 'https://service-qa-sg.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-qa-sg.bankofchain.io',
     IMAGE_ROOT: 'https://qa-sg.bankofchain.io',
+    RPC_URL: {
+      1: "http://13.215.137.222:8545",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://rpc-mainnet.maticvigil.com"
+    },
     USDI: {
       SUB_GRAPH_URL: {
         1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum',

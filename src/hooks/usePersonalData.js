@@ -14,12 +14,12 @@ import map from 'lodash/map';
 import { reverse, find } from 'lodash'
 import { useEffect, useState } from 'react';
 import * as ethers from "ethers";
-import useUserProvider from '@/hooks/useUserProvider'
 import {toFixed} from '@/utils/number-format'
 import { USDI_BN_DECIMALS } from "@/constants/usdi"
 import { APY_DURATION } from "@/constants/api"
 import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { getJsonRpcProvider } from '@/utils/json-provider'
 
 const { BigNumber } = ethers
 
@@ -114,23 +114,21 @@ export default function usePersonalData(tokenType) {
   const {
     initialState
   } = useModel('@@initialState')
-  const { userProvider } = useUserProvider()
 
   useEffect(() => {
-    if (!initialState?.address || !userProvider || !initialState?.chain) {
+    const jsonRpcProvider = getJsonRpcProvider(initialState?.chain)
+    if (!initialState?.address || !jsonRpcProvider || !initialState?.chain) {
       return
     }
     setLoading(true)
     const requests = []
-    if (!isEmpty(userProvider) && initialState?.address) {
-      const tokenContract = new ethers.Contract(initialState.tokenAddress, ABI, userProvider)
-      requests.push(tokenContract.balanceOf(initialState?.address).catch(() => BigNumber.from(0)))
-    }
+    const tokenContract = new ethers.Contract(initialState.tokenAddress, ABI, jsonRpcProvider)
+    requests.push(tokenContract.balanceOf(initialState?.address).catch(() => BigNumber.from(0)))
     dataMerge(initialState?.address?.toLowerCase(), initialState?.chain, initialState?.vault, tokenType, requests).then(r => {
       setData(r)
       setLoading(false)
     }).finally(() => setLoading(false))
-  }, [initialState?.address, userProvider, initialState?.chain])
+  }, [initialState?.address, initialState?.chain])
 
   return {
     dataSource: data,
