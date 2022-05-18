@@ -22,7 +22,7 @@ export const WALLETS = {
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          rpc: JSON_RPC
+          rpc: RPC_URL
         }
       }
     })

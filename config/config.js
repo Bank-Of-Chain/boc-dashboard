@@ -92,6 +92,11 @@ export default defineConfig({
       56: 'https://bscscan.com',
       137: 'https://polygonscan.com',
     },
+    RPC_URL: {
+      1: "https://rpc.ankr.com/eth",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://rpc-mainnet.maticvigil.com"
+    },
     USDI: {
       SUB_GRAPH_URL: {
         1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',

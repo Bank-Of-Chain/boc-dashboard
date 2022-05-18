@@ -18,7 +18,7 @@ export default defineConfig({
     API_SERVER: 'https://service-v1.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-v1.bankofchain.io',
     IMAGE_ROOT:'https://web-v1.bankofchain.io',
-    JSON_RPC: {
+    RPC_URL: {
       1: "http://localhost:8545",
       56: "https://bsc-dataseed.binance.org",
       137: "https://rpc-mainnet.maticvigil.com"
