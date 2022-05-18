@@ -108,6 +108,7 @@ const Strategy = props => {
         strategy?.strategyName,
       ).catch(() => {}),
     ]).then(([apys, offChainApys, unRealizeApys]) => {
+      const currentDayStartUtc0 = moment().utcOffset(0).startOf('day')
       const startMoment = moment()
         .utcOffset(0)
         .subtract(66, 'day')
@@ -143,6 +144,9 @@ const Strategy = props => {
         }),
         'date',
       )
+      // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
+      const yesterdayStr = formatToUTC0(currentDayStartUtc0.clone().subtract(1, 'day'), 'yyyy-MM-DD')
+      unRealizeApyMap[yesterdayStr] = baseApysMap[yesterdayStr]
 
       const offChainApyMap = keyBy(
         map(offChainApys.content, i => {
@@ -181,7 +185,8 @@ const Strategy = props => {
         const baseApyItem = get(baseApysMap, `${i}.apy`, null)
         const offChainApyItem = get(offChainApyMap, `${i}.apy`, null)
         const unRealizeApyItem = get(unRealizeApyMap, `${i}.apy`, null)
-        const weeklyApyItem = getWeeklyAvgApy(i)
+        // 小于当前的天，就不计算平均apy了
+        const weeklyApyItem = currentDayStartUtc0.isAfter(moment(i).utcOffset(0).startOf('day')) ? getWeeklyAvgApy(i) : null
         return {
           date: i,
           apy: isNil(baseApyItem) ? null : baseApyItem,
