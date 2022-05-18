@@ -68,14 +68,15 @@ const USDiHome = () => {
       getEstimateApys(initialState.vaultAddress)
     ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
-      const result = map(reverse(items), ({date, apy}) => ({
+      const result = map(reverse(items), ({date, apy}, index) => ({
         date,
-        apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
+        apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`,
+        // 如果是最后一个节点的话，就把unrealize_apy填充上，确保apy曲线和unrealizeapy曲线是连续的
+        unrealize_apy: index !== items.length - 1 ? null : `${numeral(apy).format('0,0.00')}`
       }))
       const nextApy30 = get(data, 'content.[0].apy', 0)
       setApy30(nextApy30)
 
-      // TODO: 加入逻辑处理一下当天的点数据，要不然会出现两条线断开的展示效果
       const reverseIt = map(estimateApys.content, i => {
         return {
           date: i.date,
