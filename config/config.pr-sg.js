@@ -9,9 +9,9 @@ export default defineConfig({
     DASHBOARD_ROOT: 'https://dashboard-v1.bankofchain.io',
     IMAGE_ROOT:'https://web-v1.bankofchain.io',
     RPC_URL: {
-      1: "https://rpc.ankr.com/eth",
+      1: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
       56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com"
+      137: "https://polygon-rpc.com"
     },
     USDI: {
       SUB_GRAPH_URL: {
