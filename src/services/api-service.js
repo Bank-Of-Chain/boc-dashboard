@@ -233,8 +233,7 @@ export const getEstimateApys = (vaultAddress) => {
   if (isEmpty(vaultAddress))
     return Promise.reject("vaultAddress不可为空")
 
-  // return request(`${API_SERVER}/apy/vault_estimate_apy`)
-  return request(`/apy/vault_estimate_apy`)
+  return request(`${API_SERVER}/apy/vault_estimate_apy`)
 }
 
 /**
@@ -253,7 +252,9 @@ export const getStrategyEstimateApys = (chainId, vaultAddress, strategyAddress) 
 
   if (isEmpty(strategyAddress))
     return Promise.reject("strategyAddress不可为空")
+  const params = {
+    strategyName: strategyAddress
+  }
 
-  // return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_apy`)
-  return request(`/chains/${chainId}/vaults/${vaultAddress}/strategy_apy`)
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_estimate_apy`, { params })
 }

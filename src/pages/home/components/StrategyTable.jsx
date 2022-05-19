@@ -104,21 +104,20 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       key: 'weeklyProfit',
       render: (text, item) => <span>{text ? `${toFixed(text, decimals, displayDecimals)} ${item.tokenUnit || ''}` : ''}</span>
     },
-    // TODO: 字段暂未调试
     {
       title: 'Next Weekly APY',
-      dataIndex: 'estimate_apy',
-      key: 'estimate_apy',
+      dataIndex: 'estimateApy',
+      key: 'estimateApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.estimate_apy - b.estimate_apy
+        return a.estimateApy - b.estimateApy
       },
       render: (text = 0) => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
       title: 'Next Weekly Profit',
-      dataIndex: 'estimate_profit',
-      key: 'estimate_profit',
+      dataIndex: 'estimateProfit',
+      key: 'estimateProfit',
       render: (text, item) => <span>{text ? `${toFixed(text, decimals, displayDecimals)} ${item.tokenUnit || ''}` : ''}</span>
     },
     {
