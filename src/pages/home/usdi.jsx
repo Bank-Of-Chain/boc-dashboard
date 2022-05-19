@@ -107,7 +107,7 @@ const USDiHome = () => {
         data: columeArray
       }
       const option = multipleLine(obj)
-      option.color = ['#5470c6', '#fac858']
+      option.color = ['#5470c6', '#91cc75']
       option.series.forEach(serie => {
         serie.connectNulls = true
       })
