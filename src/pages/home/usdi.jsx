@@ -65,7 +65,7 @@ const USDiHome = () => {
         limit: calDateRange,
         tokenType: TOKEN_TYPE.usdi
       }),
-      getEstimateApys(initialState.vaultAddress).catch(() => { return { content: [] } })
+      getEstimateApys(initialState.chain, initialState.vaultAddress, 'usdi').catch(() => { return { content: [] } })
     ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
       const result = map(reverse(items), ({date, apy}, index) => ({

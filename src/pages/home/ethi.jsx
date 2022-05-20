@@ -61,7 +61,7 @@ const ETHiHome = () => {
         limit: calDateRange,
         tokenType: TOKEN_TYPE.ethi
       }),
-      getEstimateApys(initialState.vaultAddress).catch(() => { return { content: [] } })
+      getEstimateApys(initialState.chain, initialState.vaultAddress, 'ethi').catch(() => { return { content: [] } })
     ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
       const result = map(reverse(items), ({date, apy}, index) => ({

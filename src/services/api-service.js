@@ -227,13 +227,18 @@ export const clearAPICache = () => {
 
 /**
  * 获取vault的预估apy
- * @param {string} vaultAddress vault地址
+ * @param {string} chainId 链id
+ * @param {string} tokenType vault地址
  */
-export const getEstimateApys = (vaultAddress) => {
-  if (isEmpty(vaultAddress))
+export const getEstimateApys = (chainId, tokenType) => {
+  if (isEmpty(tokenType))
     return Promise.reject("vaultAddress不可为空")
-
-  return request(`${API_SERVER}/apy/vault_estimate_apy`)
+  const params = {
+    chainId,
+    tokenType,
+    limit: 10
+  }
+  return request(`${API_SERVER}/apy/vault_estimate_apy`, { params })
 }
 
 /**
