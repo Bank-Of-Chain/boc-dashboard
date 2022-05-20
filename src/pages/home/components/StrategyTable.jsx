@@ -96,12 +96,28 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       sorter: (a, b) => {
         return a.apyLP - b.apyLP
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>,
+      render: (text = 0) => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
       title: 'Weekly Profit',
       dataIndex: 'weeklyProfit',
       key: 'weeklyProfit',
+      render: (text, item) => <span>{text ? `${toFixed(text, decimals, displayDecimals)} ${item.tokenUnit || ''}` : ''}</span>
+    },
+    {
+      title: 'Next Weekly APY',
+      dataIndex: 'estimateApy',
+      key: 'estimateApy',
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        return a.estimateApy - b.estimateApy
+      },
+      render: (text = 0) => <span>{(100 * text).toFixed(2)} %</span>,
+    },
+    {
+      title: 'Next Weekly Profit',
+      dataIndex: 'estimateProfit',
+      key: 'estimateProfit',
       render: (text, item) => <span>{text ? `${toFixed(text, decimals, displayDecimals)} ${item.tokenUnit || ''}` : ''}</span>
     },
     {
