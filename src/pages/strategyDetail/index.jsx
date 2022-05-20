@@ -230,9 +230,19 @@ const Strategy = props => {
     data,
   }
   const option = multipleLine(obj)
-  option.color =  ['#5470c6', '#fac858', '#13c2c2', '#91cc75']
+  option.color =  ['#5470c6', '#fac858', '#91cc75', '#13c2c2']
   option.series.forEach(serie => {
     serie.connectNulls = true
+    if (serie.name === 'UnRealized APY') {
+      serie.itemStyle = {
+        normal: {
+          lineStyle:{
+            width:2,
+            type:'dotted'
+          }
+        }
+      }
+    }
   })
   option.xAxis.data = option.xAxis.data.map(item => `${item} (UTC)`)
   option.xAxis.axisLabel = {

@@ -113,6 +113,16 @@ const USDiHome = () => {
       option.color = ['#5470c6', '#91cc75']
       option.series.forEach(serie => {
         serie.connectNulls = true
+        if (serie.name === 'UnRealized APY') {
+          serie.itemStyle = {
+            normal: {
+              lineStyle:{
+                width:2,
+                type:'dotted'
+              }
+            }
+          }
+        }
       })
       option.grid= {left: '0%', right: '2%', bottom: '0%', containLabel: true}
       option.xAxis.data = option.xAxis.data.map(item => `${item} (UTC)`)
