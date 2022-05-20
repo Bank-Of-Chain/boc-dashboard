@@ -138,8 +138,8 @@ const Strategy = props => {
       const unRealizeApyMap = keyBy(
         map(unRealizeApys.content, i => {
           return {
-            ...i,
-            date: formatToUTC0(1000 * i.date, 'yyyy-MM-DD'),
+            apy: (i.apy * 100).toFixed(2),
+            date: formatToUTC0(1000 * i.timestamp, 'yyyy-MM-DD'),
           }
         }),
         'date',

@@ -61,15 +61,18 @@ const ETHiHome = () => {
         limit: calDateRange,
         tokenType: TOKEN_TYPE.ethi
       }),
-      getEstimateApys(initialState.chain, initialState.vaultAddress, 'ethi').catch(() => { return { content: [] } })
+      getEstimateApys(initialState.chain, 'ethi').catch(() => { return { content: [] } })
     ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
-      const result = map(reverse(items), ({date, apy}, index) => ({
-        date,
-        apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`,
-        // 如果是最后一个节点的话，就把unrealize_apy填充上，确保apy曲线和unrealizeapy曲线是连续的
-        unrealize_apy: index !== items.length - 1 ? null : `${numeral(apy).format('0,0.00')}`
-      }))
+      const result = map(reverse(items), ({date, apy}, index) => {
+        const apyValue = isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
+        return ({
+          date,
+          apy: apyValue,
+          // 如果是最后一个节点的话，就把unrealize_apy填充上，确保apy曲线和unrealizeapy曲线是连续的
+          unrealize_apy: index !== items.length - 1 ? null : apyValue
+        })
+      })
       setApy30(data.content[0] ? data.content[0].apy : 0)
       const reverseIt = map(estimateApys.content, i => {
         return {

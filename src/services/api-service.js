@@ -236,7 +236,8 @@ export const getEstimateApys = (chainId, tokenType) => {
   const params = {
     chainId,
     tokenType,
-    limit: 10
+    limit: 10,
+    sort: 'date asc'
   }
   return request(`${API_SERVER}/apy/vault_estimate_apy`, { params })
 }
