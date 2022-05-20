@@ -8,6 +8,11 @@ export default defineConfig({
     API_SERVER: 'https://service-stage-sg.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-stage-sg.bankofchain.io',
     IMAGE_ROOT:'https://stage-sg.bankofchain.io',
+     RPC_URL: {
+      1: "http://122.248.220.253:8545",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://rpc-mainnet.maticvigil.com"
+    },
     USDI: {
       SUB_GRAPH_URL: {
         1: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',

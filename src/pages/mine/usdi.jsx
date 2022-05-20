@@ -73,7 +73,7 @@ const Personal = () => {
 
   return (
     <GridContent>
-      <ChainChange shouldChangeChain />
+      <ChainChange />
       <Suspense fallback={null}>
         <Row gutter={[24, 24]} style={{ display: isProEnv(ENV_INDEX) ? 'none' : '' }}>
           <Col>
