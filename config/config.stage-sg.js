@@ -9,7 +9,7 @@ export default defineConfig({
     DASHBOARD_ROOT: 'https://dashboard-stage-sg.bankofchain.io',
     IMAGE_ROOT:'https://stage-sg.bankofchain.io',
      RPC_URL: {
-      1: "http://122.248.220.253:8545",
+      1: "https://rpc-stage-sg.bankofchain.io",
       56: "https://bsc-dataseed.binance.org",
       137: "https://rpc-mainnet.maticvigil.com"
     },

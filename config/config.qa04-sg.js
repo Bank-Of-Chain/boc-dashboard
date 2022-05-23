@@ -11,7 +11,7 @@ export default defineConfig({
     DASHBOARD_ROOT: 'https://dashboard-qa04-sg.bankofchain.io',
     IMAGE_ROOT: 'https://qa04-sg.bankofchain.io',
     RPC_URL: {
-      1: "http://13.213.33.247:8545",
+      1: "https://rpc-qa04-sg.bankofchain.io",
       56: "https://bsc-dataseed.binance.org",
       137: "https://rpc-mainnet.maticvigil.com"
     },
