@@ -24,7 +24,7 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getEstimateApys } from '@/services/api-service'
 
 // === Utils === //
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isNil, uniq, find } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { APY_DURATION } from '@/constants/api'
@@ -73,8 +73,6 @@ const USDiHome = () => {
         return ({
           date,
           apy: apyValue,
-          // 如果是最后一个节点的话，就把unrealize_apy填充上，确保apy曲线和unrealizeapy曲线是连续的
-          unrealize_apy: index !== items.length - 1 ? null : apyValue
         })
       })
       const nextApy30 = get(data, 'content.[0].apy', 0)
@@ -87,18 +85,25 @@ const USDiHome = () => {
           apy: null
         }
       })
-      const nextArray = [...result, ...reverseIt]
+
+      const xAxisData = uniq([...map(result, ({ date }) => date), ...map(reverseIt, ({ date }) => date)])
 
       // 多条折现配置
       const lengndData = ['APY', 'UnRealized APY']
       const columeArray = [
         {
           seriesName: 'APY',
-          seriesData: map(nextArray, 'apy'),
+          seriesData: map(xAxisData, date => {
+            const item = find(result, { date })
+            return item ? item.apy : null
+          }),
         },
         {
           seriesName: 'UnRealized APY',
-          seriesData: map(nextArray, 'unrealize_apy'),
+          seriesData: map(xAxisData, date => {
+            const item = find(reverseIt, { date })
+            return item ? item.unrealize_apy : null
+          }),
         }
       ]
       const obj = {
@@ -106,7 +111,7 @@ const USDiHome = () => {
           data: lengndData,
           textStyle: { color: '#fff' },
         },
-        xAxisData: map(nextArray, 'date'),
+        xAxisData,
         data: columeArray
       }
       const option = multipleLine(obj)
