@@ -135,8 +135,20 @@ const Strategy = props => {
         'date',
       )
 
+      // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
+      let unRealizeApyItems = unRealizeApys.content
+      if (apys.content.length > 0
+          && unRealizeApyItems.length > 0
+          && moment(apys.content[0].fetchTimestamp * 1000).isBefore(unRealizeApyItems[unRealizeApyItems.length - 1].timestamp * 1000)
+      ) {
+        const firstItem = {
+          apy: apys.content[0].lpApy,
+          timestamp: apys.content[0].fetchTimestamp,
+        }
+        unRealizeApyItems = [firstItem, ...unRealizeApyItems]
+      }
       const unRealizeApyMap = keyBy(
-        map(unRealizeApys.content, i => {
+        map(unRealizeApyItems, i => {
           return {
             apy: (i.apy * 100).toFixed(2),
             date: formatToUTC0(1000 * i.timestamp, 'yyyy-MM-DD'),
@@ -144,9 +156,6 @@ const Strategy = props => {
         }),
         'date',
       )
-      // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
-      const yesterdayStr = formatToUTC0(currentDayStartUtc0.clone().subtract(1, 'day'), 'yyyy-MM-DD')
-      unRealizeApyMap[yesterdayStr] = baseApysMap[yesterdayStr]
 
       const offChainApyMap = keyBy(
         map(offChainApys.content, i => {
@@ -199,7 +208,7 @@ const Strategy = props => {
     })
   }, [strategy, strategy?.strategyName])
 
-  const lengndData = ['Weekly APY', 'Official Weekly APY', 'UnRealized APY']
+  const lengndData = ['Weekly APY', 'Official Weekly APY', 'Estimated Weekly APY']
   const data = [
     {
       seriesName: 'Weekly APY',
@@ -210,7 +219,7 @@ const Strategy = props => {
       seriesData: map(apyArray, 'weekly_avg_apy'),
     },
     {
-      seriesName: 'UnRealized APY',
+      seriesName: 'Estimated Weekly APY',
       seriesData: map(apyArray, 'un_realize_apy'),
     },
   ]
@@ -231,16 +240,13 @@ const Strategy = props => {
   }
   const option = multipleLine(obj)
   option.color =  ['#5470c6', '#fac858', '#91cc75', '#13c2c2']
-  option.series.forEach(serie => {
+  option.series.forEach((serie, index) => {
     serie.connectNulls = true
-    if (serie.name === 'UnRealized APY') {
-      serie.itemStyle = {
-        normal: {
-          lineStyle:{
-            width:2,
-            type:'dotted'
-          }
-        }
+    serie.z = option.series.length - index
+    if (serie.name === 'Estimated Weekly APY') {
+      serie.lineStyle = {
+        width: 2,
+        type:'dotted'
       }
     }
   })

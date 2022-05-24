@@ -62,7 +62,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      width: 160,
+      width: 130,
       render: text => <CoinSuperPosition array={text} />,
     },
     {

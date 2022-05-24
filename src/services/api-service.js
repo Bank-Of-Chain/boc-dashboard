@@ -220,26 +220,40 @@ export const getTokenTotalSupplyList = ({
   })
 }
 
-export const clearAPICache = () => {
-  apyListCache = {}
-  tokenTotalSupplyCache = {}
-}
-
+let estimateApyCache = {}
 /**
  * 获取vault的预估apy
  * @param {string} chainId 链id
  * @param {string} tokenType vault地址
  */
-export const getEstimateApys = (chainId, tokenType) => {
-  if (isEmpty(tokenType))
+export const getEstimateApys = ({
+  chainId,
+  tokenType,
+  offset = 0,
+  limit,
+  useCache = true
+}) => {
+  if (isEmpty(tokenType)) {
     return Promise.reject("vaultAddress不可为空")
+  }
+
+  const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`
+  if (useCache && estimateApyCache[cacheKey]) {
+    return Promise.resolve(estimateApyCache[cacheKey])
+  }
   const params = {
     chainId,
     tokenType,
-    limit: 10,
-    sort: 'date asc'
+    offset,
+    limit
   }
   return request(`${API_SERVER}/apy/vault_estimate_apy`, { params })
+}
+
+export const clearAPICache = () => {
+  apyListCache = {}
+  tokenTotalSupplyCache = {}
+  estimateApyCache = {}
 }
 
 /**
