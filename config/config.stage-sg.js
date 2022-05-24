@@ -15,9 +15,9 @@ export default defineConfig({
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-        56: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-        137: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph'
+        1: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
+        56: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
+        137: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth'
       },
       VAULT_ADDRESS: {
         1: '0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC',
