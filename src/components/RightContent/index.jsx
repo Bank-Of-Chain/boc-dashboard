@@ -1,6 +1,7 @@
 import { Space, Button, Menu } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect } from 'react'
+import classNames from 'classnames'
 
 // === Components === //
 import Avatar from './AvatarDropdown'
@@ -10,7 +11,7 @@ import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
 import { getVaultConfig } from '@/utils/vault';
-import { isInMobileWalletApp } from "@/utils/device"
+import { isInMobileWalletApp, isInMobileH5 } from "@/utils/device"
 import { changeNetwork } from "@/utils/network"
 
 // === Contansts === //
@@ -29,8 +30,6 @@ import styles from './index.less'
 const disabledChangeVaultRoute = ['/strategy']
 
 const GlobalHeaderRight = () => {
-  const className = `${styles.right}  ${styles.dark}`
-
   const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
   const [current, setCurrent] = useState(initialState.vault)
@@ -40,7 +39,7 @@ const GlobalHeaderRight = () => {
   const address = useUserAddress(userProvider)
 
   const handleClickConnect = () => {
-    if (isInMobileWalletApp) {
+    if (isInMobileWalletApp()) {
       connect()
     } else {
       setWalletModalVisible(true)
@@ -120,7 +119,7 @@ const GlobalHeaderRight = () => {
           <Menu.Item key="usdi">USDi</Menu.Item>
         </Menu>
       ) : <span/>}
-      <Space className={className}>
+      <Space className={classNames(styles.right, styles.dark, { [styles.hidden]: isInMobileH5() })}>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
         ) : isEmpty(address) ? (
@@ -131,7 +130,7 @@ const GlobalHeaderRight = () => {
           <Avatar
             key="avatar"
             menu
-            showChangeWallet={!isInMobileWalletApp}
+            showChangeWallet={!isInMobileWalletApp()}
             onChangeWallet={handleClickConnect}
             address={address}
             logoutOfWeb3Modal={disconnect}
