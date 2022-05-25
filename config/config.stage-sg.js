@@ -10,8 +10,9 @@ export default defineConfig({
     IMAGE_ROOT:'https://stage-sg.bankofchain.io',
      RPC_URL: {
       1: "https://rpc-stage-sg.bankofchain.io",
-      56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com"
+      56: "https://rpc-stage-sg.bankofchain.io",
+      137: "https://rpc-stage-sg.bankofchain.io",
+      31337: "https://rpc-stage-sg.bankofchain.io",
     },
     USDI: {
       SUB_GRAPH_URL: {
