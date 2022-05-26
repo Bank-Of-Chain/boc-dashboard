@@ -1,6 +1,6 @@
-import { Space, Button, Menu } from 'antd'
+import { Space, Button, Menu, message } from 'antd'
 import { useModel, history } from 'umi'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
 
 // === Components === //
@@ -34,6 +34,7 @@ const GlobalHeaderRight = () => {
   const { initialState, setInitialState } = useModel('@@initialState')
   const [current, setCurrent] = useState(initialState.vault)
   const [walletModalVisible, setWalletModalVisible] = useState(false)
+  const connectTimer = useRef(null)
 
   const { userProvider, connect, disconnect, getWalletName } = useWallet()
   const address = useUserAddress(userProvider)
@@ -51,7 +52,21 @@ const GlobalHeaderRight = () => {
   }
 
   const connectTo = async (name) => {
-    const provider = await connect(name)
+    if (!connectTimer.current) {
+      connectTimer.current = setTimeout(() => {
+        message.warning('Please check you wallet info or confirm you have install the wallet')
+        connectTimer.current = null
+      }, 5000)
+    }
+    const provider = await connect(name).catch((error) => {
+      const msg = error?.message
+      if (msg === 'No Web3 Provider found') {
+        message.warning('Please install the wallet first. If you have installed, reload page')
+      }
+      console.error(error)
+    })
+    clearTimeout(connectTimer.current)
+    connectTimer.current = null
     if (provider) {
       handleCancel()
     }
