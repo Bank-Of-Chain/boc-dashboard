@@ -233,21 +233,22 @@ export const getEstimateApys = ({
   limit,
   useCache = true
 }) => {
-  if (isEmpty(tokenType)) {
-    return Promise.reject("vaultAddress不可为空")
-  }
+  return Promise.resolve({ content:[] })
+  // if (isEmpty(tokenType)) {
+  //   return Promise.reject("vaultAddress不可为空")
+  // }
 
-  const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`
-  if (useCache && estimateApyCache[cacheKey]) {
-    return Promise.resolve(estimateApyCache[cacheKey])
-  }
-  const params = {
-    chainId,
-    tokenType,
-    offset,
-    limit
-  }
-  return request(`${API_SERVER}/apy/vault_estimate_apy`, { params })
+  // const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`
+  // if (useCache && estimateApyCache[cacheKey]) {
+  //   return Promise.resolve(estimateApyCache[cacheKey])
+  // }
+  // const params = {
+  //   chainId,
+  //   tokenType,
+  //   offset,
+  //   limit
+  // }
+  // return request(`${API_SERVER}/apy/vault_estimate_apy`, { params })
 }
 
 export const clearAPICache = () => {
@@ -264,17 +265,18 @@ export const clearAPICache = () => {
  * @returns
  */
 export const getStrategyEstimateApys = (chainId, vaultAddress, strategyAddress) => {
-  if (isEmpty(chainId))
-    return Promise.reject("chainId不可为空")
+  return Promise.resolve({ content: [] })
+  // if (isEmpty(chainId))
+  //   return Promise.reject("chainId不可为空")
 
-  if (isEmpty(vaultAddress))
-    return Promise.reject("vaultAddress不可为空")
+  // if (isEmpty(vaultAddress))
+  //   return Promise.reject("vaultAddress不可为空")
 
-  if (isEmpty(strategyAddress))
-    return Promise.reject("strategyAddress不可为空")
-  const params = {
-    strategyName: strategyAddress
-  }
+  // if (isEmpty(strategyAddress))
+  //   return Promise.reject("strategyAddress不可为空")
+  // const params = {
+  //   strategyName: strategyAddress
+  // }
 
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_estimate_apy`, { params })
+  // return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_estimate_apy`, { params })
 }
