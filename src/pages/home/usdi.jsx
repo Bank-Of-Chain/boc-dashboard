@@ -95,7 +95,7 @@ const USDiHome = () => {
       const xAxisData = uniq([...map(result, ({ date }) => date), ...map(reverseIt, ({ date }) => date)])
 
       // 多条折现配置
-      const lengndData = ['APY', 'Estimated APY']
+      const lengndData = []
       const columeArray = [
         {
           seriesName: 'APY',
@@ -103,15 +103,20 @@ const USDiHome = () => {
             const item = find(result, { date })
             return item ? item.apy : null
           }),
-        },
-        {
+        }
+      ]
+      // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
+      if (!isEmpty(estimateApys.content)) {
+        lengndData.push('APY')
+        lengndData.push('Estimated APY')
+        columeArray.push({
           seriesName: 'Estimated APY',
           seriesData: map(xAxisData, date => {
             const item = find(reverseIt, { date })
             return item ? item.unrealize_apy : null
           }),
-        }
-      ]
+        })
+      }
       const obj = {
         legend: {
           data: lengndData,

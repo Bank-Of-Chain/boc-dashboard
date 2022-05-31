@@ -17,7 +17,7 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
-import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex } from 'lodash'
+import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex, compact } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 
 import moment from 'moment'
@@ -136,7 +136,7 @@ const Strategy = props => {
       )
 
       // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
-      let unRealizeApyItems = unRealizeApys.content
+      let unRealizeApyItems = unRealizeApys?.content
       if (apys.content.length > 0
           && unRealizeApyItems.length > 0
           && moment(apys.content[0].fetchTimestamp * 1000).isBefore(unRealizeApyItems[unRealizeApyItems.length - 1].timestamp * 1000)
@@ -208,7 +208,8 @@ const Strategy = props => {
     })
   }, [strategy, strategy?.strategyName])
 
-  const lengndData = ['Weekly APY', 'Official Weekly APY', 'Estimated Weekly APY']
+  const estimateArray = map(apyArray, 'un_realize_apy')
+  const lengndData = ['Weekly APY', 'Official Weekly APY']
   const data = [
     {
       seriesName: 'Weekly APY',
@@ -217,12 +218,16 @@ const Strategy = props => {
     {
       seriesName: 'Official Weekly APY',
       seriesData: map(apyArray, 'weekly_avg_apy'),
-    },
-    {
-      seriesName: 'Estimated Weekly APY',
-      seriesData: map(apyArray, 'un_realize_apy'),
-    },
+    }
   ]
+  // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
+  if (!isEmpty(compact(estimateArray))) {
+    lengndData.push('Estimated Weekly APY')
+    data.push({
+      seriesName: 'Estimated Weekly APY',
+      seriesData: estimateArray,
+    },)
+  }
   if (official_daily_apy) {
     lengndData.push('Official Daily APY')
     data.push({
