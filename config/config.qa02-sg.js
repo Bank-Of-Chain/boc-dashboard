@@ -18,7 +18,7 @@ export default defineConfig({
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum',
+        1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
         56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
         137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon'
       },
