@@ -134,7 +134,7 @@ const GlobalHeaderRight = () => {
           <Menu.Item key="usdi">USDi</Menu.Item>
         </Menu>
       ) : <span/>}
-      <Space className={classNames(styles.right, styles.dark, { [styles.hidden]: isInMobileH5() })}>
+      <Space className={classNames(styles.right, styles.dark, { [styles.hidden]: isInMobileH5() || isInMobileWalletApp() })}>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
         ) : isEmpty(address) ? (
