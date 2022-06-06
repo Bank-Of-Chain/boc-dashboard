@@ -9,6 +9,7 @@ import { useModel } from 'umi'
 import _min from 'lodash/min'
 import _max from 'lodash/max'
 import numeral from 'numeral'
+import moment from 'moment'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -19,7 +20,7 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getEstimateApys } from '@/services/api-service'
 
 // === Utils === //
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isNil, uniq, find } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { APY_DURATION } from '@/constants/api'
@@ -49,7 +50,8 @@ const ETHiHome = () => {
         axisTick: {
           alignWithLabel: true,
         },
-      }
+      },
+      format:'MM-DD HH:mm'
     }
     if (calDateRange > 7) {
       params.format = 'MM-DD'
@@ -61,53 +63,80 @@ const ETHiHome = () => {
         limit: calDateRange,
         tokenType: TOKEN_TYPE.ethi
       }),
-      getEstimateApys(initialState.chain, initialState.vaultAddress, 'ethi').catch(() => { return { content: [] } })
+      getEstimateApys({
+        chainId: initialState.chain,
+        tokenType: TOKEN_TYPE.ethi,
+        limit: calDateRange,
+      }).catch(() => { return { content: [] } })
     ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
-      const result = map(reverse(items), ({date, apy}, index) => ({
-        date,
-        apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`,
-        // 如果是最后一个节点的话，就把unrealize_apy填充上，确保apy曲线和unrealizeapy曲线是连续的
-        unrealize_apy: index !== items.length - 1 ? null : `${numeral(apy).format('0,0.00')}`
-      }))
+      const result = map(reverse(items), ({date, apy}, index) => {
+        const apyValue = isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
+        return ({
+          date,
+          apy: apyValue,
+        })
+      })
       setApy30(data.content[0] ? data.content[0].apy : 0)
-      const reverseIt = map(estimateApys.content, i => {
+      const reverseIt = map(reverse(estimateApys.content), i => {
         return {
           date: i.date,
           unrealize_apy: i.apy,
           apy: null
         }
       })
-      const nextArray = [...result, ...reverseIt]
+      const xAxisData = uniq([...map(result, ({ date }) => date), ...map(reverseIt, ({ date }) => date)])
       // 多条折现配置
-      const lengndData = ['APY', 'UnRealized APY']
+      const lengndData = []
       const columeArray = [
         {
           seriesName: 'APY',
-          seriesData: map(nextArray, 'apy'),
-        },
-        {
-          seriesName: 'UnRealized APY',
-          seriesData: map(nextArray, 'unrealize_apy'),
+          seriesData: map(xAxisData, date => {
+            const item = find(result, { date })
+            return item ? item.apy : null
+          }),
         }
       ]
+      if (!isEmpty(estimateApys.content)) {
+        lengndData.push('APY')
+        lengndData.push('Estimated APY')
+        columeArray.push({
+          seriesName: 'Estimated APY',
+          seriesData: map(xAxisData, date => {
+            const item = find(reverseIt, { date })
+            return item ? item.unrealize_apy : null
+          }),
+        })
+      }
       const obj = {
         legend: {
           data: lengndData,
           textStyle: { color: '#fff' },
         },
-        xAxisData: map(nextArray, 'date'),
+        xAxisData,
         data: columeArray
       }
       const option = multipleLine(obj)
       option.color = ['#5470c6', '#91cc75']
       option.series.forEach(serie => {
         serie.connectNulls = true
+        if (serie.name === 'Estimated APY') {
+          serie.lineStyle = {
+            width: 2,
+            type:'dotted'
+          }
+        }
       })
       option.grid= {left: '0%', right: '2%', bottom: '0%', containLabel: true}
-      option.xAxis.data = option.xAxis.data.map(item => `${item} (UTC)`)
+      const xAxisLabels = []
+      option.xAxis.data = option.xAxis.data.map(item => {
+        // 数据为当天 23:59 数据，显示成明天 0 点
+        const value = `${moment(item).add(1, 'days').format('YYYY-MM-DD HH:mm')} (UTC)`
+        xAxisLabels[value] = moment(item).add(1, 'days').format(params.format);
+        return value
+      })
       option.xAxis.axisLabel = {
-        formatter: (value) => value.replace(' (UTC)', '')
+        formatter: (value) => xAxisLabels[value]
       }
       option.xAxis.axisTick = {
         alignWithLabel: true,

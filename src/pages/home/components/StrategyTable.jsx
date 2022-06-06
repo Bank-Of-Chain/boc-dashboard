@@ -1,7 +1,7 @@
-import { Card, Table, Image, Switch, Tooltip } from 'antd'
+import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
 import React, { useState } from 'react'
 import { useModel, useRequest } from 'umi'
-import { filter } from 'lodash'
+import { filter, isNil } from 'lodash'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
@@ -62,7 +62,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      width: 160,
+      width: 130,
       render: text => <CoinSuperPosition array={text} />,
     },
     {
@@ -96,29 +96,39 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       sorter: (a, b) => {
         return a.apyLP - b.apyLP
       },
-      render: (text = 0) => <span>{(100 * text).toFixed(2)} %</span>,
+      render: (text = 0, item) => {
+        const { estimateApy } = item
+        const withoutEstimate = isNil(estimateApy)
+        const jsxElement = <Badge dot={!withoutEstimate} color="gold">
+          <span>{(100 * text).toFixed(2)} %</span>
+        </Badge>
+        if (withoutEstimate) {
+          return jsxElement
+        }
+        const nextWeekApyJsx = <span>Estimate Apy: {(100 * estimateApy).toFixed(2)} %</span>
+        return <Tooltip title={nextWeekApyJsx}>
+          {jsxElement}
+        </Tooltip>
+      }
     },
     {
       title: 'Weekly Profit',
       dataIndex: 'weeklyProfit',
       key: 'weeklyProfit',
-      render: (text, item) => <span>{text ? `${toFixed(text, decimals, displayDecimals)} ${item.tokenUnit || ''}` : ''}</span>
-    },
-    {
-      title: 'Next Weekly APY',
-      dataIndex: 'estimateApy',
-      key: 'estimateApy',
-      showSorterTooltip: false,
-      sorter: (a, b) => {
-        return a.estimateApy - b.estimateApy
-      },
-      render: (text = 0) => <span>{(100 * text).toFixed(2)} %</span>,
-    },
-    {
-      title: 'Next Weekly Profit',
-      dataIndex: 'estimateProfit',
-      key: 'estimateProfit',
-      render: (text, item) => <span>{text ? `${toFixed(text, decimals, displayDecimals)} ${item.tokenUnit || ''}` : ''}</span>
+      render: (text = 0, item) => {
+        const { estimateProfit, tokenUnit = '' } = item
+        const withoutEstimate = isNil(estimateProfit)
+        const jsxElement = <Badge dot={!withoutEstimate} color="gold" >
+          <span>{toFixed(text || '0', decimals, displayDecimals)} {tokenUnit || ''}</span>
+        </Badge>
+        if (withoutEstimate) {
+          return jsxElement
+        }
+        const nextWeekProfitJsx = <span>Estimate Profit: {toFixed(estimateProfit, decimals, displayDecimals)} {tokenUnit || ''}</span>
+        return <Tooltip title={nextWeekProfitJsx}>
+          {jsxElement}
+        </Tooltip>
+      }
     },
     {
       title: 'Strategy Address',

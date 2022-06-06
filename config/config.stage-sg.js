@@ -9,25 +9,26 @@ export default defineConfig({
     DASHBOARD_ROOT: 'https://dashboard-stage-sg.bankofchain.io',
     IMAGE_ROOT:'https://stage-sg.bankofchain.io',
      RPC_URL: {
-      1: "http://122.248.220.253:8545",
-      56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com"
+      1: "https://rpc-stage-sg.bankofchain.io",
+      56: "https://rpc-stage-sg.bankofchain.io",
+      137: "https://rpc-stage-sg.bankofchain.io",
+      31337: "https://rpc-stage-sg.bankofchain.io",
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-        56: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-        137: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph'
+        1: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
+        56: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
+        137: 'https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth'
       },
       VAULT_ADDRESS: {
         1: '0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC',
         56: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
-        137: '0x85f93384BAd10d7751Fcc3bBD8F8710db3190700'
+        137: '0x394b07B5c9A19a553E49eC95A2aF1c4a56eA634B'
       },
       USDI_ADDRESS: {
         1: '0xBe15Eed7D8e91D20263d4521c9eB0F4e3510bfBF',
         56: '0xCFC6E8577a414f561D459fC4a030e3463A500d29',
-        137: '0x1C9f974DF781C6EB3764F21Fe961ba38305213df'
+        137: '0xfddd2CB0408CE08d91C30cc98173065CcE29248d'
       },
     },
     ETHI: {

@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react"
 import { useModel } from "umi"
+import { isInMobileWalletApp, isInMobileH5 } from "@/utils/device"
 
 function useWallet() {
   const {
@@ -98,7 +99,7 @@ function useWallet() {
   }, [provider, disconnectPassive, getProviderType])
 
   useEffect(() => {
-    if (web3Modal.cachedProvider) {
+    if (web3Modal.cachedProvider && !isInMobileWalletApp() && !isInMobileH5()) {
       connect()
     }
   }, [])

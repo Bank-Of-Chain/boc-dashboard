@@ -17,7 +17,7 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
-import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex } from 'lodash'
+import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex, compact } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 
 import moment from 'moment'
@@ -135,18 +135,27 @@ const Strategy = props => {
         'date',
       )
 
+      // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
+      let unRealizeApyItems = unRealizeApys?.content
+      if (apys.content.length > 0
+          && unRealizeApyItems.length > 0
+          && moment(apys.content[0].fetchTimestamp * 1000).isBefore(unRealizeApyItems[unRealizeApyItems.length - 1].timestamp * 1000)
+      ) {
+        const firstItem = {
+          apy: apys.content[0].lpApy,
+          timestamp: apys.content[0].fetchTimestamp,
+        }
+        unRealizeApyItems = [firstItem, ...unRealizeApyItems]
+      }
       const unRealizeApyMap = keyBy(
-        map(unRealizeApys.content, i => {
+        map(unRealizeApyItems, i => {
           return {
-            ...i,
-            date: formatToUTC0(1000 * i.date, 'yyyy-MM-DD'),
+            apy: (i.apy * 100).toFixed(2),
+            date: formatToUTC0(1000 * i.timestamp, 'yyyy-MM-DD'),
           }
         }),
         'date',
       )
-      // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
-      const yesterdayStr = formatToUTC0(currentDayStartUtc0.clone().subtract(1, 'day'), 'yyyy-MM-DD')
-      unRealizeApyMap[yesterdayStr] = baseApysMap[yesterdayStr]
 
       const offChainApyMap = keyBy(
         map(offChainApys.content, i => {
@@ -199,7 +208,8 @@ const Strategy = props => {
     })
   }, [strategy, strategy?.strategyName])
 
-  const lengndData = ['Weekly APY', 'Official Weekly APY', 'UnRealized APY']
+  const estimateArray = map(apyArray, 'un_realize_apy')
+  const lengndData = ['Weekly APY', 'Official Weekly APY']
   const data = [
     {
       seriesName: 'Weekly APY',
@@ -208,12 +218,16 @@ const Strategy = props => {
     {
       seriesName: 'Official Weekly APY',
       seriesData: map(apyArray, 'weekly_avg_apy'),
-    },
-    {
-      seriesName: 'UnRealized APY',
-      seriesData: map(apyArray, 'un_realize_apy'),
-    },
+    }
   ]
+  // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
+  if (!isEmpty(compact(estimateArray))) {
+    lengndData.push('Estimated Weekly APY')
+    data.push({
+      seriesName: 'Estimated Weekly APY',
+      seriesData: estimateArray,
+    },)
+  }
   if (official_daily_apy) {
     lengndData.push('Official Daily APY')
     data.push({
@@ -230,9 +244,16 @@ const Strategy = props => {
     data,
   }
   const option = multipleLine(obj)
-  option.color =  ['#5470c6', '#fac858', '#13c2c2', '#91cc75']
-  option.series.forEach(serie => {
+  option.color =  ['#5470c6', '#fac858', '#91cc75', '#13c2c2']
+  option.series.forEach((serie, index) => {
     serie.connectNulls = true
+    serie.z = option.series.length - index
+    if (serie.name === 'Estimated Weekly APY') {
+      serie.lineStyle = {
+        width: 2,
+        type:'dotted'
+      }
+    }
   })
   option.xAxis.data = option.xAxis.data.map(item => `${item} (UTC)`)
   option.xAxis.axisLabel = {
