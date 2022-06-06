@@ -1,5 +1,5 @@
 import isEqual from "lodash/isEqual"
 
 export const isProEnv = (env) => {
-  return isEqual(env, 'pro')
+  return isEqual(env, 'pr-sg')
 }

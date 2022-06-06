@@ -83,14 +83,19 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   define: {
-    ENV_INDEX: 'pro',
+    ENV_INDEX: 'pr-sg',
     API_SERVER: 'https://service.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard.bankofchain.io',
-    IMAGE_ROOT: 'https://web.bankofchain.io',
+    IMAGE_ROOT: 'https://v1.bankofchain.io',
     CHAIN_BROWSER_URL: {
       1: 'https://etherscan.io',
       56: 'https://bscscan.com',
       137: 'https://polygonscan.com',
+    },
+    RPC_URL: {
+      1: "https://rpc.ankr.com/eth",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://rpc-mainnet.maticvigil.com"
     },
     USDI: {
       SUB_GRAPH_URL: {

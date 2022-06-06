@@ -10,6 +10,7 @@ import get from 'lodash/get'
 import _min from 'lodash/min'
 import _max from 'lodash/max'
 import numeral from 'numeral'
+import moment from 'moment'
 
 // === Components === //
 import ChainChange from '../../components/ChainChange'
@@ -21,11 +22,12 @@ import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
-import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
+import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getEstimateApys } from '@/services/api-service'
 
 // === Utils === //
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isNil, uniq, find } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
+import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
@@ -52,28 +54,108 @@ const USDiHome = () => {
         axisTick: {
           alignWithLabel: true,
         },
-      }
+      },
+      format:'MM-DD HH:mm'
     }
     if (calDateRange > 7) {
       params.format = 'MM-DD'
     }
-    getValutAPYList({
-      chainId: initialState.chain,
-      duration: APY_DURATION.monthly,
-      limit: calDateRange,
-      tokenType: TOKEN_TYPE.usdi
-    }).then(data => {
+    Promise.all([
+      getValutAPYList({
+        chainId: initialState.chain,
+        duration: APY_DURATION.monthly,
+        limit: calDateRange,
+        tokenType: TOKEN_TYPE.usdi
+      }),
+      getEstimateApys({
+        chainId: initialState.chain,
+        tokenType: TOKEN_TYPE.usdi,
+        limit: calDateRange,
+      }).catch(() => { return { content: [] } })
+    ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
-      const result = map(reverse(items), ({date, apy}) => ({
-        date,
-        apy: isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
-      }))
+      const result = map(reverse(items), ({date, apy}, index) => {
+        const apyValue = isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
+        return ({
+          date,
+          apy: apyValue,
+        })
+      })
       const nextApy30 = get(data, 'content.[0].apy', 0)
       setApy30(nextApy30)
-      setApyEchartOpt(getLineEchartOpt(result, 'apy', 'Trailing 30-day APY(%)', {
-        ...params,
-        needMinMax: false
-      }))
+
+      const reverseIt = map(reverse(estimateApys.content), i => {
+        return {
+          date: i.date,
+          unrealize_apy: i.apy,
+          apy: null
+        }
+      })
+
+      const xAxisData = uniq([...map(result, ({ date }) => date), ...map(reverseIt, ({ date }) => date)])
+
+      // 多条折现配置
+      const lengndData = []
+      const columeArray = [
+        {
+          seriesName: 'APY',
+          seriesData: map(xAxisData, date => {
+            const item = find(result, { date })
+            return item ? item.apy : null
+          }),
+        }
+      ]
+      // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
+      if (!isEmpty(estimateApys.content)) {
+        lengndData.push('APY')
+        lengndData.push('Estimated APY')
+        columeArray.push({
+          seriesName: 'Estimated APY',
+          seriesData: map(xAxisData, date => {
+            const item = find(reverseIt, { date })
+            return item ? item.unrealize_apy : null
+          }),
+        })
+      }
+      const obj = {
+        legend: {
+          data: lengndData,
+          textStyle: { color: '#fff' },
+        },
+        xAxisData,
+        data: columeArray
+      }
+      const option = multipleLine(obj)
+      option.color = ['#5470c6', '#91cc75']
+      option.series.forEach(serie => {
+        serie.connectNulls = true
+        if (serie.name === 'Estimated APY') {
+          serie.lineStyle = {
+            width: 2,
+            type:'dotted'
+          }
+        }
+      })
+      option.grid= {left: '0%', right: '2%', bottom: '0%', containLabel: true}
+      const xAxisLabels = []
+      option.xAxis.data = option.xAxis.data.map(item => {
+        // 数据为当天 23:59 数据，显示成明天 0 点
+        const value = `${moment(item).add(1, 'days').format('YYYY-MM-DD HH:mm')} (UTC)`
+        xAxisLabels[value] = moment(item).add(1, 'days').format(params.format);
+        return value
+      })
+      option.xAxis.axisLabel = {
+        formatter: (value) => xAxisLabels[value]
+      }
+      option.xAxis.axisTick = {
+        alignWithLabel: true,
+      }
+      option.yAxis.splitLine = {
+        lineStyle: {
+          color: 'black',
+        },
+      }
+      setApyEchartOpt(option)
     }).catch((e) => {
       console.error(e)
     })

@@ -4,10 +4,15 @@ export default defineConfig({
   base: '/',
   publicPath: '/',
   define:{
-    ENV_INDEX: 'pro',
+    ENV_INDEX: 'pr-sg',
     API_SERVER: 'https://service-v1.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-v1.bankofchain.io',
     IMAGE_ROOT:'https://web-v1.bankofchain.io',
+    RPC_URL: {
+      1: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://polygon-rpc.com"
+    },
     USDI: {
       SUB_GRAPH_URL: {
         1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum',

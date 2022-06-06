@@ -6,10 +6,16 @@ export default defineConfig({
   base: '/',
   publicPath: '/',
   define: {
-    ENV_INDEX: 'debug',
+    ENV_INDEX: 'qa-sg',
     API_SERVER: 'https://service-qa-sg.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-qa-sg.bankofchain.io',
     IMAGE_ROOT: 'https://qa-sg.bankofchain.io',
+    RPC_URL: {
+      1: "https://rpc-qa-sg.bankofchain.io",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://rpc-mainnet.maticvigil.com",
+      31337: "https://rpc-qa-sg.bankofchain.io",
+    },
     USDI: {
       SUB_GRAPH_URL: {
         1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum',

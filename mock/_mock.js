@@ -1,5 +1,7 @@
 import moment from 'moment';
-import { Random } from 'mockjs';
+import {
+  Random
+} from 'mockjs';
 import map from 'lodash/map';
 // mock data
 const visitData = [];
@@ -44,8 +46,7 @@ for (let i = 0; i < 50; i += 1) {
   });
 }
 
-const salesTypeData = [
-  {
+const salesTypeData = [{
     x: '家用电器',
     y: 4544,
   },
@@ -70,8 +71,7 @@ const salesTypeData = [
     y: 1231,
   },
 ];
-const salesTypeDataOnline = [
-  {
+const salesTypeDataOnline = [{
     x: '家用电器',
     y: 244,
   },
@@ -96,8 +96,7 @@ const salesTypeDataOnline = [
     y: 111,
   },
 ];
-const salesTypeDataOffline = [
-  {
+const salesTypeDataOffline = [{
     x: '家用电器',
     y: 99,
   },
@@ -143,8 +142,7 @@ for (let i = 0; i < 20; i += 1) {
   });
 }
 
-const radarOriginData = [
-  {
+const radarOriginData = [{
     name: '个人',
     ref: 10,
     koubei: 8,
@@ -368,12 +366,78 @@ export default {
     res.json({
       data: fakeProtocol(),
     }),
-  'GET  /api/strategy-3': (_, res) =>
+  'GET /api/strategy-3': (_, res) =>
     res.json({
       data: fakeStrategy(),
     }),
   'GET  /api/txn-1': (_, res) =>
     res.json({
       data: map(Random.range(Random.natural(5, 30)), fakeImportantTxn),
+    }),
+  'GET /apy/vault_estimate_apy': (_, res) =>
+    res.json({
+      content: [{
+          apy: '11.35',
+          date: "2022-05-17"
+        },
+        {
+          apy: '12.35',
+          date: "2022-05-18"
+        },
+        {
+          apy: '13.35',
+          date: "2022-05-19"
+        },
+        {
+          apy: '14.35',
+          date: "2022-05-20"
+        },
+        {
+          apy: '14.05',
+          date: "2022-05-21"
+        },
+        {
+          apy: '13.35',
+          date: "2022-05-22"
+        },
+      ]
+    }),
+  'GET /chains/137/vaults/0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A/strategy_apy': (_, res) =>
+    res.json({
+      content: [{
+          type: 'estimate',
+          apy: '11.35',
+          date: moment().utcOffset(0).startOf('day').valueOf() / 1000
+        }, {
+          type: 'estimate',
+          apy: '11.35',
+          date: moment().utcOffset(0).startOf('day').add(1, 'days').valueOf() / 1000
+        },
+        {
+          type: 'estimate',
+          apy: '12.35',
+          date: moment().utcOffset(0).startOf('day').add(2, 'days').valueOf() / 1000
+        },
+        {
+          type: 'estimate',
+          apy: '13.35',
+          date: moment().utcOffset(0).startOf('day').add(3, 'days').valueOf() / 1000
+        },
+        {
+          type: 'estimate',
+          apy: '14.35',
+          date: moment().utcOffset(0).startOf('day').add(4, 'days').valueOf() / 1000
+        },
+        {
+          type: 'estimate',
+          apy: '14.05',
+          date: moment().utcOffset(0).startOf('day').add(5, 'days').valueOf() / 1000
+        },
+        {
+          type: 'estimate',
+          apy: '13.35',
+          date: moment().utcOffset(0).startOf('day').add(6, 'days').valueOf() / 1000
+        },
+      ]
     }),
 };
