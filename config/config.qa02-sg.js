@@ -18,19 +18,19 @@ export default defineConfig({
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph',
-        56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
-        137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon'
+        1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
+        56: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
+        137: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth'
       },
       VAULT_ADDRESS: {
         1: '0x9BcC604D4381C5b0Ad12Ff3Bf32bEdE063416BC7',
         56: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
-        137: '0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A'
+        137: '0xe6cFc17053c64838Fd7bb55BD4A2cb5b207A71ed'
       },
       USDI_ADDRESS: {
         1: '0xf090f16dEc8b6D24082Edd25B1C8D26f2bC86128',
         56: '0xCFC6E8577a414f561D459fC4a030e3463A500d29',
-        137: '0x8DEb399a86f28f62f0F24daF56c4aDD8e57EEcD5'
+        137: '0x965A01d39A9835d2B7e9e53bDc5C8501B962e8a3'
       },
     },
     ETHI: {
