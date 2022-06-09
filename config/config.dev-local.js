@@ -15,7 +15,7 @@ export default defineConfig({
   },
   define:{
     ENV_INDEX: 'dev-local',
-    API_SERVER: 'https://service-v1.bankofchain.io',
+    API_SERVER: 'http://192.168.75.31:8080',
     DASHBOARD_ROOT: 'https://dashboard-v1.bankofchain.io',
     IMAGE_ROOT:'https://web-v1.bankofchain.io',
     RPC_URL: {
