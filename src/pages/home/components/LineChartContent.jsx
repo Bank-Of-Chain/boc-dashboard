@@ -8,6 +8,7 @@ import styles from '../style.less'
 const { TabPane } = Tabs
 
 export default function LineChartContent({
+  isUsdi,
   loading = false,
   calDateRange = 7,
   onCalDateRangeClick = () => {},
@@ -89,7 +90,7 @@ export default function LineChartContent({
               <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
             </div>
           </TabPane>
-          <TabPane tab='Total Supply' key='totalSupply'>
+          <TabPane tab={isUsdi ? 'Total USDi Supply' : 'Total ETHi Supply'} key='totalSupply'>
             <div className={chartResponsiveConfig.chartWrapperClassName}>
               <LineEchart option={tvlEchartOpt} style={{ height: '100%', width: '100%' }} />
             </div>
