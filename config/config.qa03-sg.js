@@ -12,9 +12,9 @@ export default defineConfig({
     IMAGE_ROOT: 'https://qa03-sg.bankofchain.io',
     RPC_URL: {
       1: "https://rpc-qa03-sg.bankofchain.io",
-      56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com",
-      31337: "https://rpc-qa03-sg.bankofchain.io",
+      56: "https://rpc-qa03-sg.bankofchain.io",
+      137: "https://rpc-qa03-sg.bankofchain.io", // 个人页使用
+      31337: "https://rpc-qa03-sg.bankofchain.io", // 钱包连接是 31337
     },
     USDI: {
       SUB_GRAPH_URL: {
