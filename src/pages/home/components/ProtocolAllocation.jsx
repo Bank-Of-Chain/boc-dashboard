@@ -39,7 +39,7 @@ export default function ProtocolAllocation({
       title='Vault Protocol Allocations'
       style={{
         height: '100%',
-        marginTop: 24,
+        marginTop: 40,
       }}
       {...protocolResponsiveConfig.cardProps}
     >

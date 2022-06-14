@@ -180,7 +180,7 @@ const TransationsTable = ({
         }
         style={{
           height: '100%',
-          marginTop: 32,
+          marginTop: 40,
         }}
         {...responsiveConfig.cardProps}
       >

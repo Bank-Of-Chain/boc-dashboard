@@ -43,7 +43,7 @@ export default function LineChartContent({
       loading={loading}
       bordered={false}
       bodyStyle={{ padding: 0 }}
-      style={{ marginTop: 24 }}
+      style={{ marginTop: 40 }}
     >
       <div className={styles.vaultKeyCard}>
         <Tabs
@@ -51,7 +51,7 @@ export default function LineChartContent({
           size='small'
           className={classNames(chartResponsiveConfig.tabClassName)}
           tabBarExtraContent={
-            <div>
+            <div className={styles.buttons}>
               <Tooltip title='last 7 days'>
                 <Button
                   ghost

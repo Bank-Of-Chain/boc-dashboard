@@ -12,6 +12,7 @@ body,
 
 .ant-layout {
   min-height: 100vh;
+  background-color: #1F2023;
 }
 
 .ant-pro-sider.ant-layout-sider.ant-pro-sider-fixed {
@@ -69,9 +70,6 @@ ol {
   font-size: 0.8rem;
 }
 
-.ant-layout-header {
-  background-color: #000 ;
-}
 .ant-pro-top-nav-header {
   max-width: 1200px ;
   margin: 0 auto ;
@@ -79,5 +77,42 @@ ol {
 .ant-pro-top-nav-header-logo {
   h1 {
     color: @text-color ;
+  }
+}
+.ant-pro-top-nav-header.light {
+  background-color: transparent;
+}
+
+div.ant-card {
+  border-radius: 20px;
+  background: #323338;
+}
+
+.ant-tooltip {
+  max-width: none;
+  .ant-tooltip-inner {
+    padding: 1.25rem 2.5rem;
+    border-radius: 5px;
+    background-color: @primary-color;
+    color: #313036;
+  }
+  .ant-tooltip-arrow {
+    width: 1.125rem;
+    height: 1.125rem;
+
+    .ant-tooltip-arrow-content {
+      width: 1.125rem;
+      height: 1.125rem;
+      background-color: @primary-color;
+    }
+  }
+}
+
+.ant-tabs {
+  .ant-tabs-nav::before {
+    border: none;
+  }
+  .ant-tabs-tab {
+    padding: 0 0 1rem;
   }
 }
