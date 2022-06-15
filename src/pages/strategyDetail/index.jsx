@@ -269,7 +269,19 @@ const Strategy = props => {
     data,
   }
   const option = multipleLine(obj)
-  option.color =  ['#5470c6', '#fac858', '#91cc75', '#13c2c2']
+  option.color = [
+    '#A68EFE',
+    '#2ec7c9',
+    '#5ab1ef',
+    '#ffb980',
+    '#d87a80',
+    '#8d98b3',
+    '#e5cf0d',
+    '#97b552',
+    '#95706d',
+    '#dc69aa',
+    '#07a2a4',
+  ]
   option.series.forEach((serie, index) => {
     serie.connectNulls = true
     serie.z = option.series.length - index
