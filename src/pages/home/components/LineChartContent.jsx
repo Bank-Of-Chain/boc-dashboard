@@ -8,6 +8,7 @@ import styles from '../style.less'
 const { TabPane } = Tabs
 
 export default function LineChartContent({
+  isUsdi,
   loading = false,
   calDateRange = 7,
   onCalDateRangeClick = () => {},
@@ -41,16 +42,14 @@ export default function LineChartContent({
     <Card
       loading={loading}
       bordered={false}
-      bodyStyle={{ padding: 0 }}
-      style={{ marginTop: 24 }}
+      style={{ marginTop: 40 }}
     >
       <div className={styles.vaultKeyCard}>
         <Tabs
           animated
-          size='small'
           className={classNames(chartResponsiveConfig.tabClassName)}
           tabBarExtraContent={
-            <div>
+            <div className={styles.buttons}>
               <Tooltip title='last 7 days'>
                 <Button
                   ghost
@@ -84,12 +83,12 @@ export default function LineChartContent({
             </div>
           }
         >
-          <TabPane tab="APY" key="apy">
+          <TabPane tab="APY (%)" key="apy">
             <div className={chartResponsiveConfig.chartWrapperClassName}>
               <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
             </div>
           </TabPane>
-          <TabPane tab='Total Supply' key='totalSupply'>
+          <TabPane tab={isUsdi ? 'Total USDi Supply' : 'Total ETHi Supply'} key='totalSupply'>
             <div className={chartResponsiveConfig.chartWrapperClassName}>
               <LineEchart option={tvlEchartOpt} style={{ height: '100%', width: '100%' }} />
             </div>

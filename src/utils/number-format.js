@@ -28,6 +28,7 @@ export const toLeastOneFixed = (balance, decimals, displayDecimals = DISPLAY_DEC
   let displayValue
   if (isLessThenDisplay) {
     displayValue = toFixed(value, decimalsValue, decimals - value.abs().toString().length + 1)
+    return parseFloat(displayValue)
   }
   displayValue = toFixed(value, decimalsValue, displayDecimals)
   return parseFloat(displayValue)

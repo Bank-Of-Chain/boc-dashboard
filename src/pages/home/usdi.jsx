@@ -214,6 +214,7 @@ const USDiHome = () => {
       </Suspense>
       <Suspense fallback={null}>
         <LineChartContent
+          isUsdi
           loading={loading}
           calDateRange={calDateRange}
           onCalDateRangeClick={setCalDateRange}

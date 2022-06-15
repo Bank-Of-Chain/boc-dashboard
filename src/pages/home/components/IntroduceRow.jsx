@@ -23,7 +23,7 @@ const IntroduceRow = ({ data = [] }) => {
             title={title}
             action={
               <Tooltip title={tip}>
-                <InfoCircleOutlined />
+                <InfoCircleOutlined style={{ fontSize: 22 }} />
               </Tooltip>
             }
             loading={loading}

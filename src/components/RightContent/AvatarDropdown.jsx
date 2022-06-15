@@ -1,5 +1,5 @@
 import React from 'react'
-import { LogoutOutlined, WalletOutlined } from '@ant-design/icons'
+import { LogoutOutlined, WalletOutlined, CopyOutlined } from '@ant-design/icons'
 import { Avatar, Menu, Spin } from 'antd'
 import { useModel } from 'umi'
 
@@ -9,7 +9,7 @@ import Address from './../Address'
 
 import styles from './index.less'
 
-const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet }) => {
+const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet, onCopy }) => {
   const { initialState } = useModel('@@initialState')
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
@@ -35,6 +35,10 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
           Change Wallet
         </Menu.Item>
       )}
+      <Menu.Item key='copy' onClick={onCopy}>
+        <CopyOutlined />
+        Copy Address
+      </Menu.Item>
       <Menu.Item key='logout' onClick={logoutOfWeb3Modal}>
         <LogoutOutlined />
         Disconnect
@@ -44,13 +48,8 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
+        <div className={styles.dot}></div>
         <Address size='short' wrapClassName={`${styles.name} anticon`} address={address} />
-        <Avatar
-          size='small'
-          className={styles.avatar}
-          src='https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
-          alt='avatar'
-        />
       </span>
     </HeaderDropdown>
   )

@@ -14,6 +14,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
 import { getRecentActivity } from '@/services/dashboard-service'
+import styles from '../style.less'
 
 const TransationsTable = ({
   loading,
@@ -172,7 +173,7 @@ const TransationsTable = ({
         bordered={false}
         title='Recent Activity'
         extra={
-          <Radio.Group value={filter} onChange={handleChange} buttonStyle="outline" {...responsiveConfig.radioGroupProps}>
+          <Radio.Group value={filter} onChange={handleChange} buttonStyle="outline" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
             {map(FILTER_OPTIONS, (value, key) => (
               <Radio.Button value={value} key={key}>{value}</Radio.Button>
             ))}
@@ -180,7 +181,7 @@ const TransationsTable = ({
         }
         style={{
           height: '100%',
-          marginTop: 32,
+          marginTop: 40,
         }}
         {...responsiveConfig.cardProps}
       >

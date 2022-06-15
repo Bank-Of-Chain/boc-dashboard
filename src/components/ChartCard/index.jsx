@@ -36,11 +36,7 @@ class ChartCard extends React.Component {
 
     return (
       <div className={styles.chartCard}>
-        <div
-          className={classNames(styles.chartTop, {
-            [styles.chartTopMargin]: !children && !footer,
-          })}
-        >
+        <div className={classNames(styles.chartTop)}>
           <div className={styles.avatar}>{avatar}</div>
           <div className={styles.metaWrap}>
             <div className={styles.meta}>
@@ -89,7 +85,7 @@ class ChartCard extends React.Component {
       <Card
         loading={loading}
         bodyStyle={{
-          padding: '20px 24px 8px 24px',
+          padding: '2.375rem 2.125rem 2.375rem 2.75rem',
         }}
         {...rest}
       >
