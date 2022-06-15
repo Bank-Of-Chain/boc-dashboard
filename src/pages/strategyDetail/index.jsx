@@ -73,7 +73,6 @@ const Strategy = props => {
       })
       .catch(noop)
       .finally(() => {
-        setStrategy({strategyName: 'sdsd'})
         setLoading(false)
       })
     // eslint-disable-next-line
@@ -86,6 +85,7 @@ const Strategy = props => {
         {
           chainId: initialState.chain,
           vaultAddress: initialState.vaultAddress,
+          strategyName: strategy?.strategyName,
           sort: 'fetch_block desc',
         },
         0,
@@ -95,6 +95,7 @@ const Strategy = props => {
       getStrategyApysOffChain(
         {
           chainId: initialState.chain,
+          strategyName: strategy?.strategyName,
           sort: 'fetch_time desc',
         },
         0,
@@ -106,7 +107,7 @@ const Strategy = props => {
         initialState.vaultAddress,
         strategy?.strategyName,
       ).catch(() => {}),
-    ]).then(([apys, offChainApys, unRealizeApys]) => {
+    ]).then(([apys = { content: [] }, offChainApys, unRealizeApys]) => {
       const currentDayStartUtc0 = moment().utcOffset(0).startOf('day')
       const startMoment = moment()
         .utcOffset(0)
@@ -172,7 +173,6 @@ const Strategy = props => {
         map(apys.content, i => {
           return {
             realizedApy: (i.realizedApy.value * 100).toFixed(2),
-            unrealizedApy: (i.unrealizedApy.value * 100).toFixed(2),
             expectedApy:(i.expectedApy * 100).toFixed(2),
             date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
           }
@@ -206,9 +206,8 @@ const Strategy = props => {
         const baseApyItem = get(baseApysMap, `${i}.apy`, null)
         const offChainApyItem = get(offChainApyMap, `${i}.apy`, null)
         const unRealizeApyItem = get(unRealizeApyMap, `${i}.apy`, null)
-        const lw_unRealizeApyItem = get(extentApyMap, `${i}.unrealizedApy`, null)
-        const lw_realizeApyItem = get(extentApyMap, `${i}.realizedApy`, null)
-        const lw_expectedApyItem = get(extentApyMap, `${i}.expectedApy`, null)
+        const realizeApyItem = get(extentApyMap, `${i}.realizedApy`, null)
+        const expectedApyItem = get(extentApyMap, `${i}.expectedApy`, null)
         // 小于当前的天，就不计算平均apy了
         const weeklyApyItem = currentDayStartUtc0.isAfter(moment(i).utcOffset(0).startOf('day')) ? getWeeklyAvgApy(i) : null
         return {
@@ -217,8 +216,8 @@ const Strategy = props => {
           un_realize_apy: isNil(unRealizeApyItem) ? null : unRealizeApyItem,
           official_daily_apy: isNil(offChainApyItem) ? null : offChainApyItem,
           weekly_avg_apy: isNil(weeklyApyItem) ? null : weeklyApyItem.toFixed(2),
-          lw_realizeApy: isNil(lw_realizeApyItem) ? null : lw_realizeApyItem,
-          lw_expectedApy: isNil(lw_expectedApyItem) ? null : lw_expectedApyItem
+          realizeApy: isNil(realizeApyItem) ? null : realizeApyItem,
+          expectedApy: isNil(expectedApyItem) ? null : expectedApyItem
         }
       })
       console.log('nextApyArray=', nextApyArray)
@@ -227,7 +226,7 @@ const Strategy = props => {
   }, [strategy, strategy?.strategyName])
 
   const estimateArray = map(apyArray, 'un_realize_apy')
-  const lengndData = ['Weekly APY', 'Official Weekly APY', 'lw_realizeApy', 'lw_expectedApy']
+  const lengndData = ['Weekly APY', 'Official Weekly APY', 'Realized Apy', 'Expected Apy']
   const data = [
     {
       seriesName: 'Weekly APY',
@@ -238,12 +237,12 @@ const Strategy = props => {
       seriesData: map(apyArray, 'weekly_avg_apy'),
     },
     {
-      seriesName: 'lw_realizeApy',
-      seriesData: map(apyArray, 'lw_realizeApy'),
+      seriesName: 'Realize Apy',
+      seriesData: map(apyArray, 'realizeApy'),
     },
     {
-      seriesName: 'lw_expectedApy',
-      seriesData: map(apyArray, 'lw_expectedApy'),
+      seriesName: 'Expected Apy',
+      seriesData: map(apyArray, 'expectedApy'),
     }
   ]
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
@@ -402,7 +401,7 @@ const Strategy = props => {
       <Suspense fallback={null}>
         <Card
           loading={loading}
-          title='Apy'
+          title='Apy (%)'
           className={styles.offlineCard}
           bordered={false}
           style={{
