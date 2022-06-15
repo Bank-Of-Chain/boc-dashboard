@@ -45,7 +45,7 @@ export default function ChainChange (props) {
   return (
     <Tabs activeKey={initialState.chain} className={styles.tabs} centered onChange={changeChain}>
       {map(CHAINS, i => (
-        <TabPane tab={<span style={{ fontSize: '1rem' }}>{i.name}</span>} key={i.id} />
+        <TabPane tab={i.name} key={i.id} />
       ))}
     </Tabs>
   )

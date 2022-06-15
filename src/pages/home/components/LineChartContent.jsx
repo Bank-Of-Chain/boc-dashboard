@@ -47,7 +47,6 @@ export default function LineChartContent({
       <div className={styles.vaultKeyCard}>
         <Tabs
           animated
-          size='small'
           className={classNames(chartResponsiveConfig.tabClassName)}
           tabBarExtraContent={
             <div className={styles.buttons}>
@@ -84,7 +83,7 @@ export default function LineChartContent({
             </div>
           }
         >
-          <TabPane tab="APY" key="apy">
+          <TabPane tab="APY (%)" key="apy">
             <div className={chartResponsiveConfig.chartWrapperClassName}>
               <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
             </div>
