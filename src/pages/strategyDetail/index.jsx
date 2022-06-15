@@ -237,7 +237,7 @@ const Strategy = props => {
       seriesData: map(apyArray, 'weekly_avg_apy'),
     },
     {
-      seriesName: 'Realize Apy',
+      seriesName: 'Realized Apy',
       seriesData: map(apyArray, 'realizeApy'),
     },
     {
