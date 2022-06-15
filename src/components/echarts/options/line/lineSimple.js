@@ -21,7 +21,12 @@ export default function (obj) {
       containLabel: true
     },
     tooltip: {
-      trigger: 'axis'
+      trigger: 'axis',
+      borderWidth: 0,
+      backgroundColor: '#292B2E',
+      textStyle: {
+        color: '#fff'
+      }
     },
     xAxis: {
       type: 'category',
@@ -31,6 +36,7 @@ export default function (obj) {
       type: 'value'
     },
     dataZoom: showDataZoom ? obj.dataZoom : null,
+    color: ['#A68EFE', '#5470c6', '#91cc75'],
     series: [{
       name: obj.seriesName ? obj.seriesName : "",
       data: obj.seriesData,
