@@ -42,7 +42,6 @@ export default function LineChartContent({
     <Card
       loading={loading}
       bordered={false}
-      bodyStyle={{ padding: 0 }}
       style={{ marginTop: 40 }}
     >
       <div className={styles.vaultKeyCard}>

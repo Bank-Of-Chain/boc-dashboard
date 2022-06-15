@@ -41,6 +41,7 @@ export default function ProtocolAllocation({
         height: '100%',
         marginTop: 40,
       }}
+      bodyStyle={{ padding: '0 2.75rem 1.75rem' }}
       {...protocolResponsiveConfig.cardProps}
     >
       <Row

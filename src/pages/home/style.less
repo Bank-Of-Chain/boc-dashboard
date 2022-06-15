@@ -35,8 +35,6 @@
 }
 
 .vaultKeyCard{
-  padding: 1.375rem 1rem;
-
   .tabMobile {
     :global(.ant-tabs-tab + .ant-tabs-tab) {
       margin: 0 0 0 24px;
@@ -44,7 +42,6 @@
   }
   .chartDiv {
     height: 300px;
-    padding: 1.25rem;
   }
   .chartDivMobile {
     height: 250px;
@@ -52,7 +49,6 @@
   }
   :global {
     .ant-tabs-nav {
-      padding: 0 1.25rem;
       margin-bottom: 0;
     }
   }
@@ -99,6 +95,12 @@
   :global {
     .ant-btn {
       width: 7.5rem;
+      height: 2.25rem;
+      border-width: 2px;
+
+      & + .ant-btn {
+        left: -2px;
+      }
     }
   }
 }
