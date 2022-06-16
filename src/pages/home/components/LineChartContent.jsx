@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Card, Button, Tabs, Tooltip } from 'antd'
+import { Card, Button, Tabs, Tooltip, Radio } from 'antd'
 import { LineEchart } from '@/components/echarts'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import styles from '../style.less'
@@ -38,6 +38,10 @@ export default function LineChartContent({
     }
   }[deviceType]
 
+  const onDateChange = (e) => {
+    onCalDateRangeClick(e.target.value)
+  }
+
   return (
     <Card
       loading={loading}
@@ -50,36 +54,17 @@ export default function LineChartContent({
           className={classNames(chartResponsiveConfig.tabClassName)}
           tabBarExtraContent={
             <div className={styles.buttons}>
-              <Tooltip title='last 7 days'>
-                <Button
-                  ghost
-                  type={calDateRange === 7 ? 'primary' : ''}
-                  onClick={() => onCalDateRangeClick(7)}
-                  {...chartResponsiveConfig.buttonProps}
-                >
-                  WEEK
-                </Button>
-              </Tooltip>
-              <Tooltip title='last 30 days'>
-                <Button
-                  ghost
-                  type={calDateRange === 31 ? 'primary' : ''}
-                  onClick={() => onCalDateRangeClick(31)}
-                  {...chartResponsiveConfig.buttonProps}
-                >
-                  MONTH
-                </Button>
-              </Tooltip>
-              <Tooltip title='last 365 days'>
-                <Button
-                  ghost
-                  type={calDateRange === 365 ? 'primary' : ''}
-                  onClick={() => onCalDateRangeClick(365)}
-                  {...chartResponsiveConfig.buttonProps}
-                >
-                  YEAR
-                </Button>
-              </Tooltip>
+              <Radio.Group value={calDateRange} onChange={onDateChange}>
+                <Tooltip title='last 7 days'>
+                  <Radio.Button value={7}>WEEK</Radio.Button>
+                </Tooltip>
+                <Tooltip title='last 30 days'>
+                  <Radio.Button value={31}>MONTH</Radio.Button>
+                </Tooltip>
+                <Tooltip title='last 365 days'>
+                  <Radio.Button value={365}>YEAR</Radio.Button>
+                </Tooltip>
+              </Radio.Group>
             </div>
           }
         >

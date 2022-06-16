@@ -102,6 +102,9 @@ div.ant-tooltip {
     border-radius: 5px;
     background-color: @primary-color;
     color: #313036;
+    &::selection {
+      color: #313036;
+    }
   }
   .ant-tooltip-arrow {
     width: 1.125rem;
@@ -156,7 +159,7 @@ div.ant-table {
     width: 7.5rem;
     height: 2.25rem;
     border: 2px solid #A0A0A0;
-    border-top-width: 1.02px;
+    border-top-width: 2px;
     border-left-width: 0;
     line-height: 2rem;
     text-align: center;
