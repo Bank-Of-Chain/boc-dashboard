@@ -126,7 +126,7 @@ const Strategy = props => {
       const baseApys = map(apys.content, i => {
         return {
           date: formatToUTC0(1000 * i.fetchTimestamp, 'yyyy-MM-DD'),
-          apy: (i.lpApy * 100).toFixed(2),
+          apy: isNil(i.lpApy) ? null : (i.lpApy * 100).toFixed(2),
         }
       })
       const groupApys = groupBy(baseApys, item => item.date)
@@ -272,13 +272,12 @@ const Strategy = props => {
   option.color = [
     '#A68EFE',
     '#2ec7c9',
-    '#5ab1ef',
     '#ffb980',
     '#d87a80',
-    '#8d98b3',
     '#e5cf0d',
     '#97b552',
     '#95706d',
+    '#8d98b3',
     '#dc69aa',
     '#07a2a4',
   ]
