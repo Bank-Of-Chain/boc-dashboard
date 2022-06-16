@@ -17,7 +17,7 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
-import { isEmpty, map, noop, reduce, groupBy, sortBy, findIndex, compact } from 'lodash'
+import { isEmpty, map, noop, reduce, compact } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 
 import moment from 'moment'
@@ -90,8 +90,7 @@ const Strategy = props => {
         },
         0,
         100,
-      )
-        .catch(() => {}),
+      ).catch(() => {}),
       getStrategyApysOffChain(
         {
           chainId: initialState.chain,
@@ -100,15 +99,13 @@ const Strategy = props => {
         },
         0,
         100,
-      )
-        .catch(() => {}),
+      ).catch(() => {}),
       getStrategyEstimateApys(
         initialState.chain,
         initialState.vaultAddress,
         strategy?.strategyName,
       ).catch(() => {}),
     ]).then(([apys = { content: [] }, offChainApys, unRealizeApys]) => {
-      const currentDayStartUtc0 = moment().utcOffset(0).startOf('day')
       const startMoment = moment()
         .utcOffset(0)
         .subtract(66, 'day')
@@ -123,23 +120,15 @@ const Strategy = props => {
         },
         [],
       )
-      const baseApys = map(apys.content, i => {
-        return {
-          date: formatToUTC0(1000 * i.fetchTimestamp, 'yyyy-MM-DD'),
-          apy: isNil(i.lpApy) ? null : (i.lpApy * 100).toFixed(2),
-        }
-      })
-      const groupApys = groupBy(baseApys, item => item.date)
-      const baseApysMap = keyBy(
-        map(groupApys, group => sortBy(group, o => o.timestamp).pop()),
-        'date',
-      )
 
       // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
       let unRealizeApyItems = unRealizeApys?.content
-      if (apys.content.length > 0
-          && unRealizeApyItems.length > 0
-          && moment(apys.content[0].fetchTimestamp * 1000).isBefore(unRealizeApyItems[unRealizeApyItems.length - 1].timestamp * 1000)
+      if (
+        apys.content.length > 0 &&
+        unRealizeApyItems.length > 0 &&
+        moment(apys.content[0].fetchTimestamp * 1000).isBefore(
+          unRealizeApyItems[unRealizeApyItems.length - 1].timestamp * 1000,
+        )
       ) {
         const firstItem = {
           apy: apys.content[0].lpApy,
@@ -147,16 +136,6 @@ const Strategy = props => {
         }
         unRealizeApyItems = [firstItem, ...unRealizeApyItems]
       }
-      const unRealizeApyMap = keyBy(
-        map(unRealizeApyItems, i => {
-          return {
-            apy: (i.apy * 100).toFixed(2),
-            date: formatToUTC0(1000 * i.timestamp, 'yyyy-MM-DD'),
-          }
-        }),
-        'date',
-      )
-
       const offChainApyMap = keyBy(
         map(offChainApys.content, i => {
           return {
@@ -167,57 +146,31 @@ const Strategy = props => {
         }),
         'date',
       )
-
-      console.log('apys.content=', apys.content)
       const extentApyMap = keyBy(
         map(apys.content, i => {
           return {
+            officialApy: (i.factorialOfficialApy * 100).toFixed(2),
             realizedApy: (i.realizedApy.value * 100).toFixed(2),
-            expectedApy:(i.expectedApy * 100).toFixed(2),
+            expectedApy: (i.expectedApy * 100).toFixed(2),
             date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
           }
         }),
         'date',
       )
 
-      const getWeeklyAvgApy = day => {
-        const index = findIndex(calcArray, _ => _ === day)
-        let firstValidIndex = -1
-        for (let i = index; i >= 0; i--) {
-          if (get(offChainApyMap, `${calcArray[i]}.value`, null)) {
-            firstValidIndex = i
-            break
-          }
-        }
-        if (firstValidIndex === -1) {
-          return
-        }
-        const weeklyArray = calcArray.slice(Math.max(0, firstValidIndex - 6), firstValidIndex + 1)
-        const values = map(weeklyArray, day => get(offChainApyMap, `${day}.value`, null)).filter(
-          _ => !isNil(_),
-        )
-        if (values.length === 0) {
-          return
-        }
-        return sum(values) / values.length
-      }
-
       const nextApyArray = map(calcArray, i => {
-        const baseApyItem = get(baseApysMap, `${i}.apy`, null)
         const offChainApyItem = get(offChainApyMap, `${i}.apy`, null)
-        const unRealizeApyItem = get(unRealizeApyMap, `${i}.apy`, null)
-        const realizeApyItem = get(extentApyMap, `${i}.realizedApy`, null)
-        const expectedApyItem = get(extentApyMap, `${i}.expectedApy`, null)
-        // 小于当前的天，就不计算平均apy了
-        const weeklyApyItem = currentDayStartUtc0.isAfter(moment(i).utcOffset(0).startOf('day')) ? getWeeklyAvgApy(i) : null
+        const { officialApy, realizedApy, expectedApy } = get(extentApyMap, i, {
+          officialApy: null,
+          realizedApy: null,
+          expectedApy: null,
+        })
         return {
           date: i,
-          apy: isNil(baseApyItem) ? null : baseApyItem,
-          un_realize_apy: isNil(unRealizeApyItem) ? null : unRealizeApyItem,
+          realizedApy,
+          expectedApy,
+          officialApy,
           official_daily_apy: isNil(offChainApyItem) ? null : offChainApyItem,
-          weekly_avg_apy: isNil(weeklyApyItem) ? null : weeklyApyItem.toFixed(2),
-          realizeApy: isNil(realizeApyItem) ? null : realizeApyItem,
-          expectedApy: isNil(expectedApyItem) ? null : expectedApyItem
         }
       })
       console.log('nextApyArray=', nextApyArray)
@@ -226,24 +179,21 @@ const Strategy = props => {
   }, [strategy, strategy?.strategyName])
 
   const estimateArray = map(apyArray, 'un_realize_apy')
-  const lengndData = ['Weekly APY', 'Official Weekly APY', 'Realized Apy', 'Expected Apy']
+  const lengndData = ['Official APY', 'Realized APY', 'Expected APY']
   const data = [
     {
-      seriesName: 'Weekly APY',
-      seriesData: map(apyArray, 'apy'),
+      seriesName: 'Official APY',
+      seriesData: map(apyArray, 'officialApy'),
     },
     {
-      seriesName: 'Official Weekly APY',
-      seriesData: map(apyArray, 'weekly_avg_apy'),
-    },
-    {
-      seriesName: 'Realized Apy',
-      seriesData: map(apyArray, 'realizeApy'),
-    },
-    {
-      seriesName: 'Expected Apy',
+      seriesName: 'Expected APY',
       seriesData: map(apyArray, 'expectedApy'),
-    }
+    },
+    {
+      seriesName: 'Realized APY',
+      seriesData: map(apyArray, 'realizedApy'),
+    },
+
   ]
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
   if (!isEmpty(compact(estimateArray))) {
@@ -251,7 +201,7 @@ const Strategy = props => {
     data.push({
       seriesName: 'Estimated Weekly APY',
       seriesData: estimateArray,
-    },)
+    })
   }
   if (official_daily_apy) {
     lengndData.push('Official Daily APY')
@@ -284,10 +234,10 @@ const Strategy = props => {
   option.series.forEach((serie, index) => {
     serie.connectNulls = true
     serie.z = option.series.length - index
-    if (serie.name === 'Estimated Weekly APY') {
+    if (serie.name === 'Expected APY') {
       serie.lineStyle = {
-        width: 2,
-        type:'dotted'
+        width: 5,
+        type: 'dotted',
       }
     }
   })

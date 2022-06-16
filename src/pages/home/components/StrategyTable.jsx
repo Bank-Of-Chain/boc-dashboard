@@ -1,7 +1,7 @@
-import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
+import { Card, Table, Image, Switch, Tooltip, Badge, Divider } from 'antd'
 import React, { useState } from 'react'
 import { useModel, useRequest } from 'umi'
-import { filter, isNil } from 'lodash'
+import { filter, isNil, map } from 'lodash'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
@@ -17,13 +17,21 @@ import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 import styles from '../style.less'
 
-const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
+const StrategyTable = ({
+  loading,
+  strategyMap,
+  displayDecimals = TOKEN_DISPLAY_DECIMALS,
+  unit = 'USD',
+}) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
-  const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100), {
-    formatResult: resp => resp.content,
-  })
+  const { data: searchData } = useRequest(
+    () => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100),
+    {
+      formatResult: resp => resp.content,
+    },
+  )
   if (!initialState.chain) return null
 
   // boc-service fixed the number to 6
@@ -39,9 +47,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           <Image
             preview={false}
             width={30}
-            src={`${IMAGE_ROOT}/images/amms/${
-              strategyMap[initialState.chain][item.protocol]
-            }.png`}
+            src={`${IMAGE_ROOT}/images/amms/${strategyMap[initialState.chain][item.protocol]}.png`}
             placeholder={item.protocol}
             style={{ backgroundColor: '#fff', borderRadius: '50%' }}
             alt={strategyMap[initialState.chain][item.protocol]}
@@ -77,39 +83,53 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>,
     },
     {
-      title: <Tooltip title='Official weekly average APY'>
-        <span>Official APY</span>
-      </Tooltip>,
-      dataIndex: 'officialApyAvg',
-      key: 'officialApyAvg',
+      title: (
+        <Tooltip title='Official weekly average APY'>
+          <span>Official APY</span>
+        </Tooltip>
+      ),
+      dataIndex: 'factorialOfficialApy',
+      key: 'factorialOfficialApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.officialApyAvg - b.officialApyAvg
+        return a.factorialOfficialApy - b.factorialOfficialApy
       },
       render: text => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
-      title: 'Weekly APY',
-      dataIndex: 'apyLP',
-      key: 'apyLP',
+      title: 'Realized Apy',
+      dataIndex: 'realizedApy',
+      key: 'realizedApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.apyLP - b.apyLP
+        return a.realizedApy.value - b.realizedApy.value
       },
-      render: (text = 0, item) => {
-        const { estimateApy } = item
-        const withoutEstimate = isNil(estimateApy)
-        const jsxElement = <Badge dot={!withoutEstimate} color="gold">
-          <span>{(100 * text).toFixed(2)} %</span>
-        </Badge>
-        if (withoutEstimate) {
-          return jsxElement
-        }
-        const nextWeekApyJsx = <span>Estimate Apy: {(100 * estimateApy).toFixed(2)} %</span>
-        return <Tooltip title={nextWeekApyJsx}>
-          {jsxElement}
-        </Tooltip>
-      }
+      render: (data, item) => {
+        const { value, detail } = data
+        const { unrealizedApy } = item
+
+        const realizeApyValue = 100 * value
+        const unRealizeApyValue = 100 * unrealizedApy.value
+        const withoutEstimate = realizeApyValue === unRealizeApyValue
+
+        const jsxElement = (
+          <Badge dot={!withoutEstimate} color='gold'>
+            <span>{realizeApyValue.toFixed(2)} %</span>
+          </Badge>
+        )
+        const nextWeekApyJsx = (
+          <div>
+            <span>Unrealize APY: {unRealizeApyValue.toFixed(2)} %</span>
+            <Divider style={{ margin: '0.5rem 0' }} />
+            {map(detail, (i, index) => (
+              <span key={index}>
+                {i.feeName}:{(100 * i.feeApy).toFixed(2)} %
+              </span>
+            ))}
+          </div>
+        )
+        return <Tooltip title={nextWeekApyJsx}>{jsxElement}</Tooltip>
+      },
     },
     {
       title: 'Weekly Profit',
@@ -118,17 +138,23 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: (text = 0, item) => {
         const { estimateProfit, tokenUnit = '' } = item
         const withoutEstimate = isNil(estimateProfit)
-        const jsxElement = <Badge dot={!withoutEstimate} color="gold" >
-          <span>{toFixed(text || '0', decimals, displayDecimals)} {tokenUnit || ''}</span>
-        </Badge>
+        const jsxElement = (
+          <Badge dot={!withoutEstimate} color='gold'>
+            <span>
+              {toFixed(text || '0', decimals, displayDecimals)} {tokenUnit || ''}
+            </span>
+          </Badge>
+        )
         if (withoutEstimate) {
           return jsxElement
         }
-        const nextWeekProfitJsx = <span>Estimate Profit: {toFixed(estimateProfit, decimals, displayDecimals)} {tokenUnit || ''}</span>
-        return <Tooltip title={nextWeekProfitJsx}>
-          {jsxElement}
-        </Tooltip>
-      }
+        const nextWeekProfitJsx = (
+          <span>
+            Estimate Profit: {toFixed(estimateProfit, decimals, displayDecimals)} {tokenUnit || ''}
+          </span>
+        )
+        return <Tooltip title={nextWeekProfitJsx}>{jsxElement}</Tooltip>
+      },
     },
     {
       title: 'Strategy Address',
@@ -137,11 +163,11 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       align: 'center',
       render: (text, item) => (
         <a
-          target="_blank"
-          rel="noreferrer"
+          target='_blank'
+          rel='noreferrer'
           href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}
         >
-          <img width={21} src="./images/link.png" alt="link" />
+          <img width={21} src='./images/link.png' alt='link' />
         </a>
       ),
     },
@@ -151,22 +177,22 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
-        size: 'small'
+        size: 'small',
       },
       tableProps: {
         size: 'small',
-        rowClassName: 'tablet-font-size'
-      }
+        rowClassName: 'tablet-font-size',
+      },
     },
     [DEVICE_TYPE.Mobile]: {
       cardProps: {
-        size: 'small'
+        size: 'small',
       },
       tableProps: {
         size: 'small',
-        rowClassName: 'mobile-font-sizee'
-      }
-    }
+        rowClassName: 'mobile-font-sizee',
+      },
+    },
   }[deviceType]
 
   return (
