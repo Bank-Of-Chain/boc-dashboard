@@ -14,7 +14,12 @@ export default function (obj) {
       let dataFormat = {
         name: element.seriesName ? element.seriesName : "",
         data: element.seriesData,
-        type: 'line'
+        type: 'line',
+        showSymbol: false,
+        lineStyle: {
+          width: 5,
+          cap: 'round'
+        }
       };
       dataCount += element.seriesData.length;
       data.push(dataFormat);
@@ -27,7 +32,12 @@ export default function (obj) {
       color: '#fff'
     },
     tooltip: {
-      trigger: 'axis'
+      trigger: 'axis',
+      borderWidth: 0,
+      backgroundColor: '#292B2E',
+      textStyle: {
+        color: '#fff'
+      }
     },
     legend: obj.legend,
     xAxis: {

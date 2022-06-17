@@ -125,12 +125,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
         rowKey={record => record.name}
         columns={columns}
         dataSource={tableData}
-        pagination={{
-          style: {
-            marginBottom: 0,
-          },
-          pageSize: 10,
-        }}
+        pagination={false}
         {...responsiveConfig.tableProps}
       />
     </div>

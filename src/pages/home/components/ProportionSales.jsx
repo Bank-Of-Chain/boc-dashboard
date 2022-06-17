@@ -57,31 +57,42 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
   ]
 
   const responsiveConfig = {
-    [DEVICE_TYPE.Desktop]: {},
-    [DEVICE_TYPE.Tablet]: {},
+    [DEVICE_TYPE.Desktop]: {
+      legendProps: {
+        position: 'bottom-center',
+      },
+    },
+    [DEVICE_TYPE.Tablet]: {
+      legendProps: {
+        position: 'bottom-center',
+      },
+    },
     [DEVICE_TYPE.Mobile]: {
       legendProps: {
-        position: 'top'
-      }
-    }
+        position: 'bottom-center',
+      },
+    },
   }[deviceType]
 
   return (
     <div className={styles.chartWrapper}>
       <Donut
         forceFit
-        height={340}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        }}
-        radius={1}
-        innerRadius={0.75}
+        padding='auto'
         angleField='amount'
+        color={[
+          '#A68EFE',
+          '#2ec7c9',
+          '#5ab1ef',
+          '#ffb980',
+          '#d87a80',
+          '#8d98b3',
+          '#e5cf0d',
+          '#97b552',
+          '#95706d',
+          '#dc69aa',
+          '#07a2a4',
+        ]}
         colorField='Protocol'
         data={tableData}
         legend={{
@@ -94,7 +105,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
               return value.replace(suffix, '')
             },
           },
-          ...responsiveConfig.legendProps
+          ...responsiveConfig.legendProps,
         }}
         label={{
           visible: false,

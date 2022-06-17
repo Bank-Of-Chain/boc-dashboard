@@ -1,3 +1,27 @@
+.modal {
+  :global(.ant-modal-content) {
+    border-radius: 12px;
+  }
+
+  :global(.ant-modal-header) {
+    border-bottom: 0;
+    padding: 32px 32px 28px;
+    border-radius: 20px;
+  }
+  :global(.ant-modal-header .ant-modal-title) {
+    font-size: 18px;
+  }
+
+  :global(.ant-modal-close) {
+    top: 16px;
+    right: 16px;
+  }
+
+  :global(.ant-modal-body) {
+    padding: 0 36px 32px;
+  }
+}
+
 .content {
   display: flex;
   flex-wrap: wrap;
@@ -22,40 +46,40 @@
 .walletItemWrapper {
   position: relative;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border-radius: 4px;
-  border: 1px solid rgb(228; 228; 231);
+  border: 2px solid #666666;
   &:last-child {
     margin-bottom: 0
   }
-  // "&:hover": {
-    //   backgroundColor: "#f4f4f5";
-    // };
-    &:after {
-      display: none;
-      content: "";
-      position: absolute;
-      top: 50%;
-      right: 16px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: #10b981;
+  &:hover {
+    background: #323438,
+  }
+  &:after {
+    display: none;
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #55E752;
+    transform: translate(0, -50%);
   }
 }
 .walletItem {
-  padding: 16px;
+  padding: 14px 24px;
   cursor: pointer;
 }
 .walletItemWrapperSelected {
-  border: 1px solid rgb(228; 228; 231);
   &:after {
     display: block
   }
 }
 .walletLogo {
   width: 24px;
-  margin-right: 8px;
+  margin-right: 12px;
   vertical-align: middle
 }
 .walletName {

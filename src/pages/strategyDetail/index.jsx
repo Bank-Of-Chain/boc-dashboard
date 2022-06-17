@@ -107,7 +107,7 @@ const Strategy = props => {
         initialState.vaultAddress,
         strategy?.strategyName,
       ).catch(() => {}),
-    ]).then(([apys, offChainApys, unRealizeApys]) => {
+    ]).then(([apys = { content: [] }, offChainApys, unRealizeApys]) => {
       const currentDayStartUtc0 = moment().utcOffset(0).startOf('day')
       const startMoment = moment()
         .utcOffset(0)
@@ -126,7 +126,7 @@ const Strategy = props => {
       const baseApys = map(apys.content, i => {
         return {
           date: formatToUTC0(1000 * i.fetchTimestamp, 'yyyy-MM-DD'),
-          apy: (i.lpApy * 100).toFixed(2),
+          apy: isNil(i.lpApy) ? null : (i.lpApy * 100).toFixed(2),
         }
       })
       const groupApys = groupBy(baseApys, item => item.date)
@@ -168,6 +168,18 @@ const Strategy = props => {
         'date',
       )
 
+      console.log('apys.content=', apys.content)
+      const extentApyMap = keyBy(
+        map(apys.content, i => {
+          return {
+            realizedApy: (i.realizedApy.value * 100).toFixed(2),
+            expectedApy:(i.expectedApy * 100).toFixed(2),
+            date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
+          }
+        }),
+        'date',
+      )
+
       const getWeeklyAvgApy = day => {
         const index = findIndex(calcArray, _ => _ === day)
         let firstValidIndex = -1
@@ -194,6 +206,8 @@ const Strategy = props => {
         const baseApyItem = get(baseApysMap, `${i}.apy`, null)
         const offChainApyItem = get(offChainApyMap, `${i}.apy`, null)
         const unRealizeApyItem = get(unRealizeApyMap, `${i}.apy`, null)
+        const realizeApyItem = get(extentApyMap, `${i}.realizedApy`, null)
+        const expectedApyItem = get(extentApyMap, `${i}.expectedApy`, null)
         // 小于当前的天，就不计算平均apy了
         const weeklyApyItem = currentDayStartUtc0.isAfter(moment(i).utcOffset(0).startOf('day')) ? getWeeklyAvgApy(i) : null
         return {
@@ -201,15 +215,18 @@ const Strategy = props => {
           apy: isNil(baseApyItem) ? null : baseApyItem,
           un_realize_apy: isNil(unRealizeApyItem) ? null : unRealizeApyItem,
           official_daily_apy: isNil(offChainApyItem) ? null : offChainApyItem,
-          weekly_avg_apy: isNil(weeklyApyItem) ? null : weeklyApyItem.toFixed(2)
+          weekly_avg_apy: isNil(weeklyApyItem) ? null : weeklyApyItem.toFixed(2),
+          realizeApy: isNil(realizeApyItem) ? null : realizeApyItem,
+          expectedApy: isNil(expectedApyItem) ? null : expectedApyItem
         }
       })
+      console.log('nextApyArray=', nextApyArray)
       setApyArray(nextApyArray.slice(-67))
     })
   }, [strategy, strategy?.strategyName])
 
   const estimateArray = map(apyArray, 'un_realize_apy')
-  const lengndData = ['Weekly APY', 'Official Weekly APY']
+  const lengndData = ['Weekly APY', 'Official Weekly APY', 'Realized Apy', 'Expected Apy']
   const data = [
     {
       seriesName: 'Weekly APY',
@@ -218,6 +235,14 @@ const Strategy = props => {
     {
       seriesName: 'Official Weekly APY',
       seriesData: map(apyArray, 'weekly_avg_apy'),
+    },
+    {
+      seriesName: 'Realized Apy',
+      seriesData: map(apyArray, 'realizeApy'),
+    },
+    {
+      seriesName: 'Expected Apy',
+      seriesData: map(apyArray, 'expectedApy'),
     }
   ]
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
@@ -244,7 +269,18 @@ const Strategy = props => {
     data,
   }
   const option = multipleLine(obj)
-  option.color =  ['#5470c6', '#fac858', '#91cc75', '#13c2c2']
+  option.color = [
+    '#A68EFE',
+    '#2ec7c9',
+    '#ffb980',
+    '#d87a80',
+    '#e5cf0d',
+    '#97b552',
+    '#95706d',
+    '#8d98b3',
+    '#dc69aa',
+    '#07a2a4',
+  ]
   option.series.forEach((serie, index) => {
     serie.connectNulls = true
     serie.z = option.series.length - index
@@ -376,7 +412,7 @@ const Strategy = props => {
       <Suspense fallback={null}>
         <Card
           loading={loading}
-          title='Apy'
+          title='Apy (%)'
           className={styles.offlineCard}
           bordered={false}
           style={{

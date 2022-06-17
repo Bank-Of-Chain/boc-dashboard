@@ -2,6 +2,7 @@ import { Space, Button, Menu, message } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
+import copy from "copy-to-clipboard"
 
 // === Components === //
 import Avatar from './AvatarDropdown'
@@ -106,6 +107,11 @@ const GlobalHeaderRight = () => {
     history.push(`/mine?chain=${initialState.chain}&vault=${initialState.vault}`)
   }
 
+  const copyAddress = () => {
+    copy(address)
+    message.success('Copied')
+  }
+
   useEffect(() => {
     if (isEmpty(userProvider)) return
     setIsLoading(true)
@@ -134,7 +140,7 @@ const GlobalHeaderRight = () => {
           <Menu.Item key="usdi">USDi</Menu.Item>
         </Menu>
       ) : <span/>}
-      <Space className={classNames(styles.right, styles.dark, { [styles.hidden]: isInMobileH5() || isInMobileWalletApp() })}>
+      <Space size={20} className={classNames(styles.right, styles.dark, { [styles.hidden]: isInMobileH5() || isInMobileWalletApp() })}>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
         ) : isEmpty(address) ? (
@@ -149,6 +155,7 @@ const GlobalHeaderRight = () => {
             onChangeWallet={handleClickConnect}
             address={address}
             logoutOfWeb3Modal={disconnect}
+            onCopy={copyAddress}
           />,
           <Button className={styles.myDasboardBtn} key="mine" icon={<AreaChartOutlined />} type="primary" onClick={goToMine}>
             My Dashboard
