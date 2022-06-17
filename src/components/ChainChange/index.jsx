@@ -1,21 +1,28 @@
 import React from 'react'
+import classNames from 'classnames'
 import { useModel, history } from 'umi'
 
 // === Components === //
-import { Tabs } from 'antd'
+import { Tabs, Radio, Row, Col } from 'antd'
 
 // === Constants === //
 import CHAINS from '@/constants/chain'
 
 // === Utils === //
 import map from 'lodash/map'
-import { changeNetwork } from "@/utils/network"
+import { changeNetwork } from '@/utils/network'
 
 import useWallet from '@/hooks/useWallet'
+
 // === Styles === //
 import styles from './index.less'
 
-const { TabPane } = Tabs
+const options = map(CHAINS, i => {
+  return {
+    label: i.name,
+    value: i.id,
+  }
+})
 
 export default function ChainChange (props) {
   const { shouldChangeChain } = props
@@ -26,7 +33,7 @@ export default function ChainChange (props) {
   const changeChain = value => {
     const { vault } = history.location.query
     let promise = Promise.resolve()
-    if (shouldChangeChain){
+    if (shouldChangeChain) {
       promise = changeNetwork(value, userProvider, getWalletName(), { resolveWhenUnsupport: true })
     }
     promise.then(() => {
@@ -43,10 +50,16 @@ export default function ChainChange (props) {
   }
 
   return (
-    <Tabs activeKey={initialState.chain} className={styles.tabs} centered onChange={changeChain}>
-      {map(CHAINS, i => (
-        <TabPane tab={i.name} key={i.id} />
-      ))}
-    </Tabs>
+    <Row>
+      <Col span={24} className={styles.container}>
+        <Radio.Group
+          options={options}
+          onChange={v => changeChain(v.value)}
+          value={initialState.chain}
+          optionType='button'
+          buttonStyle='solid'
+        />
+      </Col>
+    </Row>
   )
 }

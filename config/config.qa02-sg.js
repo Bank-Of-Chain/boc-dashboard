@@ -23,12 +23,12 @@ export default defineConfig({
         137: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth'
       },
       VAULT_ADDRESS: {
-        1: '0x9BcC604D4381C5b0Ad12Ff3Bf32bEdE063416BC7',
+        1: '0x38A70c040CA5F5439ad52d0e821063b0EC0B52b6',
         56: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
         137: '0xe6cFc17053c64838Fd7bb55BD4A2cb5b207A71ed'
       },
       USDI_ADDRESS: {
-        1: '0xf090f16dEc8b6D24082Edd25B1C8D26f2bC86128',
+        1: '0xe70f935c32dA4dB13e7876795f1e175465e6458e',
         56: '0xCFC6E8577a414f561D459fC4a030e3463A500d29',
         137: '0x965A01d39A9835d2B7e9e53bDc5C8501B962e8a3'
       },
@@ -38,10 +38,10 @@ export default defineConfig({
         1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi',
       },
       VAULT_ADDRESS: {
-        1: '0xaC9fCBA56E42d5960f813B9D0387F3D3bC003338',
+        1: '0x95775fD3Afb1F4072794CA4ddA27F2444BCf8Ac3',
       },
       ETHI_ADDRESS: {
-        1: '0xf090f16dEc8b6D24082Edd25B1C8D26f2bC86128',
+        1: '0xCBBe2A5c3A22BE749D5DDF24e9534f98951983e2',
       }
     }
   },
