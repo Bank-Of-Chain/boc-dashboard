@@ -86,14 +86,16 @@
     display: flex;
     align-items: center;
     height: 32px;
-    padding: 0 12px;
+    padding: 0 1rem;
     cursor: pointer;
     transition: all 0.3s;
-    background: rgba(255, 255, 255, 0.08);
+    background: #313036;
+    border: 2px solid #D7A1F6;
+    border-radius: 4px;
     > span {
       vertical-align: middle;
       &.name {
-        width: 100px;
+        margin-left: 0.625rem;
       }
     }
     &:hover {
@@ -117,6 +119,12 @@
       background: rgba(255, 255, 255, 0.85);
     }
   }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #55E752;
+  }
 }
 
 .dark {
@@ -135,6 +143,14 @@
 
 .chainSelect {
   width: 6.5rem;
+}
+
+.myDasboardBtn {
+  border: none;
+  background: linear-gradient(223.3deg, #A68EFD 20.71%, #F4ACF3 103.56%);
+  &:hover {
+    background: linear-gradient(223.3deg, #A68EFD 20.71%, #F4ACF3 103.56%);
+  }
 }
 
 @media only screen and (max-width: @screen-md) {

@@ -18,10 +18,11 @@ export default function WalletModal({
 
   return (
     <Modal
+      className={styles.modal}
       visible={visible}
       onCancel={onCancel}
       footer={null}
-      title="Select a Wallet"
+      title="Select a wallet"
     >
       <div className={styles.content}>
         {map(walletOptions, (wallet) => (

@@ -126,7 +126,7 @@ const USDiHome = () => {
         data: columeArray
       }
       const option = multipleLine(obj)
-      option.color = ['#5470c6', '#91cc75']
+      option.color = ['#A68EFE', '#5470c6', '#91cc75']
       option.series.forEach(serie => {
         serie.connectNulls = true
         if (serie.name === 'Estimated APY') {
@@ -152,7 +152,7 @@ const USDiHome = () => {
       }
       option.yAxis.splitLine = {
         lineStyle: {
-          color: 'black',
+          color: '#454459',
         },
       }
       setApyEchartOpt(option)

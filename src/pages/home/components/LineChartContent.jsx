@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Card, Button, Tabs, Tooltip } from 'antd'
+import { Card, Button, Tabs, Tooltip, Radio } from 'antd'
 import { LineEchart } from '@/components/echarts'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import styles from '../style.less'
@@ -38,54 +38,37 @@ export default function LineChartContent({
     }
   }[deviceType]
 
+  const onDateChange = (e) => {
+    onCalDateRangeClick(e.target.value)
+  }
+
   return (
     <Card
       loading={loading}
       bordered={false}
-      bodyStyle={{ padding: 0 }}
-      style={{ marginTop: 24 }}
+      style={{ marginTop: 40 }}
     >
       <div className={styles.vaultKeyCard}>
         <Tabs
           animated
-          size='small'
           className={classNames(chartResponsiveConfig.tabClassName)}
           tabBarExtraContent={
-            <div>
-              <Tooltip title='last 7 days'>
-                <Button
-                  ghost
-                  type={calDateRange === 7 ? 'primary' : ''}
-                  onClick={() => onCalDateRangeClick(7)}
-                  {...chartResponsiveConfig.buttonProps}
-                >
-                  WEEK
-                </Button>
-              </Tooltip>
-              <Tooltip title='last 30 days'>
-                <Button
-                  ghost
-                  type={calDateRange === 31 ? 'primary' : ''}
-                  onClick={() => onCalDateRangeClick(31)}
-                  {...chartResponsiveConfig.buttonProps}
-                >
-                  MONTH
-                </Button>
-              </Tooltip>
-              <Tooltip title='last 365 days'>
-                <Button
-                  ghost
-                  type={calDateRange === 365 ? 'primary' : ''}
-                  onClick={() => onCalDateRangeClick(365)}
-                  {...chartResponsiveConfig.buttonProps}
-                >
-                  YEAR
-                </Button>
-              </Tooltip>
+            <div className={styles.buttons}>
+              <Radio.Group value={calDateRange} onChange={onDateChange}>
+                <Tooltip title='last 7 days'>
+                  <Radio.Button value={7}>WEEK</Radio.Button>
+                </Tooltip>
+                <Tooltip title='last 30 days'>
+                  <Radio.Button value={31}>MONTH</Radio.Button>
+                </Tooltip>
+                <Tooltip title='last 365 days'>
+                  <Radio.Button value={365}>YEAR</Radio.Button>
+                </Tooltip>
+              </Radio.Group>
             </div>
           }
         >
-          <TabPane tab="APY" key="apy">
+          <TabPane tab="APY (%)" key="apy">
             <div className={chartResponsiveConfig.chartWrapperClassName}>
               <LineEchart option={apyEchartOpt} style={{height: '100%', width: '100%'}}/>
             </div>

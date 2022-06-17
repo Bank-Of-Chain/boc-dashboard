@@ -54,7 +54,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
   }
   option.yAxis.splitLine = {
     lineStyle: {
-      color: 'black'
+      color: '#454459'
     }
   };
   if (needMinMax) {
@@ -62,6 +62,11 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
     option.yAxis.max = yAxisMax
   }
   option.series[0].connectNulls = true;
+  option.series[0].showSymbol = false
+  option.series[0].lineStyle = {
+    width: 5,
+    cap: 'round'
+  }
   if (step) {
     const seriesData = option.series[0].data
     forEach(seriesData, (value, index) => {

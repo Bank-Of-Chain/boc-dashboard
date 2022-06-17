@@ -37,7 +37,7 @@ export default function MonthProfit({
     textStyle: {
       color: '#fff',
     },
-    color: ['#5470c6'],
+    color: ['#A68EFE', '#5470c6'],
     tooltip: {},
     xAxis: {
       data: nextMonths,
@@ -48,7 +48,13 @@ export default function MonthProfit({
         alignWithLabel: true
       },
     },
-    yAxis: {},
+    yAxis: {
+      splitLine: {
+        lineStyle: {
+          color: '#454459'
+        }
+      }
+    },
     grid: {},
     series: [
       {
