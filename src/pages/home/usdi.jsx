@@ -43,7 +43,7 @@ const USDiHome = () => {
   const { initialState } = useModel('@@initialState')
 
   const { dataSource = {}, loading } = useDashboardData();
-  const { usdi = {} } = dataSource;
+  const { pegToken = {} } = dataSource;
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -188,20 +188,22 @@ const USDiHome = () => {
   if (isEmpty(initialState.chain)) return null
 
   const introduceData = [{
-    title: 'Total USDi Supply',
+    title: 'Total Supply',
     tip: 'Current total USDi supply',
-    content: !isEmpty(usdi) ? toFixed(usdi?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS) : 0,
+    content: !isEmpty(pegToken) ? toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS) : 0,
     loading,
+    unit: 'USDi'
   }, {
     title: 'Holders',
     tip: 'Number Of USDi holders',
-    content: numeral(usdi?.holderCount).format('0,0'),
+    content: numeral(pegToken?.holderCount).format('0,0'),
     loading,
   }, {
     title: 'APY (last 30 days)',
     tip: 'Yield over the past 1 month',
-    content: `${numeral(apy30).format('0,0.00')}%`,
+    content: numeral(apy30).format('0,0.00'),
     loading,
+    unit: '%'
   }]
 
   return (

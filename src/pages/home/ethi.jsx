@@ -39,7 +39,7 @@ const ETHiHome = () => {
   const { initialState } = useModel('@@initialState')
 
   const { dataSource = {}, loading } = useDashboardData()
-  const { ethi = {} } = dataSource;
+  const { pegToken = {} } = dataSource;
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -179,20 +179,22 @@ const ETHiHome = () => {
   if (isEmpty(initialState.chain)) return null
 
   const introduceData = [{
-    title: 'Total ETHi Supply',
+    title: 'Total Supply',
     tip: 'Current total ETHi supply',
-    content: !isEmpty(ethi) ? toFixed(ethi?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS) : 0,
+    content: !isEmpty(pegToken) ? toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS) : 0,
     loading,
+    unit: 'ETHi'
   }, {
     title: 'Holders',
     tip: 'Number Of ETHi holders',
-    content: numeral(ethi?.holderCount).format('0,0'),
+    content: numeral(pegToken?.holderCount).format('0,0'),
     loading,
   }, {
     title: 'APY (last 30 days)',
     tip: 'Yield over the past 1 month',
-    content: `${numeral(apy30).format('0,0.00')}%`,
+    content: numeral(apy30).format('0,0.00'),
     loading,
+    unit: '%'
   }]
 
   const vaultData = cloneDeep(dataSource.vault)

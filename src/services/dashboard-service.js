@@ -5,7 +5,7 @@ import { VAULT_TYPE } from '@/constants/vault'
 
 const USDI_DASHBOARD_DETAIL_QUERY = `
 query ($tokenAddress: Bytes, $valutAddress: Bytes) {
-  usdi(id: $tokenAddress) {
+  pegToken(id: $tokenAddress) {
     tokenInfo {
       decimals
     }
@@ -25,7 +25,7 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes) {
 `;
 const ETHI_DASHBOARD_DETAIL_QUERY = `
 query ($tokenAddress: Bytes, $valutAddress: Bytes) {
-  ethi(id: $tokenAddress) {
+  pegToken(id: $tokenAddress) {
     tokenInfo {
       decimals
     }
@@ -64,20 +64,20 @@ export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutA
   return data
 };
 
-const getRecentActivityQuery = (entity, type) => `
-query($types: [${type}], $first: Int) {
-  ${entity}(
+const getRecentActivityQuery = (tokenAddress) => `
+query($types: [PegTokenUpdateType], $first: Int) {
+  pegTokenUpdates(
     orderBy: timestamp,
     orderDirection: desc,
     first: $first,
     where: {
-      type_in: $types
+      type_in: $types,
+      pegToken: "${tokenAddress}"
     },
   ) {
     id
     type
     transferredAmount
-    changeAmount
     timestamp
     fromAccountUpdate {
       account {
@@ -95,17 +95,17 @@ query($types: [${type}], $first: Int) {
   }
 }
 `;
-const USDI_ACTIVITY_QUERY = getRecentActivityQuery('usdiUpdates', 'USDiUpdateType')
-const ETHI_ACTIVITY_QUERY = getRecentActivityQuery('ethiUpdates', 'ETHiUpdateType')
 
 export const getRecentActivity = async (vault, chain, types, total = 100) => {
   const client = getClient(vault, chain)
   if (isEmpty(client)) {
     return
   }
+  const USDI_ADDRESS = USDI.USDI_ADDRESS[chain].toLowerCase()
+  const ETHI_ADDRESS = ETHI.ETHI_ADDRESS[chain].toLowerCase()
   const QUERY = {
-    [VAULT_TYPE.USDi]: USDI_ACTIVITY_QUERY,
-    [VAULT_TYPE.ETHi]: ETHI_ACTIVITY_QUERY,
+    [VAULT_TYPE.USDi]: getRecentActivityQuery(USDI_ADDRESS),
+    [VAULT_TYPE.ETHi]: getRecentActivityQuery(ETHI_ADDRESS),
   }[vault]
 
   const key = {
@@ -121,5 +121,5 @@ export const getRecentActivity = async (vault, chain, types, total = 100) => {
         first: total
       },
     })
-    .then((res) => res.data[key]);
+    .then((res) => res.data.pegTokenUpdates);
 };

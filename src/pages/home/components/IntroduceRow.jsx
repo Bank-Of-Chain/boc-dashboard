@@ -16,7 +16,7 @@ const topColResponsiveProps = {
 const IntroduceRow = ({ data = [] }) => {
   return (
     <Row gutter={[24, 24]}>
-      {map(data, ({ title, tip, loading, content }) => (
+      {map(data, ({ title, tip, loading, content, unit }) => (
         <Col key={title} {...topColResponsiveProps}>
           <ChartCard
             bordered={false}
@@ -28,6 +28,7 @@ const IntroduceRow = ({ data = [] }) => {
             }
             loading={loading}
             total={content}
+            unit={unit}
           />
         </Col>
       ))}

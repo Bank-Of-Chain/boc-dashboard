@@ -98,15 +98,15 @@ const TransationsTable = ({
       title: 'Detail',
       key: 'detail',
       render: (text, item) => {
-        const { type, changeAmount, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
-        const changeValue = toLeastOneFixed(changeAmount, decimals, dispalyDecimal)
-        const absChangeValue = toLeastOneFixed(BN(changeAmount).abs(), decimals, dispalyDecimal)
+        const { type, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
+        const changeValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
+        const absChangeValue = toLeastOneFixed(BN(transferredAmount).abs(), decimals, dispalyDecimal)
         const transferValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
-        const changeValueTitle = toFixed(changeAmount, BN(10 ** decimals))
-        const absChangeValueTitle = toFixed(BN(changeAmount).abs(), BN(10 ** decimals))
+        const changeValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
+        const absChangeValueTitle = toFixed(BN(transferredAmount).abs(), BN(10 ** decimals))
         const transferValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
-        const from = fromAccountUpdate?.account.id
-        const to = toAccountUpdate?.account.id
+        const from = fromAccountUpdate?.account?.address
+        const to = toAccountUpdate?.account?.address
         const fns = {
           Mint: () => (
             <>
