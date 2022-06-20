@@ -105,8 +105,8 @@ const TransationsTable = ({
         const changeValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
         const absChangeValueTitle = toFixed(BN(transferredAmount).abs(), BN(10 ** decimals))
         const transferValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
-        const from = fromAccountUpdate?.account?.address
-        const to = toAccountUpdate?.account?.address
+        const from = fromAccountUpdate?.account?.id
+        const to = toAccountUpdate?.account?.id
         const fns = {
           Mint: () => (
             <>

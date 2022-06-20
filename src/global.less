@@ -70,17 +70,17 @@ ol {
   font-size: 0.8rem;
 }
 
-.ant-pro-top-nav-header {
-  max-width: 1200px ;
-  margin: 0 auto ;
+div.ant-pro-top-nav-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  &.light {
+    background-color: transparent;
+  }
 }
 .ant-pro-top-nav-header-logo {
   h1 {
     color: @text-color ;
   }
-}
-.ant-pro-top-nav-header.light {
-  background-color: transparent;
 }
 
 div.ant-card {
@@ -158,6 +158,9 @@ div.ant-table {
 
 .ant-radio-group {
   .ant-radio-button-wrapper {
+    width: 7.5rem;
+    height: 2.25rem;
+    line-height: 2rem;
     border: 2px solid #A0A0A0;
     border-top-width: 2px;
     border-left-width: 0;
