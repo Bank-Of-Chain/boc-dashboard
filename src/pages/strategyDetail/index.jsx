@@ -179,21 +179,16 @@ const Strategy = props => {
   }, [strategy, strategy?.strategyName])
 
   const estimateArray = map(apyArray, 'un_realize_apy')
-  const lengndData = ['Official APY', 'Realized APY', 'Expected APY']
+  const lengndData = ['Official APY', 'Expected APY']
   const data = [
     {
       seriesName: 'Official APY',
-      seriesData: map(apyArray, 'officialApy'),
+      seriesData: map(apyArray, 'official_daily_apy'),
     },
     {
       seriesName: 'Expected APY',
       seriesData: map(apyArray, 'expectedApy'),
     },
-    {
-      seriesName: 'Realized APY',
-      seriesData: map(apyArray, 'realizedApy'),
-    },
-
   ]
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
   if (!isEmpty(compact(estimateArray))) {
@@ -201,13 +196,6 @@ const Strategy = props => {
     data.push({
       seriesName: 'Estimated Weekly APY',
       seriesData: estimateArray,
-    })
-  }
-  if (official_daily_apy) {
-    lengndData.push('Official Daily APY')
-    data.push({
-      seriesName: 'Official Daily APY',
-      seriesData: map(apyArray, 'official_daily_apy'),
     })
   }
   let obj = {
