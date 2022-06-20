@@ -31,7 +31,7 @@ export const layout = ({ initialState, setInitialState }) => {
     waterMarkProps: {
       content: initialState?.chain,
     },
-    headerHeight: 64,
+    headerHeight: '4rem',
     footerRender: () => <Footer />,
     onPageChange: () => {
       const {

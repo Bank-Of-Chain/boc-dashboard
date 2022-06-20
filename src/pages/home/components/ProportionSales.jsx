@@ -32,7 +32,8 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     'protocol',
   )
   const vaultDisplayValue = toFixed(tvl, tokenDecimals, displayDecimals)
-  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty />
+  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue))
+    return <Empty style={{ marginBottom: '1rem' }} />
 
   const tableData = [
     ...values(
@@ -101,7 +102,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
             style: {
               fill: '#fff',
             },
-            formatter: (value) => {
+            formatter: value => {
               return value.replace(suffix, '')
             },
           },

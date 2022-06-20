@@ -1,9 +1,8 @@
 import React from 'react'
-import classNames from 'classnames'
 import { useModel, history } from 'umi'
 
 // === Components === //
-import { Tabs, Radio, Row, Col } from 'antd'
+import { Radio, Row, Col } from 'antd'
 
 // === Constants === //
 import CHAINS from '@/constants/chain'
@@ -53,12 +52,16 @@ export default function ChainChange (props) {
     <Row>
       <Col span={24} className={styles.container}>
         <Radio.Group
-          options={options}
-          onChange={v => changeChain(v.value)}
+          onChange={v => changeChain(v.target.value)}
           value={initialState.chain}
-          optionType='button'
-          buttonStyle='solid'
-        />
+          buttonStyle='outline'
+        >
+          {map(options, (item, key) => (
+            <Radio.Button value={item.value} key={key}>
+              {item.label}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
       </Col>
     </Row>
   )

@@ -122,8 +122,8 @@ const StrategyTable = ({
             <span>Unrealize APY: {unRealizeApyValue.toFixed(2)} %</span>
             <Divider style={{ margin: '0.5rem 0' }} />
             {map(detail, (i, index) => (
-              <span key={index}>
-                {i.feeName}:{(100 * i.feeApy).toFixed(2)} %
+              <span key={index} style={{ display: 'block' }}>
+                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
               </span>
             ))}
           </div>
