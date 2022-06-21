@@ -7,9 +7,12 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { getStrategyDetailsReports } from '@/services/api-service'
 import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import CoinSuperPosition from '@/components/CoinSuperPosition'
 
 // === Utils === //
 import moment from 'moment'
+import keys from 'lodash/keys'
+import map from 'lodash/map'
 import isUndefined from 'lodash/isUndefined'
 import { toFixed } from '@/utils/number-format'
 
@@ -17,7 +20,7 @@ const OPERATION = {
   0: 'harvest',
   1: 'lend',
   2: 'withdraw',
-  3: 'redeem'
+  3: 'redeem',
 }
 
 const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
@@ -26,13 +29,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   const [tableLoading, setTableLoading] = useState(false)
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10
+    pageSize: 10,
   })
   const deviceType = useDeviceType()
   const isETHi = VAULT_TYPE.ETHi === initialState.vault
   const displayDecimals = {
     [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
-    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS,
   }[initialState.vault]
 
   const unit = dataSource[0]?.lpTokenUnit ? `(${dataSource[0]?.lpTokenUnit})` : ''
@@ -44,20 +47,23 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       chainId: initialState.chain,
       vaultAddress: initialState.vaultAddress,
       limit: pagination.pageSize,
-      offset: (pagination.current - 1) * pagination.pageSize
-    }).then((data) => {
-      setDataSource(data.content)
-      if (isUndefined(pagination.total)) {
-        setPagination({
-          ...pagination,
-          total: data.totalElements
-        })
-      }
-    }).catch(() => {
-      setDataSource([])
-    }).finally(() => {
-      setTableLoading(false)
+      offset: (pagination.current - 1) * pagination.pageSize,
     })
+      .then(data => {
+        setDataSource(data.content)
+        if (isUndefined(pagination.total)) {
+          setPagination({
+            ...pagination,
+            total: data.totalElements,
+          })
+        }
+      })
+      .catch(() => {
+        setDataSource([])
+      })
+      .finally(() => {
+        setTableLoading(false)
+      })
   }
 
   useEffect(() => {
@@ -71,17 +77,17 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   useEffect(() => {
     setPagination({
       ...pagination,
-      current: 1
+      current: 1,
     })
     // eslint-disable-next-line
   }, [initialState.chain, strategyName])
 
-  const handleTableChange = (pagination) => {
+  const handleTableChange = pagination => {
     setPagination(pagination)
   }
 
   // 固定6位
-  const decimal = BN(1e6)
+  const decimal = BN(1e18)
 
   const columns = [
     {
@@ -104,29 +110,45 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       ),
     },
     {
-      title: isETHi ? `Total Asset${unit}` : (
-        <Tooltip placement="top" title="Total number of stablecoins">Total Balance</Tooltip>
+      title: isETHi ? (
+        `Total Asset${unit}`
+      ) : (
+        <Tooltip placement='top' title='Total number of stablecoins'>
+          Total Balance
+        </Tooltip>
       ),
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       width: '7rem',
-      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
+      render: (text, item) => {
+        const { tokenAssets } = item
+        const nextTitle = map(keys(tokenAssets), key => {
+          return (
+            <span style={{ display: 'flex', marginBottom: '0.2rem' }}>
+              <CoinSuperPosition array={[key]} />
+              &nbsp;&nbsp;{toFixed(tokenAssets[key], decimal)}
+            </span>
+          )
+        })
+        return (
+          <Tooltip placement='top' title={nextTitle}>
+            <span>{toFixed(text, decimal, displayDecimals)}</span>
+          </Tooltip>
+        )
+      },
     },
     {
-      title: isETHi ? `Asset Changed${unit}` : (
-        <Tooltip placement="top" title="Number of Stablecoins Changed">Balance Changed</Tooltip>
+      title: isETHi ? (
+        `Asset Changed${unit}`
+      ) : (
+        <Tooltip placement='top' title='Number of Stablecoins Changed'>
+          Balance Changed
+        </Tooltip>
       ),
       dataIndex: 'assetChange',
       key: 'assetChange',
       width: '8rem',
       render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
-    },
-    {
-      title: `Reward Asset (USD)`,
-      dataIndex: 'rewardAsset',
-      key: 'rewardAsset',
-      width: '8rem',
-      render: text => <span>{toFixed(text, decimal, 6)}</span>,
     },
     {
       title: 'Operation',
@@ -141,7 +163,11 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       key: 'fetchTimestamp',
       width: '6rem',
       render: text => (
-        <Tooltip title={`${moment(1000 * text).utcOffset(0).format('yyyy-MM-DD HH:mm:ss')} (UTC)`}>
+        <Tooltip
+          title={`${moment(1000 * text)
+            .utcOffset(0)
+            .format('yyyy-MM-DD HH:mm:ss')} (UTC)`}
+        >
           {moment(1000 * text)
             .utcOffset(0)
             .locale('en')
@@ -151,20 +177,15 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     },
   ]
 
-  // ETHi dont have "Reward Asset"
-  if (isETHi) {
-    columns.splice(3, 1)
-  }
-
   const smallCardConfig = {
     cardProps: {
-      size: 'small'
+      size: 'small',
     },
     tableProps: {
       size: 'small',
       rowClassName: 'tablet-font-size',
-      scroll: { x: 900 }
-    }
+      scroll: { x: 900 },
+    },
   }
   const responsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
@@ -173,17 +194,17 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       tableProps: {
         size: 'small',
         rowClassName: 'tablet-font-size',
-        scroll: { x: 900 }
-      }
+        scroll: { x: 900 },
+      },
     },
     [DEVICE_TYPE.Mobile]: {
       ...smallCardConfig,
       tableProps: {
         size: 'small',
         rowClassName: 'mobile-font-size',
-        scroll: { x: 900 }
-      }
-    }
+        scroll: { x: 900 },
+      },
+    },
   }[deviceType]
 
   return (
