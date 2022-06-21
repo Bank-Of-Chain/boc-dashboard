@@ -133,8 +133,8 @@ const StrategyTable = ({
     },
     {
       title: 'Weekly Profit',
-      dataIndex: 'weeklyProfit',
-      key: 'weeklyProfit',
+      dataIndex: 'weekProfit',
+      key: 'weekProfit',
       render: (text = 0, item) => {
         const { estimateProfit, tokenUnit = '' } = item
         const withoutEstimate = isNil(estimateProfit)

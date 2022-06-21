@@ -18,17 +18,17 @@ export default defineConfig({
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum',
+        1: 'https://qa-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
         56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
         137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon'
       },
       VAULT_ADDRESS: {
-        1: '0x54B8d8E2455946f2A5B8982283f2359812e815ce',
+        1: '0x359570B3a0437805D0a71457D61AD26a28cAC9A2',
         56: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
         137: '0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A'
       },
       USDI_ADDRESS: {
-        1: '0x3C15538ED063e688c8DF3d571Cb7a0062d2fB18D',
+        1: '0x67aD6EA566BA6B0fC52e97Bc25CE46120fdAc04c',
         56: '0xCFC6E8577a414f561D459fC4a030e3463A500d29',
         137: '0x8DEb399a86f28f62f0F24daF56c4aDD8e57EEcD5'
       },
@@ -38,10 +38,10 @@ export default defineConfig({
         1: 'https://qa-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi',
       },
       VAULT_ADDRESS: {
-        1: '0xb932C8342106776E73E39D695F3FFC3A9624eCE0',
+        1: '0x70E5370b8981Abc6e14C91F4AcE823954EFC8eA3',
       },
       ETHI_ADDRESS: {
-        1: '0x75c68e69775fA3E9DD38eA32E554f6BF259C1135' ,
+        1: '0x33E45b187da34826aBCEDA1039231Be46f1b05Af' ,
       }
     },
   },

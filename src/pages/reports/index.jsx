@@ -21,7 +21,7 @@ import {
 import Address from '@/components/Address'
 import { FallOutlined, RiseOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import ChainChange from "@/components/ChainChange"
+import ChainChange from '@/components/ChainChange'
 
 // === Services === //
 import { getReports, updateReportStatus } from '@/services/api-service'
@@ -35,7 +35,7 @@ import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import { toFixed } from '@/utils/number-format'
 import BN from 'bignumber.js'
-import { changeNetwork } from "@/utils/network"
+import { changeNetwork } from '@/utils/network'
 
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
@@ -69,7 +69,7 @@ const Reports = () => {
 
   const displayDecimals = {
     [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
-    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS,
   }[initialState.vault]
 
   const [showWarningModal, setShowWarningModal] = useState(false)
@@ -77,9 +77,9 @@ const Reports = () => {
   const { data, error, run, loading, pagination, refresh } = useRequest(
     ({ current, pageSize }) => {
       return getReports(
-        {chainId: initialState.chain, vaultAddress: initialState.vaultAddress},
+        { chainId: initialState.chain, vaultAddress: initialState.vaultAddress },
         (current - 1) * pageSize,
-        pageSize
+        pageSize,
       ).catch(() => [])
     },
     {
@@ -461,57 +461,53 @@ const Reports = () => {
       size: 'small',
     },
     tableProps: {
-      size: 'small'
-    }
+      size: 'small',
+    },
   }
   const listResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: smallConfig,
-    [DEVICE_TYPE.Mobile]: smallConfig
+    [DEVICE_TYPE.Mobile]: smallConfig,
   }[deviceType]
 
   const detailHeaderResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
       firstDescProps: {},
       lastDescProps: {
-        column: 4
-      }
+        column: 4,
+      },
     },
     [DEVICE_TYPE.Tablet]: {
       firstDescProps: {
         size: 'small',
         style: {
-          fontSize: '0.7rem'
-        }
+          fontSize: '0.7rem',
+        },
       },
-      lastDescProps: {}
+      lastDescProps: {},
     },
     [DEVICE_TYPE.Mobile]: {
       firstDescProps: {
         size: 'small',
         style: {
-          fontSize: '0.7rem'
-        }
+          fontSize: '0.7rem',
+        },
       },
-      lastDescProps: {}
-    }
+      lastDescProps: {},
+    },
   }[deviceType]
 
   const detailTableResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: smallConfig,
-    [DEVICE_TYPE.Mobile]: smallConfig
+    [DEVICE_TYPE.Mobile]: smallConfig,
   }[deviceType]
 
   return (
     <GridContent>
-      { initialState.vault === 'usdi' && <ChainChange shouldChangeChain /> }
+      {initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}
       <Suspense fallback={null}>
-        <Card
-          bordered={false}
-          title='Allocation Reports'
-          {...listResponsiveConfig.cardProps}
-          >
+        <Card bordered={false} title='Allocation Reports' {...listResponsiveConfig.cardProps}>
           <Table
             rowKey={record => record.id}
             columns={columns}
@@ -528,6 +524,7 @@ const Reports = () => {
       <Modal
         title={''}
         style={{ top: 20 }}
+        bodyStyle={{ background: '#323338' }}
         visible={showIndex !== -1}
         footer={null}
         onCancel={() => setShowIndex(-1)}
@@ -558,9 +555,7 @@ const Reports = () => {
                 {isExec === 0 && `Not execute${forcedExecuted ? ' (enforced)' : ''}`}
                 {isExec === 1 && 'Execute'}
               </Descriptions.Item>
-              <Descriptions.Item label='Calculation Period'>
-                {durationDays} days
-              </Descriptions.Item>
+              <Descriptions.Item label='Calculation Period'>{durationDays} days</Descriptions.Item>
               <Descriptions.Item label='Report Time'>
                 {moment(currentReport.geneTime).format('yyyy-MM-DD HH:mm:ss')}
               </Descriptions.Item>
@@ -629,7 +624,6 @@ const Reports = () => {
               Details
             </Divider>
             <Table
-              bordered
               columns={detailsColumns}
               dataSource={displayData}
               scroll={{ x: 1400, y: 400 }}
