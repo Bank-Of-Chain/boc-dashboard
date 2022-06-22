@@ -98,11 +98,13 @@ const TransationsTable = ({
       title: 'Detail',
       key: 'detail',
       render: (text, item) => {
-        const { type, transferredAmount, toAccountUpdate, fromAccountUpdate } = item
+        const { type, transferredAmount, toAccountUpdate, fromAccountUpdate, totalSupplyChangeAmount } = item
         const changeValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
+        const rebaseValue = toLeastOneFixed(totalSupplyChangeAmount, decimals, dispalyDecimal)
         const absChangeValue = toLeastOneFixed(BN(transferredAmount).abs(), decimals, dispalyDecimal)
         const transferValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
         const changeValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
+        const rebaseValueTitle = toFixed(totalSupplyChangeAmount, BN(10 ** decimals))
         const absChangeValueTitle = toFixed(BN(transferredAmount).abs(), BN(10 ** decimals))
         const transferValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
         const from = fromAccountUpdate?.account?.id
@@ -122,7 +124,7 @@ const TransationsTable = ({
           ),
           Rebase: () => (
             <>
-              {type} <span title={changeValueTitle}>{changeValue}</span> {token}
+              {type} <span title={rebaseValueTitle}>{rebaseValue}</span> {token}
             </>
           ),
           Transfer: () => (

@@ -78,6 +78,7 @@ query($types: [PegTokenUpdateType], $first: Int) {
     id
     type
     transferredAmount
+    totalSupplyChangeAmount
     timestamp
     fromAccountUpdate {
       account {
