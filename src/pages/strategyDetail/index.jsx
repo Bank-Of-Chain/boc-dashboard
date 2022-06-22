@@ -335,8 +335,7 @@ const Strategy = props => {
                   </a>
                 </Descriptions.Item>
                 <Descriptions.Item label='Underlying Token'>
-                  &nbsp;&nbsp;
-                  <CoinSuperPosition array={underlyingTokens} />
+                  {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
                   {toFixed(totalAssetBaseUsd, decimals, displayDecimals) + ` ${unit}`}

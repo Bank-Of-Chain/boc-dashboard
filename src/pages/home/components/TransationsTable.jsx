@@ -165,7 +165,11 @@ const TransationsTable = ({
   }
 
   const responsiveConfig = {
-    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Desktop]: {
+      radioGroupProps: {
+        size: 'large',
+      },
+    },
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
         size: 'small',

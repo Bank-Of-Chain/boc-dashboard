@@ -16,6 +16,7 @@ import { getStrategyDetails } from '@/services/api-service'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 import styles from '../style.less'
+import { isEmpty } from 'lodash'
 
 const StrategyTable = ({
   loading,
@@ -35,7 +36,7 @@ const StrategyTable = ({
   if (!initialState.chain) return null
 
   // boc-service fixed the number to 6
-  const decimals = BN(1e6)
+  const decimals = BN(1e18)
   const columns = [
     {
       title: 'Name',
@@ -69,12 +70,12 @@ const StrategyTable = ({
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
       width: 130,
-      render: text => <CoinSuperPosition array={text} />,
+      render: text => !isEmpty(text) && <CoinSuperPosition array={text.split(',')} />,
     },
     {
       title: `Asset (${unit})`,
-      dataIndex: 'totalAssetBaseUsd',
-      key: 'totalAssetBaseUsd',
+      dataIndex: 'totalAssetBaseCurrent',
+      key: 'totalAssetBaseCurrent',
       showSorterTooltip: false,
       defaultSortOrder: 'descend',
       sorter: (a, b) => {
@@ -119,8 +120,8 @@ const StrategyTable = ({
         )
         const nextWeekApyJsx = (
           <div>
-            <span>Unrealize APY: {unRealizeApyValue.toFixed(2)} %</span>
-            <Divider style={{ margin: '0.5rem 0' }} />
+            {/* <span>Unrealize APY: {unRealizeApyValue.toFixed(2)} %</span>
+            <Divider style={{ margin: '0.5rem 0' }} /> */}
             {map(detail, (i, index) => (
               <span key={index} style={{ display: 'block' }}>
                 {i.feeName}: {(100 * i.feeApy).toFixed(2)} %

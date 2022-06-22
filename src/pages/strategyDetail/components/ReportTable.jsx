@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react'
 import { useModel } from 'umi'
 import BN from 'bignumber.js'
 
+// === Components === //
+import { SlidersOutlined } from '@ant-design/icons'
+
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { getStrategyDetailsReports } from '@/services/api-service'
 import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
@@ -120,22 +123,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       width: '7rem',
-      render: (text, item) => {
-        const { tokenAssets } = item
-        const nextTitle = map(keys(tokenAssets), key => {
-          return (
-            <span style={{ display: 'flex', marginBottom: '0.2rem' }}>
-              <CoinSuperPosition array={[key]} />
-              &nbsp;&nbsp;{toFixed(tokenAssets[key], decimal)}
-            </span>
-          )
-        })
-        return (
-          <Tooltip placement='top' title={nextTitle}>
-            <span>{toFixed(text, decimal, displayDecimals)}</span>
-          </Tooltip>
-        )
-      },
+      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
       title: isETHi ? (
@@ -174,6 +162,26 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
             .fromNow()}
         </Tooltip>
       ),
+    },
+    {
+      title: 'Position Details',
+      width: '3rem',
+      render: (text, item) => {
+        const { tokenAssets } = item
+        const nextTitle = map(keys(tokenAssets), key => {
+          return (
+            <span style={{ display: 'flex', marginBottom: '0.2rem' }}>
+              <CoinSuperPosition array={[key]} />
+              &nbsp;&nbsp;{toFixed(tokenAssets[key], decimal)}
+            </span>
+          )
+        })
+        return (
+          <Tooltip placement='top' title={nextTitle}>
+            <SlidersOutlined />
+          </Tooltip>
+        )
+      },
     },
   ]
 
