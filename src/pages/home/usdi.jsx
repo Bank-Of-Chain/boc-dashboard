@@ -43,7 +43,7 @@ const USDiHome = () => {
   const { initialState } = useModel('@@initialState')
 
   const { dataSource = {}, loading } = useDashboardData();
-  const { pegToken = {} } = dataSource;
+  const { pegToken = {}, vault = {} } = dataSource;
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -192,7 +192,8 @@ const USDiHome = () => {
     tip: 'Current total USDi supply',
     content: !isEmpty(pegToken) ? toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS) : 0,
     loading,
-    unit: 'USDi'
+    unit: 'USDi',
+    subTitle: `1USDi ≈ ${!pegToken || pegToken.totalSupply === '0' ? '1' : toFixed(vault?.totalAssets, pegToken?.totalSupply, TOKEN_DISPLAY_DECIMALS)}USDT`
   }, {
     title: 'Holders',
     tip: 'Number Of USDi holders',

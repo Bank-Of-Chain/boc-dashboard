@@ -15,6 +15,7 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes) {
   vault(id: $valutAddress) {
     id
     totalValueInVault
+    totalAssets
     strategies(where: {isAdded: true}) {
       id
       protocol

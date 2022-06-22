@@ -39,7 +39,7 @@ const ETHiHome = () => {
   const { initialState } = useModel('@@initialState')
 
   const { dataSource = {}, loading } = useDashboardData()
-  const { pegToken = {} } = dataSource;
+  const { pegToken = {}, vault } = dataSource;
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -70,7 +70,7 @@ const ETHiHome = () => {
       }).catch(() => { return { content: [] } })
     ]).then(([data, estimateApys]) => {
       const items = appendDate(data.content, 'apy', calDateRange)
-      const result = map(reverse(items), ({date, apy}, index) => {
+      const result = map(reverse(items), ({date, apy}) => {
         const apyValue = isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
         return ({
           date,
@@ -183,7 +183,8 @@ const ETHiHome = () => {
     tip: 'Current total ETHi supply',
     content: !isEmpty(pegToken) ? toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS) : 0,
     loading,
-    unit: 'ETHi'
+    unit: 'ETHi',
+    subTitle: `1ETHi ≈ ${!pegToken || pegToken.totalSupply === '0' ? '1' : toFixed(vault?.totalAssets, pegToken?.totalSupply, ETHI_DISPLAY_DECIMALS)}ETH`
   }, {
     title: 'Holders',
     tip: 'Number Of ETHi holders',
