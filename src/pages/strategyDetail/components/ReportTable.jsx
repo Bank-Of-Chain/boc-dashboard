@@ -114,7 +114,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         `Total Asset${unit}`
       ) : (
         <Tooltip placement='top' title='Total number of stablecoins'>
-          Total Balance
+          Total Asset
         </Tooltip>
       ),
       dataIndex: 'totalAsset',
