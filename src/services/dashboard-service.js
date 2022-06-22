@@ -104,7 +104,7 @@ export const getRecentActivity = async (vault, chain, types, total = 100) => {
     return
   }
   const USDI_ADDRESS = USDI.USDI_ADDRESS[chain].toLowerCase()
-  const ETHI_ADDRESS = ETHI.ETHI_ADDRESS[chain].toLowerCase()
+  const ETHI_ADDRESS = ETHI.ETHI_ADDRESS[chain]?.toLowerCase()
   const QUERY = {
     [VAULT_TYPE.USDi]: getRecentActivityQuery(USDI_ADDRESS),
     [VAULT_TYPE.ETHi]: getRecentActivityQuery(ETHI_ADDRESS),
