@@ -193,7 +193,7 @@ const USDiHome = () => {
     content: !isEmpty(pegToken) ? toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS) : 0,
     loading,
     unit: 'USDi',
-    subTitle: `1USDi ≈ ${!pegToken || pegToken.totalSupply === '0' ? '1' : toFixed(vault?.totalAssets, pegToken?.totalSupply, TOKEN_DISPLAY_DECIMALS)}USDT`
+    subTitle: `1USDi ≈ ${toFixed(vault?.totalAssets, pegToken?.totalSupply, TOKEN_DISPLAY_DECIMALS)}USDT`
   }, {
     title: 'Holders',
     tip: 'Number Of USDi holders',
