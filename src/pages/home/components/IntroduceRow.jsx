@@ -40,7 +40,7 @@ const IntroduceRow = ({ data = [] }) => {
             loading={loading}
             total={content}
             unit={unit}
-            footer={isEmpty(subTitle) ? <Field /> : <Field value={subTitle} />}
+            footer={<Field style={{ height: '1rem' }} value={subTitle} />}
           />
         </Col>
       ))}

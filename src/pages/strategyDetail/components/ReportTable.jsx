@@ -18,6 +18,7 @@ import keys from 'lodash/keys'
 import map from 'lodash/map'
 import isUndefined from 'lodash/isUndefined'
 import { toFixed } from '@/utils/number-format'
+import { isEmpty } from 'lodash'
 
 const OPERATION = {
   0: 'harvest',
@@ -149,7 +150,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       title: 'Date',
       dataIndex: 'fetchTimestamp',
       key: 'fetchTimestamp',
-      width: '6rem',
+      width: '5rem',
       render: text => (
         <Tooltip
           title={`${moment(1000 * text)
@@ -165,10 +166,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     },
     {
       title: 'Position Details',
-      width: '3rem',
+      width: '5rem',
+      align: 'center',
       render: (text, item) => {
         const { tokenAssets } = item
-        const nextTitle = map(keys(tokenAssets), key => {
+        const keyArray = keys(tokenAssets)
+        if (isEmpty(keyArray)) return <SlidersOutlined style={{ color: 'gray' }} />
+        const nextTitle = map(keyArray, key => {
           return (
             <span style={{ display: 'flex', marginBottom: '0.2rem' }}>
               <CoinSuperPosition array={[key]} />

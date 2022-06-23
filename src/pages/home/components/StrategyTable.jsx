@@ -106,6 +106,7 @@ const StrategyTable = ({
         return a.realizedApy.value - b.realizedApy.value
       },
       render: (data, item) => {
+        if (isEmpty(data)) return <span>0.00%</span>
         const { value, detail } = data
         const { unrealizedApy } = item
 
