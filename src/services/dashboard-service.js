@@ -72,8 +72,7 @@ query($types: [PegTokenUpdateType], $first: Int) {
     orderDirection: desc,
     first: $first,
     where: {
-      type_in: $types,
-      pegToken: "${tokenAddress}"
+      type_in: $types
     },
   ) {
     id
