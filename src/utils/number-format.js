@@ -1,11 +1,10 @@
+// === Utils === //
 import BN from 'bignumber.js'
-import { isNil } from 'lodash'
+import { isNil, isNull } from 'lodash'
 import isEmpty from 'lodash/isEmpty'
 
 export const toFixed = (value, precision = 1, ...args) => {
-  if (isNil(value) || isNil(value)) {
-    return 0
-  }
+  if (isNil(value) || isNull(precision)) return undefined
   const precisionBN = BN(precision.toString())
   if (isEmpty(value) || precisionBN.isZero()) {
     return 0
