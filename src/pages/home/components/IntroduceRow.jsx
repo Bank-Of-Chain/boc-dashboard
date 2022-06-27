@@ -4,7 +4,7 @@ import { Col, Row, Tooltip } from 'antd'
 import ChartCard from '@/components/ChartCard'
 
 // === Utils === //
-import { isEmpty, map } from 'lodash'
+import { map } from 'lodash'
 
 // === Styles === //
 import styles from '../style.less'

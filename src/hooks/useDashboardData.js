@@ -13,7 +13,15 @@ const dataMerge = (initialState) => {
   return getDashboardDetail(vault, chain, tokenAddress, vaultAddress)
     .catch((error) => {
       console.error('DashBoard数据初始化失败', error);
-      return {}
+      return {
+        pegToken:{
+          totalSupply: "0",
+          holderCount: "0"
+        },
+        vault:{
+          totalAssets: "0"
+        }
+      }
     });
 };
 
