@@ -86,7 +86,7 @@ export default function LineChartContent ({
               <LineEchart option={apyEchartOpt} style={{ height: '100%', width: '100%' }} />
             </div>
           </TabPane>
-          <TabPane tab={isUsdi ? 'Total USDi Supply' : 'Total ETHi Supply'} key='totalSupply'>
+          <TabPane tab={isUsdi ? 'Total Supply' : 'Total Supply'} key='totalSupply'>
             <div className={chartResponsiveConfig.chartWrapperClassName}>
               <LineEchart option={tvlEchartOpt} style={{ height: '100%', width: '100%' }} />
             </div>

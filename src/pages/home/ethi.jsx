@@ -184,7 +184,7 @@ const ETHiHome = () => {
     content: !isEmpty(pegToken) ? toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS) : 0,
     loading,
     unit: 'ETHi',
-    subTitle: `1ETHi ≈ ${toFixed(vault?.totalAssets, pegToken?.totalSupply, ETHI_DISPLAY_DECIMALS)}ETH`
+    subTitle: `1ETHi ≈ ${toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)}ETH`
   }, {
     title: 'Holders',
     tip: 'Number Of ETHi holders',
