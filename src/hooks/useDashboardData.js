@@ -19,7 +19,8 @@ const dataMerge = (initialState) => {
           holderCount: "0"
         },
         vault:{
-          totalAssets: "0"
+          totalAssets: "0",
+          strategies: []
         }
       }
     });
