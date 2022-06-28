@@ -39,7 +39,7 @@ import {
 import styles from './style.less'
 
 const Strategy = props => {
-  const { id, official_daily_apy = false } = props?.location?.query
+  const { id, ori = false } = props?.location?.query
   const [loading, setLoading] = useState(false)
   const [strategy, setStrategy] = useState({})
   // 用于存放所有的apy数据，取代上面的apys和offchainApys
@@ -52,7 +52,7 @@ const Strategy = props => {
   }[initialState.vault]
 
   // boc-service fixed the number to 6
-  const decimals = BN(1e6)
+  const decimals = BN(1e18)
 
   const strategiesMap = {
     [VAULT_TYPE.USDi]: USDI_STRATEGIES_MAP,
@@ -141,7 +141,7 @@ const Strategy = props => {
           return {
             value: 100 * i.apy,
             apy: (i.apy * 100).toFixed(2),
-            date: formatToUTC0(i.fetchTimestamp * 1000, 'yyyy-MM-DD'),
+            date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
           }
         }),
         'date',
@@ -183,13 +183,20 @@ const Strategy = props => {
   const data = [
     {
       seriesName: 'Official APY',
-      seriesData: map(apyArray, 'official_daily_apy'),
+      seriesData: map(apyArray, 'officialApy'),
     },
     {
       seriesName: 'Expected APY',
       seriesData: map(apyArray, 'expectedApy'),
     },
   ]
+  if (ori) {
+    lengndData.push('Official Origin Apy')
+    data.push({
+      seriesName: 'Official Origin Apy',
+      seriesData: map(apyArray, 'official_daily_apy'),
+    })
+  }
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
   if (!isEmpty(compact(estimateArray))) {
     lengndData.push('Estimated Weekly APY')
@@ -251,7 +258,7 @@ const Strategy = props => {
   }
   if (!initialState.chain || isEmpty(strategy)) return null
 
-  const { underlyingTokens, totalAssetBaseUsd } = strategy
+  const { underlyingTokens, totalAssetBaseCurrent } = strategy
 
   const smallSizeProps = {
     cardProps: {
@@ -335,10 +342,12 @@ const Strategy = props => {
                   </a>
                 </Descriptions.Item>
                 <Descriptions.Item label='Underlying Token'>
-                  {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
+                  {!isEmpty(underlyingTokens) && (
+                    <CoinSuperPosition array={underlyingTokens.split(',')} />
+                  )}
                 </Descriptions.Item>
                 <Descriptions.Item label='Asset Value'>
-                  {toFixed(totalAssetBaseUsd, decimals, displayDecimals) + ` ${unit}`}
+                  {toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}
                 </Descriptions.Item>
                 <Descriptions.Item label='Status'>Active</Descriptions.Item>
               </Descriptions>

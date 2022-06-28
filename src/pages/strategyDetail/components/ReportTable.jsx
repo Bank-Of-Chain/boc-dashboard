@@ -137,14 +137,14 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       dataIndex: 'assetChange',
       key: 'assetChange',
       width: '8rem',
-      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
-    },
-    {
-      title: 'Operation',
-      dataIndex: 'fetchType',
-      key: 'fetchType',
-      width: '4.5rem',
-      render: text => <span>{OPERATION[text]}</span>,
+      render: (text, item) => {
+        const { fetchType } = item
+        return (
+          <span>
+            {toFixed(text, decimal, displayDecimals)}&nbsp;({OPERATION[fetchType]})
+          </span>
+        )
+      },
     },
     {
       title: 'Date',
@@ -174,9 +174,9 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         if (isEmpty(keyArray)) return <SlidersOutlined style={{ color: 'gray' }} />
         const nextTitle = map(keyArray, key => {
           return (
-            <span style={{ display: 'flex', marginBottom: '0.2rem' }}>
+            <span key={key} style={{ display: 'flex', marginBottom: '0.2rem' }}>
               <CoinSuperPosition array={[key]} />
-              &nbsp;&nbsp;{toFixed(tokenAssets[key], decimal)}
+              &nbsp;&nbsp;{toFixed(tokenAssets[key], decimal, displayDecimals)}
             </span>
           )
         })

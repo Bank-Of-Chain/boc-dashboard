@@ -79,16 +79,12 @@ const StrategyTable = ({
       showSorterTooltip: false,
       defaultSortOrder: 'descend',
       sorter: (a, b) => {
-        return BN(a.totalAssetBaseUsd || '0').minus(BN(b.totalAssetBaseUsd || '0'))
+        return BN(a.totalAssetBaseCurrent || '0').minus(BN(b.totalAssetBaseCurrent || '0'))
       },
       render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>,
     },
     {
-      title: (
-        <Tooltip title='Official weekly average APY'>
-          <span>Official APY</span>
-        </Tooltip>
-      ),
+      title: 'Weekly Official apy',
       dataIndex: 'factorialOfficialApy',
       key: 'factorialOfficialApy',
       showSorterTooltip: false,
@@ -98,12 +94,14 @@ const StrategyTable = ({
       render: text => <span>{(100 * text).toFixed(2)} %</span>,
     },
     {
-      title: 'Realized Apy',
+      title: 'Weekly Realized Apy',
       dataIndex: 'realizedApy',
       key: 'realizedApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.realizedApy.value - b.realizedApy.value
+        const { value: aValue } = a.realizedApy || { value: '0' }
+        const { value: bValue } = b.realizedApy || { value: '0' }
+        return aValue - bValue
       },
       render: (data, item) => {
         if (isEmpty(data)) return <span>0.00%</span>
@@ -121,8 +119,6 @@ const StrategyTable = ({
         )
         const nextWeekApyJsx = (
           <div>
-            {/* <span>Unrealize APY: {unRealizeApyValue.toFixed(2)} %</span>
-            <Divider style={{ margin: '0.5rem 0' }} /> */}
             {map(detail, (i, index) => (
               <span key={index} style={{ display: 'block' }}>
                 {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
@@ -134,7 +130,23 @@ const StrategyTable = ({
       },
     },
     {
-      title: 'Weekly Profit',
+      title: 'Weekly Unrealized Apy',
+      dataIndex: 'unrealizedApy',
+      key: 'unrealizedApy',
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        const { value: aValue } = a.unrealizedApy || { value: '0' }
+        const { value: bValue } = b.unrealizedApy || { value: '0' }
+        return aValue - bValue
+      },
+      render: data => {
+        if (isEmpty(data)) return <span>0.00%</span>
+        const { value } = data
+        return <span>{(100 * value).toFixed(2)} %</span>
+      },
+    },
+    {
+      title: 'Weekly Realized Profit',
       dataIndex: 'weekProfit',
       key: 'weekProfit',
       render: (text = 0, item) => {
