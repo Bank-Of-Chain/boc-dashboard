@@ -181,14 +181,14 @@ const ETHiHome = () => {
   const introduceData = [{
     title: 'Total Supply',
     tip: 'Current total ETHi supply',
-    content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format("0.0000a") : 0,
+    content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format("0.[0000]a") : 0,
     loading,
     unit: 'ETHi',
     subTitle: `1ETHi ≈ ${pegToken?.totalSupply === "0" ? "1" : toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)}ETH`
   }, {
     title: 'Holders',
     tip: 'Number Of ETHi holders',
-    content: numeral(pegToken?.holderCount).format("0a"),
+    content: numeral(pegToken?.holderCount).format("0.[0000]a"),
     loading,
   }, {
     title: 'APY (last 30 days)',
