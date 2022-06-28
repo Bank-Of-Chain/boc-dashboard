@@ -141,7 +141,7 @@ const Strategy = props => {
           return {
             value: 100 * i.apy,
             apy: (i.apy * 100).toFixed(2),
-            date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
+            date: formatToUTC0(i.fetchTimestamp * 1000, 'yyyy-MM-DD'),
           }
         }),
         'date',
@@ -152,7 +152,7 @@ const Strategy = props => {
             officialApy: (i.factorialOfficialApy * 100).toFixed(2),
             realizedApy: (i.realizedApy.value * 100).toFixed(2),
             expectedApy: (i.expectedApy * 100).toFixed(2),
-            date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
+            date: formatToUTC0(i.fetchTimestamp * 1000, 'yyyy-MM-DD'),
           }
         }),
         'date',
