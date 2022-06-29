@@ -20,13 +20,12 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getEstimateApys } from '@/services/api-service'
 
 // === Utils === //
-import { isEmpty, isNil, uniq, find } from 'lodash';
+import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce } from 'lodash';
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
-import { map, reverse, cloneDeep, reduce } from 'lodash'
 import BN from 'bignumber.js'
 import { appendDate } from "@/utils/array-append"
 
@@ -88,24 +87,28 @@ const ETHiHome = () => {
       const xAxisData = uniq([...map(result, ({ date }) => date), ...map(reverseIt, ({ date }) => date)])
       // 多条折现配置
       const lengndData = []
+      const data1 = map(xAxisData, date => {
+        const item = find(result, { date })
+        return item ? item.apy : null
+      })
       const columeArray = [
         {
           seriesName: 'APY',
-          seriesData: map(xAxisData, date => {
-            const item = find(result, { date })
-            return item ? item.apy : null
-          }),
+          seriesData: data1,
+          showSymbol: size(filter(data1, i => !isNil(i))) === 1
         }
       ]
       if (!isEmpty(estimateApys.content)) {
         lengndData.push('APY')
         lengndData.push('Estimated APY')
+        const data2 =  map(xAxisData, date => {
+          const item = find(reverseIt, { date })
+          return item ? item.unrealize_apy : null
+        })
         columeArray.push({
           seriesName: 'Estimated APY',
-          seriesData: map(xAxisData, date => {
-            const item = find(reverseIt, { date })
-            return item ? item.unrealize_apy : null
-          }),
+          seriesData: data2,
+          showSymbol: size(filter(data2, i => !isNil(i))) === 1
         })
       }
       const obj = {

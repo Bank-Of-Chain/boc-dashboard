@@ -6,6 +6,7 @@ import _max from 'lodash/max';
 import forEach from 'lodash/forEach';
 import isNaN from 'lodash/isNaN';
 import isUndefined from 'lodash/isUndefined';
+import { isNil, filter, size } from 'lodash';
 
 const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
   const {
@@ -62,7 +63,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
     option.yAxis.max = yAxisMax
   }
   option.series[0].connectNulls = true;
-  option.series[0].showSymbol = false
+  option.series[0].showSymbol = size(filter(seriesData, i => !isNil(i))) === 1
   option.series[0].lineStyle = {
     width: 5,
     cap: 'round'

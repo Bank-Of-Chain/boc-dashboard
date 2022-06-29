@@ -24,7 +24,7 @@ import moment from 'moment'
 import _union from 'lodash/union'
 import _find from 'lodash/find'
 import BN from 'bignumber.js'
-import { get, isNil, keyBy, sum } from 'lodash'
+import { get, isNil, keyBy, size, filter } from 'lodash'
 import { formatToUTC0 } from '@/utils/date'
 
 // === Services === //
@@ -141,7 +141,7 @@ const Strategy = props => {
           return {
             value: 100 * i.apy,
             apy: (i.apy * 100).toFixed(2),
-            date: formatToUTC0(i.fetchTime, 'yyyy-MM-DD'),
+            date: formatToUTC0(i.fetchTime * 1000, 'yyyy-MM-DD'),
           }
         }),
         'date',
@@ -180,14 +180,19 @@ const Strategy = props => {
 
   const estimateArray = map(apyArray, 'un_realize_apy')
   const lengndData = ['Official APY', 'Expected APY']
+  const data1 = map(apyArray, 'officialApy')
+  const data2 = map(apyArray, 'expectedApy')
+  const data3 = map(apyArray, 'official_daily_apy')
   const data = [
     {
       seriesName: 'Official APY',
-      seriesData: map(apyArray, 'officialApy'),
+      seriesData: data1,
+      showSymbol: size(filter(data1, i => !isNil(i))) === 1,
     },
     {
       seriesName: 'Expected APY',
-      seriesData: map(apyArray, 'expectedApy'),
+      seriesData: data2,
+      showSymbol: size(filter(data2, i => !isNil(i))) === 1,
     },
   ]
   if (ori) {
@@ -195,6 +200,7 @@ const Strategy = props => {
     data.push({
       seriesName: 'Official Origin Apy',
       seriesData: map(apyArray, 'official_daily_apy'),
+      showSymbol: size(filter(data3, i => !isNil(i))) === 1,
     })
   }
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy

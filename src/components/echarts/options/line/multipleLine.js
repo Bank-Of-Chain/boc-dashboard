@@ -15,7 +15,7 @@ export default function (obj) {
         name: element.seriesName ? element.seriesName : "",
         data: element.seriesData,
         type: 'line',
-        showSymbol: false,
+        showSymbol: element.showSymbol,
         lineStyle: {
           width: 5,
           cap: 'round'
