@@ -140,7 +140,8 @@ const Strategy = props => {
         map(offChainApys.content, i => {
           return {
             value: 100 * i.apy,
-            apy: (i.apy * 100).toFixed(2),
+            officialApy: (i.apy * 100).toFixed(2),
+            originApy: (i.originApy * 100).toFixed(2),
             date: formatToUTC0(i.fetchTime * 1000, 'yyyy-MM-DD'),
           }
         }),
@@ -149,8 +150,6 @@ const Strategy = props => {
       const extentApyMap = keyBy(
         map(apys.content, i => {
           return {
-            officialApy: (i.factorialOfficialApy * 100).toFixed(2),
-            realizedApy: (i.realizedApy.value * 100).toFixed(2),
             expectedApy: (i.expectedApy * 100).toFixed(2),
             date: formatToUTC0(i.fetchTimestamp * 1000, 'yyyy-MM-DD'),
           }
@@ -159,18 +158,18 @@ const Strategy = props => {
       )
 
       const nextApyArray = map(calcArray, i => {
-        const offChainApyItem = get(offChainApyMap, `${i}.apy`, null)
-        const { officialApy, realizedApy, expectedApy } = get(extentApyMap, i, {
+        const { officialApy, originApy } = get(offChainApyMap, i, {
           officialApy: null,
-          realizedApy: null,
+          originApy: null,
+        })
+        const { expectedApy } = get(extentApyMap, i, {
           expectedApy: null,
         })
         return {
           date: i,
-          realizedApy,
+          originApy,
           expectedApy,
           officialApy,
-          official_daily_apy: isNil(offChainApyItem) ? null : offChainApyItem,
         }
       })
       console.log('nextApyArray=', nextApyArray)
@@ -182,7 +181,6 @@ const Strategy = props => {
   const lengndData = ['Official APY', 'Expected APY']
   const data1 = map(apyArray, 'officialApy')
   const data2 = map(apyArray, 'expectedApy')
-  const data3 = map(apyArray, 'official_daily_apy')
   const data = [
     {
       seriesName: 'Official APY',
@@ -196,10 +194,11 @@ const Strategy = props => {
     },
   ]
   if (ori) {
+    const data3 = map(apyArray, 'originApy')
     lengndData.push('Official Origin Apy')
     data.push({
       seriesName: 'Official Origin Apy',
-      seriesData: map(apyArray, 'official_daily_apy'),
+      seriesData: data3,
       showSymbol: size(filter(data3, i => !isNil(i))) === 1,
     })
   }

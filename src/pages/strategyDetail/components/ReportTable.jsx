@@ -141,7 +141,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         const { fetchType } = item
         return (
           <span>
-            {toFixed(text, decimal, displayDecimals)}&nbsp;({OPERATION[fetchType]})
+            {OPERATION[fetchType]}&nbsp;({toFixed(text, decimal, displayDecimals)})
           </span>
         )
       },
