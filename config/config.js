@@ -6,7 +6,7 @@ import routes from './routes'
 import FileManagerPlugin from 'filemanager-webpack-plugin'
 import moment from 'moment'
 
-const { REACT_APP_ENV, UMI_ENV } = process.env
+const { REACT_APP_ENV, UMI_ENV, NODE_ENV } = process.env
 export default defineConfig({
   base: '/',
   publicPath: '/',
@@ -84,21 +84,27 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   chainWebpack: config => {
-    config.plugin('FileManagerPlugin').use(
-      new FileManagerPlugin({
-        events: {
-          onEnd: {
-            archive: [
-              {
-                source: './dist',
-                destination:
-                  './zip/dashboard-' + moment().format('yyyyMMDDHHmmss') + '(' + UMI_ENV + ').zip',
-              },
-            ],
+    if (NODE_ENV === 'production') {
+      config.plugin('FileManagerPlugin').use(
+        new FileManagerPlugin({
+          events: {
+            onEnd: {
+              archive: [
+                {
+                  source: './dist',
+                  destination:
+                    './zip/dashboard-' +
+                    moment().format('yyyyMMDDHHmmss') +
+                    '(' +
+                    UMI_ENV +
+                    ').zip',
+                },
+              ],
+            },
           },
-        },
-      }),
-    )
+        }),
+      )
+    }
   },
   define: {
     ENV_INDEX: 'pr-sg',
@@ -141,7 +147,7 @@ export default defineConfig({
       },
       ETHI_ADDRESS: {
         1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
-      }
-    }
+      },
+    },
   },
-});
+})
