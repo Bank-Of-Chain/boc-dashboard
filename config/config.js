@@ -1,16 +1,17 @@
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
-import { join } from 'path';
-import defaultSettings from './defaultSettings';
-import proxy from './proxy';
-import routes from './routes';
+import { defineConfig } from 'umi'
+import defaultSettings from './defaultSettings'
+import proxy from './proxy'
+import routes from './routes'
+import FileManagerPlugin from 'filemanager-webpack-plugin'
+import moment from 'moment'
 
-const { REACT_APP_ENV } = process.env;
+const { REACT_APP_ENV, UMI_ENV } = process.env
 export default defineConfig({
   base: '/',
   publicPath: '/',
   hash: true,
-  history:{
+  history: {
     type: 'hash',
   },
   antd: {
@@ -82,6 +83,23 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+  chainWebpack: config => {
+    config.plugin('FileManagerPlugin').use(
+      new FileManagerPlugin({
+        events: {
+          onEnd: {
+            archive: [
+              {
+                source: './dist',
+                destination:
+                  './zip/dashboard-' + moment().format('yyyyMMDDHHmmss') + '(' + UMI_ENV + ').zip',
+              },
+            ],
+          },
+        },
+      }),
+    )
+  },
   define: {
     ENV_INDEX: 'pr-sg',
     API_SERVER: 'https://service.bankofchain.io',
@@ -93,9 +111,9 @@ export default defineConfig({
       137: 'https://polygonscan.com',
     },
     RPC_URL: {
-      1: "https://rpc.ankr.com/eth",
-      56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com"
+      1: 'https://rpc.ankr.com/eth',
+      56: 'https://bsc-dataseed.binance.org',
+      137: 'https://rpc-mainnet.maticvigil.com',
     },
     USDI: {
       SUB_GRAPH_URL: {
@@ -106,12 +124,12 @@ export default defineConfig({
       USDI_VAULT_ADDRESS: {
         1: '0x008586B7f6768EDc269D9e5cd276316d33CECE6d',
         56: '0x699F86dd50224544E6c23670Af44682CAe9db3c5',
-        137: '0xFB7f340A7DEfD3bB0072844db6D5EbdFAD765dea'
+        137: '0xFB7f340A7DEfD3bB0072844db6D5EbdFAD765dea',
       },
-      USDI_ADDRESS:{
+      USDI_ADDRESS: {
         1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
         56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
-        137: '0xe47F0396CfCB8134A791246924171950f1a83053'
+        137: '0xe47F0396CfCB8134A791246924171950f1a83053',
       },
     },
     ETHI: {
