@@ -1,7 +1,7 @@
 import { Card, Table, Image, Switch, Tooltip, Badge, Divider } from 'antd'
 import React, { useState } from 'react'
 import { useModel, useRequest } from 'umi'
-import { filter, isNil, map } from 'lodash'
+import { filter, isNil, map, sortBy } from 'lodash'
 
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
@@ -30,7 +30,7 @@ const StrategyTable = ({
   const { data: searchData } = useRequest(
     () => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100),
     {
-      formatResult: resp => resp.content,
+      formatResult: resp => sortBy(resp.content, ['strategyName']),
     },
   )
   if (!initialState.chain) return null
