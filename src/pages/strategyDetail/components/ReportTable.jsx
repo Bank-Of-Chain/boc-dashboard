@@ -127,13 +127,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
-      title: isETHi ? (
-        `Asset Changed${unit}`
-      ) : (
-        <Tooltip placement='top' title='Number of Stablecoins Changed'>
-          Balance Changed
-        </Tooltip>
-      ),
+      title: `Asset Changed${unit}`,
       dataIndex: 'assetChange',
       key: 'assetChange',
       width: '8rem',
@@ -141,7 +135,8 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         const { fetchType } = item
         return (
           <span>
-            {OPERATION[fetchType]}&nbsp;({toFixed(text, decimal, displayDecimals)})
+            {OPERATION[fetchType]}
+            {text !== '0' && ` (${toFixed(text, decimal, displayDecimals)})`}
           </span>
         )
       },
@@ -169,14 +164,16 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       width: '5rem',
       align: 'center',
       render: (text, item) => {
-        const { tokenAssets } = item
-        const keyArray = keys(tokenAssets)
-        if (isEmpty(keyArray)) return <SlidersOutlined style={{ color: 'gray' }} />
-        const nextTitle = map(keyArray, key => {
+        const { tokens } = item
+        if (isEmpty(tokens)) return <SlidersOutlined style={{ color: 'gray' }} />
+        const nextTitle = map(tokens, ({ address, amount, asset }) => {
           return (
-            <span key={key} style={{ display: 'flex', marginBottom: '0.2rem' }}>
-              <CoinSuperPosition array={[key]} />
-              &nbsp;&nbsp;{toFixed(tokenAssets[key], decimal, displayDecimals)}
+            <span key={address} style={{ display: 'flex', marginBottom: '0.2rem' }}>
+              <CoinSuperPosition array={[address]} />
+              &nbsp;&nbsp;
+              {toFixed(amount, decimal, displayDecimals)}
+              {isETHi && `(${toFixed(asset, decimal, displayDecimals)}ETH)`}
+              {!isETHi && `(\$${toFixed(asset, decimal, displayDecimals)})`}
             </span>
           )
         })
