@@ -114,13 +114,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       ),
     },
     {
-      title: isETHi ? (
-        `Total Asset${unit}`
-      ) : (
-        <Tooltip placement='top' title='Total number of stablecoins'>
-          Total Asset
-        </Tooltip>
-      ),
+      title: `Total Asset${unit}`,
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       width: '7rem',
