@@ -19,7 +19,8 @@ export default function (obj) {
         lineStyle: {
           width: 5,
           cap: 'round'
-        }
+        },
+        ...element
       };
       dataCount += element.seriesData.length;
       data.push(dataFormat);
