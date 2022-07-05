@@ -1,16 +1,16 @@
 // https://umijs.org/config/
 import { defineConfig } from 'umi'
 
-const ETHI_FOR_ETH = '0x33E45b187da34826aBCEDA1039231Be46f1b05Af'
+const ETHI_FOR_ETH = '0x0Dd99d9f56A14E9D53b2DdC62D9f0bAbe806647A'
 
-const USDI_FOR_ETH = '0x67aD6EA566BA6B0fC52e97Bc25CE46120fdAc04c'
+const USDI_FOR_ETH = '0x3C1Cb427D20F15563aDa8C249E71db76d7183B6c'
 const USDI_FOR_BSC = ''
-const USDI_FOR_MATIC = ''
+const USDI_FOR_MATIC = '0x831a721007308E45e66496Ea78203d35c5AcD309'
 
-const ETHI_VAULT = '0x70E5370b8981Abc6e14C91F4AcE823954EFC8eA3'
-const USDI_VAULT_FOR_ETH = '0x359570B3a0437805D0a71457D61AD26a28cAC9A2'
+const ETHI_VAULT = '0xDae16f755941cbC0C9D240233a6F581d1734DaA2'
+const USDI_VAULT_FOR_ETH = '0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC'
 const USDI_VAULT_FOR_BSC = ''
-const USDI_VAULT_FOR_MATIC = ''
+const USDI_VAULT_FOR_MATIC = '0x17B43460aAA42Dd72C26A10B5038Ac2cB2278E49'
 
 export default defineConfig({
   base: '/',
@@ -28,9 +28,9 @@ export default defineConfig({
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
+        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
         56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb',
-        137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon',
+        137: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth',
       },
       VAULT_ADDRESS: {
         1: USDI_VAULT_FOR_ETH,
@@ -45,7 +45,7 @@ export default defineConfig({
     },
     ETHI: {
       SUB_GRAPH_URL: {
-        1: 'https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi',
+        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi',
       },
       VAULT_ADDRESS: {
         1: ETHI_VAULT,

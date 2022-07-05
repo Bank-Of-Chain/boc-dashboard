@@ -117,6 +117,7 @@ const StrategyTable = ({
             <span>{realizeApyValue.toFixed(2)} %</span>
           </Badge>
         )
+        if(isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
