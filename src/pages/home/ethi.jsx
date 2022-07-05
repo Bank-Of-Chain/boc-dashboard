@@ -28,6 +28,7 @@ import { toFixed } from '@/utils/number-format';
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import BN from 'bignumber.js'
 import { appendDate } from "@/utils/array-append"
+import { BigNumber } from 'ethers'
 
 const ETHiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -38,7 +39,7 @@ const ETHiHome = () => {
   const { initialState } = useModel('@@initialState')
 
   const { dataSource = {}, loading } = useDashboardData()
-  const { pegToken = {}, vault } = dataSource;
+  const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource;
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -181,13 +182,23 @@ const ETHiHome = () => {
 
   if (isEmpty(initialState.chain)) return null
 
+  const price = () => {
+    if (isEmpty(pegToken) || pegToken?.totalSupply === "0" || isEmpty(vault?.totalAssets)) return '1'
+    if (!isEmpty(vaultBuffer)) {
+      if (vault.isAdjust) {
+        return toFixed(BigNumber.from(vault.totalAssets).sub(vaultBuffer.totalSupply),  pegToken?.totalSupply, 6)
+      }
+    }
+    return toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)
+  }
+
   const introduceData = [{
     title: 'Total Supply',
     tip: 'Current total ETHi supply',
     content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format("0.[0000]a") : 0,
     loading,
     unit: 'ETHi',
-    subTitle: `1ETHi ≈ ${isEmpty(pegToken) || pegToken?.totalSupply === "0" ? "1" : toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)}ETH`
+    subTitle: `1ETHi ≈ ${price()}ETH`
   }, {
     title: 'Holders',
     tip: 'Number Of ETHi holders',

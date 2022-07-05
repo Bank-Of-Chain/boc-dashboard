@@ -32,6 +32,7 @@ import { APY_DURATION } from '@/constants/api'
 import { toFixed } from '@/utils/number-format';
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { appendDate } from "@/utils/array-append"
+import { BigNumber } from 'ethers'
 
 const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -42,7 +43,7 @@ const USDiHome = () => {
   const { initialState } = useModel('@@initialState')
 
   const { dataSource = {}, loading } = useDashboardData();
-  const { pegToken = {}, vault = {} } = dataSource;
+  const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource;
 
   useEffect(() => {
     if (!initialState.chain) {
@@ -190,13 +191,23 @@ const USDiHome = () => {
 
   if (isEmpty(initialState.chain)) return null
 
+  const price = () => {
+    if(isEmpty(pegToken) || pegToken?.totalSupply === "0" || isEmpty(vault?.totalAssets)) return '1'
+    if (!isEmpty(vaultBuffer)){
+      if (vault.isAdjust) {
+        return toFixed(BigNumber.from(vault.totalAssets).sub(vaultBuffer.totalSupply),  pegToken?.totalSupply, 6)
+      }
+    }
+    return toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)
+  }
+
   const introduceData = [{
     title: 'Total Supply',
     tip: 'Current total USDi supply',
     content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)).format("0.[0000]a") : 0,
     loading,
     unit: 'USDi',
-    subTitle: `1USDi ≈ ${isEmpty(pegToken) || pegToken?.totalSupply === "0" ? "1" : toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)}USD`
+    subTitle: `1USDi ≈ ${price()}USD`
   }, {
     title: 'Holders',
     tip: 'Number Of USDi holders',
