@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { VAULT_TYPE } from '@/constants/vault'
 
 const USDI_DASHBOARD_DETAIL_QUERY = `
-query ($tokenAddress: Bytes, $valutAddress: Bytes) {
+query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
   pegToken(id: $tokenAddress) {
     tokenInfo {
       decimals
@@ -21,11 +21,16 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes) {
       protocol
       totalValue
     }
+    isAdjust
+  }
+  vaultBuffer(id: $vaultBufferAddress) {
+    id
+    totalSupply
   }
 }
 `;
 const ETHI_DASHBOARD_DETAIL_QUERY = `
-query ($tokenAddress: Bytes, $valutAddress: Bytes) {
+query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
   pegToken(id: $tokenAddress) {
     tokenInfo {
       decimals
@@ -41,11 +46,17 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes) {
       protocol
       debtRecordInVault
     }
+    isAdjust
+  }
+  vaultBuffer(id: $vaultBufferAddress) {
+    id
+    totalSupply
   }
 }
 `;
 
-export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutAddress = '') => {
+export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutAddress = '', vaultBufferAddress= '') => {
+  console.log('vaultBufferAddress=', vaultBufferAddress)
   const client = getClient(vault, chain)
   if (isEmpty(client)) {
     return
@@ -59,7 +70,8 @@ export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutA
     query: gql(QUERY),
     variables: {
       tokenAddress: tokenAddress.toLowerCase(),
-      valutAddress: valutAddress.toLowerCase()
+      valutAddress: valutAddress.toLowerCase(),
+      vaultBufferAddress: vaultBufferAddress.toLowerCase()
     }
   });
   return data
