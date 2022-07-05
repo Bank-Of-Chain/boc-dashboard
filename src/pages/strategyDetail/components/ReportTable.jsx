@@ -118,7 +118,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       dataIndex: 'totalAsset',
       key: 'totalAsset',
       width: '7rem',
-      render: text => <span>{toFixed(text, decimal, displayDecimals)}</span>,
+      render: text => <span title={toFixed(text, decimal)}>{toFixed(text, decimal, displayDecimals)}</span>,
     },
     {
       title: `Asset Changed${unit}`,
@@ -128,7 +128,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       render: (text, item) => {
         const { fetchType } = item
         return (
-          <span>
+          <span title={toFixed(text, decimal)}>
             {OPERATION[fetchType]}
             {text !== '0' && ` (${toFixed(text, decimal, displayDecimals)})`}
           </span>
