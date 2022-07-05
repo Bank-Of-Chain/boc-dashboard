@@ -6,6 +6,7 @@ import { filter, isNil, map, sortBy } from 'lodash'
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format'
@@ -84,7 +85,7 @@ const StrategyTable = ({
       render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>,
     },
     {
-      title: 'Weekly Official apy',
+      title: 'Weekly Official Apy',
       dataIndex: 'factorialOfficialApy',
       key: 'factorialOfficialApy',
       showSorterTooltip: false,
@@ -106,18 +107,8 @@ const StrategyTable = ({
       render: (data, item) => {
         if (isEmpty(data)) return <span>0.00%</span>
         const { value, detail } = data
-        const { unrealizedApy } = item
-
-        const realizeApyValue = 100 * value
-        const unRealizeApyValue = 100 * unrealizedApy.value
-        const withoutEstimate = realizeApyValue === unRealizeApyValue
-
-        const jsxElement = (
-          <Badge dot={!withoutEstimate} color='gold'>
-            <span>{realizeApyValue.toFixed(2)} %</span>
-          </Badge>
-        )
-        if(isEmpty(detail)) return jsxElement
+        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        if (isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
@@ -127,7 +118,14 @@ const StrategyTable = ({
             ))}
           </div>
         )
-        return <Tooltip title={nextWeekApyJsx}>{jsxElement}</Tooltip>
+        return (
+          <span>
+            {jsxElement}&nbsp;
+            <Tooltip title={nextWeekApyJsx}>
+              <ExclamationCircleOutlined />
+            </Tooltip>
+          </span>
+        )
       },
     },
     {
@@ -142,8 +140,27 @@ const StrategyTable = ({
       },
       render: data => {
         if (isEmpty(data)) return <span>0.00%</span>
-        const { value } = data
-        return <span>{(100 * value).toFixed(2)} %</span>
+        const { value, detail } = data
+
+        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        if (isEmpty(detail)) return jsxElement
+        const nextWeekApyJsx = (
+          <div>
+            {map(detail, (i, index) => (
+              <span key={index} style={{ display: 'block' }}>
+                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
+              </span>
+            ))}
+          </div>
+        )
+        return (
+          <span>
+            {jsxElement}&nbsp;
+            <Tooltip title={nextWeekApyJsx}>
+              <ExclamationCircleOutlined />
+            </Tooltip>
+          </span>
+        )
       },
     },
     {
