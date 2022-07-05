@@ -150,6 +150,8 @@ const Strategy = props => {
       const extentApyMap = keyBy(
         map(apys.content, i => {
           return {
+            realizedApy: (i.realizedApy?.value * 100).toFixed(2),
+            unrealizedApy: (i.unrealizedApy?.value * 100).toFixed(2),
             expectedApy: (i.expectedApy * 100).toFixed(2),
             date: formatToUTC0(i.fetchTimestamp * 1000, 'yyyy-MM-DD'),
           }
@@ -162,14 +164,18 @@ const Strategy = props => {
           officialApy: null,
           originApy: null,
         })
-        const { expectedApy } = get(extentApyMap, i, {
+        const { expectedApy, realizedApy, unrealizedApy } = get(extentApyMap, i, {
           expectedApy: null,
+          unrealizedApy: null,
+          realizedApy: null,
         })
         return {
           date: i,
           originApy,
           expectedApy,
           officialApy,
+          realizedApy,
+          unrealizedApy,
         }
       })
       console.log('nextApyArray=', nextApyArray)
@@ -191,6 +197,24 @@ const Strategy = props => {
       seriesName: 'Expected APY',
       seriesData: data2,
       showSymbol: size(filter(data2, i => !isNil(i))) === 1,
+    },
+    {
+      seriesName: 'Realized APY',
+      seriesData: map(apyArray, 'realizedApy'),
+      showSymbol: false,
+      lineStyle: {
+        width: 0,
+      },
+      symbol: 'none',
+    },
+    {
+      seriesName: 'UnRealized APY',
+      seriesData: map(apyArray, 'unrealizedApy'),
+      showSymbol: false,
+      lineStyle: {
+        width: 0,
+      },
+      symbol: 'none',
     },
   ]
   if (ori) {

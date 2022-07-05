@@ -6,7 +6,7 @@ import { filter, isNil, map, sortBy } from 'lodash'
 // === Components === //
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { toFixed } from '@/utils/number-format'
@@ -122,7 +122,7 @@ const StrategyTable = ({
           <span>
             {jsxElement}&nbsp;
             <Tooltip title={nextWeekApyJsx}>
-              <ExclamationCircleOutlined />
+              <InfoCircleOutlined />
             </Tooltip>
           </span>
         )
@@ -157,7 +157,7 @@ const StrategyTable = ({
           <span>
             {jsxElement}&nbsp;
             <Tooltip title={nextWeekApyJsx}>
-              <ExclamationCircleOutlined />
+              <InfoCircleOutlined />
             </Tooltip>
           </span>
         )
