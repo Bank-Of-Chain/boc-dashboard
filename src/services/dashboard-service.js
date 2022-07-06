@@ -56,7 +56,6 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
 `;
 
 export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutAddress = '', vaultBufferAddress= '') => {
-  console.log('vaultBufferAddress=', vaultBufferAddress)
   const client = getClient(vault, chain)
   if (isEmpty(client)) {
     return
