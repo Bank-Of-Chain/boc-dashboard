@@ -34,6 +34,13 @@ const topColResponsiveProps = {
   xl: 8,
 };
 
+const Field = ({ label, value, ...rest }) => (
+  <div className={styles.field} {...rest}>
+    <span className={styles.label}>{label}</span>
+    <span className={styles.number}>{value}</span>
+  </div>
+);
+
 const Personal = () => {
   const { dataSource, loading } = usePersonalData(TOKEN_TYPE.ethi);
   const { loading: priceLoading, value: usdPrice } = useEthPrice();
@@ -65,43 +72,50 @@ const Personal = () => {
 
   const introduceData = [
     {
-      title: "Balance (ETHi)",
+      title: "Balance",
       tip: "The balance of ETHi",
-      content: toFixed(balanceOfToken, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
+      content: numeral(
+        toFixed(balanceOfToken, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
+      ).format("0.[0000]a"),
       estimateContent: renderEstimate(balanceOfToken),
       loading,
+      unit: "ETHi",
     },
     {
-      title: "Unrealized profits (ETHi)",
+      title: "Unrealized profits",
       tip: "Potential profit that has not been effected",
-      content: toFixed(
-        unrealizedProfit,
-        ETHI_BN_DECIMALS,
-        ETHI_DISPLAY_DECIMALS
-      ),
+      content: numeral(
+        toFixed(unrealizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
+      ).format("0.[0000]a"),
       estimateContent: renderEstimate(unrealizedProfit),
       loading,
+      unit: "ETHi",
     },
     {
-      title: "Realized profits (ETHi)",
+      title: "Realized profits",
       tip: "The profits that have been actualized",
-      content: toFixed(realizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
+      content: numeral(
+        toFixed(realizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
+      ).format("0.[0000]a"),
       estimateContent: renderEstimate(realizedProfit),
       loading,
+      unit: "ETHi",
     },
     {
       title: "APY(last 7 days)",
       tip: "Yield over the past 1 week",
-      content: `${numeral(day7Apy?.apy).format("0,0.00")}%`,
+      content: numeral(day7Apy?.apy).format("0,0.00"),
       loading,
       isAPY: true,
+      unit: "%",
     },
     {
       title: "APY(last 30 days)",
       tip: "Yield over the past 1 month",
-      content: `${numeral(day30Apy?.apy).format("0,0.00")}%`,
+      content: numeral(day30Apy?.apy).format("0,0.00"),
       loading,
       isAPY: true,
+      unit: "%",
     },
   ];
 
@@ -170,29 +184,23 @@ const Personal = () => {
         <Row gutter={[24, 24]}>
           {map(
             introduceData,
-            ({ title, tip, loading, content, estimateContent, isAPY }) => (
+            ({ title, tip, loading, content, estimateContent, unit }) => (
               <Col key={title} {...topColResponsiveProps}>
                 <ChartCard
                   bordered={false}
                   title={title}
                   action={
                     <Tooltip title={tip}>
-                      <InfoCircleOutlined />
+                      <InfoCircleOutlined style={{ fontSize: 22 }} />
                     </Tooltip>
                   }
                   loading={loading}
-                >
-                  {isAPY ? (
-                    <div className={styles.apyNumber}>{content}</div>
-                  ) : (
-                    <div className={styles.ethiCardContent}>
-                      <div className={styles.ethiNumber}>{content}</div>
-                      <div className={styles.estimateNumber}>
-                        {estimateContent}
-                      </div>
-                    </div>
-                  )}
-                </ChartCard>
+                  total={content}
+                  unit={unit}
+                  footer={
+                    <Field style={{ height: "1rem" }} value={estimateContent} />
+                  }
+                />
               </Col>
             )
           )}

@@ -24,6 +24,8 @@ import { USDI_BN_DECIMALS } from "@/constants/usdi";
 // === Hooks === //
 import usePersonalData from "@/hooks/usePersonalData";
 
+import styles from "./style.less";
+
 const topColResponsiveProps = {
   xs: 24,
   sm: 8,
@@ -31,6 +33,13 @@ const topColResponsiveProps = {
   lg: 8,
   xl: 8,
 };
+
+const Field = ({ label, value, ...rest }) => (
+  <div className={styles.field} {...rest}>
+    <span className={styles.label}>{label}</span>
+    {value && <span className={styles.number}>{value}</span>}
+  </div>
+);
 
 const Personal = () => {
   const { dataSource, loading } = usePersonalData(TOKEN_TYPE.usdi);
@@ -46,37 +55,45 @@ const Personal = () => {
 
   const introduceData = [
     {
-      title: "Balance (USDi)",
+      title: "Balance",
       tip: "The balance of USDi",
-      content: () =>
-        toFixed(balanceOfToken, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
+      content: numeral(
+        toFixed(balanceOfToken, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
+      ).format("0.[0000]a"),
       loading,
+      unit: "USDi",
     },
     {
-      title: "Unrealized profits (USDi)",
+      title: "Unrealized profits",
       tip: "Potential profit that has not been effected",
-      content: () =>
-        toFixed(unrealizedProfit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
+      content: numeral(
+        toFixed(unrealizedProfit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
+      ).format("0.[0000]a"),
       loading,
+      unit: "USDi",
     },
     {
-      title: "Realized profits (USDi)",
+      title: "Realized profits",
       tip: "The profits that have been actualized",
-      content: () =>
-        toFixed(realizedProfit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS),
+      content: numeral(
+        toFixed(realizedProfit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
+      ).format("0.[0000]a"),
       loading,
+      unit: "USDi",
     },
     {
       title: "APY(last 7 days)",
       tip: "Yield over the past 1 week",
-      content: `${numeral(day7Apy?.apy).format("0,0.00")}%`,
+      content: numeral(day7Apy?.apy).format("0,0.00"),
       loading,
+      unit: "%",
     },
     {
       title: "APY(last 30 days)",
       tip: "Yield over the past 1 month",
-      content: `${numeral(day30Apy?.apy).format("0,0.00")}%`,
+      content: numeral(day30Apy?.apy).format("0,0.00"),
       loading,
+      unit: "%",
     },
   ];
 
@@ -144,22 +161,28 @@ const Personal = () => {
           </Col>
         </Row>
         <Row gutter={[24, 24]}>
-          {map(introduceData, ({ title, tip, loading, content }) => (
-            <Col key={title} {...topColResponsiveProps}>
-              <ChartCard
-                bordered={false}
-                title={title}
-                action={
-                  <Tooltip title={tip}>
-                    <InfoCircleOutlined />
-                  </Tooltip>
-                }
-                loading={loading}
-                total={content}
-                contentHeight={100}
-              />
-            </Col>
-          ))}
+          {map(
+            introduceData,
+            ({ title, tip, loading, content, unit, estimateContent }) => (
+              <Col key={title} {...topColResponsiveProps}>
+                <ChartCard
+                  bordered={false}
+                  title={title}
+                  action={
+                    <Tooltip title={tip}>
+                      <InfoCircleOutlined style={{ fontSize: 22 }} />
+                    </Tooltip>
+                  }
+                  loading={loading}
+                  total={content}
+                  unit={unit}
+                  footer={
+                    <Field style={{ height: "1rem" }} value={estimateContent} />
+                  }
+                />
+              </Col>
+            )
+          )}
         </Row>
       </Suspense>
       <Suspense fallback={null}>
