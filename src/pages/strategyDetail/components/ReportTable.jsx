@@ -1,51 +1,53 @@
-import { Card, Table, Tooltip } from 'antd'
-import React, { useState, useEffect } from 'react'
-import { useModel } from 'umi'
-import BN from 'bignumber.js'
+import { Card, Table, Tooltip } from "antd";
+import React, { useState, useEffect } from "react";
+import { useModel } from "umi";
+import BN from "bignumber.js";
 
 // === Components === //
-import { SlidersOutlined } from '@ant-design/icons'
+import { SlidersOutlined } from "@ant-design/icons";
 
-import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import { getStrategyDetailsReports } from '@/services/api-service'
-import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
-import CoinSuperPosition from '@/components/CoinSuperPosition'
+import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
+import { getStrategyDetailsReports } from "@/services/api-service";
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from "@/constants/vault";
+import { ETHI_DISPLAY_DECIMALS } from "@/constants/ethi";
+import CoinSuperPosition from "@/components/CoinSuperPosition";
 
 // === Utils === //
-import moment from 'moment'
-import keys from 'lodash/keys'
-import map from 'lodash/map'
-import isUndefined from 'lodash/isUndefined'
-import { toFixed } from '@/utils/number-format'
-import { isEmpty } from 'lodash'
+import moment from "moment";
+import keys from "lodash/keys";
+import map from "lodash/map";
+import isUndefined from "lodash/isUndefined";
+import { toFixed } from "@/utils/number-format";
+import { isEmpty } from "lodash";
 
 const OPERATION = {
-  0: 'harvest',
-  1: 'lend',
-  2: 'withdraw',
-  3: 'redeem',
-}
+  0: "harvest",
+  1: "lend",
+  2: "withdraw",
+  3: "redeem",
+};
 
 const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
-  const { initialState } = useModel('@@initialState')
-  const [dataSource, setDataSource] = useState([])
-  const [tableLoading, setTableLoading] = useState(false)
+  const { initialState } = useModel("@@initialState");
+  const [dataSource, setDataSource] = useState([]);
+  const [tableLoading, setTableLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
-  })
-  const deviceType = useDeviceType()
-  const isETHi = VAULT_TYPE.ETHi === initialState.vault
+  });
+  const deviceType = useDeviceType();
+  const isETHi = VAULT_TYPE.ETHi === initialState.vault;
   const displayDecimals = {
     [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
     [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS,
-  }[initialState.vault]
+  }[initialState.vault];
 
-  const unit = dataSource[0]?.lpTokenUnit ? `(${dataSource[0]?.lpTokenUnit})` : ''
+  const unit = dataSource[0]?.lpTokenUnit
+    ? `(${dataSource[0]?.lpTokenUnit})`
+    : "";
 
   const fetch = async () => {
-    setTableLoading(true)
+    setTableLoading(true);
     getStrategyDetailsReports({
       strategyName,
       chainId: initialState.chain,
@@ -53,59 +55,59 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       limit: pagination.pageSize,
       offset: (pagination.current - 1) * pagination.pageSize,
     })
-      .then(data => {
-        setDataSource(data.content)
+      .then((data) => {
+        setDataSource(data.content);
         if (isUndefined(pagination.total)) {
           setPagination({
             ...pagination,
             total: data.totalElements,
-          })
+          });
         }
       })
       .catch(() => {
-        setDataSource([])
+        setDataSource([]);
       })
       .finally(() => {
-        setTableLoading(false)
-      })
-  }
+        setTableLoading(false);
+      });
+  };
 
   useEffect(() => {
     if (!strategyName) {
-      return
+      return;
     }
-    fetch()
+    fetch();
     // eslint-disable-next-line
-  }, [pagination.current, strategyName])
+  }, [pagination.current, strategyName]);
 
   useEffect(() => {
     setPagination({
       ...pagination,
       current: 1,
-    })
+    });
     // eslint-disable-next-line
-  }, [initialState.chain, strategyName])
+  }, [initialState.chain, strategyName]);
 
-  const handleTableChange = pagination => {
-    setPagination(pagination)
-  }
+  const handleTableChange = (pagination) => {
+    setPagination(pagination);
+  };
 
   // 固定6位
-  const decimal = BN(1e18)
+  const decimal = BN(1e18);
 
   const columns = [
     {
-      title: 'Txn Hash',
-      dataIndex: 'txnHash',
-      key: 'txnHash',
-      width: '8rem',
+      title: "Txn Hash",
+      dataIndex: "txnHash",
+      key: "txnHash",
+      width: "8rem",
       ellipsis: {
         showTitle: false,
       },
-      render: text => (
+      render: (text) => (
         <a
-          target={'_blank'}
-          rel='noreferrer'
+          target={"_blank"}
+          rel="noreferrer"
           href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
           title={text}
         >
@@ -115,116 +117,124 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     },
     {
       title: `Total Asset${unit}`,
-      dataIndex: 'totalAsset',
-      key: 'totalAsset',
-      width: '7rem',
-      render: text => <span title={toFixed(text, decimal)}>{toFixed(text, decimal, displayDecimals)}</span>,
+      dataIndex: "totalAsset",
+      key: "totalAsset",
+      width: "7rem",
+      render: (text) => (
+        <span title={toFixed(text, decimal)}>
+          {toFixed(text, decimal, displayDecimals)}
+        </span>
+      ),
     },
     {
       title: `Asset Changed${unit}`,
-      dataIndex: 'assetChange',
-      key: 'assetChange',
-      width: '8rem',
+      dataIndex: "assetChange",
+      key: "assetChange",
+      width: "8rem",
       render: (text, item) => {
-        const { fetchType } = item
+        const { fetchType } = item;
         return (
           <span title={toFixed(text, decimal)}>
             {OPERATION[fetchType]}
-            {text !== '0' && ` (${toFixed(text, decimal, displayDecimals)})`}
+            {text !== "0" && ` (${toFixed(text, decimal, displayDecimals)})`}
           </span>
-        )
+        );
       },
     },
     {
-      title: 'Date',
-      dataIndex: 'fetchTimestamp',
-      key: 'fetchTimestamp',
-      width: '5rem',
-      render: text => (
+      title: "Date",
+      dataIndex: "fetchTimestamp",
+      key: "fetchTimestamp",
+      width: "5rem",
+      render: (text) => (
         <Tooltip
           title={`${moment(1000 * text)
             .utcOffset(0)
-            .format('yyyy-MM-DD HH:mm:ss')} (UTC)`}
+            .format("yyyy-MM-DD HH:mm:ss")} (UTC)`}
         >
           {moment(1000 * text)
             .utcOffset(0)
-            .locale('en')
+            .locale("en")
             .fromNow()}
         </Tooltip>
       ),
     },
     {
-      title: 'Position Details',
-      width: '5rem',
-      align: 'center',
+      title: "Position Details",
+      width: "5rem",
+      align: "center",
       render: (text, item) => {
-        const { tokens } = item
-        if (isEmpty(tokens)) return <SlidersOutlined style={{ color: 'gray' }} />
+        const { tokens } = item;
+        if (isEmpty(tokens))
+          return <SlidersOutlined style={{ color: "gray" }} />;
         const nextTitle = map(tokens, ({ address, amount, asset }) => {
           return (
-            <span key={address} style={{ display: 'flex', marginBottom: '0.2rem' }}>
+            <span
+              key={address}
+              style={{ display: "flex", marginBottom: "0.2rem" }}
+            >
               <CoinSuperPosition array={[address]} />
               &nbsp;&nbsp;
               {toFixed(amount, decimal, displayDecimals)}
               {isETHi && `(${toFixed(asset, decimal, displayDecimals)}ETH)`}
               {!isETHi && `(\$${toFixed(asset, decimal, displayDecimals)})`}
             </span>
-          )
-        })
+          );
+        });
         return (
-          <Tooltip placement='top' title={nextTitle}>
+          <Tooltip placement="top" title={nextTitle}>
             <SlidersOutlined />
           </Tooltip>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const smallCardConfig = {
     cardProps: {
-      size: 'small',
+      size: "small",
     },
     tableProps: {
-      size: 'small',
-      rowClassName: 'tablet-font-size',
+      size: "small",
+      rowClassName: "tablet-font-size",
       scroll: { x: 900 },
     },
-  }
+  };
   const responsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: {
       ...smallCardConfig,
       tableProps: {
-        size: 'small',
-        rowClassName: 'tablet-font-size',
+        size: "small",
+        rowClassName: "tablet-font-size",
         scroll: { x: 900 },
       },
     },
     [DEVICE_TYPE.Mobile]: {
       ...smallCardConfig,
       tableProps: {
-        size: 'small',
-        rowClassName: 'mobile-font-size',
+        size: "small",
+        rowClassName: "mobile-font-size",
         scroll: { x: 900 },
       },
     },
-  }[deviceType]
+  }[deviceType];
 
   return (
     <div>
       <Card
         loading={loading}
         bordered={false}
-        title='Reports'
+        title="Reports"
         extra={dropdownGroup}
         style={{
-          height: '100%',
+          height: "100%",
           marginTop: 32,
         }}
         {...responsiveConfig.cardProps}
       >
         <Table
-          rowKey={record => record.id}
+          rowKey={(record) => record.id}
           columns={columns}
           dataSource={dataSource}
           loading={tableLoading}
@@ -240,7 +250,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         />
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default ReportTable
+export default ReportTable;

@@ -1,8 +1,8 @@
-@import '~antd/es/style/themes/default.less';
+@import "~antd/es/style/themes/default.less";
 
 .chartCard {
   position: relative;
-  .title{
+  .title {
     color: @text-color;
     font-size: 1.25rem;
     line-height: 1.875rem;
@@ -46,18 +46,22 @@
     margin-bottom: 0;
     overflow: hidden;
     color: @text-color;
-    font-size: 2.5rem;
     font-weight: bold;
+    font-size: 2.5rem;
     line-height: 3.25rem;
     white-space: nowrap;
     text-overflow: ellipsis;
     word-break: break-all;
     .unit {
       margin-left: 0.5rem;
-      background-image: linear-gradient(223.3deg, #A68EFD 20.71%, #F4ACF3 103.56%);
+      font-size: 2.375rem;
+      background-image: linear-gradient(
+        223.3deg,
+        #a68efd 20.71%,
+        #f4acf3 103.56%
+      );
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-size: 2.375rem;
     }
   }
   .content {

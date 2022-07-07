@@ -1,7 +1,7 @@
-import { Card } from 'antd';
-import React from 'react';
-import classNames from 'classnames';
-import styles from './index.less';
+import { Card } from "antd";
+import React from "react";
+import classNames from "classnames";
+import styles from "./index.less";
 
 const renderTotal = (total, unit) => {
   if (!total && total !== 0) {
@@ -11,22 +11,26 @@ const renderTotal = (total, unit) => {
   let totalDom;
 
   switch (typeof total) {
-    case 'undefined':
+    case "undefined":
       totalDom = null;
       break;
 
-    case 'function':
-      totalDom = <div className={styles.total}>
-        <span>{total()}</span>
-        {unit && <span className={styles.unit}>{unit}</span>}
-      </div>;
+    case "function":
+      totalDom = (
+        <div className={styles.total}>
+          <span>{total()}</span>
+          {unit && <span className={styles.unit}>{unit}</span>}
+        </div>
+      );
       break;
 
     default:
-      totalDom = <div className={styles.total}>
-        <span>{total}</span>
-        {unit && <span className={styles.unit}>{unit}</span>}
-      </div>;
+      totalDom = (
+        <div className={styles.total}>
+          <span>{total}</span>
+          {unit && <span className={styles.unit}>{unit}</span>}
+        </div>
+      );
   }
 
   return totalDom;
@@ -34,7 +38,17 @@ const renderTotal = (total, unit) => {
 
 class ChartCard extends React.Component {
   renderContent = () => {
-    const { contentHeight, title, avatar, action, total, footer, children, loading, unit } = this.props;
+    const {
+      contentHeight,
+      title,
+      avatar,
+      action,
+      total,
+      footer,
+      children,
+      loading,
+      unit,
+    } = this.props;
 
     if (loading) {
       return false;
@@ -56,10 +70,12 @@ class ChartCard extends React.Component {
           <div
             className={styles.content}
             style={{
-              height: contentHeight || 'auto',
+              height: contentHeight || "auto",
             }}
           >
-            <div className={contentHeight && styles.contentFixed}>{children}</div>
+            <div className={contentHeight && styles.contentFixed}>
+              {children}
+            </div>
           </div>
         )}
         {footer && (
@@ -91,7 +107,7 @@ class ChartCard extends React.Component {
       <Card
         loading={loading}
         bodyStyle={{
-          padding: '2.375rem 2.125rem 2.375rem 2.75rem',
+          padding: "2.375rem 2.125rem 2.375rem 2.75rem",
         }}
         {...rest}
       >

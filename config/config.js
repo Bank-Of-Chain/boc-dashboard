@@ -1,18 +1,18 @@
 // https://umijs.org/config/
-import { defineConfig } from 'umi'
-import defaultSettings from './defaultSettings'
-import proxy from './proxy'
-import routes from './routes'
-import FileManagerPlugin from 'filemanager-webpack-plugin'
-import moment from 'moment'
+import { defineConfig } from "umi";
+import defaultSettings from "./defaultSettings";
+import proxy from "./proxy";
+import routes from "./routes";
+import FileManagerPlugin from "filemanager-webpack-plugin";
+import moment from "moment";
 
-const { REACT_APP_ENV, UMI_ENV, NODE_ENV } = process.env
+const { REACT_APP_ENV, UMI_ENV, NODE_ENV } = process.env;
 export default defineConfig({
-  base: '/',
-  publicPath: '/',
+  base: "/",
+  publicPath: "/",
   hash: true,
   history: {
-    type: 'hash',
+    type: "hash",
   },
   antd: {
     dark: true,
@@ -31,13 +31,13 @@ export default defineConfig({
   // https://umijs.org/zh-CN/plugins/plugin-locale
   locale: {
     // default zh-CN
-    default: 'en-US',
+    default: "en-US",
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: false,
   },
   dynamicImport: {
-    loading: '@ant-design/pro-layout/es/PageLoading',
+    loading: "@ant-design/pro-layout/es/PageLoading",
   },
   targets: {
     ie: 11,
@@ -46,20 +46,20 @@ export default defineConfig({
   routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
-    'primary-color': defaultSettings.primaryColor,
-    'text-color': defaultSettings.textColor,
-    'card-head-color': defaultSettings.textColor,
-    'table-header-color': defaultSettings.textColor,
-    'modal-heading-color': defaultSettings.textColor,
+    "primary-color": defaultSettings.primaryColor,
+    "text-color": defaultSettings.textColor,
+    "card-head-color": defaultSettings.textColor,
+    "table-header-color": defaultSettings.textColor,
+    "modal-heading-color": defaultSettings.textColor,
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild
   esbuild: {},
   title: false,
   ignoreMomentLocale: true,
-  proxy: proxy[REACT_APP_ENV || 'dev'],
+  proxy: proxy[REACT_APP_ENV || "dev"],
   manifest: {
-    basePath: '/',
+    basePath: "/",
   },
   // Fast Refresh 热更新
   fastRefresh: {},
@@ -78,48 +78,48 @@ export default defineConfig({
     // },
   ],
   nodeModulesTransform: {
-    type: 'none',
+    type: "none",
   },
   mfsu: {},
   webpack5: {},
   exportStatic: {},
-  chainWebpack: config => {
-    if (NODE_ENV === 'production') {
-      config.plugin('FileManagerPlugin').use(
+  chainWebpack: (config) => {
+    if (NODE_ENV === "production") {
+      config.plugin("FileManagerPlugin").use(
         new FileManagerPlugin({
           events: {
             onEnd: {
               archive: [
                 {
-                  source: './dist',
+                  source: "./dist",
                   destination:
-                    './zip/dashboard-' +
-                    moment().format('yyyyMMDDHHmmss') +
-                    '(' +
+                    "./zip/dashboard-" +
+                    moment().format("yyyyMMDDHHmmss") +
+                    "(" +
                     UMI_ENV +
-                    ').zip',
+                    ").zip",
                 },
               ],
             },
           },
-        }),
-      )
+        })
+      );
     }
   },
   define: {
-    ENV_INDEX: 'pr-sg',
-    API_SERVER: 'https://service.bankofchain.io',
-    DASHBOARD_ROOT: 'https://dashboard.bankofchain.io',
-    IMAGE_ROOT: 'https://v1.bankofchain.io',
+    ENV_INDEX: "pr-sg",
+    API_SERVER: "https://service.bankofchain.io",
+    DASHBOARD_ROOT: "https://dashboard.bankofchain.io",
+    IMAGE_ROOT: "https://v1.bankofchain.io",
     CHAIN_BROWSER_URL: {
-      1: 'https://etherscan.io',
-      56: 'https://bscscan.com',
-      137: 'https://polygonscan.com',
+      1: "https://etherscan.io",
+      56: "https://bscscan.com",
+      137: "https://polygonscan.com",
     },
     RPC_URL: {
-      1: 'https://rpc.ankr.com/eth',
-      56: 'https://bsc-dataseed.binance.org',
-      137: 'https://rpc-mainnet.maticvigil.com',
+      1: "https://rpc.ankr.com/eth",
+      56: "https://bsc-dataseed.binance.org",
+      137: "https://rpc-mainnet.maticvigil.com",
     },
   },
-})
+});
