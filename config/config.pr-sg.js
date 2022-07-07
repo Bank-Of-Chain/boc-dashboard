@@ -12,6 +12,11 @@ const USDI_VAULT_FOR_ETH = "0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC";
 const USDI_VAULT_FOR_BSC = "0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2";
 const USDI_VAULT_FOR_MATIC = "0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A";
 
+const VAULT_BUFFER_FOR_ETHI_ETH = "0x2F54D1563963fC04770E85AF819c89Dc807f6a06";
+const VAULT_BUFFER_FOR_USDI_ETH = "0x942ED2fa862887Dc698682cc6a86355324F0f01e";
+const VAULT_BUFFER_FOR_USDI_BSC = "";
+const VAULT_BUFFER_FOR_USDI_MATIC = "";
+
 export default defineConfig({
   base: "/",
   publicPath: "/",
@@ -41,6 +46,11 @@ export default defineConfig({
         56: USDI_FOR_BSC,
         137: USDI_FOR_MATIC,
       },
+      VAULT_BUFFER_ADDRESS: {
+        1: VAULT_BUFFER_FOR_USDI_ETH,
+        56: VAULT_BUFFER_FOR_USDI_BSC,
+        137: VAULT_BUFFER_FOR_USDI_MATIC,
+      },
     },
     ETHI: {
       SUB_GRAPH_URL: {
@@ -51,6 +61,9 @@ export default defineConfig({
       },
       ETHI_ADDRESS: {
         1: ETHI_FOR_ETH,
+      },
+      VAULT_BUFFER_ADDRESS: {
+        1: VAULT_BUFFER_FOR_ETHI_ETH,
       },
     },
   },
