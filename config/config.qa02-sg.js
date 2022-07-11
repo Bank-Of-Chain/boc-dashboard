@@ -29,7 +29,7 @@ export default defineConfig({
     RPC_URL: {
       1: "https://rpc-qa02-sg.bankofchain.io",
       56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com",
+      137: "https://rpc-qa02-sg.bankofchain.io",
       31337: "https://rpc-qa02-sg.bankofchain.io",
     },
     USDI: {
