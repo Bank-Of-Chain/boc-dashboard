@@ -1,9 +1,7 @@
-import random from "lodash/random"
-import * as ethers from 'ethers'
+import random from "lodash/random";
+import * as ethers from "ethers";
 
-const {
-  utils
-} = ethers
+const { utils } = ethers;
 export async function getSignatureHeader(account, signer) {
   const timestamp = Date.now();
   const nonce = random(0, 100000000);
@@ -14,6 +12,6 @@ export async function getSignatureHeader(account, signer) {
     timestamp,
     nonce,
     account,
-    signature
+    signature,
   };
 }

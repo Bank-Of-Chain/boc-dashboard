@@ -1,4 +1,4 @@
-@import '~antd/es/style/themes/default.less';
+@import "~antd/es/style/themes/default.less";
 
 html,
 body,
@@ -12,7 +12,7 @@ body,
 
 .ant-layout {
   min-height: 100vh;
-  background-color: #1F2023;
+  background-color: #1f2023;
 }
 
 .ant-pro-sider.ant-layout-sider.ant-pro-sider-fixed {
@@ -39,14 +39,13 @@ ol {
     width: 100%;
     overflow-x: auto;
 
-    &-thead>tr,
-    &-tbody>tr {
-
-      >th,
-      >td {
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
         white-space: pre;
 
-        >span {
+        > span {
           display: block;
         }
       }
@@ -55,9 +54,8 @@ ol {
 }
 
 // Compatible with IE11
-@media screen and(-ms-high-contrast: active),
-(-ms-high-contrast: none) {
-  body .ant-design-pro>.ant-layout {
+@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
+  body .ant-design-pro > .ant-layout {
     min-height: 100vh;
   }
 }
@@ -70,22 +68,22 @@ ol {
   font-size: 0.8rem;
 }
 
-.ant-pro-top-nav-header {
-  max-width: 1200px ;
-  margin: 0 auto ;
+div.ant-pro-top-nav-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  &.light {
+    background-color: transparent;
+  }
 }
 .ant-pro-top-nav-header-logo {
   h1 {
-    color: @text-color ;
+    color: @text-color;
   }
-}
-.ant-pro-top-nav-header.light {
-  background-color: transparent;
 }
 
 div.ant-card {
-  border-radius: 20px;
   background: #323338;
+  border-radius: 20px;
   .ant-card-head {
     padding: 0 2.75rem;
     font-weight: normal;
@@ -99,9 +97,12 @@ div.ant-tooltip {
   max-width: none;
   .ant-tooltip-inner {
     padding: 1.25rem 2.5rem;
-    border-radius: 5px;
-    background-color: @primary-color;
     color: #313036;
+    background-color: @primary-color;
+    border-radius: 5px;
+    &::selection {
+      color: #313036;
+    }
   }
   .ant-tooltip-arrow {
     width: 1.125rem;
@@ -126,13 +127,18 @@ div.ant-tooltip {
 }
 
 div.ant-table {
-  border: 1px solid #A0A0A0;
+  background: none !important;
+  border: 1px solid #a0a0a0;
   border-radius: 16px;
-  background: none;
-  .ant-table-thead > tr > th,
+  .ant-table-thead > tr > th {
+    background: #292b2e;
+  }
   .ant-table-tbody > tr.ant-table-row:hover > td,
+  .ant-table-cell-fix-left,
+  .ant-table-cell,
+  .ant-table-cell-ellipsis,
   .ant-table-tbody > tr.ant-table-placeholder:hover > td {
-    background: #292B2E;
+    background: transparent;
   }
   .ant-table-container table > thead > tr:first-child th:first-child {
     border-top-left-radius: 16px;
@@ -141,10 +147,14 @@ div.ant-table {
     border-top-right-radius: 16px;
   }
   .ant-table-tbody > tr > td {
-    border-bottom: 1px solid #A0A0A0;
+    border-bottom: 1px solid #a0a0a0;
   }
   .ant-table-tbody > tr:last-child > td {
     border: none;
+  }
+  .ant-table-header {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
   }
   .ant-table-thead > tr > th {
     font-weight: normal;
@@ -153,24 +163,24 @@ div.ant-table {
 
 .ant-radio-group {
   .ant-radio-button-wrapper {
-    width: 7.5rem;
-    height: 2.25rem;
-    border: 2px solid #A0A0A0;
-    border-top-width: 1.02px;
-    border-left-width: 0;
-    line-height: 2rem;
+    // width: 7.5rem;
+    // height: 2.25rem;
+    // line-height: 2rem;
     text-align: center;
+    border: 2px solid #a0a0a0;
+    border-top-width: 2px;
+    border-left-width: 0;
     &:first-child {
-      border-left: 2px solid #A0A0A0;
+      border-left: 2px solid #a0a0a0;
     }
   }
-  .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+  .ant-radio-button-wrapper-checked:not([class*=" ant-radio-button-wrapper-disabled"]).ant-radio-button-wrapper:first-child {
     border-right-color: @primary-color;
   }
   .ant-radio-button-wrapper:not(:first-child)::before {
     left: -2px;
     width: 2px;
-    background-color: #A0A0A0;
+    background-color: #a0a0a0;
   }
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before,
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover::before {
@@ -186,13 +196,53 @@ div.ant-table {
 }
 
 ul.ant-dropdown-menu {
-  background-color: #292B2E;
+  background-color: #292b2e;
   .ant-dropdown-menu-item {
     padding: 0.5rem 1rem;
-    color: #A0A0A0;
+    color: #a0a0a0;
   }
 }
 
 footer.ant-layout-footer {
   background: transparent;
+}
+
+/*---滚动条默认显示样式--*/
+
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  background-color: gray;
+
+  border: 2px solid #fff;
+
+  -webkit-border-radius: 4px;
+
+  outline: 2px solid #fff;
+
+  outline-offset: -2px;
+}
+
+/*---鼠标点击滚动条显示样式--*/
+
+::-webkit-scrollbar-thumb:hover {
+  height: 50px;
+  background-color: gray;
+
+  -webkit-border-radius: 4px;
+}
+
+/*---滚动条大小--*/
+
+::-webkit-scrollbar {
+  width: 8px;
+
+  height: 8px;
+}
+
+/*---滚动框背景样式--*/
+
+::-webkit-scrollbar-track-piece {
+  background-color: #fff;
+
+  -webkit-border-radius: 0;
 }

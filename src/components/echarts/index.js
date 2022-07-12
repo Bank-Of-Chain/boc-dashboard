@@ -1,5 +1,5 @@
 import loadable from "@loadable/component";
-import {Spin} from "antd";
+import { Spin } from "antd";
 
 const DEFAULT_THEME = "dark";
 
@@ -15,8 +15,8 @@ const loaddingCom = (
     tip="Loading...."
   />
 );
-const LineEchart = loadable(() => import("./line"), {fallback: loaddingCom});
-const BarEchart = loadable(() => import("./bar"), {fallback: loaddingCom});
-const PieEchart = loadable(() => import("./pie"), {fallback: loaddingCom});
+const LineEchart = loadable(() => import("./line"), { fallback: loaddingCom });
+const BarEchart = loadable(() => import("./bar"), { fallback: loaddingCom });
+const PieEchart = loadable(() => import("./pie"), { fallback: loaddingCom });
 
-export {LineEchart, BarEchart, PieEchart};
+export { LineEchart, BarEchart, PieEchart };

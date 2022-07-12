@@ -1,8 +1,8 @@
-import { Button, message, notification } from 'antd';
-import { useIntl } from 'umi';
-import defaultSettings from '../config/defaultSettings';
+import { Button, message, notification } from "antd";
+import { useIntl } from "umi";
+import defaultSettings from "../config/defaultSettings";
 const { pwa } = defaultSettings;
-const isHttps = document.location.protocol === 'https:';
+const isHttps = document.location.protocol === "https:";
 
 const clearCache = () => {
   // remove all caches
@@ -20,15 +20,15 @@ const clearCache = () => {
 
 if (pwa) {
   // Notify user if offline now
-  window.addEventListener('sw.offline', () => {
+  window.addEventListener("sw.offline", () => {
     message.warning(
       useIntl().formatMessage({
-        id: 'app.pwa.offline',
-      }),
+        id: "app.pwa.offline",
+      })
     );
   }); // Pop up a prompt on the page asking the user if they want to use the latest version
 
-  window.addEventListener('sw.updated', (event) => {
+  window.addEventListener("sw.updated", (event) => {
     const e = event;
 
     const reloadSW = async () => {
@@ -53,9 +53,9 @@ if (pwa) {
 
         worker.postMessage(
           {
-            type: 'skip-waiting',
+            type: "skip-waiting",
           },
-          [channel.port2],
+          [channel.port2]
         );
       });
       clearCache();
@@ -73,23 +73,23 @@ if (pwa) {
         }}
       >
         {useIntl().formatMessage({
-          id: 'app.pwa.serviceworker.updated.ok',
+          id: "app.pwa.serviceworker.updated.ok",
         })}
       </Button>
     );
     notification.open({
       message: useIntl().formatMessage({
-        id: 'app.pwa.serviceworker.updated',
+        id: "app.pwa.serviceworker.updated",
       }),
       description: useIntl().formatMessage({
-        id: 'app.pwa.serviceworker.updated.hint',
+        id: "app.pwa.serviceworker.updated.hint",
       }),
       btn,
       key,
       onClose: async () => null,
     });
   });
-} else if ('serviceWorker' in navigator && isHttps) {
+} else if ("serviceWorker" in navigator && isHttps) {
   // unregister service worker
   const { serviceWorker } = navigator;
 
