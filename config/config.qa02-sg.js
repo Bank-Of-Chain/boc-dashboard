@@ -28,7 +28,7 @@ export default defineConfig({
     IMAGE_ROOT: "https://qa02-sg.bankofchain.io",
     RPC_URL: {
       1: "https://rpc-qa02-sg.bankofchain.io",
-      56: "https://bsc-dataseed.binance.org",
+      56: "https://rpc-qa02-sg.bankofchain.io",
       137: "https://rpc-qa02-sg.bankofchain.io",
       31337: "https://rpc-qa02-sg.bankofchain.io",
     },
