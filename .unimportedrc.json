@@ -1,0 +1,14 @@
+{
+  "entry": [
+    "src/app.jsx",
+    "src/global.jsx",
+    "src/pages/**/*.{js,jsx}",
+    "src/models/**/*.{js,jsx}"
+  ],
+  "extensions": [".jsx", ".js"],
+  "ignorePatterns": ["**/node_modules/**"],
+  "ignoreUnimported": ["src/models/wallet.js"],
+  "aliases": {
+    "@/": ["./src/"]
+  }
+}
