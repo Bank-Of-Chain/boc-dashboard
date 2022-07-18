@@ -1,5 +1,5 @@
 /**
- * stage-sg环境配置文件
+ * {{env}}环境配置文件
  */
 
 // https://umijs.org/config/
@@ -86,7 +86,7 @@ export default defineConfig({
                   destination:
                     "./zip/dashboard-" +
                     moment().format("yyyyMMDDHHmmss") +
-                    "(stage-sg).zip",
+                    "({{env}}).zip",
                 },
               ],
             },
@@ -96,55 +96,55 @@ export default defineConfig({
     }
   },
   define: {
-    ENV_INDEX: "stage-sg",
-    API_SERVER: "https://service-stage-sg.bankofchain.io",
-    DASHBOARD_ROOT: "https://dashboard-stage-sg.bankofchain.io",
-    IMAGE_ROOT: "https://stage-sg.bankofchain.io",
+    ENV_INDEX: "{{env}}",
+    API_SERVER: "{{{API_SERVER}}}",
+    DASHBOARD_ROOT: "{{{DASHBOARD_ROOT}}}",
+    IMAGE_ROOT: "{{{IMAGE_ROOT}}}",
     CHAIN_BROWSER_URL: {
       1: "https://etherscan.io",
       56: "https://bscscan.com",
       137: "https://polygonscan.com",
     },
     RPC_URL: {
-      1: "https://rpc-stage-sg.bankofchain.io",
-      56: "https://rpc-stage-sg.bankofchain.io",
-      137: "https://rpc-stage-sg.bankofchain.io",
-      31337: "https://rpc-stage-sg.bankofchain.io",
+      1: "{{{RPC_FOR_1}}}",
+      56: "{{{RPC_FOR_56}}}",
+      137: "{{{RPC_FOR_137}}}",
+      31337: "{{{RPC_FOR_31337}}}",
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: "https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        56: "https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        137: "https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        1: "{{{SUB_GRAPH_URL_FOR_USDI_ETH}}}",
+        56: "{{{SUB_GRAPH_URL_FOR_USDI_BSC}}}",
+        137: "{{{SUB_GRAPH_URL_FOR_USDI_MATIC}}}",
       },
       VAULT_ADDRESS: {
-        1: "0xcD0048A5628B37B8f743cC2FeA18817A29e97270",
-        56: "0x2f64734C74e72661C9857059928Ed398593da173",
-        137: "0x12087c013f6269A90F113F8935f51C713a09b173",
+        1: "{{USDI_VAULT_FOR_ETH}}",
+        56: "{{USDI_VAULT_FOR_BSC}}",
+        137: "{{USDI_VAULT_FOR_MATIC}}",
       },
       USDI_ADDRESS: {
-        1: "0xa722bdA6968F50778B973Ae2701e90200C564B49",
-        56: "0xc7C037221Cb8Af497A2963e553263aE38e01dA62",
-        137: "0x04Cd8B3e384e7bBB01109bc8b6708fCAeD5e9eB0",
+        1: "{{USDI_FOR_ETH}}",
+        56: "{{USDI_FOR_BSC}}",
+        137: "{{USDI_FOR_MATIC}}",
       },
       VAULT_BUFFER_ADDRESS: {
-        1: "0x871ACbEabBaf8Bed65c22ba7132beCFaBf8c27B5",
-        56: "0x13398e151530AbDF387d8A1Fa4C3a75EC355Cc4d",
-        137: "0xfDFB68F5195DF817824Ee881CF63E94402eEc46A",
+        1: "{{VAULT_BUFFER_FOR_USDI_ETH}}",
+        56: "{{VAULT_BUFFER_FOR_USDI_BSC}}",
+        137: "{{VAULT_BUFFER_FOR_USDI_MATIC}}",
       },
     },
     ETHI: {
       SUB_GRAPH_URL: {
-        1: "https://stage-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
+        1: "{{{SUB_GRAPH_URL_FOR_ETHI}}}",
       },
       VAULT_ADDRESS: {
-        1: "0x9c65f85425c619A6cB6D29fF8d57ef696323d188",
+        1: "{{ETHI_VAULT}}",
       },
       ETHI_ADDRESS: {
-        1: "0x0c626FC4A447b01554518550e30600136864640B",
+        1: "{{ETHI_FOR_ETH}}",
       },
       VAULT_BUFFER_ADDRESS: {
-        1: "0xF342E904702b1D021F03f519D6D9614916b03f37",
+        1: "{{VAULT_BUFFER_FOR_ETHI_ETH}}",
       },
     },
   },
