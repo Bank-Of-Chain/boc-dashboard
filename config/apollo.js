@@ -43,6 +43,17 @@ const start = async () => {
       VAULT_BUFFER_FOR_USDI_ETH,
       VAULT_BUFFER_FOR_USDI_BSC,
       VAULT_BUFFER_FOR_USDI_MATIC,
+      API_SERVER: getApiServer(),
+      DASHBOARD_ROOT: getDashboardRoot(),
+      IMAGE_ROOT: getImageRoot(),
+      SUB_GRAPH_URL_FOR_USDI_ETH: getSubgraphForEthUsdi(),
+      SUB_GRAPH_URL_FOR_USDI_BSC: getSubgraphForBscUsdi(),
+      SUB_GRAPH_URL_FOR_USDI_MATIC: getSubgraphForMaticUsdi(),
+      SUB_GRAPH_URL_FOR_ETHI: getSubgraphForEthEthi(),
+      RPC_FOR_1: getRpcFor1(),
+      RPC_FOR_56: getRpcFor56(),
+      RPC_FOR_137: getRpcFor137(),
+      RPC_FOR_31337: getRpcFor31337(),
     };
     fs.writeFileSync(
       `./config/address.json`,
@@ -50,6 +61,66 @@ const start = async () => {
     );
     console.log("write json success");
   }
+};
+
+const isPrSg = () => {
+  return env === "qa04-sg";
+};
+
+const getApiServer = () => {
+  if (isPrSg()) return "https://service.bankofchain.io";
+  return `https://service-${env}.bankofchain.io`;
+};
+
+const getDashboardRoot = () => {
+  if (isPrSg()) return "https://dashboard.bankofchain.io";
+  return `https://dashboard-${env}.bankofchain.io`;
+};
+
+const getImageRoot = () => {
+  if (isPrSg()) return "https://bankofchain.io";
+  return `https://${env}.bankofchain.io`;
+};
+
+const getRpcFor1 = () => {
+  if (isPrSg()) return "https://rpc.ankr.com/eth";
+  return `https://rpc-${env}.bankofchain.io`;
+};
+const getRpcFor56 = () => {
+  if (isPrSg()) return "https://bsc-dataseed.binance.org";
+  return `https://rpc-${env}.bankofchain.io`;
+};
+const getRpcFor137 = () => {
+  if (isPrSg()) return "https://rpc-mainnet.maticvigil.com";
+  return `https://rpc-${env}.bankofchain.io`;
+};
+const getRpcFor31337 = () => {
+  if (isPrSg()) return "";
+  return `https://rpc-${env}.bankofchain.io`;
+};
+
+const getSubgraphForEthUsdi = () => {
+  if (isPrSg())
+    return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum";
+  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
+};
+
+const getSubgraphForBscUsdi = () => {
+  if (isPrSg())
+    return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb";
+  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
+};
+
+const getSubgraphForMaticUsdi = () => {
+  if (isPrSg())
+    return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon";
+  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
+};
+
+const getSubgraphForEthEthi = () => {
+  if (isPrSg())
+    return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi";
+  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi`;
 };
 
 try {

@@ -86,9 +86,7 @@ export default defineConfig({
                   destination:
                     "./zip/dashboard-" +
                     moment().format("yyyyMMDDHHmmss") +
-                    "(" +
-                    UMI_ENV +
-                    ").zip",
+                    "({{env}}).zip",
                 },
               ],
             },
@@ -99,30 +97,25 @@ export default defineConfig({
   },
   define: {
     ENV_INDEX: "{{env}}",
-    API_SERVER: "https://service-{{env}}.bankofchain.io",
-    DASHBOARD_ROOT: "https://dashboard-{{env}}.bankofchain.io",
-    IMAGE_ROOT: "https://{{env}}.bankofchain.io",
+    API_SERVER: "{{{API_SERVER}}}",
+    DASHBOARD_ROOT: "{{{DASHBOARD_ROOT}}}",
+    IMAGE_ROOT: "{{{IMAGE_ROOT}}}",
     CHAIN_BROWSER_URL: {
       1: "https://etherscan.io",
       56: "https://bscscan.com",
       137: "https://polygonscan.com",
     },
     RPC_URL: {
-      1: "https://rpc.ankr.com/eth",
-      56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com",
-    },
-    RPC_URL: {
-      1: "https://rpc-{{env}}.bankofchain.io",
-      56: "https://rpc-{{env}}.bankofchain.io",
-      137: "https://rpc-{{env}}.bankofchain.io",
-      31337: "https://rpc-{{env}}.bankofchain.io",
+      1: "{{{RPC_FOR_1}}}",
+      56: "{{{RPC_FOR_56}}}",
+      137: "{{{RPC_FOR_137}}}",
+      31337: "{{{RPC_FOR_31337}}}",
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        56: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        137: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        1: "{{{SUB_GRAPH_URL_FOR_USDI_ETH}}}",
+        56: "{{{SUB_GRAPH_URL_FOR_USDI_BSC}}}",
+        137: "{{{SUB_GRAPH_URL_FOR_USDI_MATIC}}}",
       },
       VAULT_ADDRESS: {
         1: "{{USDI_VAULT_FOR_ETH}}",
@@ -142,7 +135,7 @@ export default defineConfig({
     },
     ETHI: {
       SUB_GRAPH_URL: {
-        1: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
+        1: "{{{SUB_GRAPH_URL_FOR_ETHI}}}",
       },
       VAULT_ADDRESS: {
         1: "{{ETHI_VAULT}}",

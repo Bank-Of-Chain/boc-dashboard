@@ -9,7 +9,7 @@
     "apollo:qa03-sg": "node config/apollo.js --env=qa03-sg",
     "apollo:qa04-sg": "node config/apollo.js --env=qa04-sg",
     "apollo:stage-sg": "node config/apollo.js --env=stage-sg",
-    "apollo:pr-sg": "node configs/apollo.js --env=pr-sg",
+    "apollo:pr-sg": "node config/apollo.js --env=pr-sg",
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
     "deploy:qa-sg": "yarn apollo:qa-sg && yarn mustache && yarn build",
