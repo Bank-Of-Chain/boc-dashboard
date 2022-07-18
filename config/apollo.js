@@ -64,7 +64,7 @@ const start = async () => {
 };
 
 const isPrSg = () => {
-  return env === "qa04-sg";
+  return env === "pr-sg";
 };
 
 const getApiServer = () => {
