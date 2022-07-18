@@ -1,5 +1,5 @@
 /**
- * qa02-sg环境配置文件
+ * {{env}}环境配置文件
  */
 
 // https://umijs.org/config/
@@ -98,10 +98,10 @@ export default defineConfig({
     }
   },
   define: {
-    ENV_INDEX: "qa02-sg",
-    API_SERVER: "https://service-qa02-sg.bankofchain.io",
-    DASHBOARD_ROOT: "https://dashboard-qa02-sg.bankofchain.io",
-    IMAGE_ROOT: "https://qa02-sg.bankofchain.io",
+    ENV_INDEX: "{{env}}",
+    API_SERVER: "https://service-{{env}}.bankofchain.io",
+    DASHBOARD_ROOT: "https://dashboard-{{env}}.bankofchain.io",
+    IMAGE_ROOT: "https://{{env}}.bankofchain.io",
     CHAIN_BROWSER_URL: {
       1: "https://etherscan.io",
       56: "https://bscscan.com",
@@ -113,45 +113,45 @@ export default defineConfig({
       137: "https://rpc-mainnet.maticvigil.com",
     },
     RPC_URL: {
-      1: "https://rpc-qa02-sg.bankofchain.io",
-      56: "https://rpc-qa02-sg.bankofchain.io",
-      137: "https://rpc-qa02-sg.bankofchain.io",
-      31337: "https://rpc-qa02-sg.bankofchain.io",
+      1: "https://rpc-{{env}}.bankofchain.io",
+      56: "https://rpc-{{env}}.bankofchain.io",
+      137: "https://rpc-{{env}}.bankofchain.io",
+      31337: "https://rpc-{{env}}.bankofchain.io",
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: "https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        56: "https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        137: "https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        1: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        56: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        137: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
       },
       VAULT_ADDRESS: {
-        1: "711",
-        56: "0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2",
-        137: "0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A",
+        1: "{{USDI_VAULT_FOR_ETH}}",
+        56: "{{USDI_VAULT_FOR_BSC}}",
+        137: "{{USDI_VAULT_FOR_MATIC}}",
       },
       USDI_ADDRESS: {
-        1: "10",
-        56: "0xd19D3AC573Cb92D8A043724144f7F0080eA9650a",
-        137: "0x3A81ced09917adE002F269bD96014716bACC1BE2",
+        1: "{{USDI_FOR_ETH}}",
+        56: "{{USDI_FOR_BSC}}",
+        137: "{{USDI_FOR_MATIC}}",
       },
       VAULT_BUFFER_ADDRESS: {
-        1: "8",
-        56: "0xAB4F5f1Ee46Af26A9201c2C28af9C570727c582d",
-        137: "0xFdc146E92D892F326CB9a1A480f58fc30a766c98",
+        1: "{{VAULT_BUFFER_FOR_USDI_ETH}}",
+        56: "{{VAULT_BUFFER_FOR_USDI_BSC}}",
+        137: "{{VAULT_BUFFER_FOR_USDI_MATIC}}",
       },
     },
     ETHI: {
       SUB_GRAPH_URL: {
-        1: "https://qa02-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
+        1: "https://{{env}}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
       },
       VAULT_ADDRESS: {
-        1: "19",
+        1: "{{ETHI_VAULT}}",
       },
       ETHI_ADDRESS: {
-        1: "22",
+        1: "{{ETHI_FOR_ETH}}",
       },
       VAULT_BUFFER_ADDRESS: {
-        1: "20",
+        1: "{{VAULT_BUFFER_FOR_ETHI_ETH}}",
       },
     },
   },
