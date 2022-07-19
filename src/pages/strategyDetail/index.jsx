@@ -17,6 +17,7 @@ import { ETHI_DISPLAY_DECIMALS } from "@/constants/ethi";
 
 // === Components === //
 import CoinSuperPosition from "@/components/CoinSuperPosition";
+import StrategyApyTable from "./components/StrategyApyTable";
 import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 
 // === Utils === //
@@ -188,7 +189,6 @@ const Strategy = (props) => {
           unrealizedApy,
         };
       });
-      console.log("nextApyArray=", nextApyArray);
       setApyArray(nextApyArray.slice(-67));
     });
   }, [strategy, strategy?.strategyName]);
@@ -402,7 +402,7 @@ const Strategy = (props) => {
           </Row>
         </Card>
       </Suspense>
-      <Suspense fallback={null}>
+      {/* <Suspense fallback={null}>
         <Card
           loading={loading}
           title="Apy (%)"
@@ -423,6 +423,12 @@ const Strategy = (props) => {
       </Suspense>
       <Suspense fallback={null}>
         <ReportTable strategyName={strategy?.strategyName} loading={loading} />
+      </Suspense> */}
+      <Suspense fallback={null}>
+        <StrategyApyTable
+          strategyName={strategy?.strategyName}
+          loading={loading}
+        />
       </Suspense>
     </GridContent>
   );
