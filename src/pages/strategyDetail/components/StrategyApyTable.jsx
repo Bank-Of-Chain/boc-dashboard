@@ -14,7 +14,7 @@ import { BigNumber } from "ethers";
 import { keyBy, last } from "lodash";
 import BN from "bignumber.js";
 
-const decimals = 2;
+const decimals = 6;
 const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
   const deviceType = useDeviceType();
   const { initialState } = useModel("@@initialState");
@@ -42,21 +42,46 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
               BigNumber.from(10).pow(18),
               decimals
             ),
-            official_apy: `${toFixed(i.dailyOfficialApy || "0", 100)}%`,
-            verify_apy: `${toFixed(
-              new BN(i.dailyRealizedApy).plus(i.dailyUnrealizedApy),
-              100,
+            officialApy: `${toFixed(
+              new BN(i.dailyOfficialApy).multipliedBy(100),
+              1,
               decimals
             )}%`,
-            weeklyRealizedProfit: i.weeklyRealizedProfit,
-            weeklyRealizedApy: i.weeklyRealizedApy,
-            weeklyWeightAsset: i.weeklyWeightAsset,
+            verifyApy: `${toFixed(
+              new BN(i.dailyRealizedApy)
+                .plus(i.dailyUnrealizedApy)
+                .multipliedBy(100),
+              1,
+              decimals
+            )}%`,
+            weeklyAssets: toFixed(
+              i.weeklyWeightAsset,
+              BigNumber.from(10).pow(18),
+              decimals
+            ),
+            weeklyProfit: toFixed(
+              new BN(i.weeklyRealizedProfit).plus(i.weeklyUnrealizedProfit),
+              BigNumber.from(10).pow(18),
+              decimals
+            ),
+            weeklyApy: `${toFixed(
+              new BN(i.weeklyOfficialApy).multipliedBy(100),
+              1,
+              decimals
+            )}%`,
+            weeklyVerifyApy: `${toFixed(
+              new BN(i.weeklyRealizedApy)
+                .plus(i.weeklyUnrealizedApy)
+                .multipliedBy(100),
+              1,
+              decimals
+            )}%`,
           };
         });
       },
     }
   );
-  console.log("dataSource=", dataSource);
+
   const columns = [
     {
       title: "Date",
@@ -75,13 +100,13 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
     },
     {
       title: "Official APY",
-      dataIndex: "official_apy",
-      key: "official_apy",
+      dataIndex: "officialApy",
+      key: "officialApy",
     },
     {
       title: "BOC Verify APY",
-      dataIndex: "verify_apy",
-      key: "verify_apy",
+      dataIndex: "verifyApy",
+      key: "verifyApy",
     },
   ];
 
@@ -115,17 +140,23 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
   const dataSource1 = map(array, (i) => {
     const obj = map(keyBy(dataSource, "date"), (j, key) => {
       let value = "";
+      let weekly = "";
       if (i === array[0]) {
         value = j.assets;
+        weekly = j.weeklyAssets;
       } else if (i === array[1]) {
         value = j.profit;
+        weekly = j.weeklyProfit;
       } else if (i === array[2]) {
-        value = j.official_apy;
+        value = j.officialApy;
+        weekly = j.weeklyApy;
       } else if (i === array[3]) {
-        value = j.verify_apy;
+        value = j.verifyApy;
+        weekly = j.weeklyVerifyApy;
       }
       return {
         [key]: value,
+        weekly,
       };
     });
     return {
@@ -141,10 +172,10 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
         },
         {}
       ),
-      weekly: last(dataSource),
     };
   });
 
+  console.log("dataSource=", dataSource, dataSource1);
   const smallCardConfig = {
     cardProps: {
       size: "small",
