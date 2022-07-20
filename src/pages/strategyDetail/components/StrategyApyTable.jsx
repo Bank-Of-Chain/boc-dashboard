@@ -11,7 +11,7 @@ import reduce from "lodash/reduce";
 import map from "lodash/map";
 import { toFixed } from "@/utils/number-format";
 import { BigNumber } from "ethers";
-import { keyBy, last } from "lodash";
+import { keyBy } from "lodash";
 import BN from "bignumber.js";
 
 const decimals = 6;
@@ -42,18 +42,24 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
               BigNumber.from(10).pow(18),
               decimals
             ),
-            officialApy: `${toFixed(
-              new BN(i.dailyOfficialApy).multipliedBy(100),
-              1,
-              decimals
-            )}%`,
-            verifyApy: `${toFixed(
-              new BN(i.dailyRealizedApy)
-                .plus(i.dailyUnrealizedApy)
-                .multipliedBy(100),
-              1,
-              decimals
-            )}%`,
+            officialApy:
+              i.dailyWeightAsset === "0"
+                ? "N/A"
+                : `${toFixed(
+                    new BN(i.dailyOfficialApy).multipliedBy(100),
+                    1,
+                    decimals
+                  )}%`,
+            verifyApy:
+              i.dailyWeightAsset === "0"
+                ? "N/A"
+                : `${toFixed(
+                    new BN(i.dailyRealizedApy)
+                      .plus(i.dailyUnrealizedApy)
+                      .multipliedBy(100),
+                    1,
+                    decimals
+                  )}%`,
             weeklyAssets: toFixed(
               i.weeklyWeightAsset,
               BigNumber.from(10).pow(18),
@@ -82,33 +88,33 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
     }
   );
 
-  const columns = [
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Weighted Assets(USD)",
-      dataIndex: "assets",
-      key: "assets",
-    },
-    {
-      title: `Profits(USD)`,
-      dataIndex: "profit",
-      key: "profit",
-    },
-    {
-      title: "Official APY",
-      dataIndex: "officialApy",
-      key: "officialApy",
-    },
-    {
-      title: "BOC Verify APY",
-      dataIndex: "verifyApy",
-      key: "verifyApy",
-    },
-  ];
+  // const columns = [
+  //   {
+  //     title: "Date",
+  //     dataIndex: "date",
+  //     key: "date",
+  //   },
+  //   {
+  //     title: "Weighted Assets(USD)",
+  //     dataIndex: "assets",
+  //     key: "assets",
+  //   },
+  //   {
+  //     title: `Profits(USD)`,
+  //     dataIndex: "profit",
+  //     key: "profit",
+  //   },
+  //   {
+  //     title: "Official APY",
+  //     dataIndex: "officialApy",
+  //     key: "officialApy",
+  //   },
+  //   {
+  //     title: "BOC Verify APY",
+  //     dataIndex: "verifyApy",
+  //     key: "verifyApy",
+  //   },
+  // ];
 
   const columns1 = [
     {
@@ -219,7 +225,7 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
         }}
         {...responsiveConfig.cardProps}
       >
-        <Table
+        {/* <Table
           rowKey={(record) => record.id}
           columns={columns}
           dataSource={dataSource}
@@ -227,9 +233,9 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
           pagination={false}
           {...responsiveConfig.tableProps}
         />
-        <br />
+        <br /> */}
         <Table
-          rowKey={(record) => record.id}
+          rowKey={(record) => record.name}
           columns={columns1}
           dataSource={dataSource1}
           loading={loading}

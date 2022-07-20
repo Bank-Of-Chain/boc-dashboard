@@ -75,7 +75,7 @@ export const getStrategyDetails = (
 export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
   const { chainId, vaultAddress, ...restParams } = params;
   return request(
-    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/weeklyApy`,
+    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`,
     {
       params: {
         offset,
