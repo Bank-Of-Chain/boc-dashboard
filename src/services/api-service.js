@@ -75,7 +75,7 @@ export const getStrategyDetails = (
 export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
   const { chainId, vaultAddress, ...restParams } = params;
   return request(
-    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/weeklyApy`,
+    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`,
     {
       params: {
         offset,
@@ -299,4 +299,27 @@ export const getStrategyEstimateApys = (
   // }
 
   // return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_estimate_apy`, { params })
+};
+
+/**
+ * 按分页查询策略详情
+ * @param {String} chainId 链ID
+ * @param {number} offset
+ * @param {number} limit
+ * @returns
+ */
+export const getStrategyApyDetails = (
+  chainId,
+  vaultAddress,
+  offset = 0,
+  limit = 20
+) => {
+  const nextParams = {
+    offset,
+    limit,
+  };
+  // TODO: MOCK
+  return request(`/api/apys`, {
+    params: nextParams,
+  });
 };

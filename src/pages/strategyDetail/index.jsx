@@ -17,6 +17,7 @@ import { ETHI_DISPLAY_DECIMALS } from "@/constants/ethi";
 
 // === Components === //
 import CoinSuperPosition from "@/components/CoinSuperPosition";
+import StrategyApyTable from "./components/StrategyApyTable";
 import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 
 // === Utils === //
@@ -92,7 +93,7 @@ const Strategy = (props) => {
           chainId: initialState.chain,
           vaultAddress: initialState.vaultAddress,
           strategyName: strategy?.strategyName,
-          sort: "fetch_block desc",
+          sort: "schedule_timestamp desc",
         },
         0,
         100
@@ -158,8 +159,8 @@ const Strategy = (props) => {
           return {
             realizedApy: (i.realizedApy?.value * 100).toFixed(2),
             unrealizedApy: (i.unrealizedApy?.value * 100).toFixed(2),
-            expectedApy: (i.expectedApy * 100).toFixed(2),
-            date: formatToUTC0(i.fetchTimestamp * 1000, "yyyy-MM-DD"),
+            expectedApy: (i.verifiedApy * 100).toFixed(2),
+            date: formatToUTC0(i.scheduleTimestamp * 1000, "yyyy-MM-DD"),
           };
         }),
         "date"
@@ -188,13 +189,12 @@ const Strategy = (props) => {
           unrealizedApy,
         };
       });
-      console.log("nextApyArray=", nextApyArray);
       setApyArray(nextApyArray.slice(-67));
     });
   }, [strategy, strategy?.strategyName]);
 
   const estimateArray = map(apyArray, "un_realize_apy");
-  const lengndData = ["Official APY", "Expected APY"];
+  const lengndData = ["Official APY", "Verified APY"];
   const data1 = map(apyArray, "officialApy");
   const data2 = map(apyArray, "expectedApy");
   const data = [
@@ -204,7 +204,7 @@ const Strategy = (props) => {
       showSymbol: size(filter(data1, (i) => !isNil(i))) === 1,
     },
     {
-      seriesName: "Expected APY",
+      seriesName: "Verified APY",
       seriesData: data2,
       showSymbol: size(filter(data2, (i) => !isNil(i))) === 1,
     },
@@ -424,6 +424,14 @@ const Strategy = (props) => {
       <Suspense fallback={null}>
         <ReportTable strategyName={strategy?.strategyName} loading={loading} />
       </Suspense>
+      {ori && (
+        <Suspense fallback={null}>
+          <StrategyApyTable
+            strategyName={strategy?.strategyName}
+            loading={loading}
+          />
+        </Suspense>
+      )}
     </GridContent>
   );
 };
