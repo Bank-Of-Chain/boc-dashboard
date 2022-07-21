@@ -12,7 +12,7 @@ import reduce from "lodash/reduce";
 import map from "lodash/map";
 import { toFixed } from "@/utils/number-format";
 import { BigNumber } from "ethers";
-import { keyBy } from "lodash";
+import { isEmpty, keyBy } from "lodash";
 import BN from "bignumber.js";
 
 const decimals = 6;
@@ -103,7 +103,7 @@ const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
       },
     }
   );
-
+  if (isEmpty(dataSource)) return <span />;
   // const columns = [
   //   {
   //     title: "Date",
