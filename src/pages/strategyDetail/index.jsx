@@ -183,7 +183,7 @@ const Strategy = (props) => {
         return {
           date: i,
           originApy,
-          expectedApy,
+          value: expectedApy,
           officialApy,
           realizedApy,
           unrealizedApy,
@@ -195,8 +195,13 @@ const Strategy = (props) => {
 
   const estimateArray = map(apyArray, "un_realize_apy");
   const lengndData = ["Official APY", "Verified APY"];
-  const data1 = map(apyArray, "officialApy");
-  const data2 = map(apyArray, "expectedApy");
+  const data1 = map(apyArray, (i) => {
+    return {
+      value: i.officialApy,
+      unit: "%",
+    };
+  });
+  const data2 = map(apyArray, "value");
   const data = [
     {
       seriesName: "Official APY",
@@ -205,26 +210,8 @@ const Strategy = (props) => {
     },
     {
       seriesName: "Verified APY",
-      seriesData: data2,
+      seriesData: apyArray,
       showSymbol: size(filter(data2, (i) => !isNil(i))) === 1,
-    },
-    {
-      seriesName: "Realized APY",
-      seriesData: map(apyArray, "realizedApy"),
-      showSymbol: false,
-      lineStyle: {
-        width: 0,
-      },
-      symbol: "none",
-    },
-    {
-      seriesName: "UnRealized APY",
-      seriesData: map(apyArray, "unrealizedApy"),
-      showSymbol: false,
-      lineStyle: {
-        width: 0,
-      },
-      symbol: "none",
     },
   ];
   if (ori) {
@@ -232,7 +219,9 @@ const Strategy = (props) => {
     lengndData.push("Official Origin Apy");
     data.push({
       seriesName: "Official Origin Apy",
-      seriesData: data3,
+      seriesData: map(data3, (i) => {
+        return { value: i };
+      }),
       showSymbol: size(filter(data3, (i) => !isNil(i))) === 1,
     });
   }
@@ -260,10 +249,10 @@ const Strategy = (props) => {
     "#d87a80",
     "#e5cf0d",
     "#97b552",
-    "#95706d",
     "#8d98b3",
-    "#dc69aa",
     "#07a2a4",
+    "#95706d",
+    "#dc69aa",
   ];
   option.series.forEach((serie, index) => {
     serie.connectNulls = true;
@@ -287,7 +276,46 @@ const Strategy = (props) => {
       color: "black",
     },
   };
+  option.tooltip = {
+    ...option.tooltip,
+    formatter: function (params, _ticket, _callback) {
+      if (params instanceof Array) {
+        if (params.length) {
+          const unit = params[0]?.data?.unit || "";
+          let message = "";
+          message += `${params[0].axisValueLabel}`;
+          params.forEach((param) => {
+            message += `<br/>${param.marker}${param.seriesName}: ${
+              isNil(param.value) ? "-" : param.value + unit
+            }`;
+            if (param?.seriesName === "Verified APY") {
+              const realizedApy = param?.data?.realizedApy;
+              const unrealizedApy = param?.data?.unrealizedApy;
+              const realizedApyText = `${
+                isNil(realizedApy) ? "-" : realizedApy + unit
+              }`;
+              const unrealizedApyText = `${
+                isNil(unrealizedApy) ? "-" : unrealizedApy + unit
+              }`;
+              message += `<br/><span style=\"display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#dc69aa;\"></span>Realized APY: ${realizedApyText}`;
+              message += `<br/><span style=\"display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#95706d;\"></span>UnRealized APY: ${unrealizedApyText}`;
+            }
+          });
 
+          return message;
+        } else {
+          return null;
+        }
+      } else {
+        let message = "";
+        message += `${params[0].axisValueLabel}`;
+        message += `<br/>${params.marker}${params.seriesName}: ${params.value}${
+          params.data.unit || ""
+        }`;
+        return message;
+      }
+    },
+  };
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
