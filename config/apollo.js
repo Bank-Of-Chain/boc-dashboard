@@ -1,14 +1,22 @@
 const fs = require("fs");
 const argv = require("minimist")(process.argv.slice(2));
 const axios = require("axios");
+const inquirer = require("inquirer");
+const { isEmpty } = require("lodash");
 
 const { env } = argv;
+let nextEnv = env;
 
 const start = async () => {
+  if (isEmpty(env)) {
+    nextEnv = await chooseEnv();
+  }
   const host = "http://54.179.161.168";
-  const url = `${host}:8088/configfiles/json/boc-subgraph/${env}/boc1.application`;
-  console.log(`url: ${url}`);
-  const { status, data } = await axios.get(url);
+  const url = `${host}:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`;
+  const { status, data } = await axios.get(url).catch((error) => {
+    console.error(`${nextEnv}配置加载失败，url=${url}`);
+    return {};
+  });
   if (status === 200) {
     const USDI_VAULT_FOR_ETH = data[`boc.networks.eth.vaultAddress`];
     const USDI_FOR_ETH = data[`boc.networks.eth.pegTokenAddress`];
@@ -30,7 +38,7 @@ const start = async () => {
     const VAULT_BUFFER_FOR_ETHI_ETH =
       data[`boc.networks.ethi.vaultBufferAddress`];
     let config = {
-      env,
+      env: nextEnv,
       ETHI_FOR_ETH,
       USDI_FOR_ETH,
       USDI_FOR_BSC,
@@ -57,70 +65,113 @@ const start = async () => {
     };
     fs.writeFileSync(
       `./config/address.json`,
-      JSON.stringify(config, undefined, 4)
+      JSON.stringify(config, undefined, 2)
     );
     console.log("write json success");
   }
 };
 
 const isPrSg = () => {
-  return env === "pr-sg";
+  return nextEnv === "pr-sg";
 };
 
 const getApiServer = () => {
   if (isPrSg()) return "https://service.bankofchain.io";
-  return `https://service-${env}.bankofchain.io`;
+  return `https://service-${nextEnv}.bankofchain.io`;
 };
 
 const getDashboardRoot = () => {
   if (isPrSg()) return "https://dashboard.bankofchain.io";
-  return `https://dashboard-${env}.bankofchain.io`;
+  return `https://dashboard-${nextEnv}.bankofchain.io`;
 };
 
 const getImageRoot = () => {
   if (isPrSg()) return "https://bankofchain.io";
-  return `https://${env}.bankofchain.io`;
+  return `https://${nextEnv}.bankofchain.io`;
 };
 
 const getRpcFor1 = () => {
   if (isPrSg()) return "https://rpc.ankr.com/eth";
-  return `https://rpc-${env}.bankofchain.io`;
+  return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 const getRpcFor56 = () => {
   if (isPrSg()) return "https://bsc-dataseed.binance.org";
-  return `https://rpc-${env}.bankofchain.io`;
+  return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 const getRpcFor137 = () => {
   if (isPrSg()) return "https://rpc-mainnet.maticvigil.com";
-  return `https://rpc-${env}.bankofchain.io`;
+  return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 const getRpcFor31337 = () => {
   if (isPrSg()) return "";
-  return `https://rpc-${env}.bankofchain.io`;
+  return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 
 const getSubgraphForEthUsdi = () => {
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum";
-  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
+  return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
 };
 
 const getSubgraphForBscUsdi = () => {
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb";
-  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
+  return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
 };
 
 const getSubgraphForMaticUsdi = () => {
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon";
-  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
+  return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
 };
 
 const getSubgraphForEthEthi = () => {
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi";
-  return `https://${env}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi`;
+  return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi`;
+};
+
+const chooseEnv = () => {
+  const questions = [
+    {
+      type: "list",
+      name: "confirm",
+      message: "请选择需要发布的环境：",
+      choices: [
+        {
+          key: "qa-sg",
+          name: "qa-sg",
+          value: "qa-sg",
+        },
+        {
+          key: "qa02-sg",
+          name: "qa02-sg",
+          value: "qa02-sg",
+        },
+        {
+          key: "qa03-sg",
+          name: "qa03-sg",
+          value: "qa03-sg",
+        },
+        {
+          key: "qa04-sg",
+          name: "qa04-sg",
+          value: "qa04-sg",
+        },
+        {
+          key: "stage-sg",
+          name: "stage-sg",
+          value: "stage-sg",
+        },
+        {
+          key: "pr-sg",
+          name: "pr-sg(生产)",
+          value: "pr-sg",
+        },
+      ],
+    },
+  ];
+  return inquirer.prompt(questions).then((rs) => rs.confirm);
 };
 
 try {
