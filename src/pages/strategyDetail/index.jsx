@@ -92,7 +92,7 @@ const Strategy = (props) => {
         {
           chainId: initialState.chain,
           vaultAddress: initialState.vaultAddress,
-          strategyName: strategy?.strategyName,
+          strategyAddress: strategy?.strategyAddress,
           sort: "schedule_timestamp desc",
         },
         0,
@@ -424,14 +424,13 @@ const Strategy = (props) => {
       <Suspense fallback={null}>
         <ReportTable strategyName={strategy?.strategyName} loading={loading} />
       </Suspense>
-      {ori && (
-        <Suspense fallback={null}>
-          <StrategyApyTable
-            strategyName={strategy?.strategyName}
-            loading={loading}
-          />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        <StrategyApyTable
+          strategyName={strategy?.strategyName}
+          strategyAddress={strategy?.strategyAddress}
+          loading={loading}
+        />
+      </Suspense>
     </GridContent>
   );
 };

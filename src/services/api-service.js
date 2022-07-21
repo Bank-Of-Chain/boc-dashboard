@@ -311,15 +311,17 @@ export const getStrategyEstimateApys = (
 export const getStrategyApyDetails = (
   chainId,
   vaultAddress,
+  strategyAddress,
   offset = 0,
   limit = 20
 ) => {
   const nextParams = {
+    strategyAddress,
     offset,
     limit,
   };
-  // TODO: MOCK
-  return request(`/api/apys`, {
+  const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy/daily`;
+  return request(url, {
     params: nextParams,
   });
 };

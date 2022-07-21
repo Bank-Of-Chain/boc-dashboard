@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, Table } from "antd";
+import { HourglassOutlined } from "@ant-design/icons";
 import { useModel, useRequest } from "umi";
 
 import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
@@ -15,7 +16,7 @@ import { keyBy } from "lodash";
 import BN from "bignumber.js";
 
 const decimals = 6;
-const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
+const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
   const deviceType = useDeviceType();
   const { initialState } = useModel("@@initialState");
   const { data: dataSource = [], loading } = useRequest(
@@ -23,6 +24,7 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
       getStrategyApyDetails(
         initialState.chain,
         initialState.vaultAddress,
+        strategyAddress,
         0,
         100
       ),
@@ -37,10 +39,17 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
               BigNumber.from(10).pow(18),
               decimals
             ),
-            profit: toFixed(
-              new BN(i.dailyRealizedProfit).plus(i.dailyUnrealizedProfit),
-              BigNumber.from(10).pow(18),
-              decimals
+            profit: (
+              <div>
+                {toFixed(
+                  new BN(i.dailyRealizedProfit).plus(i.dailyUnrealizedProfit),
+                  BigNumber.from(10).pow(18),
+                  decimals
+                )}
+                {i.dailyUnrealizedProfit !== "0" && (
+                  <HourglassOutlined style={{ color: "#a68efe" }} />
+                )}
+              </div>
             ),
             officialApy:
               i.dailyWeightAsset === "0"
@@ -65,10 +74,17 @@ const StrategyApyTable = ({ strategyName, dropdownGroup }) => {
               BigNumber.from(10).pow(18),
               decimals
             ),
-            weeklyProfit: toFixed(
-              new BN(i.weeklyRealizedProfit).plus(i.weeklyUnrealizedProfit),
-              BigNumber.from(10).pow(18),
-              decimals
+            weeklyProfit: (
+              <div>
+                {toFixed(
+                  new BN(i.weeklyRealizedProfit).plus(i.weeklyUnrealizedProfit),
+                  BigNumber.from(10).pow(18),
+                  decimals
+                )}
+                {i.weeklyUnrealizedProfit !== "0" && (
+                  <HourglassOutlined style={{ color: "#a68efe" }} />
+                )}
+              </div>
             ),
             weeklyApy: `${toFixed(
               new BN(i.weeklyOfficialApy).multipliedBy(100),
