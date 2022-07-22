@@ -18,6 +18,8 @@ import { formatToUTC0 } from "@/utils/date";
 
 const dateFormat = "MMMM DD";
 const decimals = 6;
+
+const comp = <HourglassOutlined style={{ color: "#a68efe" }} />;
 const StrategyApyTable = ({
   strategyName,
   strategyAddress,
@@ -53,9 +55,7 @@ const StrategyApyTable = ({
                   BigNumber.from(10).pow(18),
                   decimals
                 )}
-                {i.dailyUnrealizedProfit !== "0" && (
-                  <HourglassOutlined style={{ color: "#a68efe" }} />
-                )}
+                {i.dailyUnrealizedProfit !== "0" && comp}
               </div>
             ),
             officialApy:
@@ -67,15 +67,20 @@ const StrategyApyTable = ({
                     decimals
                   )}%`,
             verifyApy:
-              i.dailyWeightAsset === "0"
-                ? "N/A"
-                : `${toFixed(
+              i.dailyWeightAsset === "0" ? (
+                "N/A"
+              ) : (
+                <div>
+                  {`${toFixed(
                     new BN(i.dailyRealizedApy)
                       .plus(i.dailyUnrealizedApy)
                       .multipliedBy(100),
                     1,
                     decimals
-                  )}%`,
+                  )}%`}
+                  {i.dailyUnrealizedApy > 0 && comp}
+                </div>
+              ),
             weeklyAssets: toFixed(
               i.weeklyWeightAsset,
               BigNumber.from(10).pow(18),
@@ -88,23 +93,32 @@ const StrategyApyTable = ({
                   BigNumber.from(10).pow(18),
                   decimals
                 )}
-                {i.weeklyUnrealizedProfit !== "0" && (
-                  <HourglassOutlined style={{ color: "#a68efe" }} />
-                )}
+                {i.weeklyUnrealizedProfit !== "0" && comp}
               </div>
             ),
-            weeklyApy: `${toFixed(
-              new BN(i.weeklyOfficialApy).multipliedBy(100),
-              1,
-              decimals
-            )}%`,
-            weeklyVerifyApy: `${toFixed(
-              new BN(i.weeklyRealizedApy)
-                .plus(i.weeklyUnrealizedApy)
-                .multipliedBy(100),
-              1,
-              decimals
-            )}%`,
+            weeklyApy:
+              i.weeklyWeightAsset === "0"
+                ? "N/A"
+                : `${toFixed(
+                    new BN(i.weeklyOfficialApy).multipliedBy(100),
+                    1,
+                    decimals
+                  )}%`,
+            weeklyVerifyApy:
+              i.weeklyWeightAsset === "0" ? (
+                "N/A"
+              ) : (
+                <div>
+                  {`${toFixed(
+                    new BN(i.weeklyRealizedApy)
+                      .plus(i.weeklyUnrealizedApy)
+                      .multipliedBy(100),
+                    1,
+                    decimals
+                  )}%`}
+                  {i.weeklyUnrealizedApy > 0 && comp}
+                </div>
+              ),
           };
         });
       },
