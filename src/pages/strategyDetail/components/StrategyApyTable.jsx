@@ -1,13 +1,12 @@
 import React from "react";
-import { Card, Table } from "antd";
-import { HourglassOutlined } from "@ant-design/icons";
+import { Card, Table, Space, Tooltip } from "antd";
+import { HourglassOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { useModel, useRequest } from "umi";
 
 import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 import { getStrategyApyDetails } from "@/services/api-service";
 
 // === Utils === //
-import moment from "moment";
 import reduce from "lodash/reduce";
 import map from "lodash/map";
 import { toFixed } from "@/utils/number-format";
@@ -157,26 +156,59 @@ const StrategyApyTable = ({
     const obj = map(keyBy(dataSource, "date"), (j, key) => {
       let value = "";
       let weekly = "";
+      let nextName = "";
       if (i === array[0]) {
         value = j.assets;
         weekly = j.weeklyAssets;
+        nextName = (
+          <Space>
+            {i}
+            <Tooltip title="Time weighted assets daily/weekly.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        );
       } else if (i === array[1]) {
         value = j.profit;
         weekly = j.weeklyProfit;
+        nextName = (
+          <Space>
+            {i}
+            <Tooltip title="Strategy profit daily/weekly.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        );
       } else if (i === array[2]) {
         value = j.officialApy;
         weekly = j.weeklyApy;
+        nextName = (
+          <Space>
+            {i}
+            <Tooltip title="The official apy of the 3rd pool, through the raw data statistics on the chain.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        );
       } else if (i === array[3]) {
         value = j.verifyApy;
         weekly = j.weeklyVerifyApy;
+        nextName = (
+          <Space>
+            {i}
+            <Tooltip title="The apy verified by the BOC strategy is calculated by profit and weighted assets.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        );
       }
       return {
         [key]: value,
         weekly,
+        name: nextName,
       };
     });
     return {
-      name: i,
       ...reduce(
         obj,
         (rs, i) => {
@@ -242,9 +274,6 @@ const StrategyApyTable = ({
           pagination={false}
           {...responsiveConfig.tableProps}
         />
-        <br />
-        <p>Official APY=</p>
-        <p>BOC Verify APY=</p>
       </Card>
     </div>
   );
