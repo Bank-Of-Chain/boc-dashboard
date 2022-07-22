@@ -14,9 +14,16 @@ import { toFixed } from "@/utils/number-format";
 import { BigNumber } from "ethers";
 import { isEmpty, keyBy } from "lodash";
 import BN from "bignumber.js";
+import { formatToUTC0 } from "@/utils/date";
 
+const dateFormat = "MMMM DD";
 const decimals = 6;
-const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
+const StrategyApyTable = ({
+  strategyName,
+  strategyAddress,
+  unit,
+  dropdownGroup,
+}) => {
   const deviceType = useDeviceType();
   const { initialState } = useModel("@@initialState");
   const { data: dataSource = [], loading } = useRequest(
@@ -33,7 +40,7 @@ const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
         return map(resp, (i) => {
           return {
             id: i.id,
-            date: moment(i.scheduleTimestamp * 1000).format("MM-DD"),
+            date: formatToUTC0(i.scheduleTimestamp * 1000, dateFormat),
             assets: toFixed(
               i.dailyWeightAsset,
               BigNumber.from(10).pow(18),
@@ -104,33 +111,6 @@ const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
     }
   );
   if (isEmpty(dataSource)) return <span />;
-  // const columns = [
-  //   {
-  //     title: "Date",
-  //     dataIndex: "date",
-  //     key: "date",
-  //   },
-  //   {
-  //     title: "Weighted Assets(USD)",
-  //     dataIndex: "assets",
-  //     key: "assets",
-  //   },
-  //   {
-  //     title: `Profits(USD)`,
-  //     dataIndex: "profit",
-  //     key: "profit",
-  //   },
-  //   {
-  //     title: "Official APY",
-  //     dataIndex: "officialApy",
-  //     key: "officialApy",
-  //   },
-  //   {
-  //     title: "BOC Verify APY",
-  //     dataIndex: "verifyApy",
-  //     key: "verifyApy",
-  //   },
-  // ];
 
   const columns1 = [
     {
@@ -139,7 +119,7 @@ const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
       key: "name",
     },
     ...map(dataSource, (item) => {
-      const title = moment(item.date).format("MM-DD");
+      const title = item.date;
       return {
         title: title,
         dataIndex: title,
@@ -154,8 +134,8 @@ const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
   ];
 
   const array = [
-    "Weighted Assets(USD)",
-    "Profits(USD)",
+    `Weighted Assets(${unit})`,
+    `Profits(${unit})`,
     "Official APY",
     "BOC Verify APY",
   ];
@@ -197,7 +177,6 @@ const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
     };
   });
 
-  console.log("dataSource=", dataSource, dataSource1);
   const smallCardConfig = {
     cardProps: {
       size: "small",
@@ -241,15 +220,6 @@ const StrategyApyTable = ({ strategyName, strategyAddress, dropdownGroup }) => {
         }}
         {...responsiveConfig.cardProps}
       >
-        {/* <Table
-          rowKey={(record) => record.id}
-          columns={columns}
-          dataSource={dataSource}
-          loading={loading}
-          pagination={false}
-          {...responsiveConfig.tableProps}
-        />
-        <br /> */}
         <Table
           rowKey={(record) => record.name}
           columns={columns1}

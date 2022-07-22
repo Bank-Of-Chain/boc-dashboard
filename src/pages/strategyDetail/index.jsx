@@ -43,7 +43,7 @@ import {
 import styles from "./style.less";
 
 const Strategy = (props) => {
-  const { id, ori = false } = props?.location?.query;
+  const { id, ori = false, vault } = props?.location?.query;
   const [loading, setLoading] = useState(false);
   const [strategy, setStrategy] = useState({});
   // 用于存放所有的apy数据，取代上面的apys和offchainApys
@@ -450,14 +450,15 @@ const Strategy = (props) => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <ReportTable strategyName={strategy?.strategyName} loading={loading} />
-      </Suspense>
-      <Suspense fallback={null}>
         <StrategyApyTable
+          unit={vault === "ethi" ? "ETH" : "USD"}
           strategyName={strategy?.strategyName}
           strategyAddress={strategy?.strategyAddress}
           loading={loading}
         />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ReportTable strategyName={strategy?.strategyName} loading={loading} />
       </Suspense>
     </GridContent>
   );

@@ -94,11 +94,11 @@ const StrategyTable = ({
     },
     {
       title: "Weekly Official Apy",
-      dataIndex: "factorialOfficialApy",
-      key: "factorialOfficialApy",
+      dataIndex: "verifiedApy",
+      key: "verifiedApy",
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.factorialOfficialApy - b.factorialOfficialApy;
+        return a.verifiedApy - b.verifiedApy;
       },
       render: (text) => <span>{(100 * text).toFixed(2)} %</span>,
     },
