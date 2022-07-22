@@ -1,4 +1,4 @@
-import { Suspense, useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { Col, Row, Card, Image, Descriptions, Spin } from "antd";
 import { GridContent } from "@ant-design/pro-layout";
 import ReportTable from "./components/ReportTable";
@@ -25,7 +25,6 @@ import { isEmpty, map, noop, reduce, compact } from "lodash";
 import { toFixed } from "@/utils/number-format";
 
 import moment from "moment";
-import _union from "lodash/union";
 import _find from "lodash/find";
 import BN from "bignumber.js";
 import { get, isNil, keyBy, size, filter } from "lodash";
@@ -160,6 +159,7 @@ const Strategy = (props) => {
             realizedApy: (i.realizedApy?.value * 100).toFixed(2),
             unrealizedApy: (i.unrealizedApy?.value * 100).toFixed(2),
             expectedApy: (i.verifiedApy * 100).toFixed(2),
+            dailyVerifiedApy: (i.dailyVerifiedApy * 100).toFixed(2),
             date: formatToUTC0(i.scheduleTimestamp * 1000, "yyyy-MM-DD"),
           };
         }),
@@ -171,15 +171,13 @@ const Strategy = (props) => {
           officialApy: null,
           originApy: null,
         });
-        const { expectedApy, realizedApy, unrealizedApy } = get(
-          extentApyMap,
-          i,
-          {
+        const { expectedApy, realizedApy, unrealizedApy, dailyVerifiedApy } =
+          get(extentApyMap, i, {
             expectedApy: null,
             unrealizedApy: null,
             realizedApy: null,
-          }
-        );
+            dailyVerifiedApy: null,
+          });
         return {
           date: i,
           originApy,
@@ -187,6 +185,7 @@ const Strategy = (props) => {
           officialApy,
           realizedApy,
           unrealizedApy,
+          dailyVerifiedApy,
         };
       });
       setApyArray(nextApyArray.slice(-67));
@@ -216,13 +215,23 @@ const Strategy = (props) => {
   ];
   if (ori) {
     const data3 = map(apyArray, "originApy");
-    lengndData.push("Official Origin Apy");
+    lengndData.push("Official Daily APY");
     data.push({
-      seriesName: "Official Origin Apy",
+      seriesName: "Official Daily APY",
       seriesData: map(data3, (i) => {
         return { value: i };
       }),
       showSymbol: size(filter(data3, (i) => !isNil(i))) === 1,
+    });
+
+    const data4 = map(apyArray, "dailyVerifiedApy");
+    lengndData.push("Verified Daily APY");
+    data.push({
+      seriesName: "Verified Daily APY",
+      seriesData: map(data4, (i) => {
+        return { value: i };
+      }),
+      showSymbol: size(filter(data4, (i) => !isNil(i))) === 1,
     });
   }
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy

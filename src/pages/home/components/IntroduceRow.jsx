@@ -1,3 +1,4 @@
+import React from "react";
 // === Component === //
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Col, Row, Tooltip } from "antd";

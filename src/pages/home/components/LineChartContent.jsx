@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { Card, Button, Tabs, Tooltip, Radio } from "antd";
+import { Card, Tabs, Tooltip, Radio } from "antd";
 import { LineEchart } from "@/components/echarts";
 import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 import styles from "../style.less";

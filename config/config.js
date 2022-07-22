@@ -119,12 +119,12 @@ export default defineConfig({
       },
       VAULT_ADDRESS: {
         1: "0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC",
-        56: "111",
+        56: "11",
         137: "13",
       },
       USDI_ADDRESS: {
         1: "0xBe15Eed7D8e91D20263d4521c9eB0F4e3510bfBF",
-        56: "4",
+        56: "3",
         137: "16",
       },
       VAULT_BUFFER_ADDRESS: {
