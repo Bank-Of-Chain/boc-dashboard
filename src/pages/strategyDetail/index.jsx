@@ -264,7 +264,7 @@ const Strategy = (props) => {
     "#dc69aa",
   ];
   option.series.forEach((serie, index) => {
-    serie.connectNulls = true;
+    serie.connectNulls = false;
     serie.z = option.series.length - index;
     if (serie.name === "Expected APY") {
       serie.lineStyle = {

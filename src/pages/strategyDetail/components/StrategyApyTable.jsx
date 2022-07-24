@@ -152,7 +152,7 @@ const StrategyApyTable = ({
     "Official APY",
     "BOC Verify APY",
   ];
-  const dataSource1 = map(array, (i) => {
+  const dataSource1 = map(array, (i, index) => {
     const obj = map(keyBy(dataSource, "date"), (j, key) => {
       let value = "";
       let weekly = "";
@@ -218,7 +218,9 @@ const StrategyApyTable = ({
           };
           return rs;
         },
-        {}
+        {
+          id: index,
+        }
       ),
     };
   });
@@ -267,7 +269,7 @@ const StrategyApyTable = ({
         {...responsiveConfig.cardProps}
       >
         <Table
-          rowKey={(record) => record.name}
+          rowKey={(record) => record.id}
           columns={columns1}
           dataSource={dataSource1}
           loading={loading}
