@@ -11,7 +11,7 @@ import reduce from "lodash/reduce";
 import map from "lodash/map";
 import { toFixed } from "@/utils/number-format";
 import { BigNumber } from "ethers";
-import { isEmpty, keyBy } from "lodash";
+import { isEmpty, isNil, keyBy } from "lodash";
 import BN from "bignumber.js";
 import { formatToUTC0 } from "@/utils/date";
 
@@ -58,7 +58,7 @@ const StrategyApyTable = ({
               </div>
             ),
             officialApy:
-              i.dailyWeightAsset === "0"
+              i.dailyWeightAsset === "0" || isNil(i.dailyOfficialApy)
                 ? "N/A"
                 : `${toFixed(
                     new BN(i.dailyOfficialApy).multipliedBy(100),
@@ -96,7 +96,7 @@ const StrategyApyTable = ({
               </div>
             ),
             weeklyApy:
-              i.weeklyWeightAsset === "0"
+              i.weeklyWeightAsset === "0" || isNil(i.weeklyOfficialApy)
                 ? "N/A"
                 : `${toFixed(
                     new BN(i.weeklyOfficialApy).multipliedBy(100),

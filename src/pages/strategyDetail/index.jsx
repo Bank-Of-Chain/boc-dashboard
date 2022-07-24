@@ -95,7 +95,7 @@ const Strategy = (props) => {
           sort: "schedule_timestamp desc",
         },
         0,
-        100
+        200
       ).catch(() => {}),
       getStrategyApysOffChain(
         {
@@ -104,7 +104,7 @@ const Strategy = (props) => {
           sort: "fetch_time desc",
         },
         0,
-        100
+        200
       ).catch(() => {}),
       getStrategyEstimateApys(
         initialState.chain,
@@ -114,11 +114,11 @@ const Strategy = (props) => {
     ]).then(([apys = { content: [] }, offChainApys, unRealizeApys]) => {
       const startMoment = moment()
         .utcOffset(0)
-        .subtract(66, "day")
+        .subtract(186, "day")
         .startOf("day");
       const calcArray = reduce(
         // 往前推66天，往后预估7天
-        new Array(66 + 7),
+        new Array(186 + 7),
         (rs) => {
           const currentMoment = startMoment.subtract(-1, "day");
           rs.push(currentMoment.format("yyyy-MM-DD"));
