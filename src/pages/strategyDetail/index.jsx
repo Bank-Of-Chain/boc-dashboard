@@ -95,7 +95,7 @@ const Strategy = (props) => {
           sort: "schedule_timestamp desc",
         },
         0,
-        200
+        365
       ).catch(() => {}),
       getStrategyApysOffChain(
         {
@@ -104,7 +104,7 @@ const Strategy = (props) => {
           sort: "fetch_time desc",
         },
         0,
-        200
+        365
       ).catch(() => {}),
       getStrategyEstimateApys(
         initialState.chain,
@@ -114,11 +114,11 @@ const Strategy = (props) => {
     ]).then(([apys = { content: [] }, offChainApys, unRealizeApys]) => {
       const startMoment = moment()
         .utcOffset(0)
-        .subtract(186, "day")
+        .subtract(366, "day")
         .startOf("day");
       const calcArray = reduce(
         // 往前推66天，往后预估7天
-        new Array(186 + 7),
+        new Array(366 + 7),
         (rs) => {
           const currentMoment = startMoment.subtract(-1, "day");
           rs.push(currentMoment.format("yyyy-MM-DD"));
@@ -188,7 +188,7 @@ const Strategy = (props) => {
           dailyVerifiedApy,
         };
       });
-      setApyArray(nextApyArray.slice(-67));
+      setApyArray(nextApyArray);
     });
   }, [strategy, strategy?.strategyName]);
 
@@ -325,6 +325,14 @@ const Strategy = (props) => {
       }
     },
   };
+
+  option.dataZoom = [
+    {
+      end: 100,
+      start: 0,
+    },
+  ];
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>

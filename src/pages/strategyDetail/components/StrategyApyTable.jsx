@@ -130,6 +130,7 @@ const StrategyApyTable = ({
       title: "",
       dataIndex: "name",
       key: "name",
+      width: "10%",
     },
     ...map(dataSource, (item) => {
       const title = item.date;
