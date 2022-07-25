@@ -1,27 +1,9 @@
-.tabs {
-  position: relative;
-  margin-bottom: 1.5rem;
-
-  // :global(.ant-tabs-tab:before) {
-  //   content: '';
-  //   position: absolute;
-  //   top: 50%;
-  //   right: -16px;
-  //   height: 18px;
-  //   width: 1px;
-  //   margin-top: 3px;
-  //   transform: translate(0, -50%);
-  //   background-color: #434343;
-  // }
-
-  :global(.ant-tabs-tab:nth-child(3):before) {
-    display: none;
-  }
-
-  :global(.ant-tabs-tab-btn:focus),
-  :global(.ant-tabs-tab-remove:focus),
-  :global(.ant-tabs-tab-btn:active),
-  :global(.ant-tabs-tab-remove:active) {
-    color: #fff
+.container {
+  padding: 2rem 0;
+  text-align: center;
+  :global {
+    .ant-radio-group .ant-radio-button-wrapper {
+      width: 5.5rem;
+    }
   }
 }

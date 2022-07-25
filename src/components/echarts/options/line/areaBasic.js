@@ -1,4 +1,4 @@
-import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
+import { getNoDataGraphic } from "@/components/echarts/options/optionHelper";
 
 /**
  * Created by linyu on 2018/5/3.
@@ -7,45 +7,52 @@ import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 export default function (obj) {
   let option = {
     animation: false,
-    grid: {left: '20', right: '20', top: '60', bottom: '10',containLabel:true},
-    tooltip : {
-      trigger: 'axis',
+    grid: {
+      left: "20",
+      right: "20",
+      top: "60",
+      bottom: "10",
+      containLabel: true,
+    },
+    tooltip: {
+      trigger: "axis",
     },
     xAxis: {
-      type: 'category',
-      data: obj.xAxisData
+      type: "category",
+      data: obj.xAxisData,
     },
     yAxis: {
-      type: 'value'
+      type: "value",
     },
-    series: []
+    series: [],
   };
   if (obj.legends) {
     option = {
-      ...option, ...{
+      ...option,
+      ...{
         legend: {
-          data: obj.legends
+          data: obj.legends,
         },
-      }
-    }
+      },
+    };
   }
   obj.seriesData.forEach(function (item, key) {
     option.series.push({
-      name: obj.legends ? obj.legends[key] : '',
+      name: obj.legends ? obj.legends[key] : "",
       data: item,
-      type: 'line',
+      type: "line",
       smooth: true,
       areaStyle: {},
       markPoint: {
         data: [
-          {type: 'max', name: '最大值'},
-          {type: 'min', name: '最小值'}
-        ]
+          { type: "max", name: "最大值" },
+          { type: "min", name: "最小值" },
+        ],
       },
     });
   });
   return {
     ...getNoDataGraphic(obj.seriesData.length > 0),
-    ...option
+    ...option,
   };
 }

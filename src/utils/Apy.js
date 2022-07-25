@@ -20,50 +20,75 @@ export const calVaultAPY = (vaultDailyData) => {
   }
   // console.log('beginTime,endTime',beginTime,endTime);
   return calAPY(beginPricePerShare, endPricePerShare, endTime - beginTime);
-}
+};
 
 const calAPY = (beginPricePerShare, endPricePerShare, timeDiffSeconds) => {
-  return Math.pow(1 + Number(endPricePerShare - beginPricePerShare) / Number(beginPricePerShare), 365 * 24 * 60 * 60 / timeDiffSeconds) - 1;
-}
+  return (
+    Math.pow(
+      1 +
+        Number(endPricePerShare - beginPricePerShare) /
+          Number(beginPricePerShare),
+      (365 * 24 * 60 * 60) / timeDiffSeconds
+    ) - 1
+  );
+};
 
 export const calVaultDailyAPY = (vaultDailyData) => {
   let lastPricePerShare = undefined;
   let lastTime = undefined;
   for (let i = 0; i < vaultDailyData.length; i++) {
     if (vaultDailyData[i].totalShares) {
-      const currentPricePerShare = Number(vaultDailyData[i].tvl / vaultDailyData[i].totalShares);
+      const currentPricePerShare = Number(
+        vaultDailyData[i].tvl / vaultDailyData[i].totalShares
+      );
       const currentBeginTime = Number(vaultDailyData[i].id);
       if (lastPricePerShare) {
-        vaultDailyData[i].apy = calAPY(lastPricePerShare, currentPricePerShare, currentBeginTime - lastTime);
+        vaultDailyData[i].apy = calAPY(
+          lastPricePerShare,
+          currentPricePerShare,
+          currentBeginTime - lastTime
+        );
       }
-      if(vaultDailyData[i].apy > 10){
-        console.warn('apy more than 1000%',JSON.stringify(vaultDailyData[i]));
-        vaultDailyData[i].apy =null;
+      if (vaultDailyData[i].apy > 10) {
+        console.warn("apy more than 1000%", JSON.stringify(vaultDailyData[i]));
+        vaultDailyData[i].apy = null;
       }
       lastPricePerShare = currentPricePerShare;
       lastTime = currentBeginTime;
     }
   }
   return vaultDailyData;
-}
+};
 
 export const calVaultApyByRange = (vaultDailyData, preDayNumber) => {
   // console.log('vaultDailyData',JSON.stringify(vaultDailyData));
   const lastApyPoints = [];
   for (let i = 0; i < vaultDailyData.length; i++) {
     if (vaultDailyData[i].totalShares) {
-      const currentPricePerShare = Number(vaultDailyData[i].tvl / vaultDailyData[i].totalShares);
+      const currentPricePerShare = Number(
+        vaultDailyData[i].tvl / vaultDailyData[i].totalShares
+      );
       const currentBeginTime = Number(vaultDailyData[i].id);
       for (let j = 0; j < lastApyPoints.length; j++) {
         let lastApyPoint = lastApyPoints[j];
-        if (currentBeginTime - preDayNumber * 24 * 3600 > lastApyPoint.lastTime) {
+        if (
+          currentBeginTime - preDayNumber * 24 * 3600 >
+          lastApyPoint.lastTime
+        ) {
           lastApyPoints.shift();
           j--;
         } else {
           // console.log('lastTime, currentTime',lastApyPoint.lastTime,currentBeginTime, (currentBeginTime - lastApyPoint.lastTime)/3600/24);
-          vaultDailyData[i].apy = calAPY(lastApyPoint.lastPricePerShare, currentPricePerShare, currentBeginTime - lastApyPoint.lastTime);
+          vaultDailyData[i].apy = calAPY(
+            lastApyPoint.lastPricePerShare,
+            currentPricePerShare,
+            currentBeginTime - lastApyPoint.lastTime
+          );
           if (vaultDailyData[i].apy > 10) {
-            console.warn('apy more than 1000%', JSON.stringify(vaultDailyData[i]));
+            console.warn(
+              "apy more than 1000%",
+              JSON.stringify(vaultDailyData[i])
+            );
             vaultDailyData[i].apy = null;
           }
           break;
@@ -71,9 +96,9 @@ export const calVaultApyByRange = (vaultDailyData, preDayNumber) => {
       }
       lastApyPoints.push({
         lastPricePerShare: currentPricePerShare,
-        lastTime: currentBeginTime
+        lastTime: currentBeginTime,
       });
     }
   }
   return vaultDailyData;
-}
+};

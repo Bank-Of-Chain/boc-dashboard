@@ -1,4 +1,4 @@
-import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
+import { getNoDataGraphic } from "@/components/echarts/options/optionHelper";
 
 /**
  * Created by linyu on 2018/6/22.
@@ -6,22 +6,28 @@ import {getNoDataGraphic} from "@/components/echarts/options/optionHelper";
 
 export default function (obj) {
   let option = {
-    grid: {left: '20', right: '20', top: '60', bottom: '10', containLabel: true},
+    grid: {
+      left: "20",
+      right: "20",
+      top: "60",
+      bottom: "10",
+      containLabel: true,
+    },
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis",
     },
     xAxis: {
-      type: 'category',
-      data: obj.xAxisData
+      type: "category",
+      data: obj.xAxisData,
     },
     yAxis: {
-      type: 'value'
+      type: "value",
     },
     series: [],
-    animationEasing: 'elasticOut',
+    animationEasing: "elasticOut",
     animationDelayUpdate: function (idx) {
       return idx * 5;
-    }
+    },
   };
   let color = obj.seriesColor;
   if (obj.legends) {
@@ -29,27 +35,27 @@ export default function (obj) {
       ...option,
       ...{
         legend: {
-          data: obj.legends
+          data: obj.legends,
         },
-      }
-    }
+      },
+    };
   }
   obj.seriesData.forEach(function (item, key) {
     option.series.push({
-      name: obj.legends ? obj.legends[key] : '',
+      name: obj.legends ? obj.legends[key] : "",
       data: item,
-      type: 'bar',
+      type: "bar",
       markPoint: {
         data: [
-          {type: 'max', name: '最大值'},
-          {type: 'min', name: '最小值'}
-        ]
+          { type: "max", name: "最大值" },
+          { type: "min", name: "最小值" },
+        ],
       },
-      color: color[key]
+      color: color[key],
     });
   });
   return {
     ...getNoDataGraphic(obj.seriesData.length > 0),
-    ...option
+    ...option,
   };
 }

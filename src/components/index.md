@@ -17,8 +17,8 @@ sidemenu: false
 /**
  * background: '#f0f2f5'
  */
-import React from 'react';
-import Footer from '@/components/Footer';
+import React from "react";
+import Footer from "@/components/Footer";
 
 export default () => <Footer />;
 ```
@@ -31,9 +31,9 @@ HeaderDropdown 是 antd Dropdown 的封装，但是增加了移动端的特殊�
 /**
  * background: '#f0f2f5'
  */
-import { Button, Menu } from 'antd';
-import React from 'react';
-import HeaderDropdown from '@/components/HeaderDropdown';
+import { Button, Menu } from "antd";
+import React from "react";
+import HeaderDropdown from "@/components/HeaderDropdown";
 
 export default () => {
   const menuHeaderDropdown = (
@@ -51,6 +51,7 @@ export default () => {
   );
 };
 ```
+
 ## RightContent
 
 RightContent 是以上几个组件的组合，同时新增了 plugins 的 `SelectLang` 插件。
@@ -61,18 +62,21 @@ RightContent 是以上几个组件的组合，同时新增了 plugins 的 `Selec
     placeholder="站内搜索"
     defaultValue="umi ui"
     options={[
-      { label: <a href="https://umijs.org/zh/guide/umi-ui.html">umi ui</a>, value: 'umi ui' },
+      {
+        label: <a href="https://umijs.org/zh/guide/umi-ui.html">umi ui</a>,
+        value: "umi ui",
+      },
       {
         label: <a href="next.ant.design">Ant Design</a>,
-        value: 'Ant Design',
+        value: "Ant Design",
       },
       {
         label: <a href="https://protable.ant.design/">Pro Table</a>,
-        value: 'Pro Table',
+        value: "Pro Table",
       },
       {
         label: <a href="https://prolayout.ant.design/">Pro Layout</a>,
-        value: 'Pro Layout',
+        value: "Pro Layout",
       },
     ]}
   />
@@ -80,7 +84,7 @@ RightContent 是以上几个组件的组合，同时新增了 plugins 的 `Selec
     <span
       className={styles.action}
       onClick={() => {
-        window.location.href = 'https://pro.ant.design/docs/getting-started';
+        window.location.href = "https://pro.ant.design/docs/getting-started";
       }}
     >
       <QuestionCircleOutlined />
