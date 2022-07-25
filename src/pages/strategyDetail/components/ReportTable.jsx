@@ -1,5 +1,6 @@
-import { Card, Table, Tooltip } from "antd";
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { Card, Table, Tooltip } from "antd";
 import { useModel } from "umi";
 import BN from "bignumber.js";
 
@@ -176,7 +177,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
               &nbsp;&nbsp;
               {toFixed(amount, decimal, displayDecimals)}
               {isETHi && `(${toFixed(asset, decimal, displayDecimals)}ETH)`}
-              {!isETHi && `(\$${toFixed(asset, decimal, displayDecimals)})`}
+              {!isETHi && `($${toFixed(asset, decimal, displayDecimals)})`}
             </span>
           );
         });
@@ -250,6 +251,12 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       </Card>
     </div>
   );
+};
+
+ReportTable.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  strategyName: PropTypes.string.isRequired,
+  dropdownGroup: PropTypes.array,
 };
 
 export default ReportTable;

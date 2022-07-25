@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Card, Table, Space, Tooltip } from "antd";
 import { HourglassOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { useModel, useRequest } from "umi";
@@ -280,6 +281,13 @@ const StrategyApyTable = ({
       </Card>
     </div>
   );
+};
+
+StrategyApyTable.propTypes = {
+  strategyName: PropTypes.string.isRequired,
+  strategyAddress: PropTypes.string.isRequired,
+  unit: PropTypes.string,
+  dropdownGroup: PropTypes.array,
 };
 
 export default StrategyApyTable;
