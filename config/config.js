@@ -1,5 +1,5 @@
 /**
- * qa04-sg环境配置文件
+ * qa03-sg环境配置文件
  */
 
 // https://umijs.org/config/
@@ -86,7 +86,7 @@ export default defineConfig({
                   destination:
                     "./zip/dashboard-" +
                     moment().format("yyyyMMDDHHmmss") +
-                    "(qa04-sg).zip",
+                    "(qa03-sg).zip",
                 },
               ],
             },
@@ -96,46 +96,46 @@ export default defineConfig({
     }
   },
   define: {
-    ENV_INDEX: "qa04-sg",
-    API_SERVER: "https://service-qa04-sg.bankofchain.io",
-    DASHBOARD_ROOT: "https://dashboard-qa04-sg.bankofchain.io",
-    IMAGE_ROOT: "https://qa04-sg.bankofchain.io",
+    ENV_INDEX: "qa03-sg",
+    API_SERVER: "https://service-qa03-sg.bankofchain.io",
+    DASHBOARD_ROOT: "https://dashboard-qa03-sg.bankofchain.io",
+    IMAGE_ROOT: "https://qa03-sg.bankofchain.io",
     CHAIN_BROWSER_URL: {
       1: "https://etherscan.io",
       56: "https://bscscan.com",
       137: "https://polygonscan.com",
     },
     RPC_URL: {
-      1: "https://rpc-qa04-sg.bankofchain.io",
-      56: "https://rpc-qa04-sg.bankofchain.io",
-      137: "https://rpc-qa04-sg.bankofchain.io",
-      31337: "https://rpc-qa04-sg.bankofchain.io",
+      1: "https://rpc-qa03-sg.bankofchain.io",
+      56: "https://rpc-qa03-sg.bankofchain.io",
+      137: "https://rpc-qa03-sg.bankofchain.io",
+      31337: "https://rpc-qa03-sg.bankofchain.io",
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        56: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        137: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        1: "https://qa03-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        56: "https://qa03-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        137: "https://qa03-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
       },
       VAULT_ADDRESS: {
         1: "0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC",
-        56: "11",
-        137: "13",
+        56: "111",
+        137: "0xd3feAe6c4fdfDE73Bd2fE99c8fE6944904DAA68A",
       },
       USDI_ADDRESS: {
         1: "0xBe15Eed7D8e91D20263d4521c9eB0F4e3510bfBF",
-        56: "3",
-        137: "16",
+        56: "4",
+        137: "0xfDFB68F5195DF817824Ee881CF63E94402eEc46A",
       },
       VAULT_BUFFER_ADDRESS: {
-        1: "8",
+        1: "0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC",
         56: "2",
-        137: "14",
+        137: "0xfa949750F82779376B174C195D8f2baef20750F2",
       },
     },
     ETHI: {
       SUB_GRAPH_URL: {
-        1: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
+        1: "https://qa03-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
       },
       VAULT_ADDRESS: {
         1: "0xDae16f755941cbC0C9D240233a6F581d1734DaA2",
@@ -144,7 +144,7 @@ export default defineConfig({
         1: "0x8cB9Aca95D1EdebBfe6BD9Da4DC4a2024457bD32",
       },
       VAULT_BUFFER_ADDRESS: {
-        1: "20",
+        1: "0xDae16f755941cbC0C9D240233a6F581d1734DaA2",
       },
     },
   },

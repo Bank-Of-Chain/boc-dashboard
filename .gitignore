@@ -36,6 +36,3 @@ functions/*
 screenshot
 .firebase
 .eslintcache
-
-build
-config/aws.json
