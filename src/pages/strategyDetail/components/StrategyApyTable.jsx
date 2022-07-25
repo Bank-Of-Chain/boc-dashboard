@@ -278,6 +278,13 @@ const StrategyApyTable = ({
           pagination={false}
           {...responsiveConfig.tableProps}
         />
+        <br />
+        <p>
+          Warning: Official APY calculation is affected by the price of reward
+          token, reward rate, and changes in principal within{" "}
+          <span style={{ color: "#a68efe", fontWeight: "bold" }}>24</span> hour,
+          and the statistical data is not absolutely accurate.
+        </p>
       </Card>
     </div>
   );
