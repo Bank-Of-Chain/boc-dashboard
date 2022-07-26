@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { GridContent } from "@ant-design/pro-layout";
 import IntroduceRow from "./components/IntroduceRow";
 import LineChartContent from "./components/LineChartContent";
@@ -6,8 +6,6 @@ import ProtocolAllocation from "./components/ProtocolAllocation";
 import StrategyTable from "./components/StrategyTable";
 import TransationsTable from "./components/TransationsTable";
 import { useModel } from "umi";
-import _min from "lodash/min";
-import _max from "lodash/max";
 import numeral from "numeral";
 import moment from "moment";
 

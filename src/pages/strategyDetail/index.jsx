@@ -23,6 +23,7 @@ import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 // === Utils === //
 import { isEmpty, map, noop, reduce, compact } from "lodash";
 import { toFixed } from "@/utils/number-format";
+import { bestIntervalForArrays } from "@/utils/echart-utils";
 
 import moment from "moment";
 import _find from "lodash/find";
@@ -117,8 +118,7 @@ const Strategy = (props) => {
         .subtract(366, "day")
         .startOf("day");
       const calcArray = reduce(
-        // 往前推66天，往后预估7天
-        new Array(366 + 7),
+        new Array(366),
         (rs) => {
           const currentMoment = startMoment.subtract(-1, "day");
           rs.push(currentMoment.format("yyyy-MM-DD"));
@@ -193,6 +193,7 @@ const Strategy = (props) => {
   }, [strategy, strategy?.strategyName]);
 
   const estimateArray = map(apyArray, "un_realize_apy");
+  const intervalArray = [];
   const lengndData = ["Official APY", "Verified APY"];
   const data1 = map(apyArray, (i) => {
     return {
@@ -213,6 +214,7 @@ const Strategy = (props) => {
       showSymbol: size(filter(data2, (i) => !isNil(i))) === 1,
     },
   ];
+  intervalArray.push(map(apyArray, "officialApy"), data2);
   if (ori) {
     const data3 = map(apyArray, "originApy");
     lengndData.push("Official Daily APY");
@@ -233,6 +235,8 @@ const Strategy = (props) => {
       }),
       showSymbol: size(filter(data4, (i) => !isNil(i))) === 1,
     });
+    intervalArray.push(data3);
+    intervalArray.push(data4);
   }
   // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
   if (!isEmpty(compact(estimateArray))) {
@@ -287,7 +291,7 @@ const Strategy = (props) => {
   };
   option.tooltip = {
     ...option.tooltip,
-    formatter: function (params, _ticket, _callback) {
+    formatter: function (params) {
       if (params instanceof Array) {
         if (params.length) {
           const unit = params[0]?.data?.unit || "";
@@ -306,8 +310,8 @@ const Strategy = (props) => {
               const unrealizedApyText = `${
                 isNil(unrealizedApy) ? "-" : unrealizedApy + unit
               }`;
-              message += `<br/><span style=\"display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#dc69aa;\"></span>Realized APY: ${realizedApyText}`;
-              message += `<br/><span style=\"display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#95706d;\"></span>UnRealized APY: ${unrealizedApyText}`;
+              message += `<br/><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#dc69aa;"></span>Realized APY: ${realizedApyText}`;
+              message += `<br/><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#95706d;"></span>UnRealized APY: ${unrealizedApyText}`;
             }
           });
 
@@ -325,11 +329,14 @@ const Strategy = (props) => {
       }
     },
   };
-
+  const [minPercent, maxPercent] = bestIntervalForArrays(intervalArray, {
+    startIndex: 30,
+    rateOfChange: 3000,
+  });
   option.dataZoom = [
     {
-      end: 100,
-      start: 0,
+      end: maxPercent,
+      start: minPercent,
     },
   ];
 
@@ -469,6 +476,9 @@ const Strategy = (props) => {
       <Suspense fallback={null}>
         <StrategyApyTable
           unit={vault === "ethi" ? "ETH" : "USD"}
+          displayDecimals={
+            vault === "ethi" ? ETHI_DISPLAY_DECIMALS : TOKEN_DISPLAY_DECIMALS
+          }
           strategyName={strategy?.strategyName}
           strategyAddress={strategy?.strategyAddress}
           loading={loading}

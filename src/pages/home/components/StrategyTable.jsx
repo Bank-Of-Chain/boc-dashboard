@@ -1,4 +1,4 @@
-import { Card, Table, Image, Switch, Tooltip, Badge, Divider } from "antd";
+import { Card, Table, Image, Switch, Tooltip, Badge } from "antd";
 import React, { useState } from "react";
 import { useModel, useRequest } from "umi";
 import { filter, isNil, map, sortBy } from "lodash";
@@ -112,7 +112,7 @@ const StrategyTable = ({
         const { value: bValue } = b.realizedApy || { value: "0" };
         return aValue - bValue;
       },
-      render: (data, item) => {
+      render: (data) => {
         if (isEmpty(data)) return <span>0.00%</span>;
         const { value, detail } = data;
         const jsxElement = <span>{(100 * value).toFixed(2)} %</span>;
