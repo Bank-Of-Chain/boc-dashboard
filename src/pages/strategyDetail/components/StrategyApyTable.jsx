@@ -16,14 +16,17 @@ import { isEmpty, isNil, keyBy } from "lodash";
 import BN from "bignumber.js";
 import { formatToUTC0 } from "@/utils/date";
 
+// === Constants === //
+import { TOKEN_DISPLAY_DECIMALS } from "@/constants/vault";
+
 const dateFormat = "MMMM DD";
-const decimals = 6;
 
 const comp = <HourglassOutlined style={{ color: "#a68efe" }} />;
 const StrategyApyTable = ({
   strategyName,
   strategyAddress,
   unit,
+  displayDecimals = TOKEN_DISPLAY_DECIMALS,
   dropdownGroup,
 }) => {
   const deviceType = useDeviceType();
@@ -46,26 +49,25 @@ const StrategyApyTable = ({
             assets: toFixed(
               i.dailyWeightAsset,
               BigNumber.from(10).pow(18),
-              decimals
+              displayDecimals
             ),
             profit: (
               <div>
                 {toFixed(
                   new BN(i.dailyRealizedProfit).plus(i.dailyUnrealizedProfit),
                   BigNumber.from(10).pow(18),
-                  decimals
+                  displayDecimals
                 )}
                 {i.dailyUnrealizedProfit !== "0" && comp}
               </div>
             ),
-            officialApy:
-              i.dailyWeightAsset === "0" || isNil(i.dailyOfficialApy)
-                ? "N/A"
-                : `${toFixed(
-                    new BN(i.dailyOfficialApy).multipliedBy(100),
-                    1,
-                    decimals
-                  )}%`,
+            officialApy: isNil(i.dailyOfficialApy)
+              ? "N/A"
+              : `${toFixed(
+                  new BN(i.dailyOfficialApy).multipliedBy(100),
+                  1,
+                  2
+                )}%`,
             verifyApy:
               i.dailyWeightAsset === "0" ? (
                 "N/A"
@@ -76,7 +78,7 @@ const StrategyApyTable = ({
                       .plus(i.dailyUnrealizedApy)
                       .multipliedBy(100),
                     1,
-                    decimals
+                    2
                   )}%`}
                   {i.dailyUnrealizedApy > 0 && comp}
                 </div>
@@ -84,25 +86,25 @@ const StrategyApyTable = ({
             weeklyAssets: toFixed(
               i.weeklyWeightAsset,
               BigNumber.from(10).pow(18),
-              decimals
+              displayDecimals
             ),
             weeklyProfit: (
               <div>
                 {toFixed(
                   new BN(i.weeklyRealizedProfit).plus(i.weeklyUnrealizedProfit),
                   BigNumber.from(10).pow(18),
-                  decimals
+                  displayDecimals
                 )}
                 {i.weeklyUnrealizedProfit !== "0" && comp}
               </div>
             ),
             weeklyApy:
-              i.weeklyWeightAsset === "0" || isNil(i.weeklyOfficialApy)
+              isNil(i.weeklyOfficialApy) || i.weeklyWeightAsset === "0"
                 ? "N/A"
                 : `${toFixed(
                     new BN(i.weeklyOfficialApy).multipliedBy(100),
                     1,
-                    decimals
+                    2
                   )}%`,
             weeklyVerifyApy:
               i.weeklyWeightAsset === "0" ? (
@@ -114,7 +116,7 @@ const StrategyApyTable = ({
                       .plus(i.weeklyUnrealizedApy)
                       .multipliedBy(100),
                     1,
-                    decimals
+                    2
                   )}%`}
                   {i.weeklyUnrealizedApy > 0 && comp}
                 </div>
@@ -131,7 +133,6 @@ const StrategyApyTable = ({
       title: "",
       dataIndex: "name",
       key: "name",
-      width: "10%",
     },
     ...map(dataSource, (item) => {
       const title = item.date;
@@ -294,6 +295,7 @@ StrategyApyTable.propTypes = {
   strategyName: PropTypes.string.isRequired,
   strategyAddress: PropTypes.string.isRequired,
   unit: PropTypes.string,
+  displayDecimals: PropTypes.number,
   dropdownGroup: PropTypes.array,
 };
 
