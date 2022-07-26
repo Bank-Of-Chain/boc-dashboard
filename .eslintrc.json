@@ -18,6 +18,9 @@
     "react"
   ],
   "globals": {
-    "CHAIN_BROWSER_URL": true
+    "CHAIN_BROWSER_URL": true,
+    "IMAGE_ROOT": true,
+    "DASHBOARD_ROOT": true,
+    "API_SERVER": true
   }
 }
