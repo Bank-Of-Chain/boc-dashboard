@@ -475,6 +475,7 @@ const Strategy = (props) => {
       </Suspense>
       <Suspense fallback={null}>
         <StrategyApyTable
+          vault={vault}
           unit={vault === "ethi" ? "ETH" : "USD"}
           displayDecimals={
             vault === "ethi" ? ETHI_DISPLAY_DECIMALS : TOKEN_DISPLAY_DECIMALS

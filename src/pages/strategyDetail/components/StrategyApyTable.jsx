@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Card, Table, Space, Tooltip } from "antd";
+import { Card, Table, Space, Tooltip, Divider } from "antd";
 import { HourglassOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { useModel, useRequest } from "umi";
 
@@ -12,7 +12,7 @@ import reduce from "lodash/reduce";
 import map from "lodash/map";
 import { toFixed } from "@/utils/number-format";
 import { BigNumber } from "ethers";
-import { isEmpty, isNil, keyBy } from "lodash";
+import { groupBy, isEmpty, isNil, keyBy } from "lodash";
 import BN from "bignumber.js";
 import { formatToUTC0 } from "@/utils/date";
 
@@ -22,7 +22,14 @@ import { TOKEN_DISPLAY_DECIMALS } from "@/constants/vault";
 const dateFormat = "MMMM DD";
 
 const comp = <HourglassOutlined style={{ color: "#a68efe" }} />;
+
+const feeApyStatusMap = {
+  0: "Unrealized",
+  1: "Realized",
+};
+
 const StrategyApyTable = ({
+  vault,
   strategyName,
   strategyAddress,
   unit,
@@ -43,6 +50,51 @@ const StrategyApyTable = ({
     {
       formatResult: (resp) => {
         return map(resp, (i) => {
+          const {
+            dailyProfit,
+            weeklyProfit,
+            dailyApy,
+            weeklyApy,
+            detail = [],
+          } = i;
+          const profit = new BN(dailyProfit);
+          const wProfit = new BN(weeklyProfit);
+
+          const dailyOfficialApyJsx = (
+            <div>
+              {map(
+                groupBy(detail, "feeApyStatus"),
+                (groupArray, groupIndex) => {
+                  console.log("groupItem, groupIndex=", groupArray, groupIndex);
+                  return [
+                    <span
+                      key={`group-${groupIndex}`}
+                      style={{ display: "block" }}
+                    >
+                      <Divider
+                        orientation="left"
+                        orientationMargin="0"
+                        style={{ color: "#313036", margin: "0.25rem 0" }}
+                      >
+                        {feeApyStatusMap[groupIndex]}
+                      </Divider>
+                    </span>,
+                    ...map(groupArray, (i, index) => (
+                      <span key={index} style={{ display: "block" }}>
+                        {i.feeName}:&nbsp;
+                        {toFixed(
+                          i.feeValue,
+                          BigNumber.from(10).pow(18),
+                          vault === "ethi" ? 6 : displayDecimals
+                        )}
+                        &nbsp;{unit}({(100 * i.feeApy).toFixed(2)}%)
+                      </span>
+                    )),
+                  ];
+                }
+              )}
+            </div>
+          );
           return {
             id: i.id,
             date: formatToUTC0(i.scheduleTimestamp * 1000, dateFormat),
@@ -52,11 +104,11 @@ const StrategyApyTable = ({
               displayDecimals
             ),
             profit: (
-              <div>
+              <div title={toFixed(profit, BigNumber.from(10).pow(18))}>
                 {toFixed(
-                  new BN(i.dailyRealizedProfit).plus(i.dailyUnrealizedProfit),
+                  profit,
                   BigNumber.from(10).pow(18),
-                  displayDecimals
+                  vault === "ethi" ? 6 : displayDecimals
                 )}
                 {i.dailyUnrealizedProfit !== "0" && comp}
               </div>
@@ -71,17 +123,18 @@ const StrategyApyTable = ({
             verifyApy:
               i.dailyWeightAsset === "0" ? (
                 "N/A"
-              ) : (
+              ) : isEmpty(detail) ? (
                 <div>
-                  {`${toFixed(
-                    new BN(i.dailyRealizedApy)
-                      .plus(i.dailyUnrealizedApy)
-                      .multipliedBy(100),
-                    1,
-                    2
-                  )}%`}
+                  {`${toFixed(new BN(dailyApy).multipliedBy(100), 1, 2)}%`}
                   {i.dailyUnrealizedApy > 0 && comp}
                 </div>
+              ) : (
+                <Tooltip title={dailyOfficialApyJsx}>
+                  <div>
+                    {`${toFixed(new BN(dailyApy).multipliedBy(100), 1, 2)}%`}
+                    {i.dailyUnrealizedApy > 0 && comp}
+                  </div>
+                </Tooltip>
               ),
             weeklyAssets: toFixed(
               i.weeklyWeightAsset,
@@ -89,11 +142,11 @@ const StrategyApyTable = ({
               displayDecimals
             ),
             weeklyProfit: (
-              <div>
+              <div title={toFixed(wProfit, BigNumber.from(10).pow(18))}>
                 {toFixed(
-                  new BN(i.weeklyRealizedProfit).plus(i.weeklyUnrealizedProfit),
+                  wProfit,
                   BigNumber.from(10).pow(18),
-                  displayDecimals
+                  vault === "ethi" ? 6 : displayDecimals
                 )}
                 {i.weeklyUnrealizedProfit !== "0" && comp}
               </div>
@@ -111,13 +164,7 @@ const StrategyApyTable = ({
                 "N/A"
               ) : (
                 <div>
-                  {`${toFixed(
-                    new BN(i.weeklyRealizedApy)
-                      .plus(i.weeklyUnrealizedApy)
-                      .multipliedBy(100),
-                    1,
-                    2
-                  )}%`}
+                  {`${toFixed(new BN(weeklyApy).multipliedBy(100), 1, 2)}%`}
                   {i.weeklyUnrealizedApy > 0 && comp}
                 </div>
               ),
@@ -292,6 +339,7 @@ const StrategyApyTable = ({
 };
 
 StrategyApyTable.propTypes = {
+  vault: PropTypes.string,
   strategyName: PropTypes.string.isRequired,
   strategyAddress: PropTypes.string.isRequired,
   unit: PropTypes.string,
