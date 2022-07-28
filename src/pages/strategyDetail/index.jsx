@@ -42,6 +42,16 @@ import {
 // === Styles === //
 import styles from "./style.less";
 
+const OFFICIAL_APY = "Official Weekly APY";
+const VERIFIED_APY = "Verified Weekly APY";
+const OFFICIAL_DAILY_APY = "Official Daily APY";
+const VERIFIED_DAILY_APY = "Verified Daily APY";
+
+const feeApyStatusMap = {
+  0: "Unrealized",
+  1: "Realized",
+};
+
 const Strategy = (props) => {
   const { id, ori = false, vault } = props?.location?.query;
   const [loading, setLoading] = useState(false);
@@ -148,6 +158,7 @@ const Strategy = (props) => {
             value: 100 * i.apy,
             officialApy: (i.apy * 100).toFixed(2),
             originApy: (i.originApy * 100).toFixed(2),
+            offcialDetail: i.detail,
             date: formatToUTC0(i.fetchTime * 1000, "yyyy-MM-DD"),
           };
         }),
@@ -157,7 +168,9 @@ const Strategy = (props) => {
         map(apys.content, (i) => {
           return {
             realizedApy: (i.realizedApy?.value * 100).toFixed(2),
+            realizedApyDetail: i.realizedApy?.detail,
             unrealizedApy: (i.unrealizedApy?.value * 100).toFixed(2),
+            unrealizedApyDetail: i.unrealizedApy?.detail,
             expectedApy: (i.verifiedApy * 100).toFixed(2),
             dailyVerifiedApy: (i.dailyVerifiedApy * 100).toFixed(2),
             date: formatToUTC0(i.scheduleTimestamp * 1000, "yyyy-MM-DD"),
@@ -167,17 +180,30 @@ const Strategy = (props) => {
       );
 
       const nextApyArray = map(calcArray, (i) => {
-        const { officialApy, originApy } = get(offChainApyMap, i, {
-          officialApy: null,
-          originApy: null,
+        const { officialApy, originApy, offcialDetail } = get(
+          offChainApyMap,
+          i,
+          {
+            officialApy: null,
+            originApy: null,
+            offcialDetail: [],
+          }
+        );
+        const {
+          expectedApy,
+          realizedApy,
+          unrealizedApy,
+          dailyVerifiedApy,
+          realizedApyDetail,
+          unrealizedApyDetail,
+        } = get(extentApyMap, i, {
+          expectedApy: null,
+          unrealizedApy: null,
+          realizedApy: null,
+          dailyVerifiedApy: null,
+          realizedApyDetail: [],
+          unrealizedApyDetail: [],
         });
-        const { expectedApy, realizedApy, unrealizedApy, dailyVerifiedApy } =
-          get(extentApyMap, i, {
-            expectedApy: null,
-            unrealizedApy: null,
-            realizedApy: null,
-            dailyVerifiedApy: null,
-          });
         return {
           date: i,
           originApy,
@@ -185,6 +211,9 @@ const Strategy = (props) => {
           officialApy,
           realizedApy,
           unrealizedApy,
+          offcialDetail,
+          realizedApyDetail,
+          unrealizedApyDetail,
           dailyVerifiedApy,
         };
       });
@@ -192,9 +221,8 @@ const Strategy = (props) => {
     });
   }, [strategy, strategy?.strategyName]);
 
-  const estimateArray = map(apyArray, "un_realize_apy");
   const intervalArray = [];
-  const lengndData = ["Official APY", "Verified APY"];
+  const lengndData = [OFFICIAL_APY, VERIFIED_APY];
   const data1 = map(apyArray, (i) => {
     return {
       value: i.officialApy,
@@ -204,47 +232,48 @@ const Strategy = (props) => {
   const data2 = map(apyArray, "value");
   const data = [
     {
-      seriesName: "Official APY",
+      seriesName: OFFICIAL_APY,
       seriesData: data1,
-      showSymbol: size(filter(data1, (i) => !isNil(i))) === 1,
+      showSymbol: size(filter(data1, (i) => !isNil(i.value))) === 1,
     },
     {
-      seriesName: "Verified APY",
+      seriesName: VERIFIED_APY,
       seriesData: apyArray,
       showSymbol: size(filter(data2, (i) => !isNil(i))) === 1,
     },
   ];
   intervalArray.push(map(apyArray, "officialApy"), data2);
   if (ori) {
-    const data3 = map(apyArray, "originApy");
-    lengndData.push("Official Daily APY");
+    const data3 = map(apyArray, (i) => {
+      return {
+        value: i.originApy,
+        offcialDetail: i.offcialDetail,
+        unit: "%",
+      };
+    });
+    lengndData.push(OFFICIAL_DAILY_APY);
     data.push({
-      seriesName: "Official Daily APY",
-      seriesData: map(data3, (i) => {
-        return { value: i };
-      }),
-      showSymbol: size(filter(data3, (i) => !isNil(i))) === 1,
+      seriesName: OFFICIAL_DAILY_APY,
+      seriesData: data3,
+      showSymbol: size(filter(data3, (i) => !isNil(i.value))) === 1,
     });
 
-    const data4 = map(apyArray, "dailyVerifiedApy");
-    lengndData.push("Verified Daily APY");
+    const data4 = map(apyArray, (i) => {
+      return {
+        value: i.dailyVerifiedApy,
+        realizedApyDetail: i.realizedApyDetail,
+        unrealizedApyDetail: i.unrealizedApyDetail,
+        unit: "%",
+      };
+    });
+    lengndData.push(VERIFIED_DAILY_APY);
     data.push({
-      seriesName: "Verified Daily APY",
-      seriesData: map(data4, (i) => {
-        return { value: i };
-      }),
-      showSymbol: size(filter(data4, (i) => !isNil(i))) === 1,
+      seriesName: VERIFIED_DAILY_APY,
+      seriesData: data4,
+      showSymbol: size(filter(data4, (i) => !isNil(i.value))) === 1,
     });
     intervalArray.push(data3);
     intervalArray.push(data4);
-  }
-  // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
-  if (!isEmpty(compact(estimateArray))) {
-    lengndData.push("Estimated Weekly APY");
-    data.push({
-      seriesName: "Estimated Weekly APY",
-      seriesData: estimateArray,
-    });
   }
   let obj = {
     legend: {
@@ -301,7 +330,7 @@ const Strategy = (props) => {
             message += `<br/>${param.marker}${param.seriesName}: ${
               isNil(param.value) ? "-" : param.value + unit
             }`;
-            if (param?.seriesName === "Verified APY") {
+            if (param?.seriesName === VERIFIED_APY) {
               const realizedApy = param?.data?.realizedApy;
               const unrealizedApy = param?.data?.unrealizedApy;
               const realizedApyText = `${
@@ -312,6 +341,41 @@ const Strategy = (props) => {
               }`;
               message += `<br/><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#dc69aa;"></span>Realized APY: ${realizedApyText}`;
               message += `<br/><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#95706d;"></span>UnRealized APY: ${unrealizedApyText}`;
+            }
+            if (param?.seriesName === OFFICIAL_DAILY_APY) {
+              const offcialDetail = param?.data?.offcialDetail;
+              const stringArray = map(offcialDetail, (i) => {
+                const text = `${
+                  isNil(i.feeApy) ? "-" : (100 * i.feeApy).toFixed(2) + unit
+                }`;
+                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${
+                  i.feeName
+                }: ${text} ${i.compoundable === true ? "(Com.)" : ""}`;
+              });
+              message += stringArray.join("");
+            }
+            if (param?.seriesName === VERIFIED_DAILY_APY) {
+              const realizedApyDetail = param?.data?.realizedApyDetail;
+              const unrealizedApyDetail = param?.data?.unrealizedApyDetail;
+              const stringArray = map(realizedApyDetail, (i) => {
+                const text = `${
+                  isNil(i.feeApy) ? "-" : (100 * i.feeApy).toFixed(2) + unit
+                }`;
+                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${
+                  i.feeName
+                }: ${text} (${feeApyStatusMap[i.feeApyStatus]})`;
+              });
+
+              message += stringArray.join("");
+              const stringArray1 = map(unrealizedApyDetail, (i) => {
+                const text = `${
+                  isNil(i.feeApy) ? "-" : (100 * i.feeApy).toFixed(2) + unit
+                }`;
+                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${
+                  i.feeName
+                }: ${text} (${feeApyStatusMap[i.feeApyStatus]})`;
+              });
+              message += stringArray1.join("");
             }
           });
 

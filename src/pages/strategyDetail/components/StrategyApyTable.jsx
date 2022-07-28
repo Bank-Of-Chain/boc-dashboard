@@ -56,16 +56,27 @@ const StrategyApyTable = ({
             dailyApy,
             weeklyApy,
             detail = [],
+            officialDetail = [],
           } = i;
           const profit = new BN(dailyProfit);
           const wProfit = new BN(weeklyProfit);
 
+          const officialApyJsx = (
+            <div>
+              {map(officialDetail, (i, index) => (
+                <span key={index} style={{ display: "block" }}>
+                  {i.feeName}:&nbsp;
+                  {(100 * i.feeApy).toFixed(2)}%{" "}
+                  {i.compoundable === true ? "(Com.)" : ""}
+                </span>
+              ))}
+            </div>
+          );
           const dailyOfficialApyJsx = (
             <div>
               {map(
                 groupBy(detail, "feeApyStatus"),
                 (groupArray, groupIndex) => {
-                  console.log("groupItem, groupIndex=", groupArray, groupIndex);
                   return [
                     <span
                       key={`group-${groupIndex}`}
@@ -113,13 +124,19 @@ const StrategyApyTable = ({
                 {i.dailyUnrealizedProfit !== "0" && comp}
               </div>
             ),
-            officialApy: isNil(i.dailyOfficialApy)
-              ? "N/A"
-              : `${toFixed(
+            officialApy: isNil(i.dailyOfficialApy) ? (
+              "N/A"
+            ) : isEmpty(officialDetail) ? (
+              `${toFixed(new BN(i.dailyOfficialApy).multipliedBy(100), 1, 2)}%`
+            ) : (
+              <Tooltip title={officialApyJsx}>
+                {`${toFixed(
                   new BN(i.dailyOfficialApy).multipliedBy(100),
                   1,
                   2
-                )}%`,
+                )}%`}
+              </Tooltip>
+            ),
             verifyApy:
               i.dailyWeightAsset === "0" ? (
                 "N/A"
@@ -151,14 +168,13 @@ const StrategyApyTable = ({
                 {i.weeklyUnrealizedProfit !== "0" && comp}
               </div>
             ),
-            weeklyApy:
-              isNil(i.weeklyOfficialApy) || i.weeklyWeightAsset === "0"
-                ? "N/A"
-                : `${toFixed(
-                    new BN(i.weeklyOfficialApy).multipliedBy(100),
-                    1,
-                    2
-                  )}%`,
+            weeklyApy: isNil(i.weeklyOfficialApy)
+              ? "N/A"
+              : `${toFixed(
+                  new BN(i.weeklyOfficialApy).multipliedBy(100),
+                  1,
+                  2
+                )}%`,
             weeklyVerifyApy:
               i.weeklyWeightAsset === "0" ? (
                 "N/A"
