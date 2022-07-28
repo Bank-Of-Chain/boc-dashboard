@@ -1,4 +1,4 @@
-import { map, reverse, findIndex, max, isNil } from "lodash";
+import { map, reverse, findIndex, max, isNil, every } from "lodash";
 
 //默认配置
 const DEFAULT_OPTIONS = {
@@ -23,7 +23,14 @@ export const bestInterval = (array = [], options = DEFAULT_OPTIONS) => {
   const continuousIndex = findIndex(reverseArray, (item, index) => {
     if (index <= startIndex) return false;
     if (index === reverseArray.length) return true;
-    if (isNil(item) || isNil(reverseArray[index - 1])) return false;
+    if (isNil(item)) {
+      const arrayAfterCurrent = reverseArray.slice(index);
+      //如果从这个点往前，数据都是null，那就没有必要展示了
+      if (every(arrayAfterCurrent, isNil)) {
+        return true;
+      }
+      return false;
+    }
     return Math.abs(item - reverseArray[index - 1]) > nextRateOfChange * item;
   });
   const startPercent =
