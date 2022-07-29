@@ -348,9 +348,7 @@ const Strategy = (props) => {
                 const text = `${
                   isNil(i.feeApy) ? "-" : (100 * i.feeApy).toFixed(2) + unit
                 }`;
-                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${
-                  i.feeName
-                }: ${text} ${i.compoundable === true ? "(Com.)" : ""}`;
+                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${i.feeName}: ${text}`;
               });
               message += stringArray.join("");
             }

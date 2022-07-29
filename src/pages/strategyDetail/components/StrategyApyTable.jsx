@@ -67,7 +67,6 @@ const StrategyApyTable = ({
                 <span key={index} style={{ display: "block" }}>
                   {i.feeName}:&nbsp;
                   {(100 * i.feeApy).toFixed(2)}%{" "}
-                  {i.compoundable === true ? "(Com.)" : ""}
                 </span>
               ))}
             </div>
