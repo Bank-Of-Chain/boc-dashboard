@@ -1,11 +1,12 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // === Components === //
 import { Image } from "antd";
 
 // === Utils === //
 import isString from "lodash/isString";
-import isArray from "lodash/isArray";
+import { isArray } from "lodash";
 import map from "lodash/map";
 
 const USDT_IMAGE = `${IMAGE_ROOT}/images/0xdAC17F958D2ee523a2206206994597C13D831ec7.png`;
@@ -21,6 +22,8 @@ const STETH_IMAGE = `${IMAGE_ROOT}/images/0xae7ab96520DE3A18E5e111B5EaAb095312D7
 const RETH_IMAGE = `${IMAGE_ROOT}/images/0xae78736Cd615f374D3085123A210448E74Fc6393.png`;
 const WSTETH_IMAGE = `${IMAGE_ROOT}/images/0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0.png`;
 const WETH_IMAGE = `${IMAGE_ROOT}/images/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2.png`;
+const GUSD_IMAGE = `${IMAGE_ROOT}/images/0x056fd409e1d7a124bd7017459dfea2f387b6d5cd.png`;
+const SUSD_IMAGE = `${IMAGE_ROOT}/images/0x57ab1ec28d129707052df4df418d58a2d46d5f51.png`;
 
 const addressMap = {
   "0x55d398326f99059ff775485246999027b3197955": USDT_IMAGE,
@@ -47,7 +50,6 @@ const addressMap = {
   "0x0000000000085d4780b73119b644ae5ecd22b376": TUSD_IMAGE,
   "0x14016e85a25aeb13065688cafb43044c2ef86784": TUSD_IMAGE,
   "0x2e1ad108ff1d8c782fcbbb89aad783ac49586756": TUSD_IMAGE,
-  "0x5f98805a4e8be255a32880fdec7f6728c6568ba0": TUSD_IMAGE,
 
   "0x99d8a9c45b2eca8864373a26d1459e3dff1e17f3": MIM_IMAGE,
 
@@ -58,10 +60,12 @@ const addressMap = {
   "0xae78736cd615f374d3085123a210448e74fc6393": RETH_IMAGE,
   "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0": WSTETH_IMAGE,
   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": WETH_IMAGE,
+  "0x056fd409e1d7a124bd7017459dfea2f387b6d5cd": GUSD_IMAGE,
+  "0x57ab1ec28d129707052df4df418d58a2d46d5f51": SUSD_IMAGE,
 };
-const DEFAULT = "/default.png";
+const DEFAULT = `${IMAGE_ROOT}/default.png`;
 
-const CoinSuperPosition = ({ array, size = 24 }) => {
+const CoinSuperPosition = ({ array = [], size = 24 }) => {
   const imageRender = (address, i) => (
     <Image
       preview={false}
@@ -80,6 +84,11 @@ const CoinSuperPosition = ({ array, size = 24 }) => {
     return <div>{map(array, (address, i) => imageRender(address, i))}</div>;
   }
   return <span />;
+};
+
+CoinSuperPosition.propTypes = {
+  array: PropTypes.array,
+  size: PropTypes.any,
 };
 
 export default CoinSuperPosition;
