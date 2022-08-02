@@ -14,6 +14,7 @@ const USDI_ETH_STRATEGIES_MAP = [
   "Stargate",
   "DForce",
   "Synapse",
+  "Aura",
 ];
 
 const USDI_BSC_STRATEGIES_MAP = [
