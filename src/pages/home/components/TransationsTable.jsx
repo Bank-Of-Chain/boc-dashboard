@@ -282,17 +282,19 @@ const TransationsTable = ({
           columns={columns}
           dataSource={data}
           loading={tableLoading}
-          pagination={{
-            showSizeChanger: false,
-            style: {
-              marginBottom: 0,
-            },
-            current: currentPage,
-            pageSize: 10,
-            onChange: (page) => {
-              setCurrentPage(page);
-            },
-          }}
+          pagination={
+            data?.length > 10 && {
+              showSizeChanger: false,
+              style: {
+                marginBottom: 0,
+              },
+              current: currentPage,
+              pageSize: 10,
+              onChange: (page) => {
+                setCurrentPage(page);
+              },
+            }
+          }
           {...responsiveConfig.tableProps}
         />
       </Card>

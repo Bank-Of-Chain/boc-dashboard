@@ -268,12 +268,14 @@ const StrategyTable = ({
           rowKey={(record) => record.strategyAddress}
           columns={columns}
           dataSource={data}
-          pagination={{
-            style: {
-              marginBottom: 0,
-            },
-            pageSize: 10,
-          }}
+          pagination={
+            data?.length > 10 && {
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }
+          }
           {...responsiveConfig.tableProps}
         />
       </Card>

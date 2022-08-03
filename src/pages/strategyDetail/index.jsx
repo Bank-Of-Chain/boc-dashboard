@@ -21,7 +21,7 @@ import StrategyApyTable from "./components/StrategyApyTable";
 import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 
 // === Utils === //
-import { isEmpty, map, noop, reduce, compact } from "lodash";
+import { isEmpty, map, noop, reduce } from "lodash";
 import { toFixed } from "@/utils/number-format";
 import { bestIntervalForArrays } from "@/utils/echart-utils";
 
@@ -428,7 +428,6 @@ const Strategy = (props) => {
   }[deviceType];
 
   const chartStyle = {
-    padding: "0 24px",
     height: 400,
   };
   const chartResponsiveConfig = {
@@ -462,11 +461,12 @@ const Strategy = (props) => {
         >
           <Row justify="space-around">
             <Col
-              xl={8}
-              lg={8}
-              md={8}
-              sm={22}
-              xs={22}
+              push={2}
+              xl={12}
+              lg={12}
+              md={12}
+              sm={24}
+              xs={24}
               style={{ margin: "0 auto 16px" }}
             >
               <Image
@@ -479,13 +479,10 @@ const Strategy = (props) => {
                 fallback={`${IMAGE_ROOT}/default.png`}
               />
             </Col>
-            <Col xl={10} lg={10} md={10} sm={22} xs={22}>
+            <Col push={2} xl={12} lg={12} md={12} sm={24} xs={24}>
               <Descriptions
                 column={1}
                 title={<span style={{ color: "#fff" }}>Base Info</span>}
-                style={{
-                  marginBottom: 32,
-                }}
                 labelStyle={{ color: "#fff" }}
                 contentStyle={{ color: "#fff" }}
                 {...infoResponsiveConfig.descriptionProps}

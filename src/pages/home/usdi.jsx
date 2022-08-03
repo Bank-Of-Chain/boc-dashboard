@@ -1,3 +1,4 @@
+import React from "react";
 import { Suspense, useEffect, useState } from "react";
 import { GridContent } from "@ant-design/pro-layout";
 import IntroduceRow from "./components/IntroduceRow";
@@ -7,8 +8,6 @@ import StrategyTable from "./components/StrategyTable";
 import TransationsTable from "./components/TransationsTable";
 import { useModel } from "umi";
 import get from "lodash/get";
-import _min from "lodash/min";
-import _max from "lodash/max";
 import numeral from "numeral";
 import moment from "moment";
 
@@ -82,7 +81,7 @@ const USDiHome = () => {
     ])
       .then(([data, estimateApys]) => {
         const items = appendDate(data.content, "apy", calDateRange);
-        const result = map(reverse(items), ({ date, apy }, index) => {
+        const result = map(reverse(items), ({ date, apy }) => {
           const apyValue = isNil(apy)
             ? null
             : `${numeral(apy).format("0,0.00")}`;

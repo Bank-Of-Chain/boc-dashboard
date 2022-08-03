@@ -72,7 +72,7 @@ const CoinSuperPosition = ({ array = [], size = 24 }) => {
       key={`${address + i}`}
       width={size}
       style={{ borderRadius: "50%" }}
-      wrapperStyle={{ marginLeft: -6, zIndex: array.length - i }}
+      wrapperStyle={{ zIndex: array.length - i }}
       src={addressMap[address] || DEFAULT}
       fallback={DEFAULT}
     />
