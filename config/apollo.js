@@ -21,9 +21,6 @@ const start = async () => {
         "boc.networks.eth.vaultAddress": "",
         "boc.networks.eth.pegTokenAddress": "",
         "boc.networks.eth.vaultBufferAddress": "",
-        "boc.networks.bsc.vaultAddress": "",
-        "boc.networks.bsc.pegTokenAddress": "",
-        "boc.networks.bsc.vaultBufferAddress": "",
         "boc.networks.polygon.vaultAddress": "",
         "boc.networks.polygon.pegTokenAddress": "",
         "boc.networks.polygon.vaultBufferAddress": "",
@@ -39,11 +36,6 @@ const start = async () => {
     const VAULT_BUFFER_FOR_USDI_ETH =
       data["boc.networks.eth.vaultBufferAddress"];
 
-    const USDI_VAULT_FOR_BSC = data["boc.networks.bsc.vaultAddress"];
-    const USDI_FOR_BSC = data["boc.networks.bsc.pegTokenAddress"];
-    const VAULT_BUFFER_FOR_USDI_BSC =
-      data["boc.networks.bsc.vaultBufferAddress"];
-
     const USDI_VAULT_FOR_MATIC = data["boc.networks.polygon.vaultAddress"];
     const USDI_FOR_MATIC = data["boc.networks.polygon.pegTokenAddress"];
     const VAULT_BUFFER_FOR_USDI_MATIC =
@@ -57,25 +49,20 @@ const start = async () => {
       env: nextEnv,
       ETHI_FOR_ETH,
       USDI_FOR_ETH,
-      USDI_FOR_BSC,
       USDI_FOR_MATIC,
       ETHI_VAULT,
       USDI_VAULT_FOR_ETH,
-      USDI_VAULT_FOR_BSC,
       USDI_VAULT_FOR_MATIC,
       VAULT_BUFFER_FOR_ETHI_ETH,
       VAULT_BUFFER_FOR_USDI_ETH,
-      VAULT_BUFFER_FOR_USDI_BSC,
       VAULT_BUFFER_FOR_USDI_MATIC,
       API_SERVER: getApiServer(),
       DASHBOARD_ROOT: getDashboardRoot(),
       IMAGE_ROOT: getImageRoot(),
       SUB_GRAPH_URL_FOR_USDI_ETH: getSubgraphForEthUsdi(),
-      SUB_GRAPH_URL_FOR_USDI_BSC: getSubgraphForBscUsdi(),
       SUB_GRAPH_URL_FOR_USDI_MATIC: getSubgraphForMaticUsdi(),
       SUB_GRAPH_URL_FOR_ETHI: getSubgraphForEthEthi(),
       RPC_FOR_1: getRpcFor1(),
-      RPC_FOR_56: getRpcFor56(),
       RPC_FOR_137: getRpcFor137(),
       RPC_FOR_31337: getRpcFor31337(),
     };
@@ -118,11 +105,7 @@ const getRpcFor1 = () => {
   if (isPrSg()) return "https://rpc.ankr.com/eth";
   return `https://rpc-${nextEnv}.bankofchain.io`;
 };
-const getRpcFor56 = () => {
-  if (isDevLocal()) return "http://localhost:8545";
-  if (isPrSg()) return "https://bsc-dataseed.binance.org";
-  return `https://rpc-${nextEnv}.bankofchain.io`;
-};
+
 const getRpcFor137 = () => {
   if (isDevLocal()) return "http://localhost:8545";
   if (isPrSg()) return "https://rpc-mainnet.maticvigil.com";
@@ -138,13 +121,6 @@ const getSubgraphForEthUsdi = () => {
   if (isDevLocal()) return "http://localhost:8000";
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum";
-  return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
-};
-
-const getSubgraphForBscUsdi = () => {
-  if (isDevLocal()) return "http://localhost:8000";
-  if (isPrSg())
-    return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb";
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
 };
 
