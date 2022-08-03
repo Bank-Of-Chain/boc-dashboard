@@ -3,7 +3,7 @@ import React from "react";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Col, Row, Tooltip } from "antd";
 import ChartCard from "@/components/ChartCard";
-import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
+import { isMobile } from "@/utils/device";
 
 // === Utils === //
 import { map } from "lodash";
@@ -13,8 +13,8 @@ import styles from "../style.less";
 
 const topColResponsiveProps = {
   xs: 24,
-  sm: 8,
-  md: 8,
+  sm: 24,
+  md: 24,
   lg: 8,
   xl: 8,
 };
@@ -27,13 +27,11 @@ const Field = ({ label, value, ...rest }) => (
 );
 
 const IntroduceRow = ({ data = [] }) => {
-  const deviceType = useDeviceType();
-
   return (
     <Row gutter={[24, 24]}>
       {map(data, ({ title, tip, loading, content, unit, subTitle }) => {
         let footer = <Field style={{ height: "1rem" }} value={subTitle} />
-        if (!subTitle && deviceType === DEVICE_TYPE.Mobile) {
+        if (!subTitle && isMobile()) {
           footer = null
         }
 
