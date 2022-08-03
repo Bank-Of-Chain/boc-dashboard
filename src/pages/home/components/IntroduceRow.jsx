@@ -3,6 +3,7 @@ import React from "react";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Col, Row, Tooltip } from "antd";
 import ChartCard from "@/components/ChartCard";
+import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 
 // === Utils === //
 import { map } from "lodash";
@@ -26,25 +27,34 @@ const Field = ({ label, value, ...rest }) => (
 );
 
 const IntroduceRow = ({ data = [] }) => {
+  const deviceType = useDeviceType();
+
   return (
     <Row gutter={[24, 24]}>
-      {map(data, ({ title, tip, loading, content, unit, subTitle }) => (
-        <Col key={title} {...topColResponsiveProps}>
-          <ChartCard
-            bordered={false}
-            title={title}
-            action={
-              <Tooltip title={tip}>
-                <InfoCircleOutlined style={{ fontSize: 22 }} />
-              </Tooltip>
-            }
-            loading={loading}
-            total={content}
-            unit={unit}
-            footer={<Field style={{ height: "1rem" }} value={subTitle} />}
-          />
-        </Col>
-      ))}
+      {map(data, ({ title, tip, loading, content, unit, subTitle }) => {
+        let footer = <Field style={{ height: "1rem" }} value={subTitle} />
+        if (!subTitle && deviceType === DEVICE_TYPE.Mobile) {
+          footer = null
+        }
+
+        return (
+          <Col key={title} {...topColResponsiveProps}>
+            <ChartCard
+              bordered={false}
+              title={title}
+              action={
+                <Tooltip title={tip}>
+                  <InfoCircleOutlined style={{ fontSize: 22 }} />
+                </Tooltip>
+              }
+              loading={loading}
+              total={content}
+              unit={unit}
+              footer={footer}
+            />
+          </Col>
+        )
+      })}
     </Row>
   );
 };
