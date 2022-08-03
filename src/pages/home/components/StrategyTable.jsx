@@ -229,6 +229,7 @@ const StrategyTable = ({
       tableProps: {
         size: "small",
         rowClassName: "tablet-font-size",
+        scroll: { x: 900 },
       },
     },
     [DEVICE_TYPE.Mobile]: {
@@ -237,7 +238,8 @@ const StrategyTable = ({
       },
       tableProps: {
         size: "small",
-        rowClassName: "mobile-font-sizee",
+        rowClassName: "mobile-font-size",
+        scroll: { x: 900 },
       },
     },
   }[deviceType];

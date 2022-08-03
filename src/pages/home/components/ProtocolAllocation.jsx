@@ -41,15 +41,9 @@ export default function ProtocolAllocation({
         height: "100%",
         marginTop: 40,
       }}
-      bodyStyle={{ padding: "0 2.75rem 1.75rem" }}
       {...protocolResponsiveConfig.cardProps}
     >
-      <Row
-        gutter={24}
-        style={{
-          marginTop: 24,
-        }}
-      >
+      <Row>
         <Col xl={12} lg={24} md={24} sm={24} xs={24}>
           <Suspense fallback={null}>
             <ProportionSales
