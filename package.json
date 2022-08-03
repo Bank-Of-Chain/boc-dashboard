@@ -7,6 +7,7 @@
     "apollo": "node ./config/apollo.js",
     "mustache": "mustache ./config/address.json ./config/config.template.js > ./config/config.js",
     "build": "umi build",
+    "apollo:dev-local": "node config/apollo.js --env=dev-local",
     "apollo:qa-sg": "node config/apollo.js --env=qa-sg",
     "apollo:qa02-sg": "node config/apollo.js --env=qa02-sg",
     "apollo:qa03-sg": "node config/apollo.js --env=qa03-sg",
