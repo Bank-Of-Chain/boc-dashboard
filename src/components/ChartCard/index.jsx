@@ -106,9 +106,7 @@ class ChartCard extends React.Component {
     return (
       <Card
         loading={loading}
-        bodyStyle={{
-          padding: "2.375rem 2.125rem 2.375rem 2.75rem",
-        }}
+        className={styles.card}
         {...rest}
       >
         {this.renderContent()}
