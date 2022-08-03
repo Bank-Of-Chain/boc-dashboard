@@ -22,6 +22,9 @@ export default function LineChartContent({
       chartWrapperClassName: styles.chartDiv,
     },
     [DEVICE_TYPE.Tablet]: {
+      cardProps: {
+        size: "small",
+      },
       buttonProps: {
         size: "small",
         style: { fontSize: "0.5rem" },
@@ -29,6 +32,9 @@ export default function LineChartContent({
       chartWrapperClassName: styles.chartDivMobile,
     },
     [DEVICE_TYPE.Mobile]: {
+      cardProps: {
+        size: "small",
+      },
       buttonProps: {
         size: "small",
         style: { fontSize: "0.5rem" },
@@ -43,42 +49,30 @@ export default function LineChartContent({
   };
 
   return (
-    <Card loading={loading} bordered={false} style={{ marginTop: 40 }}>
-      {deviceType === "Mobile" && (
-        <div className={styles.mobileButtons}>
-          <Radio.Group value={calDateRange} onChange={onDateChange}>
-            <Tooltip title="last 7 days">
-              <Radio.Button value={7}>WEEK</Radio.Button>
-            </Tooltip>
-            <Tooltip title="last 30 days">
-              <Radio.Button value={31}>MONTH</Radio.Button>
-            </Tooltip>
-            <Tooltip title="last 365 days">
-              <Radio.Button value={365}>YEAR</Radio.Button>
-            </Tooltip>
-          </Radio.Group>
-        </div>
-      )}
+    <Card
+      loading={loading}
+      bordered={false}
+      style={{ marginTop: 40 }}
+      {...chartResponsiveConfig.cardProps}
+    >
       <div className={styles.vaultKeyCard}>
         <Tabs
           animated
           className={classNames(chartResponsiveConfig.tabClassName)}
           tabBarExtraContent={
-            deviceType !== "Mobile" && (
-              <div className={styles.buttons}>
-                <Radio.Group value={calDateRange} onChange={onDateChange}>
-                  <Tooltip title="last 7 days">
-                    <Radio.Button value={7}>WEEK</Radio.Button>
-                  </Tooltip>
-                  <Tooltip title="last 30 days">
-                    <Radio.Button value={31}>MONTH</Radio.Button>
-                  </Tooltip>
-                  <Tooltip title="last 365 days">
-                    <Radio.Button value={365}>YEAR</Radio.Button>
-                  </Tooltip>
-                </Radio.Group>
-              </div>
-            )
+            <div className={styles.buttons}>
+              <Radio.Group value={calDateRange} onChange={onDateChange}>
+                <Tooltip title="last 7 days">
+                  <Radio.Button value={7}>WEEK</Radio.Button>
+                </Tooltip>
+                <Tooltip title="last 30 days">
+                  <Radio.Button value={31}>MONTH</Radio.Button>
+                </Tooltip>
+                <Tooltip title="last 365 days">
+                  <Radio.Button value={365}>YEAR</Radio.Button>
+                </Tooltip>
+              </Radio.Group>
+            </div>
           }
         >
           <TabPane tab="APY (%)" key="apy">

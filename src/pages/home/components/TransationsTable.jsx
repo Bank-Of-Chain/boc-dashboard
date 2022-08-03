@@ -238,21 +238,19 @@ const TransationsTable = ({
         bordered={false}
         title="Recent Activity"
         extra={
-          deviceType !== "Mobile" && (
-            <Radio.Group
-              value={filter}
-              onChange={handleChange}
-              buttonStyle="outline"
-              {...responsiveConfig.radioGroupProps}
-              className={styles.buttons}
-            >
-              {map(FILTER_OPTIONS, (value, key) => (
-                <Radio.Button value={value} key={key}>
-                  {value}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-          )
+          <Radio.Group
+            value={filter}
+            onChange={handleChange}
+            buttonStyle="outline"
+            {...responsiveConfig.radioGroupProps}
+            className={styles.buttons}
+          >
+            {map(FILTER_OPTIONS, (value, key) => (
+              <Radio.Button value={value} key={key}>
+                {value}
+              </Radio.Button>
+            ))}
+          </Radio.Group>
         }
         style={{
           height: "100%",
@@ -260,23 +258,6 @@ const TransationsTable = ({
         }}
         {...responsiveConfig.cardProps}
       >
-        <div>
-          {deviceType === "Mobile" && (
-            <Radio.Group
-              value={filter}
-              onChange={handleChange}
-              buttonStyle="outline"
-              {...responsiveConfig.radioGroupProps}
-              className={styles.mobileButtons}
-            >
-              {map(FILTER_OPTIONS, (value, key) => (
-                <Radio.Button value={value} key={key}>
-                  {value}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-          )}
-        </div>
         <Table
           rowKey={(record) => record.id}
           columns={columns}
