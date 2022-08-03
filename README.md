@@ -1,57 +1,15 @@
-# Ant Design Pro
+# 获取apollo配置
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
+> 执行 `yarn apollo` 或执行对应环境的 `yarn apollo:qa-sg`
 
-## Environment Prepare
+# 生成配置文件
 
-Install `node_modules`:
+> 确认 configs/address.json中的各个字段是否正确？执行`yarn mustache`生成配置文件。配置文件存放路径：src/configs/config.js
 
-```bash
-npm install
-```
+# 本地启动
 
-or
+> 执行`yarn start`启动项目
 
-```bash
-yarn
-```
+# 本地打包
 
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
-
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
-
-```bash
-npm start
-```
-
-### Build project
-
-```bash
-npm run build
-```
-
-### Check code style
-
-```bash
-npm run lint
-```
-
-You can also use script to auto fix some lint error:
-
-```bash
-npm run lint:fix
-```
-
-### Test code
-
-```bash
-npm test
-```
-
-## More
-
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
+> 执行`yarn build`进行打包操作，文件输出至 /zip 路径

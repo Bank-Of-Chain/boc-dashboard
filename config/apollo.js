@@ -15,28 +15,44 @@ const start = async () => {
   const url = `${host}:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`;
   const { status, data } = await axios.get(url).catch((error) => {
     console.error(`${nextEnv}配置加载失败，url=${url}`);
-    return {};
+    return {
+      status: 200,
+      data: {
+        "boc.networks.eth.vaultAddress": "",
+        "boc.networks.eth.pegTokenAddress": "",
+        "boc.networks.eth.vaultBufferAddress": "",
+        "boc.networks.bsc.vaultAddress": "",
+        "boc.networks.bsc.pegTokenAddress": "",
+        "boc.networks.bsc.vaultBufferAddress": "",
+        "boc.networks.polygon.vaultAddress": "",
+        "boc.networks.polygon.pegTokenAddress": "",
+        "boc.networks.polygon.vaultBufferAddress": "",
+        "boc.networks.ethi.vaultAddress": "",
+        "boc.networks.ethi.pegTokenAddress": "",
+        "boc.networks.ethi.vaultBufferAddress": "",
+      },
+    };
   });
   if (status === 200) {
-    const USDI_VAULT_FOR_ETH = data[`boc.networks.eth.vaultAddress`];
-    const USDI_FOR_ETH = data[`boc.networks.eth.pegTokenAddress`];
+    const USDI_VAULT_FOR_ETH = data["boc.networks.eth.vaultAddress"];
+    const USDI_FOR_ETH = data["boc.networks.eth.pegTokenAddress"];
     const VAULT_BUFFER_FOR_USDI_ETH =
-      data[`boc.networks.eth.vaultBufferAddress`];
+      data["boc.networks.eth.vaultBufferAddress"];
 
-    const USDI_VAULT_FOR_BSC = data[`boc.networks.bsc.vaultAddress`];
-    const USDI_FOR_BSC = data[`boc.networks.bsc.pegTokenAddress`];
+    const USDI_VAULT_FOR_BSC = data["boc.networks.bsc.vaultAddress"];
+    const USDI_FOR_BSC = data["boc.networks.bsc.pegTokenAddress"];
     const VAULT_BUFFER_FOR_USDI_BSC =
-      data[`boc.networks.bsc.vaultBufferAddress`];
+      data["boc.networks.bsc.vaultBufferAddress"];
 
-    const USDI_VAULT_FOR_MATIC = data[`boc.networks.polygon.vaultAddress`];
-    const USDI_FOR_MATIC = data[`boc.networks.polygon.pegTokenAddress`];
+    const USDI_VAULT_FOR_MATIC = data["boc.networks.polygon.vaultAddress"];
+    const USDI_FOR_MATIC = data["boc.networks.polygon.pegTokenAddress"];
     const VAULT_BUFFER_FOR_USDI_MATIC =
-      data[`boc.networks.polygon.vaultBufferAddress`];
+      data["boc.networks.polygon.vaultBufferAddress"];
 
-    const ETHI_VAULT = data[`boc.networks.ethi.vaultAddress`];
-    const ETHI_FOR_ETH = data[`boc.networks.ethi.pegTokenAddress`];
+    const ETHI_VAULT = data["boc.networks.ethi.vaultAddress"];
+    const ETHI_FOR_ETH = data["boc.networks.ethi.pegTokenAddress"];
     const VAULT_BUFFER_FOR_ETHI_ETH =
-      data[`boc.networks.ethi.vaultBufferAddress`];
+      data["boc.networks.ethi.vaultBufferAddress"];
     let config = {
       env: nextEnv,
       ETHI_FOR_ETH,
@@ -64,7 +80,7 @@ const start = async () => {
       RPC_FOR_31337: getRpcFor31337(),
     };
     fs.writeFileSync(
-      `./config/address.json`,
+      "./config/address.json",
       JSON.stringify(config, undefined, 2)
     );
     console.log("write json success");
@@ -75,57 +91,72 @@ const isPrSg = () => {
   return nextEnv === "pr-sg";
 };
 
+const isDevLocal = () => {
+  return nextEnv === "dev-local";
+};
+
 const getApiServer = () => {
+  if (isDevLocal()) return "http://localhost:8080";
   if (isPrSg()) return "https://service.bankofchain.io";
   return `https://service-${nextEnv}.bankofchain.io`;
 };
 
 const getDashboardRoot = () => {
+  if (isDevLocal()) return "http://localhost:8000";
   if (isPrSg()) return "https://dashboard.bankofchain.io";
   return `https://dashboard-${nextEnv}.bankofchain.io`;
 };
 
 const getImageRoot = () => {
+  if (isDevLocal()) return "http://localhost:3001";
   if (isPrSg()) return "https://bankofchain.io";
   return `https://${nextEnv}.bankofchain.io`;
 };
 
 const getRpcFor1 = () => {
+  if (isDevLocal()) return "http://localhost:8545";
   if (isPrSg()) return "https://rpc.ankr.com/eth";
   return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 const getRpcFor56 = () => {
+  if (isDevLocal()) return "http://localhost:8545";
   if (isPrSg()) return "https://bsc-dataseed.binance.org";
   return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 const getRpcFor137 = () => {
+  if (isDevLocal()) return "http://localhost:8545";
   if (isPrSg()) return "https://rpc-mainnet.maticvigil.com";
   return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 const getRpcFor31337 = () => {
+  if (isDevLocal()) return "http://localhost:8545";
   if (isPrSg()) return "";
   return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 
 const getSubgraphForEthUsdi = () => {
+  if (isDevLocal()) return "http://localhost:8000";
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum";
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
 };
 
 const getSubgraphForBscUsdi = () => {
+  if (isDevLocal()) return "http://localhost:8000";
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bnb";
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
 };
 
 const getSubgraphForMaticUsdi = () => {
+  if (isDevLocal()) return "http://localhost:8000";
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon";
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`;
 };
 
 const getSubgraphForEthEthi = () => {
+  if (isDevLocal()) return "http://localhost:8000";
   if (isPrSg())
     return "https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi";
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi`;
@@ -138,6 +169,11 @@ const chooseEnv = () => {
       name: "confirm",
       message: "请选择需要发布的环境：",
       choices: [
+        {
+          key: "dev-local",
+          name: "dev-local",
+          value: "dev-local",
+        },
         {
           key: "qa-sg",
           name: "qa-sg",

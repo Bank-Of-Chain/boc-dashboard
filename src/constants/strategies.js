@@ -14,6 +14,7 @@ const USDI_ETH_STRATEGIES_MAP = [
   "Stargate",
   "DForce",
   "Synapse",
+  "Aura",
 ];
 
 const USDI_BSC_STRATEGIES_MAP = [
@@ -43,7 +44,14 @@ const USDI_MATIC_STRATEGIES_MAP = [
   "Stargate",
 ];
 
-const ETHI_ETH_STRATEGIES_MAP = ["Balancer", "UniswapV2", "Convex"];
+const ETHI_ETH_STRATEGIES_MAP = [
+  "Balancer",
+  "UniswapV2",
+  "Convex",
+  "Aura",
+  "UniswapV3",
+  "YearnV2",
+];
 
 export const USDI_STRATEGIES_MAP = {
   1: USDI_ETH_STRATEGIES_MAP,
