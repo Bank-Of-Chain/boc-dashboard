@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import classNames from "classnames";
 
 // === Components === //
@@ -40,20 +41,19 @@ const renderTotal = (total, unit) => {
   return totalDom;
 };
 
-const ChartCard = () => {
+const ChartCard = (props) => {
+  const { loading = false, ...rest } = props;
+  const {
+    contentHeight,
+    title,
+    avatar,
+    action,
+    total,
+    footer,
+    children,
+    unit,
+  } = rest;
   const renderContent = () => {
-    const {
-      contentHeight,
-      title,
-      avatar,
-      action,
-      total,
-      footer,
-      children,
-      loading,
-      unit,
-    } = this.props;
-
     if (loading) {
       return false;
     }
@@ -95,12 +95,15 @@ const ChartCard = () => {
     );
   };
 
-  const { loading = false, ...rest } = this.props;
   return (
     <Card loading={loading} className={styles.card} {...rest}>
       {renderContent()}
     </Card>
   );
+};
+
+ChartCard.propTypes = {
+  loading: PropTypes.bool.isRequired,
 };
 
 export default ChartCard;
