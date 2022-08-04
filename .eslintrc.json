@@ -22,6 +22,9 @@
     "IMAGE_ROOT": true,
     "DASHBOARD_ROOT": true,
     "API_SERVER": true,
-    "ENV_INDEX": true
+    "ENV_INDEX": true,
+    "USDI": true,
+    "ETHI": true,
+    "RPC_URL": true
   }
 }
