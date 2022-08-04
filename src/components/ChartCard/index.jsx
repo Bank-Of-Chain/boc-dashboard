@@ -1,6 +1,10 @@
-import { Card } from "antd";
 import React from "react";
 import classNames from "classnames";
+
+// === Components === //
+import { Card } from "antd";
+
+// === Styles === //
 import styles from "./index.less";
 
 const renderTotal = (total, unit) => {
@@ -36,8 +40,8 @@ const renderTotal = (total, unit) => {
   return totalDom;
 };
 
-class ChartCard extends React.Component {
-  renderContent = () => {
+const ChartCard = () => {
+  const renderContent = () => {
     const {
       contentHeight,
       title,
@@ -91,28 +95,12 @@ class ChartCard extends React.Component {
     );
   };
 
-  render() {
-    const {
-      loading = false,
-      contentHeight,
-      title,
-      avatar,
-      action,
-      total,
-      footer,
-      children,
-      ...rest
-    } = this.props;
-    return (
-      <Card
-        loading={loading}
-        className={styles.card}
-        {...rest}
-      >
-        {this.renderContent()}
-      </Card>
-    );
-  }
-}
+  const { loading = false, ...rest } = this.props;
+  return (
+    <Card loading={loading} className={styles.card} {...rest}>
+      {renderContent()}
+    </Card>
+  );
+};
 
 export default ChartCard;
