@@ -185,7 +185,6 @@ const Reports = () => {
       title: "Name",
       dataIndex: "id",
       key: "id",
-      fixed: "left",
       render: (text, item, index) => (
         <a onClick={() => setShowIndex(index)}>Report-{text}</a>
       ),
