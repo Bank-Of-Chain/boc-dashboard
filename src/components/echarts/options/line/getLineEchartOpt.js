@@ -1,8 +1,5 @@
 import moment from "moment";
 import lineSimple from "@/components/echarts/options/line/lineSimple";
-
-import _min from "lodash/min";
-import _max from "lodash/max";
 import forEach from "lodash/forEach";
 import isNaN from "lodash/isNaN";
 import isUndefined from "lodash/isUndefined";
@@ -48,7 +45,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
   };
   option.xAxis = {
     axisLabel: {
-      formatter: (value, index) => xAxisLabels[value],
+      formatter: (value) => xAxisLabels[value],
     },
     ...option.xAxis,
     ...xAxis,

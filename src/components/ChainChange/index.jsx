@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useModel, history } from "umi";
 
 // === Components === //
@@ -10,7 +11,6 @@ import CHAINS from "@/constants/chain";
 // === Utils === //
 import map from "lodash/map";
 import { changeNetwork } from "@/utils/network";
-
 import useWallet from "@/hooks/useWallet";
 
 // === Styles === //
@@ -23,7 +23,7 @@ const options = map(CHAINS, (i) => {
   };
 });
 
-export default function ChainChange(props) {
+const ChainChange = (props) => {
   const { shouldChangeChain } = props;
 
   const { initialState } = useModel("@@initialState");
@@ -46,7 +46,7 @@ export default function ChainChange(props) {
       });
       setTimeout(() => {
         location.reload();
-      }, 1);
+      }, 100);
     });
   };
 
@@ -67,4 +67,10 @@ export default function ChainChange(props) {
       </Col>
     </Row>
   );
-}
+};
+
+ChainChange.propTypes = {
+  shouldChangeChain: PropTypes.bool,
+};
+
+export default ChainChange;

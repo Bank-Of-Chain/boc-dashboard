@@ -1,9 +1,7 @@
-/**
- * 地址展示组件
- */
 import React from "react";
+import PropTypes from "prop-types";
 
-export default function Address(props) {
+const Address = (props) => {
   const ens = props.address;
   let displayAddress = props.address.substr(0, 6);
   if (ens && ens.indexOf("0x") < 0) {
@@ -14,4 +12,12 @@ export default function Address(props) {
     displayAddress = props.address;
   }
   return <span className={props.wrapClassName}>{displayAddress}</span>;
-}
+};
+
+Address.propTypes = {
+  address: PropTypes.string.isRequired,
+  size: PropTypes.string,
+  wrapClassName: PropTypes.string,
+};
+
+export default Address;

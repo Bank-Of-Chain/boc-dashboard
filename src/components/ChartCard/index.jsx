@@ -1,6 +1,11 @@
-import { Card } from "antd";
 import React from "react";
+import PropTypes from "prop-types";
 import classNames from "classnames";
+
+// === Components === //
+import { Card } from "antd";
+
+// === Styles === //
 import styles from "./index.less";
 
 const renderTotal = (total, unit) => {
@@ -36,20 +41,19 @@ const renderTotal = (total, unit) => {
   return totalDom;
 };
 
-class ChartCard extends React.Component {
-  renderContent = () => {
-    const {
-      contentHeight,
-      title,
-      avatar,
-      action,
-      total,
-      footer,
-      children,
-      loading,
-      unit,
-    } = this.props;
-
+const ChartCard = (props) => {
+  const { loading = false, ...rest } = props;
+  const {
+    contentHeight,
+    title,
+    avatar,
+    action,
+    total,
+    footer,
+    children,
+    ...rrest
+  } = rest;
+  const renderContent = () => {
     if (loading) {
       return false;
     }
@@ -63,7 +67,7 @@ class ChartCard extends React.Component {
               <span className={styles.title}>{title}</span>
               <span className={styles.action}>{action}</span>
             </div>
-            {renderTotal(total, unit)}
+            {renderTotal(total, props.unit)}
           </div>
         </div>
         {children && (
@@ -91,28 +95,16 @@ class ChartCard extends React.Component {
     );
   };
 
-  render() {
-    const {
-      loading = false,
-      contentHeight,
-      title,
-      avatar,
-      action,
-      total,
-      footer,
-      children,
-      ...rest
-    } = this.props;
-    return (
-      <Card
-        loading={loading}
-        className={styles.card}
-        {...rest}
-      >
-        {this.renderContent()}
-      </Card>
-    );
-  }
-}
+  return (
+    <Card loading={loading} className={styles.card} {...rrest}>
+      {renderContent()}
+    </Card>
+  );
+};
+
+ChartCard.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  unit: PropTypes.string,
+};
 
 export default ChartCard;
