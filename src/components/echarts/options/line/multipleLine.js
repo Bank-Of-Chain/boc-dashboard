@@ -38,6 +38,7 @@ export default function (obj) {
       textStyle: {
         color: "#fff",
       },
+      confine: true
     },
     legend: obj.legend,
     xAxis: {
