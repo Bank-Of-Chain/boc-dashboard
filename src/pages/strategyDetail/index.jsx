@@ -451,6 +451,25 @@ const Strategy = (props) => {
     },
   }[deviceType];
 
+  let iconProps = {
+    push: 2,
+    xl: 12,
+    lg: 12,
+    md: 12,
+    sm: 24,
+    xs: 24,
+    style: {
+      margin: "0 auto 16px"
+    }
+  }
+  if (deviceType === DEVICE_TYPE.Mobile) {
+    iconProps.style = {
+      margin: "0 auto 16px",
+      textAlign: "center"
+    }
+    delete iconProps.push
+  }
+
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -460,15 +479,7 @@ const Strategy = (props) => {
           {...infoResponsiveConfig.cardProps}
         >
           <Row justify="space-around">
-            <Col
-              push={2}
-              xl={12}
-              lg={12}
-              md={12}
-              sm={24}
-              xs={24}
-              style={{ margin: "0 auto 16px" }}
-            >
+            <Col {...iconProps}>
               <Image
                 preview={false}
                 width={200}
