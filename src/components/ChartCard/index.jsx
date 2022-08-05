@@ -51,7 +51,7 @@ const ChartCard = (props) => {
     total,
     footer,
     children,
-    unit,
+    ...rrest
   } = rest;
   const renderContent = () => {
     if (loading) {
@@ -67,7 +67,7 @@ const ChartCard = (props) => {
               <span className={styles.title}>{title}</span>
               <span className={styles.action}>{action}</span>
             </div>
-            {renderTotal(total, unit)}
+            {renderTotal(total, props.unit)}
           </div>
         </div>
         {children && (
@@ -96,7 +96,7 @@ const ChartCard = (props) => {
   };
 
   return (
-    <Card loading={loading} className={styles.card} {...rest}>
+    <Card loading={loading} className={styles.card} {...rrest}>
       {renderContent()}
     </Card>
   );
@@ -104,6 +104,7 @@ const ChartCard = (props) => {
 
 ChartCard.propTypes = {
   loading: PropTypes.bool.isRequired,
+  unit: PropTypes.string,
 };
 
 export default ChartCard;
