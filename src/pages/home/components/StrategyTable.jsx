@@ -244,12 +244,17 @@ const StrategyTable = ({
     },
   }[deviceType];
 
+  let title = 'Vault Strategies Allocations'
+  if (deviceType === DEVICE_TYPE.Mobile) {
+    title = 'Strategies Allocations'
+  }
+
   return (
     <div>
       <Card
         loading={loading}
         bordered={false}
-        title="Vault Strategies Allocations"
+        title={title}
         extra={
           <div>
             <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
