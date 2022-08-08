@@ -207,7 +207,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       tableProps: {
         size: "small",
         rowClassName: "mobile-font-size",
-        scroll: { x: 900 },
+        scroll: { x: 600 },
       },
     },
   }[deviceType];
