@@ -1,3 +1,4 @@
+import React from "react";
 import { PageLoading } from "@ant-design/pro-layout";
 import { history } from "umi";
 import RightContent from "@/components/RightContent";
@@ -41,14 +42,14 @@ export const layout = ({ initialState, setInitialState }) => {
           query: { chain, vault },
         },
       } = history; // 如果没有登录，重定向到 login
-      let nextChainId = !!initialState.chain
+      let nextChainId = initialState.chain
         ? initialState.chain
-        : !!chain
+        : chain
         ? chain
         : ETH.id;
-      let nextVault = !!initialState.vault
+      let nextVault = initialState.vault
         ? initialState.vault
-        : !!vault
+        : vault
         ? vault
         : VAULT_TYPE.ETHi;
       if (vault === VAULT_TYPE.ETHi) {

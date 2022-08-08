@@ -4,7 +4,7 @@ import {
   WalletOutlined,
   CopyOutlined,
 } from "@ant-design/icons";
-import { Avatar, Menu, Spin } from "antd";
+import { Menu, Spin } from "antd";
 import { useModel } from "umi";
 
 // === Components === //

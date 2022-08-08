@@ -21,6 +21,10 @@
     "CHAIN_BROWSER_URL": true,
     "IMAGE_ROOT": true,
     "DASHBOARD_ROOT": true,
-    "API_SERVER": true
+    "API_SERVER": true,
+    "ENV_INDEX": true,
+    "USDI": true,
+    "ETHI": true,
+    "RPC_URL": true
   }
 }

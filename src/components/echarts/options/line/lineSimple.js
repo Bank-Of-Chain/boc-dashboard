@@ -15,8 +15,9 @@ export default function (obj) {
       color: "#fff",
     },
     grid: {
+      top: 40,
       left: "0%",
-      right: "1%",
+      right: "5%",
       bottom: showDataZoom ? DATA_ZOOM_HEIGHT : "0%",
       containLabel: true,
     },

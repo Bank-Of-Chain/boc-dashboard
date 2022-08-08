@@ -36,8 +36,13 @@
 
 .vaultKeyCard {
   .tabMobile {
-    :global(.ant-tabs-tab + .ant-tabs-tab) {
-      margin: 0 0 0 24px;
+    :global {
+      .ant-tabs-tab + .ant-tabs-tab {
+        margin: 0 0 0 0.5rem;
+      }
+      .ant-tabs-tab {
+        padding: 0 0 0.5rem;
+      }
     }
   }
   .chartDiv {
@@ -98,11 +103,33 @@
       height: 2.25rem;
       line-height: 2rem;
     }
+    @media screen and (max-width: 780px) {
+      .ant-radio-button-wrapper {
+        width: 5rem;
+        height: 2.25rem;
+        padding: 0 1rem;
+        line-height: 2rem;
+      }
+    }
+    @media screen and (max-width: 554px) {
+      .ant-radio-button-wrapper {
+        width: auto;
+        height: auto;
+        padding: 0 0.4rem;
+        font-size: 0.4rem;
+        line-height: 1.5rem;
+      }
+    }
+    @media screen and (max-width: 400px) {
+      .ant-radio-button-wrapper {
+        width: auto;
+        height: auto;
+        padding: 0 0.3rem;
+        font-size: 0.4rem;
+        line-height: 1.2rem;
+      }
+    }
   }
-}
-.mobileButtons {
-  display: inline-flex;
-  margin-bottom: 1rem;
 }
 
 .field {
