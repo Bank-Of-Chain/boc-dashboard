@@ -159,8 +159,9 @@ const ETHiHome = () => {
           }
         });
         option.grid = {
+          top: 40,
           left: "0%",
-          right: "2%",
+          right: "5%",
           bottom: "0%",
           containLabel: true,
         };
