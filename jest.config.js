@@ -1,6 +1,6 @@
 module.exports = {
   testURL: "http://localhost:8000",
-  testEnvironment: "./tests/PuppeteerEnvironment",
+  testEnvironment: "jsdom",
   verbose: false,
   extraSetupFiles: ["./tests/setupTests.js"],
   globals: {
