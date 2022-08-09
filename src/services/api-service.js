@@ -1,5 +1,5 @@
 import { request } from "umi";
-import { isEmpty, isNil } from "lodash";
+import { isNil } from "lodash";
 
 export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
   try {
@@ -250,21 +250,6 @@ export const getEstimateApys = ({
   useCache = true,
 }) => {
   return Promise.resolve({ content: [] });
-  // if (isEmpty(tokenType)) {
-  //   return Promise.reject("vaultAddress不可为空")
-  // }
-
-  // const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`
-  // if (useCache && estimateApyCache[cacheKey]) {
-  //   return Promise.resolve(estimateApyCache[cacheKey])
-  // }
-  // const params = {
-  //   chainId,
-  //   tokenType,
-  //   offset,
-  //   limit
-  // }
-  // return request(`${API_SERVER}/apy/vault_estimate_apy`, { params })
 };
 
 export const clearAPICache = () => {
@@ -286,19 +271,6 @@ export const getStrategyEstimateApys = (
   strategyAddress
 ) => {
   return Promise.resolve({ content: [] });
-  // if (isEmpty(chainId))
-  //   return Promise.reject("chainId不可为空")
-
-  // if (isEmpty(vaultAddress))
-  //   return Promise.reject("vaultAddress不可为空")
-
-  // if (isEmpty(strategyAddress))
-  //   return Promise.reject("strategyAddress不可为空")
-  // const params = {
-  //   strategyName: strategyAddress
-  // }
-
-  // return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_estimate_apy`, { params })
 };
 
 /**

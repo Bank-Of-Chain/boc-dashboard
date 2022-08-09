@@ -11,8 +11,6 @@ import DailyTvl from "./components/DailyChart";
 import MonthProfit from "./components/MonthProfit";
 
 // === Utils === //
-import _min from "lodash/min";
-import _max from "lodash/max";
 import map from "lodash/map";
 import isString from "lodash/isString";
 import { toFixed } from "@/utils/number-format";
