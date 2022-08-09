@@ -14,8 +14,6 @@ import { TOKEN_DISPLAY_DECIMALS } from "@/constants/vault";
 import ChainChange from "@/components/ChainChange";
 
 // === Utils === //
-import _min from "lodash/min";
-import _max from "lodash/max";
 import map from "lodash/map";
 import { toFixed } from "@/utils/number-format";
 import { isProEnv } from "@/services/env-service";

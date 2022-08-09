@@ -6,6 +6,7 @@
   "scripts": {
     "apollo": "node ./config/apollo.js",
     "mustache": "mustache ./config/address.json ./config/config.template.js > ./config/config.js",
+    "start": "umi dev",
     "build": "umi build",
     "apollo:dev-local": "node config/apollo.js --env=dev-local",
     "apollo:qa-sg": "node config/apollo.js --env=qa-sg",
@@ -29,7 +30,6 @@
     "openapi": "umi openapi",
     "prettier": "prettier -c --write \"src/**/*\"",
     "serve": "umi-serve",
-    "start": "umi dev",
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev-local umi dev",
     "start:no-ui": "cross-env UMI_UI=none UMI_ENV=dev-local umi dev",
     "pretest": "node ./tests/beforeTest",

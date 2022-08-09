@@ -36,7 +36,6 @@ import {
   getStrategyApysOffChain,
   getBaseApyByPage,
   getStrategyDetails,
-  getStrategyEstimateApys,
 } from "@/services/api-service";
 
 // === Styles === //
@@ -117,12 +116,7 @@ const Strategy = (props) => {
         0,
         365
       ).catch(() => {}),
-      getStrategyEstimateApys(
-        initialState.chain,
-        initialState.vaultAddress,
-        strategy?.strategyName
-      ).catch(() => {}),
-    ]).then(([apys = { content: [] }, offChainApys, unRealizeApys]) => {
+    ]).then(([apys = { content: [] }, offChainApys]) => {
       const startMoment = moment()
         .utcOffset(0)
         .subtract(366, "day")
@@ -137,21 +131,6 @@ const Strategy = (props) => {
         []
       );
 
-      // 因为weeklyApy只展示到昨天的，所以需要将昨天的点，作为unrealize线的第一个点，这样weeklyapy和unrealize的线才是连贯的
-      let unRealizeApyItems = unRealizeApys?.content;
-      if (
-        apys.content.length > 0 &&
-        unRealizeApyItems.length > 0 &&
-        moment(apys.content[0].fetchTimestamp * 1000).isBefore(
-          unRealizeApyItems[unRealizeApyItems.length - 1].timestamp * 1000
-        )
-      ) {
-        const firstItem = {
-          apy: apys.content[0].lpApy,
-          timestamp: apys.content[0].fetchTimestamp,
-        };
-        unRealizeApyItems = [firstItem, ...unRealizeApyItems];
-      }
       const offChainApyMap = keyBy(
         map(offChainApys.content, (i) => {
           return {
@@ -459,15 +438,15 @@ const Strategy = (props) => {
     sm: 24,
     xs: 24,
     style: {
-      margin: "0 auto 16px"
-    }
-  }
+      margin: "0 auto 16px",
+    },
+  };
   if (deviceType === DEVICE_TYPE.Mobile) {
     iconProps.style = {
       margin: "0 auto 16px",
-      textAlign: "center"
-    }
-    delete iconProps.push
+      textAlign: "center",
+    };
+    delete iconProps.push;
   }
 
   return (

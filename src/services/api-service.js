@@ -1,5 +1,5 @@
 import { request } from "umi";
-import { isEmpty, isNil } from "lodash";
+import { isNil } from "lodash";
 
 export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
   try {
@@ -236,69 +236,9 @@ export const getTokenTotalSupplyList = ({
   });
 };
 
-let estimateApyCache = {};
-/**
- * 获取vault的预估apy
- * @param {string} chainId 链id
- * @param {string} tokenType vault地址
- */
-export const getEstimateApys = ({
-  chainId,
-  tokenType,
-  offset = 0,
-  limit,
-  useCache = true,
-}) => {
-  return Promise.resolve({ content: [] });
-  // if (isEmpty(tokenType)) {
-  //   return Promise.reject("vaultAddress不可为空")
-  // }
-
-  // const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`
-  // if (useCache && estimateApyCache[cacheKey]) {
-  //   return Promise.resolve(estimateApyCache[cacheKey])
-  // }
-  // const params = {
-  //   chainId,
-  //   tokenType,
-  //   offset,
-  //   limit
-  // }
-  // return request(`${API_SERVER}/apy/vault_estimate_apy`, { params })
-};
-
 export const clearAPICache = () => {
   apyListCache = {};
   tokenTotalSupplyCache = {};
-  estimateApyCache = {};
-};
-
-/**
- * 获取策略的apy
- * @param {string} chainId
- * @param {string} vaultAddress
- * @param {string} strategyAddress
- * @returns
- */
-export const getStrategyEstimateApys = (
-  chainId,
-  vaultAddress,
-  strategyAddress
-) => {
-  return Promise.resolve({ content: [] });
-  // if (isEmpty(chainId))
-  //   return Promise.reject("chainId不可为空")
-
-  // if (isEmpty(vaultAddress))
-  //   return Promise.reject("vaultAddress不可为空")
-
-  // if (isEmpty(strategyAddress))
-  //   return Promise.reject("strategyAddress不可为空")
-  // const params = {
-  //   strategyName: strategyAddress
-  // }
-
-  // return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_estimate_apy`, { params })
 };
 
 /**

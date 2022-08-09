@@ -10,7 +10,7 @@ const BSC = {
   id: "56",
   name: "BNB",
   decimals: BN(1e18),
-  rpcUrl: `https://bsc-dataseed.binance.org/`,
+  rpcUrl: `https://bsc-dataseed1.ninicoin.io/`,
   blockExplorer: "https://bscscan.com/",
 };
 const MATIC = {
