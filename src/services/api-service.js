@@ -236,41 +236,9 @@ export const getTokenTotalSupplyList = ({
   });
 };
 
-let estimateApyCache = {};
-/**
- * 获取vault的预估apy
- * @param {string} chainId 链id
- * @param {string} tokenType vault地址
- */
-export const getEstimateApys = ({
-  chainId,
-  tokenType,
-  offset = 0,
-  limit,
-  useCache = true,
-}) => {
-  return Promise.resolve({ content: [] });
-};
-
 export const clearAPICache = () => {
   apyListCache = {};
   tokenTotalSupplyCache = {};
-  estimateApyCache = {};
-};
-
-/**
- * 获取策略的apy
- * @param {string} chainId
- * @param {string} vaultAddress
- * @param {string} strategyAddress
- * @returns
- */
-export const getStrategyEstimateApys = (
-  chainId,
-  vaultAddress,
-  strategyAddress
-) => {
-  return Promise.resolve({ content: [] });
 };
 
 /**

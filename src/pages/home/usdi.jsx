@@ -25,7 +25,6 @@ import {
   getValutAPYList,
   getTokenTotalSupplyList,
   clearAPICache,
-  getEstimateApys,
 } from "@/services/api-service";
 
 // === Utils === //
@@ -64,22 +63,13 @@ const USDiHome = () => {
     if (calDateRange > 7) {
       params.format = "MM-DD";
     }
-    Promise.all([
-      getValutAPYList({
-        chainId: initialState.chain,
-        duration: APY_DURATION.monthly,
-        limit: calDateRange,
-        tokenType: TOKEN_TYPE.usdi,
-      }),
-      getEstimateApys({
-        chainId: initialState.chain,
-        tokenType: TOKEN_TYPE.usdi,
-        limit: calDateRange,
-      }).catch(() => {
-        return { content: [] };
-      }),
-    ])
-      .then(([data, estimateApys]) => {
+    getValutAPYList({
+      chainId: initialState.chain,
+      duration: APY_DURATION.monthly,
+      limit: calDateRange,
+      tokenType: TOKEN_TYPE.usdi,
+    })
+      .then((data) => {
         const items = appendDate(data.content, "apy", calDateRange);
         const result = map(reverse(items), ({ date, apy }) => {
           const apyValue = isNil(apy)
@@ -93,18 +83,7 @@ const USDiHome = () => {
         const nextApy30 = get(data, "content.[0].apy", 0);
         setApy30(nextApy30);
 
-        const reverseIt = map(reverse(estimateApys.content), (i) => {
-          return {
-            date: i.date,
-            unrealize_apy: i.apy,
-            apy: null,
-          };
-        });
-
-        const xAxisData = uniq([
-          ...map(result, ({ date }) => date),
-          ...map(reverseIt, ({ date }) => date),
-        ]);
+        const xAxisData = uniq(map(result, ({ date }) => date));
 
         // 多条折现配置
         const lengndData = [];
@@ -119,20 +98,6 @@ const USDiHome = () => {
             showSymbol: size(filter(data1, (i) => !isNil(i))) === 1,
           },
         ];
-        // TODO: 由于后端接口暂时未上，所以前端选择性的展示unrealize apy
-        if (!isEmpty(estimateApys.content)) {
-          lengndData.push("APY");
-          lengndData.push("Estimated APY");
-          const data2 = map(xAxisData, (date) => {
-            const item = find(reverseIt, { date });
-            return item ? item.unrealize_apy : null;
-          });
-          columeArray.push({
-            seriesName: "Estimated APY",
-            seriesData: data2,
-            showSymbol: size(filter(data2, (i) => !isNil(i))) === 1,
-          });
-        }
         const obj = {
           legend: {
             data: lengndData,

@@ -121,7 +121,7 @@ const getRpcFor1 = () => {
 };
 const getRpcFor56 = () => {
   if (isDevLocal()) return "http://localhost:8545";
-  if (isPrSg()) return "https://bsc-dataseed.binance.org";
+  if (isPrSg()) return "https://bsc-dataseed1.ninicoin.io/";
   return `https://rpc-${nextEnv}.bankofchain.io`;
 };
 const getRpcFor137 = () => {
