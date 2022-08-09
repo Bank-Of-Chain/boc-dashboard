@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChartCard Component Render 1`] = `
+<DocumentFragment>
+  <div
+    class="ant-card ant-card-loading ant-card-bordered"
+  >
+    <div
+      class="ant-card-body"
+    >
+      <div
+        class="ant-skeleton ant-skeleton-active"
+      >
+        <div
+          class="ant-skeleton-content"
+        >
+          <ul
+            class="ant-skeleton-paragraph"
+          >
+            <li />
+            <li />
+            <li />
+            <li
+              style="width: 61%;"
+            />
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

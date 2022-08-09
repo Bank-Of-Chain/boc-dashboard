@@ -33,7 +33,7 @@
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev-local umi dev",
     "start:no-ui": "cross-env UMI_UI=none UMI_ENV=dev-local umi dev",
     "pretest": "node ./tests/beforeTest",
-    "test": "umi test",
+    "test": "umi test --watchAll",
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
     "tsc": "tsc --noEmit"
