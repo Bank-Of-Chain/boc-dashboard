@@ -102,34 +102,28 @@ export default defineConfig({
     IMAGE_ROOT: "{{{IMAGE_ROOT}}}",
     CHAIN_BROWSER_URL: {
       1: "https://etherscan.io",
-      56: "https://bscscan.com",
       137: "https://polygonscan.com",
     },
     RPC_URL: {
       1: "{{{RPC_FOR_1}}}",
-      56: "{{{RPC_FOR_56}}}",
       137: "{{{RPC_FOR_137}}}",
       31337: "{{{RPC_FOR_31337}}}",
     },
     USDI: {
       SUB_GRAPH_URL: {
         1: "{{{SUB_GRAPH_URL_FOR_USDI_ETH}}}",
-        56: "{{{SUB_GRAPH_URL_FOR_USDI_BSC}}}",
         137: "{{{SUB_GRAPH_URL_FOR_USDI_MATIC}}}",
       },
       VAULT_ADDRESS: {
         1: "{{USDI_VAULT_FOR_ETH}}",
-        56: "{{USDI_VAULT_FOR_BSC}}",
         137: "{{USDI_VAULT_FOR_MATIC}}",
       },
       USDI_ADDRESS: {
         1: "{{USDI_FOR_ETH}}",
-        56: "{{USDI_FOR_BSC}}",
         137: "{{USDI_FOR_MATIC}}",
       },
       VAULT_BUFFER_ADDRESS: {
         1: "{{VAULT_BUFFER_FOR_USDI_ETH}}",
-        56: "{{VAULT_BUFFER_FOR_USDI_BSC}}",
         137: "{{VAULT_BUFFER_FOR_USDI_MATIC}}",
       },
     },

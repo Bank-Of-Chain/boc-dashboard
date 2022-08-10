@@ -17,19 +17,6 @@ const USDI_ETH_STRATEGIES_MAP = [
   "Aura",
 ];
 
-const USDI_BSC_STRATEGIES_MAP = [
-  "Bunny",
-  "Pancake",
-  "Alpaca",
-  "Venus",
-  "Ellipsis",
-  "Belt",
-  "Dodo",
-  "DForce",
-  "Synapse",
-  "Stargate",
-];
-
 const USDI_MATIC_STRATEGIES_MAP = [
   "Curve",
   "Aave",
@@ -56,7 +43,6 @@ const ETHI_ETH_STRATEGIES_MAP = [
 
 export const USDI_STRATEGIES_MAP = {
   1: USDI_ETH_STRATEGIES_MAP,
-  56: USDI_BSC_STRATEGIES_MAP,
   137: USDI_MATIC_STRATEGIES_MAP,
 };
 
@@ -66,7 +52,6 @@ export const ETHI_STRATEGIES_MAP = {
 
 export {
   USDI_ETH_STRATEGIES_MAP,
-  USDI_BSC_STRATEGIES_MAP,
   USDI_MATIC_STRATEGIES_MAP,
   ETHI_ETH_STRATEGIES_MAP,
 };

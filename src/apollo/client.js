@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
-import { ETH, BSC, MATIC } from "../constants/chain";
+import { ETH, MATIC } from "../constants/chain";
 
 import { VAULT_TYPE } from "@/constants/vault";
 
@@ -8,10 +8,6 @@ const USDI_SUB_GRAPH_URL = USDI.SUB_GRAPH_URL;
 const USDI_CLIENT = {
   [MATIC.id]: new ApolloClient({
     uri: USDI_SUB_GRAPH_URL[MATIC.id],
-    cache: new InMemoryCache(),
-  }),
-  [BSC.id]: new ApolloClient({
-    uri: USDI_SUB_GRAPH_URL[BSC.id],
     cache: new InMemoryCache(),
   }),
   [ETH.id]: new ApolloClient({

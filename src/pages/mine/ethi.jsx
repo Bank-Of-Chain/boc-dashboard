@@ -140,7 +140,7 @@ const Personal = () => {
                 })
               }
             >
-              eth/bsc: 0x2346c6b1024e97c50370c783a66d80f577fe991d
+              eth: 0x2346c6b1024e97c50370c783a66d80f577fe991d
             </a>
             <br />
             <a
