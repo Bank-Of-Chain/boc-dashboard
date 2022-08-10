@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Table, Tooltip, Radio } from "antd";
+import { Card, Table, Tooltip, Radio, Select } from "antd";
 import { useModel } from "umi";
 
 // === Utils === //
@@ -15,6 +15,8 @@ import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
 import { RECENT_ACTIVITY_TYPE } from "@/constants/usdi";
 import { getRecentActivity } from "@/services/dashboard-service";
 import styles from "../style.less";
+
+const { Option } = Select;
 
 const TransationsTable = ({
   loading,
@@ -195,7 +197,11 @@ const TransationsTable = ({
   });
 
   const handleChange = (e) => {
-    setFilter(e.target.value);
+    if (typeof e === 'string') {
+      setFilter(e);
+    } else {
+      setFilter(e.target.value);
+    }
   };
 
   const responsiveConfig = {
@@ -231,68 +237,68 @@ const TransationsTable = ({
     },
   }[deviceType];
 
+  let extra = (
+    <Radio.Group
+      value={filter}
+      onChange={handleChange}
+      buttonStyle="outline"
+      {...responsiveConfig.radioGroupProps}
+      className={styles.buttons}
+    >
+      {map(FILTER_OPTIONS, (value, key) => (
+        <Radio.Button value={value} key={key}>
+          {value}
+        </Radio.Button>
+      ))}
+    </Radio.Group>
+  )
+  if (deviceType === DEVICE_TYPE.Mobile) {
+    extra = (
+      <Select
+        style={{ width: 120 }}
+        value={filter}
+        onChange={handleChange}
+      >
+        {map(FILTER_OPTIONS, (value, key) => (
+          <Option value={value} key={key}>
+            {value}
+          </Option>
+        ))}
+      </Select>
+    )
+  }
+
   return (
     <div>
       <Card
         loading={loading}
         bordered={false}
         title="Recent Activity"
-        extra={
-          deviceType !== "Mobile" && (
-            <Radio.Group
-              value={filter}
-              onChange={handleChange}
-              buttonStyle="outline"
-              {...responsiveConfig.radioGroupProps}
-              className={styles.buttons}
-            >
-              {map(FILTER_OPTIONS, (value, key) => (
-                <Radio.Button value={value} key={key}>
-                  {value}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-          )
-        }
+        extra={extra}
         style={{
           height: "100%",
           marginTop: 40,
         }}
         {...responsiveConfig.cardProps}
       >
-        <div>
-          {deviceType === "Mobile" && (
-            <Radio.Group
-              value={filter}
-              onChange={handleChange}
-              buttonStyle="outline"
-              {...responsiveConfig.radioGroupProps}
-              className={styles.mobileButtons}
-            >
-              {map(FILTER_OPTIONS, (value, key) => (
-                <Radio.Button value={value} key={key}>
-                  {value}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-          )}
-        </div>
         <Table
           rowKey={(record) => record.id}
           columns={columns}
           dataSource={data}
           loading={tableLoading}
-          pagination={{
-            showSizeChanger: false,
-            style: {
-              marginBottom: 0,
-            },
-            current: currentPage,
-            pageSize: 10,
-            onChange: (page) => {
-              setCurrentPage(page);
-            },
-          }}
+          pagination={
+            data?.length > 10 && {
+              showSizeChanger: false,
+              style: {
+                marginBottom: 0,
+              },
+              current: currentPage,
+              pageSize: 10,
+              onChange: (page) => {
+                setCurrentPage(page);
+              },
+            }
+          }
           {...responsiveConfig.tableProps}
         />
       </Card>

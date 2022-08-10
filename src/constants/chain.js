@@ -6,7 +6,6 @@ const ETH = {
   rpcUrl: `https://cloudflare-eth.com`,
   blockExplorer: "https://etherscan.io",
 };
-
 const MATIC = {
   id: "137",
   name: "Polygon",

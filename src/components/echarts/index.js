@@ -1,7 +1,7 @@
+import React from "react";
+
 import loadable from "@loadable/component";
 import { Spin } from "antd";
-
-const DEFAULT_THEME = "dark";
 
 const loaddingCom = (
   <Spin

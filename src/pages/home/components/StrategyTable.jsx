@@ -229,6 +229,7 @@ const StrategyTable = ({
       tableProps: {
         size: "small",
         rowClassName: "tablet-font-size",
+        scroll: { x: 900 },
       },
     },
     [DEVICE_TYPE.Mobile]: {
@@ -237,17 +238,23 @@ const StrategyTable = ({
       },
       tableProps: {
         size: "small",
-        rowClassName: "mobile-font-sizee",
+        rowClassName: "mobile-font-size",
+        scroll: { x: 900 },
       },
     },
   }[deviceType];
+
+  let title = 'Vault Strategies Allocations'
+  if (deviceType === DEVICE_TYPE.Mobile) {
+    title = 'Strategies Allocations'
+  }
 
   return (
     <div>
       <Card
         loading={loading}
         bordered={false}
-        title="Vault Strategies Allocations"
+        title={title}
         extra={
           <div>
             <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
@@ -266,12 +273,14 @@ const StrategyTable = ({
           rowKey={(record) => record.strategyAddress}
           columns={columns}
           dataSource={data}
-          pagination={{
-            style: {
-              marginBottom: 0,
-            },
-            pageSize: 10,
-          }}
+          pagination={
+            data?.length > 10 && {
+              style: {
+                marginBottom: 0,
+              },
+              pageSize: 10,
+            }
+          }
           {...responsiveConfig.tableProps}
         />
       </Card>

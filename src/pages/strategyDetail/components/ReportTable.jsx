@@ -100,7 +100,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       title: "Txn Hash",
       dataIndex: "txnHash",
       key: "txnHash",
-      width: "8rem",
       ellipsis: {
         showTitle: false,
       },
@@ -119,7 +118,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       title: `Total Asset${unit}`,
       dataIndex: "totalAsset",
       key: "totalAsset",
-      width: "7rem",
       render: (text) => (
         <span title={toFixed(text, decimal)}>
           {toFixed(text, decimal, displayDecimals)}
@@ -130,7 +128,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       title: `Asset Changed${unit}`,
       dataIndex: "assetChange",
       key: "assetChange",
-      width: "8rem",
       render: (text, item) => {
         const { fetchType } = item;
         return (
@@ -145,7 +142,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       title: "Date",
       dataIndex: "fetchTimestamp",
       key: "fetchTimestamp",
-      width: "5rem",
       render: (text) => (
         <Tooltip
           title={`${moment(1000 * text)
@@ -161,7 +157,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     },
     {
       title: "Position Details",
-      width: "5rem",
       align: "center",
       render: (text, item) => {
         const { tokens } = item;
@@ -169,11 +164,8 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
           return <SlidersOutlined style={{ color: "gray" }} />;
         const nextTitle = map(tokens, ({ address, amount, asset }) => {
           return (
-            <span
-              key={address}
-              style={{ display: "flex", marginBottom: "0.2rem" }}
-            >
-              <CoinSuperPosition array={[address]} />
+            <span key={address} style={{ display: "flex" }}>
+              <CoinSuperPosition size={19} array={[address]} />
               &nbsp;&nbsp;
               {toFixed(amount, decimal, displayDecimals)}
               {isETHi && `(${toFixed(asset, decimal, displayDecimals)}ETH)`}
@@ -215,7 +207,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       tableProps: {
         size: "small",
         rowClassName: "mobile-font-size",
-        scroll: { x: 900 },
+        scroll: { x: 600 },
       },
     },
   }[deviceType];
@@ -239,13 +231,15 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
           dataSource={dataSource}
           loading={tableLoading}
           onChange={handleTableChange}
-          pagination={{
-            showSizeChanger: false,
-            style: {
-              marginBottom: 0,
-            },
-            ...pagination,
-          }}
+          pagination={
+            dataSource?.length > 10 && {
+              showSizeChanger: false,
+              style: {
+                marginBottom: 0,
+              },
+              ...pagination,
+            }
+          }
           {...responsiveConfig.tableProps}
         />
       </Card>

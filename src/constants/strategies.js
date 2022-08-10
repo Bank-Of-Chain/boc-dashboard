@@ -50,6 +50,7 @@ const ETHI_ETH_STRATEGIES_MAP = [
   "Convex",
   "Aura",
   "UniswapV3",
+  "StakeWise",
   "YearnV2",
 ];
 

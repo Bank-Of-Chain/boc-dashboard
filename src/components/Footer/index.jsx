@@ -1,7 +1,8 @@
+import React from "react";
 import { useIntl } from "umi";
-import { GithubOutlined } from "@ant-design/icons";
 import { DefaultFooter } from "@ant-design/pro-layout";
-export default () => {
+
+const Footer = () => {
   const intl = useIntl();
   const defaultMessage = intl.formatMessage({
     id: "app.copyright.produced",
@@ -15,16 +16,18 @@ export default () => {
         {
           key: "BOC Homepage",
           title: "BOC Homepage",
-          href: "https://web-v1.bankofchain.io/",
+          href: "https://bankofchain.io/",
           blankTarget: true,
         },
         {
           key: "BOC Dashboard",
           title: "BOC Dashboard",
-          href: "https://dashboard-v1.bankofchain.io/",
+          href: "https://dashboard.bankofchain.io/",
           blankTarget: true,
         },
       ]}
     />
   );
 };
+
+export default Footer;

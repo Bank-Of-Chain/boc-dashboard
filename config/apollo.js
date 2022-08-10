@@ -11,7 +11,8 @@ const start = async () => {
   if (isEmpty(env)) {
     nextEnv = await chooseEnv();
   }
-  const host = "http://54.179.161.168";
+  const isLinux = process.platform === "linux";
+  const host = isLinux ? "http://172.31.22.200" : "http://54.179.161.168";
   const url = `${host}:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`;
   const { status, data } = await axios.get(url).catch((error) => {
     console.error(`${nextEnv}配置加载失败，url=${url}`);
@@ -105,7 +106,6 @@ const getRpcFor1 = () => {
   if (isPrSg()) return "https://rpc.ankr.com/eth";
   return `https://rpc-${nextEnv}.bankofchain.io`;
 };
-
 const getRpcFor137 = () => {
   if (isDevLocal()) return "http://localhost:8545";
   if (isPrSg()) return "https://rpc-mainnet.maticvigil.com";

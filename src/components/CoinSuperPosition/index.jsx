@@ -22,8 +22,8 @@ const STETH_IMAGE = `${IMAGE_ROOT}/images/0xae7ab96520DE3A18E5e111B5EaAb095312D7
 const RETH_IMAGE = `${IMAGE_ROOT}/images/0xae78736Cd615f374D3085123A210448E74Fc6393.png`;
 const WSTETH_IMAGE = `${IMAGE_ROOT}/images/0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0.png`;
 const WETH_IMAGE = `${IMAGE_ROOT}/images/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2.png`;
-const GUSD_IMAGE = `${IMAGE_ROOT}/images/0x056fd409e1d7a124bd7017459dfea2f387b6d5cd.png`;
-const SUSD_IMAGE = `${IMAGE_ROOT}/images/0x57ab1ec28d129707052df4df418d58a2d46d5f51.png`;
+const GUSD_IMAGE = `${IMAGE_ROOT}/images/0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd.png`;
+const SUSD_IMAGE = `${IMAGE_ROOT}/images/0x57Ab1ec28D129707052df4dF418D58a2D46d5f51.png`;
 
 const addressMap = {
   "0x55d398326f99059ff775485246999027b3197955": USDT_IMAGE,
@@ -72,7 +72,10 @@ const CoinSuperPosition = ({ array = [], size = 24 }) => {
       key={`${address + i}`}
       width={size}
       style={{ borderRadius: "50%" }}
-      wrapperStyle={{ marginLeft: -6, zIndex: array.length - i }}
+      wrapperStyle={{
+        marginLeft: i === 0 ? 0 : -10,
+        zIndex: array.length - i,
+      }}
       src={addressMap[address] || DEFAULT}
       fallback={DEFAULT}
     />

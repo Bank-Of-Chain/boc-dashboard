@@ -82,7 +82,7 @@ export const getDashboardDetail = async (
   return data;
 };
 
-const getRecentActivityQuery = (tokenAddress) => `
+const getRecentActivityQuery = () => `
 query($types: [PegTokenUpdateType], $first: Int) {
   pegTokenUpdates(
     orderBy: timestamp,
@@ -119,16 +119,9 @@ export const getRecentActivity = async (vault, chain, types, total = 100) => {
   if (isEmpty(client)) {
     return;
   }
-  const USDI_ADDRESS = USDI.USDI_ADDRESS[chain].toLowerCase();
-  const ETHI_ADDRESS = ETHI.ETHI_ADDRESS[chain]?.toLowerCase();
   const QUERY = {
-    [VAULT_TYPE.USDi]: getRecentActivityQuery(USDI_ADDRESS),
-    [VAULT_TYPE.ETHi]: getRecentActivityQuery(ETHI_ADDRESS),
-  }[vault];
-
-  const key = {
-    [VAULT_TYPE.USDi]: "usdiUpdates",
-    [VAULT_TYPE.ETHi]: "ethiUpdates",
+    [VAULT_TYPE.USDi]: getRecentActivityQuery(),
+    [VAULT_TYPE.ETHi]: getRecentActivityQuery(),
   }[vault];
 
   return await client

@@ -16,7 +16,7 @@ export default function Mine() {
     return (
       <Result
         status="500"
-        title={!!userProvider ? "" : "No Connect!"}
+        title={userProvider ? "" : "No Connect!"}
         subTitle="Please connect wallet first."
       />
     );
