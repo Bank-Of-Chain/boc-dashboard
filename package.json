@@ -28,7 +28,7 @@
     "lint:prettier": "prettier --write .",
     "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
     "openapi": "umi openapi",
-    "prettier": "prettier -c --write \"src/**/*\"",
+    "prettier": "prettier -c -w \"src/**/*.{js,jsx}\"",
     "serve": "umi-serve",
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev-local umi dev",
     "start:no-ui": "cross-env UMI_UI=none UMI_ENV=dev-local umi dev",
@@ -48,7 +48,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "echo 'husky' && npm run lint:js"
+      "pre-commit": "lint-staged"
     }
   },
   "browserslist": [
