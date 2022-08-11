@@ -37,7 +37,8 @@
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
     "tsc": "tsc --noEmit",
-    "depcheck": "depcheck"
+    "depcheck": "depcheck",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "**/*.less": "stylelint --syntax less",
@@ -45,6 +46,11 @@
     "**/*.{js,jsx,tsx,ts,less,md,json}": [
       "prettier --write"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "echo 'husky' && npm run lint:js"
+    }
   },
   "browserslist": [
     "> 1%",
@@ -95,6 +101,7 @@
     "eslint-plugin-react": "^7.30.1",
     "filemanager-webpack-plugin": "^7.0.0",
     "gh-pages": "^3.0.0",
+    "husky": "^8.0.0",
     "inquirer": "8.2.0",
     "jest-environment-node": "^28.1.3",
     "lint-staged": "^10.0.0",
