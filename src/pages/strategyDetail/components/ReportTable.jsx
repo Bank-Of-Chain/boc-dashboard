@@ -231,15 +231,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
           dataSource={dataSource}
           loading={tableLoading}
           onChange={handleTableChange}
-          pagination={
-            dataSource?.length > 10 && {
-              showSizeChanger: false,
-              style: {
-                marginBottom: 0,
-              },
-              ...pagination,
-            }
-          }
+          pagination={{
+            showSizeChanger: false,
+            style: {
+              marginBottom: 0,
+            },
+            ...pagination,
+          }}
           {...responsiveConfig.tableProps}
         />
       </Card>
