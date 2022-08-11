@@ -18,7 +18,6 @@ const startServer = spawn(
 );
 
 startServer.stderr.on("data", (data) => {
-  // eslint-disable-next-line
   console.log(data.toString());
 });
 
@@ -31,7 +30,6 @@ startServer.stdout.on("data", (data) => {
   console.log(data.toString());
   // hack code , wait umi
   if (!once && data.toString().indexOf("Serving your umi project!") >= 0) {
-    // eslint-disable-next-line
     once = true;
     console.log("Development server is started, ready to run tests.");
     const testCmd = spawn(

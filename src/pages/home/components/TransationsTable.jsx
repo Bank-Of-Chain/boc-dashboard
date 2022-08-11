@@ -49,7 +49,6 @@ const TransationsTable = ({
       .finally(() => {
         setTableLoading(false);
       });
-    // eslint-disable-next-line
   }, [filter]);
 
   const renderAddress = (address) => {
@@ -197,7 +196,7 @@ const TransationsTable = ({
   });
 
   const handleChange = (e) => {
-    if (typeof e === 'string') {
+    if (typeof e === "string") {
       setFilter(e);
     } else {
       setFilter(e.target.value);
@@ -251,21 +250,17 @@ const TransationsTable = ({
         </Radio.Button>
       ))}
     </Radio.Group>
-  )
+  );
   if (deviceType === DEVICE_TYPE.Mobile) {
     extra = (
-      <Select
-        style={{ width: 120 }}
-        value={filter}
-        onChange={handleChange}
-      >
+      <Select style={{ width: 120 }} value={filter} onChange={handleChange}>
         {map(FILTER_OPTIONS, (value, key) => (
           <Option value={value} key={key}>
             {value}
           </Option>
         ))}
       </Select>
-    )
+    );
   }
 
   return (

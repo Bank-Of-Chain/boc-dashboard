@@ -77,7 +77,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       return;
     }
     fetch();
-    // eslint-disable-next-line
   }, [pagination.current, strategyName]);
 
   useEffect(() => {
@@ -85,7 +84,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       ...pagination,
       current: 1,
     });
-    // eslint-disable-next-line
   }, [initialState.chain, strategyName]);
 
   const handleTableChange = (pagination) => {
