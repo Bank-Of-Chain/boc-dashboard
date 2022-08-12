@@ -91,7 +91,6 @@ const Strategy = (props) => {
       .finally(() => {
         setLoading(false);
       });
-    // eslint-disable-next-line
   }, [id]);
 
   useEffect(() => {
