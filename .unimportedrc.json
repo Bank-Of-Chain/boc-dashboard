@@ -6,7 +6,12 @@
     "src/models/**/*.{js,jsx}"
   ],
   "extensions": [".jsx", ".js"],
-  "ignorePatterns": ["**/node_modules/**"],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/public/**",
+    "**/src/__tests__/**",
+    "**/src/locales/**"
+  ],
   "ignoreUnimported": ["src/models/wallet.js"],
   "aliases": {
     "@/": ["./src/"]
