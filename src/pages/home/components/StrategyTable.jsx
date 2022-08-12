@@ -212,7 +212,7 @@ const StrategyTable = ({
             item.strategyAddress
           }`}
         >
-          <img width={21} src="./images/link.png" alt="link" />
+          <img width={21} src={`${IMAGE_ROOT}/link.png`} alt="link" />
         </a>
       ),
     },
@@ -244,9 +244,9 @@ const StrategyTable = ({
     },
   }[deviceType];
 
-  let title = 'Vault Strategies Allocations'
+  let title = "Vault Strategies Allocations";
   if (deviceType === DEVICE_TYPE.Mobile) {
-    title = 'Strategies Allocations'
+    title = "Strategies Allocations";
   }
 
   return (

@@ -185,7 +185,7 @@ const TransationsTable = ({
             item.transaction.id
           }`}
         >
-          <img width={21} src="./images/link.png" alt="link" />
+          <img width={21} src={`${IMAGE_ROOT}/link.png`} alt="link" />
         </a>
       ),
     },
