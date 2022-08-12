@@ -9,7 +9,7 @@ import { useModel } from "umi";
 
 // === Components === //
 import HeaderDropdown from "../HeaderDropdown";
-import Address from "./../Address";
+import Address from "../Address";
 
 import styles from "./index.less";
 

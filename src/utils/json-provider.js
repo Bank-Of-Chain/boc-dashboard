@@ -1,5 +1,5 @@
 import * as ethers from "ethers";
-import { ETH, MATIC } from "../constants/chain";
+import { ETH, MATIC } from "@/constants/chain";
 
 export const ethJsonRpcProvider = new ethers.providers.JsonRpcProvider(
   RPC_URL[ETH.id]

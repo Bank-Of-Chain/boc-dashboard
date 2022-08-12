@@ -1,4 +1,4 @@
-import { getClient } from "../../src/apollo/client";
+import { getClient } from "@/apollo/client";
 import { gql } from "@apollo/client";
 import { isEmpty } from "lodash";
 import { VAULT_TYPE } from "@/constants/vault";

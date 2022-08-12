@@ -1,4 +1,4 @@
-import { toFixed } from "../../utils/number-format";
+import { toFixed } from "@/utils/number-format";
 
 test("number-format toFixed", () => {
   const text = toFixed("10000", "100");

@@ -12,7 +12,7 @@ import numeral from "numeral";
 import moment from "moment";
 
 // === Components === //
-import ChainChange from "../../components/ChainChange";
+import ChainChange from "@/components/ChainChange";
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from "@/constants/strategies";

@@ -1,5 +1,10 @@
 {
   "name": "ant-design-pro",
+  "jest": {
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
+  },
   "version": "5.0.0",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
