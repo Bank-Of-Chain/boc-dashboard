@@ -27,7 +27,11 @@ export async function getInitialState() {
 export const layout = ({ initialState, setInitialState }) => {
   return {
     logo: (
-      <img src="/logo256.png" alt="logo" onClick={() => history.push("/")} />
+      <img
+        src={`${IMAGE_ROOT}/logo256.png`}
+        alt="logo"
+        onClick={() => history.push("/")}
+      />
     ),
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
