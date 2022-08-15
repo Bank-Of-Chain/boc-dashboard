@@ -1,35 +1,35 @@
-import React, { Suspense } from "react";
-import { Col, Row, Card } from "antd";
-import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
-import TopSearch from "./TopSearch";
-import ProportionSales from "./ProportionSales";
-import { TOKEN_DISPLAY_DECIMALS } from "@/constants/vault";
+import React, { Suspense } from 'react'
+import { Col, Row, Card } from 'antd'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import TopSearch from './TopSearch'
+import ProportionSales from './ProportionSales'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
-import styles from "../style.less";
+import styles from '../style.less'
 
 export default function ProtocolAllocation({
   loading = false,
   tokenDecimals,
   strategyMap = {},
   vaultData = {},
-  unit = "USD",
-  displayDecimals = TOKEN_DISPLAY_DECIMALS,
+  unit = 'USD',
+  displayDecimals = TOKEN_DISPLAY_DECIMALS
 }) {
-  const deviceType = useDeviceType();
+  const deviceType = useDeviceType()
 
   const protocolResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
-        size: "small",
-      },
+        size: 'small'
+      }
     },
     [DEVICE_TYPE.Mobile]: {
       cardProps: {
-        size: "small",
-      },
-    },
-  }[deviceType];
+        size: 'small'
+      }
+    }
+  }[deviceType]
 
   return (
     <Card
@@ -38,8 +38,8 @@ export default function ProtocolAllocation({
       bordered={false}
       title="Vault Protocol Allocations"
       style={{
-        height: "100%",
-        marginTop: 40,
+        height: '100%',
+        marginTop: 40
       }}
       {...protocolResponsiveConfig.cardProps}
     >
@@ -70,5 +70,5 @@ export default function ProtocolAllocation({
         </Col>
       </Row>
     </Card>
-  );
+  )
 }

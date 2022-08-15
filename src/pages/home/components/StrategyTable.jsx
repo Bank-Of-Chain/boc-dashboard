@@ -1,65 +1,54 @@
-import { Card, Table, Image, Switch, Tooltip, Badge } from "antd";
-import React, { useState } from "react";
-import { useModel, useRequest } from "umi";
-import { filter, isNil, map, sortBy } from "lodash";
+import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
+import React, { useState } from 'react'
+import { useModel, useRequest } from 'umi'
+import { filter, isNil, map, sortBy } from 'lodash'
 
 // === Components === //
-import CoinSuperPosition from "@/components/CoinSuperPosition";
-import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import CoinSuperPosition from '@/components/CoinSuperPosition'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
-import { toFixed } from "@/utils/number-format";
-import BN from "bignumber.js";
+import { toFixed } from '@/utils/number-format'
+import BN from 'bignumber.js'
 
 // === Services === //
-import { getStrategyDetails } from "@/services/api-service";
-import { TOKEN_DISPLAY_DECIMALS } from "@/constants/vault";
+import { getStrategyDetails } from '@/services/api-service'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
-import styles from "../style.less";
-import { isEmpty } from "lodash";
+import styles from '../style.less'
+import { isEmpty } from 'lodash'
 
-const StrategyTable = ({
-  loading,
-  strategyMap,
-  displayDecimals = TOKEN_DISPLAY_DECIMALS,
-  unit = "USD",
-}) => {
-  const [showAll, setShowAll] = useState(true);
-  const { initialState } = useModel("@@initialState");
-  const deviceType = useDeviceType();
-  const { data: searchData } = useRequest(
-    () =>
-      getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100),
-    {
-      formatResult: (resp) => sortBy(resp.content, ["strategyName"]),
-    }
-  );
-  if (!initialState.chain) return null;
+const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
+  const [showAll, setShowAll] = useState(true)
+  const { initialState } = useModel('@@initialState')
+  const deviceType = useDeviceType()
+  const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100), {
+    formatResult: resp => sortBy(resp.content, ['strategyName'])
+  })
+  if (!initialState.chain) return null
 
   // boc-service fixed the number to 6
-  const decimals = BN(1e18);
+  const decimals = BN(1e18)
   const columns = [
     {
-      title: "Name",
-      dataIndex: "strategyName",
-      key: "strategyName",
+      title: 'Name',
+      dataIndex: 'strategyName',
+      key: 'strategyName',
       width: 320,
       render: (text, item) => (
         <div className={styles.tableCell}>
           <Image
             preview={false}
             width={30}
-            src={`${IMAGE_ROOT}/images/amms/${
-              strategyMap[initialState.chain][item.protocol]
-            }.png`}
+            src={`${IMAGE_ROOT}/images/amms/${strategyMap[initialState.chain][item.protocol]}.png`}
             placeholder={item.protocol}
-            style={{ backgroundColor: "#fff", borderRadius: "50%" }}
+            style={{ backgroundColor: '#fff', borderRadius: '50%' }}
             alt={strategyMap[initialState.chain][item.protocol]}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a
-            target={"_blank"}
+            target={'_blank'}
             rel="noreferrer"
             href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}&vault=${initialState.vault}`}
             className={styles.text}
@@ -67,65 +56,60 @@ const StrategyTable = ({
             {text}
           </a>
         </div>
-      ),
+      )
     },
     {
-      title: "Tokens",
-      dataIndex: "underlyingTokens",
-      key: "underlyingTokens",
+      title: 'Tokens',
+      dataIndex: 'underlyingTokens',
+      key: 'underlyingTokens',
       width: 130,
-      render: (text) =>
-        !isEmpty(text) && <CoinSuperPosition array={text.split(",")} />,
+      render: text => !isEmpty(text) && <CoinSuperPosition array={text.split(',')} />
     },
     {
       title: `Asset (${unit})`,
-      dataIndex: "totalAssetBaseCurrent",
-      key: "totalAssetBaseCurrent",
+      dataIndex: 'totalAssetBaseCurrent',
+      key: 'totalAssetBaseCurrent',
       showSorterTooltip: false,
-      defaultSortOrder: "descend",
+      defaultSortOrder: 'descend',
       sorter: (a, b) => {
-        return BN(a.totalAssetBaseCurrent || "0").minus(
-          BN(b.totalAssetBaseCurrent || "0")
-        );
+        return BN(a.totalAssetBaseCurrent || '0').minus(BN(b.totalAssetBaseCurrent || '0'))
       },
-      render: (text) => (
-        <span>{toFixed(text || "0", decimals, displayDecimals)}</span>
-      ),
+      render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>
     },
     {
-      title: "Weekly Official Apy",
-      dataIndex: "officialWeeklyApy",
-      key: "officialWeeklyApy",
+      title: 'Weekly Official Apy',
+      dataIndex: 'officialWeeklyApy',
+      key: 'officialWeeklyApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.officialWeeklyApy - b.officialWeeklyApy;
+        return a.officialWeeklyApy - b.officialWeeklyApy
       },
-      render: (text) => <span>{(100 * text).toFixed(2)} %</span>,
+      render: text => <span>{(100 * text).toFixed(2)} %</span>
     },
     {
-      title: "Weekly Realized Apy",
-      dataIndex: "realizedApy",
-      key: "realizedApy",
+      title: 'Weekly Realized Apy',
+      dataIndex: 'realizedApy',
+      key: 'realizedApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        const { value: aValue } = a.realizedApy || { value: "0" };
-        const { value: bValue } = b.realizedApy || { value: "0" };
-        return aValue - bValue;
+        const { value: aValue } = a.realizedApy || { value: '0' }
+        const { value: bValue } = b.realizedApy || { value: '0' }
+        return aValue - bValue
       },
-      render: (data) => {
-        if (isEmpty(data)) return <span>0.00%</span>;
-        const { value, detail } = data;
-        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>;
-        if (isEmpty(detail)) return jsxElement;
+      render: data => {
+        if (isEmpty(data)) return <span>0.00%</span>
+        const { value, detail } = data
+        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        if (isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
-              <span key={index} style={{ display: "block" }}>
+              <span key={index} style={{ display: 'block' }}>
                 {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
               </span>
             ))}
           </div>
-        );
+        )
         return (
           <span>
             {jsxElement}&nbsp;
@@ -133,34 +117,34 @@ const StrategyTable = ({
               <InfoCircleOutlined />
             </Tooltip>
           </span>
-        );
-      },
+        )
+      }
     },
     {
-      title: "Weekly Unrealized Apy",
-      dataIndex: "unrealizedApy",
-      key: "unrealizedApy",
+      title: 'Weekly Unrealized Apy',
+      dataIndex: 'unrealizedApy',
+      key: 'unrealizedApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        const { value: aValue } = a.unrealizedApy || { value: "0" };
-        const { value: bValue } = b.unrealizedApy || { value: "0" };
-        return aValue - bValue;
+        const { value: aValue } = a.unrealizedApy || { value: '0' }
+        const { value: bValue } = b.unrealizedApy || { value: '0' }
+        return aValue - bValue
       },
-      render: (data) => {
-        if (isEmpty(data)) return <span>0.00%</span>;
-        const { value, detail } = data;
+      render: data => {
+        if (isEmpty(data)) return <span>0.00%</span>
+        const { value, detail } = data
 
-        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>;
-        if (isEmpty(detail)) return jsxElement;
+        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        if (isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
-              <span key={index} style={{ display: "block" }}>
+              <span key={index} style={{ display: 'block' }}>
                 {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
               </span>
             ))}
           </div>
-        );
+        )
         return (
           <span>
             {jsxElement}&nbsp;
@@ -168,85 +152,74 @@ const StrategyTable = ({
               <InfoCircleOutlined />
             </Tooltip>
           </span>
-        );
-      },
+        )
+      }
     },
     {
-      title: "Weekly Realized Profit",
-      dataIndex: "weekProfit",
-      key: "weekProfit",
+      title: 'Weekly Realized Profit',
+      dataIndex: 'weekProfit',
+      key: 'weekProfit',
       render: (text = 0, item) => {
-        const { estimateProfit, tokenUnit = "" } = item;
-        const withoutEstimate = isNil(estimateProfit);
+        const { estimateProfit, tokenUnit = '' } = item
+        const withoutEstimate = isNil(estimateProfit)
         const jsxElement = (
           <Badge dot={!withoutEstimate} color="gold">
             <span>
-              {toFixed(text || "0", decimals, displayDecimals)}{" "}
-              {tokenUnit || ""}
+              {toFixed(text || '0', decimals, displayDecimals)} {tokenUnit || ''}
             </span>
           </Badge>
-        );
+        )
         if (withoutEstimate) {
-          return jsxElement;
+          return jsxElement
         }
         const nextWeekProfitJsx = (
           <span>
-            Estimate Profit:{" "}
-            {toFixed(estimateProfit, decimals, displayDecimals)}{" "}
-            {tokenUnit || ""}
+            Estimate Profit: {toFixed(estimateProfit, decimals, displayDecimals)} {tokenUnit || ''}
           </span>
-        );
-        return <Tooltip title={nextWeekProfitJsx}>{jsxElement}</Tooltip>;
-      },
+        )
+        return <Tooltip title={nextWeekProfitJsx}>{jsxElement}</Tooltip>
+      }
     },
     {
-      title: "Strategy Address",
-      dataIndex: "strategyAddress",
-      key: "strategyAddress",
-      align: "center",
+      title: 'Strategy Address',
+      dataIndex: 'strategyAddress',
+      key: 'strategyAddress',
+      align: 'center',
       render: (text, item) => (
-        <a
-          target="_blank"
-          rel="noreferrer"
-          href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${
-            item.strategyAddress
-          }`}
-        >
+        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}>
           <img width={21} src={`${IMAGE_ROOT}/link.png`} alt="link" />
         </a>
-      ),
-    },
-  ];
-  const data = showAll
-    ? searchData
-    : filter(searchData, (i) => BN(i.totalAsset).gt(0));
+      )
+    }
+  ]
+  const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
   const responsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
-        size: "small",
+        size: 'small'
       },
       tableProps: {
-        size: "small",
-        rowClassName: "tablet-font-size",
-        scroll: { x: 900 },
-      },
+        size: 'small',
+        rowClassName: 'tablet-font-size',
+        scroll: { x: 900 }
+      }
     },
     [DEVICE_TYPE.Mobile]: {
       cardProps: {
-        size: "small",
+        size: 'small'
       },
       tableProps: {
-        size: "small",
-        rowClassName: "mobile-font-size",
-        scroll: { x: 900 },
-      },
-    },
-  }[deviceType];
+        size: 'small',
+        rowClassName: 'mobile-font-size',
+        scroll: { x: 900 }
+      }
+    }
+  }[deviceType]
 
-  let title = "Vault Strategies Allocations";
+  let title = 'Vault Strategies Allocations'
   if (deviceType === DEVICE_TYPE.Mobile) {
-    title = "Strategies Allocations";
+    title = 'Strategies Allocations'
   }
 
   return (
@@ -264,28 +237,28 @@ const StrategyTable = ({
           </div>
         }
         style={{
-          height: "100%",
-          marginTop: 40,
+          height: '100%',
+          marginTop: 40
         }}
         {...responsiveConfig.cardProps}
       >
         <Table
-          rowKey={(record) => record.strategyAddress}
+          rowKey={record => record.strategyAddress}
           columns={columns}
           dataSource={data}
           pagination={
             data?.length > 10 && {
               style: {
-                marginBottom: 0,
+                marginBottom: 0
               },
-              pageSize: 10,
+              pageSize: 10
             }
           }
           {...responsiveConfig.tableProps}
         />
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default StrategyTable;
+export default StrategyTable

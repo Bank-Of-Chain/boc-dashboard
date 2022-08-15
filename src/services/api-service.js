@@ -1,22 +1,22 @@
-import { request } from "umi";
-import { isNil } from "lodash";
+import { request } from 'umi'
+import { isNil } from 'lodash'
 
 export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
   try {
     const nextParams = {
       offset,
       limit,
-      ...params,
-    };
+      ...params
+    }
     return request(`${API_SERVER}/officialApy`, {
-      params: nextParams,
-    });
+      params: nextParams
+    })
   } catch (error) {
     return {
-      content: [],
-    };
+      content: []
+    }
   }
-};
+}
 
 /**
  * 分页获取调仓报告
@@ -26,19 +26,16 @@ export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
  * @returns
  */
 export const getReports = (params, offset = 0, limit = 20) => {
-  const { chainId, vaultAddress } = params;
+  const { chainId, vaultAddress } = params
   const nextParams = {
-    sort: "gene_time desc",
+    sort: 'gene_time desc',
     offset,
-    limit,
-  };
-  return request(
-    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation`,
-    {
-      params: nextParams,
-    }
-  );
-};
+    limit
+  }
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation`, {
+    params: nextParams
+  })
+}
 
 /**
  * 按分页查询策略详情
@@ -47,23 +44,15 @@ export const getReports = (params, offset = 0, limit = 20) => {
  * @param {number} limit
  * @returns
  */
-export const getStrategyDetails = (
-  chainId,
-  vaultAddress,
-  offset = 0,
-  limit = 20
-) => {
+export const getStrategyDetails = (chainId, vaultAddress, offset = 0, limit = 20) => {
   const nextParams = {
     offset,
-    limit,
-  };
-  return request(
-    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/detail/list`,
-    {
-      params: nextParams,
-    }
-  );
-};
+    limit
+  }
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/detail/list`, {
+    params: nextParams
+  })
+}
 
 /**
  * 获取币本位的apy数据
@@ -73,61 +62,39 @@ export const getStrategyDetails = (
  * @returns
  */
 export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
-  const { chainId, vaultAddress, ...restParams } = params;
-  return request(
-    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`,
-    {
-      params: {
-        offset,
-        limit,
-        ...restParams,
-      },
+  const { chainId, vaultAddress, ...restParams } = params
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`, {
+    params: {
+      offset,
+      limit,
+      ...restParams
     }
-  );
-};
+  })
+}
 
 /**
  * 更新调仓报告的状态
  * @param {*} reportId
  * @returns
  */
-export const updateReportStatus = (
-  chainId,
-  vaultAddress,
-  reportId,
-  isReject,
-  headers
-) => {
-  if (isNil(reportId)) return;
-  return request(
-    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${reportId}/${isReject}`,
-    {
-      method: "patch",
-      headers,
-    }
-  );
-};
+export const updateReportStatus = (chainId, vaultAddress, reportId, isReject, headers) => {
+  if (isNil(reportId)) return
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${reportId}/${isReject}`, {
+    method: 'patch',
+    headers
+  })
+}
 
-export const getStrategyDetailsReports = ({
-  strategyName,
-  vaultAddress,
-  chainId,
-  limit = 10,
-  offset = 0,
-  sort = "fetch_timestamp desc",
-}) => {
-  return request(
-    `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/assets`,
-    {
-      params: {
-        strategyName,
-        limit,
-        offset,
-        sort,
-      },
+export const getStrategyDetailsReports = ({ strategyName, vaultAddress, chainId, limit = 10, offset = 0, sort = 'fetch_timestamp desc' }) => {
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/assets`, {
+    params: {
+      strategyName,
+      limit,
+      offset,
+      sort
     }
-  );
-};
+  })
+}
 
 /**
  * 获取用户apy
@@ -137,13 +104,10 @@ export const getStrategyDetailsReports = ({
  * @returns
  */
 export const getAccountApyByAddress = (account, date, params) => {
-  return request(
-    `${API_SERVER}/apy/account_apy/accountAddress/${account}/date/${date}`,
-    {
-      params,
-    }
-  );
-};
+  return request(`${API_SERVER}/apy/account_apy/accountAddress/${account}/date/${date}`, {
+    params
+  })
+}
 
 /**
  * 获取用户的收益，包括已实现首页和未实现收益
@@ -153,9 +117,9 @@ export const getAccountApyByAddress = (account, date, params) => {
  */
 export const getProfits = (account, params) => {
   return request(`${API_SERVER}/profit/account/${account}`, {
-    params,
-  });
-};
+    params
+  })
+}
 
 /**
  * 获取总锁仓量数组，默认取1年
@@ -167,10 +131,10 @@ export const getPersonTvlArray = (account, params) => {
   return request(`${API_SERVER}/token/balance/account/${account}`, {
     params: {
       limit: 365,
-      ...params,
-    },
-  });
-};
+      ...params
+    }
+  })
+}
 
 /**
  * 获取用户月盈利
@@ -180,22 +144,15 @@ export const getPersonTvlArray = (account, params) => {
  */
 export const getMonthProfits = (account, params) => {
   return request(`${API_SERVER}/month_profit/account/${account}`, {
-    params,
-  });
-};
+    params
+  })
+}
 
-let apyListCache = {};
-export const getValutAPYList = ({
-  chainId,
-  tokenType,
-  duration,
-  offset = 0,
-  limit,
-  useCache = true,
-}) => {
-  const cacheKey = `${chainId}-${duration}-${tokenType}-${offset}-${limit}`;
+let apyListCache = {}
+export const getValutAPYList = ({ chainId, tokenType, duration, offset = 0, limit, useCache = true }) => {
+  const cacheKey = `${chainId}-${duration}-${tokenType}-${offset}-${limit}`
   if (useCache && apyListCache[cacheKey]) {
-    return Promise.resolve(apyListCache[cacheKey]);
+    return Promise.resolve(apyListCache[cacheKey])
   }
   return request(`${API_SERVER}/apy/vault_apy`, {
     params: {
@@ -203,43 +160,37 @@ export const getValutAPYList = ({
       duration,
       offset,
       limit,
-      tokenType,
-    },
-  }).then((data) => {
-    apyListCache[cacheKey] = data;
-    return data;
-  });
-};
+      tokenType
+    }
+  }).then(data => {
+    apyListCache[cacheKey] = data
+    return data
+  })
+}
 
-let tokenTotalSupplyCache = {};
-export const getTokenTotalSupplyList = ({
-  chainId,
-  offset = 0,
-  limit,
-  tokenType,
-  useCache = true,
-}) => {
-  const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`;
+let tokenTotalSupplyCache = {}
+export const getTokenTotalSupplyList = ({ chainId, offset = 0, limit, tokenType, useCache = true }) => {
+  const cacheKey = `${chainId}-${offset}-${tokenType}-${limit}`
   if (useCache && tokenTotalSupplyCache[cacheKey]) {
-    return Promise.resolve(tokenTotalSupplyCache[cacheKey]);
+    return Promise.resolve(tokenTotalSupplyCache[cacheKey])
   }
   return request(`${API_SERVER}/token/totalSupply`, {
     params: {
       chainId,
       offset,
       limit,
-      tokenType,
-    },
-  }).then((data) => {
-    tokenTotalSupplyCache[cacheKey] = data;
-    return data;
-  });
-};
+      tokenType
+    }
+  }).then(data => {
+    tokenTotalSupplyCache[cacheKey] = data
+    return data
+  })
+}
 
 export const clearAPICache = () => {
-  apyListCache = {};
-  tokenTotalSupplyCache = {};
-};
+  apyListCache = {}
+  tokenTotalSupplyCache = {}
+}
 
 /**
  * 按分页查询策略详情
@@ -248,20 +199,14 @@ export const clearAPICache = () => {
  * @param {number} limit
  * @returns
  */
-export const getStrategyApyDetails = (
-  chainId,
-  vaultAddress,
-  strategyAddress,
-  offset = 0,
-  limit = 20
-) => {
+export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, offset = 0, limit = 20) => {
   const nextParams = {
     strategyAddress,
     offset,
-    limit,
-  };
-  const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy/daily`;
+    limit
+  }
+  const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy/daily`
   return request(url, {
-    params: nextParams,
-  });
-};
+    params: nextParams
+  })
+}
