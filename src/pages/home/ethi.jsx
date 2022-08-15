@@ -74,7 +74,7 @@ const ETHiHome = () => {
         setApy30(data.content[0] ? data.content[0].apy : 0)
 
         const xAxisData = uniq(map(result, ({ date }) => date))
-        // 多条折现配置
+        // option for multi line
         const lengndData = []
         const data1 = map(xAxisData, date => {
           const item = find(result, { date })
@@ -115,7 +115,7 @@ const ETHiHome = () => {
         }
         const xAxisLabels = []
         option.xAxis.data = option.xAxis.data.map(item => {
-          // 数据为当天 23:59 数据，显示成明天 0 点
+          // time format to tomorrow datetime string
           const value = `${moment(item).add(1, 'days').format('YYYY-MM-DD HH:mm')} (UTC)`
           xAxisLabels[value] = moment(item).add(1, 'days').format(params.format)
           return value

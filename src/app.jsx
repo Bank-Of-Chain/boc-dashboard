@@ -10,7 +10,7 @@ import { VAULT_TYPE } from '@/constants/vault'
 
 import { getVaultConfig } from '@/utils/vault'
 
-/** 获取用户信息比较慢的时候会展示一个 loading */
+// loading
 export const initialStateConfig = {
   loading: <PageLoading />
 }
@@ -22,8 +22,9 @@ export async function getInitialState() {
   return {
     chain: ''
   }
-} // ProLayout 支持的api https://procomponents.ant.design/components/layout
+}
 
+// ProLayout https://procomponents.ant.design/components/layout
 export const layout = ({ initialState, setInitialState }) => {
   return {
     logo: <img src={`${IMAGE_ROOT}/logo256.png`} alt="logo" onClick={() => history.push('/')} />,
@@ -39,7 +40,7 @@ export const layout = ({ initialState, setInitialState }) => {
         location: {
           query: { chain, vault }
         }
-      } = history // 如果没有登录，重定向到 login
+      } = history
       let nextChainId = initialState.chain ? initialState.chain : chain ? chain : ETH.id
       let nextVault = initialState.vault ? initialState.vault : vault ? vault : VAULT_TYPE.ETHi
       if (vault === VAULT_TYPE.ETHi) {
@@ -54,8 +55,6 @@ export const layout = ({ initialState, setInitialState }) => {
     links: [],
     menuHeaderRender: undefined,
     collapsedButtonRender: () => null,
-    // 自定义 403 页面
-    // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings
   }
 }
