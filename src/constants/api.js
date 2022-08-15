@@ -1,11 +1,11 @@
 export const APY_DURATION = {
-  daily: "daily",
-  monthly: "monthly",
-  weekly: "weekly",
-  yearly: "yearly",
-};
+  daily: 'daily',
+  monthly: 'monthly',
+  weekly: 'weekly',
+  yearly: 'yearly'
+}
 
 export const TOKEN_TYPE = {
-  usdi: "USDi",
-  ethi: "ETHi",
-};
+  usdi: 'USDi',
+  ethi: 'ETHi'
+}

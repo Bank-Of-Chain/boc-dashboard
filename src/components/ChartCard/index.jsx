@@ -1,33 +1,33 @@
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import React from 'react'
+import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 // === Components === //
-import { Card } from "antd";
+import { Card } from 'antd'
 
 // === Styles === //
-import styles from "./index.less";
+import styles from './index.less'
 
 const renderTotal = (total, unit) => {
   if (!total && total !== 0) {
-    return null;
+    return null
   }
 
-  let totalDom;
+  let totalDom
 
   switch (typeof total) {
-    case "undefined":
-      totalDom = null;
-      break;
+    case 'undefined':
+      totalDom = null
+      break
 
-    case "function":
+    case 'function':
       totalDom = (
         <div className={styles.total}>
           <span>{total()}</span>
           {unit && <span className={styles.unit}>{unit}</span>}
         </div>
-      );
-      break;
+      )
+      break
 
     default:
       totalDom = (
@@ -35,27 +35,18 @@ const renderTotal = (total, unit) => {
           <span>{total}</span>
           {unit && <span className={styles.unit}>{unit}</span>}
         </div>
-      );
+      )
   }
 
-  return totalDom;
-};
+  return totalDom
+}
 
-const ChartCard = (props) => {
-  const { loading = false, ...rest } = props;
-  const {
-    contentHeight,
-    title,
-    avatar,
-    action,
-    total,
-    footer,
-    children,
-    ...rrest
-  } = rest;
+const ChartCard = props => {
+  const { loading = false, ...rest } = props
+  const { contentHeight, title, avatar, action, total, footer, children, ...rrest } = rest
   const renderContent = () => {
     if (loading) {
-      return false;
+      return false
     }
 
     return (
@@ -74,37 +65,35 @@ const ChartCard = (props) => {
           <div
             className={styles.content}
             style={{
-              height: contentHeight || "auto",
+              height: contentHeight || 'auto'
             }}
           >
-            <div className={contentHeight && styles.contentFixed}>
-              {children}
-            </div>
+            <div className={contentHeight && styles.contentFixed}>{children}</div>
           </div>
         )}
         {footer && (
           <div
             className={classNames(styles.footer, {
-              [styles.footerMargin]: !children,
+              [styles.footerMargin]: !children
             })}
           >
             {footer}
           </div>
         )}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <Card loading={loading} className={styles.card} {...rrest}>
       {renderContent()}
     </Card>
-  );
-};
+  )
+}
 
 ChartCard.propTypes = {
   loading: PropTypes.bool.isRequired,
-  unit: PropTypes.string,
-};
+  unit: PropTypes.string
+}
 
-export default ChartCard;
+export default ChartCard

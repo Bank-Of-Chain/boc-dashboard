@@ -1,142 +1,123 @@
-import React, { Suspense } from "react";
-import { useModel } from "umi";
-import numeral from "numeral";
+import React, { Suspense } from 'react'
+import { useModel } from 'umi'
+import numeral from 'numeral'
 
 // === Components === //
-import { InfoCircleOutlined } from "@ant-design/icons";
-import { GridContent } from "@ant-design/pro-layout";
-import { Col, Row, Tooltip, Input } from "antd";
-import ChartCard from "@/components/ChartCard";
-import DailyTvl from "./components/DailyChart";
-import MonthProfit from "./components/MonthProfit";
+import { InfoCircleOutlined } from '@ant-design/icons'
+import { GridContent } from '@ant-design/pro-layout'
+import { Col, Row, Tooltip, Input } from 'antd'
+import ChartCard from '@/components/ChartCard'
+import DailyTvl from './components/DailyChart'
+import MonthProfit from './components/MonthProfit'
 
 // === Utils === //
-import map from "lodash/map";
-import isString from "lodash/isString";
-import { toFixed } from "@/utils/number-format";
-import { isProEnv } from "@/services/env-service";
-import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from "@/constants/ethi";
-import { TOKEN_TYPE } from "@/constants/api";
+import map from 'lodash/map'
+import isString from 'lodash/isString'
+import { toFixed } from '@/utils/number-format'
+import { isProEnv } from '@/services/env-service'
+import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { TOKEN_TYPE } from '@/constants/api'
 
 // === Hooks === //
-import usePersonalData from "@/hooks/usePersonalData";
-import useEthPrice from "@/hooks/useEthPrice";
+import usePersonalData from '@/hooks/usePersonalData'
+import useEthPrice from '@/hooks/useEthPrice'
 
-import styles from "./style.less";
+import styles from './style.less'
 
 const topColResponsiveProps = {
   xs: 24,
   sm: 8,
   md: 8,
   lg: 8,
-  xl: 8,
-};
+  xl: 8
+}
 
 const Field = ({ label, value, ...rest }) => (
   <div className={styles.field} {...rest}>
     <span className={styles.label}>{label}</span>
     <span className={styles.number}>{value}</span>
   </div>
-);
+)
 
 const Personal = () => {
-  const { dataSource, loading } = usePersonalData(TOKEN_TYPE.ethi);
-  const { loading: priceLoading, value: usdPrice } = useEthPrice();
-  const { initialState, setInitialState } = useModel("@@initialState");
+  const { dataSource, loading } = usePersonalData(TOKEN_TYPE.ethi)
+  const { loading: priceLoading, value: usdPrice } = useEthPrice()
+  const { initialState, setInitialState } = useModel('@@initialState')
 
-  const {
-    day7Apy,
-    day30Apy,
-    realizedProfit,
-    unrealizedProfit,
-    balanceOfToken,
-  } = dataSource;
+  const { day7Apy, day30Apy, realizedProfit, unrealizedProfit, balanceOfToken } = dataSource
 
-  const renderEstimate = (value) => {
+  const renderEstimate = value => {
     if (!value || priceLoading) {
-      return null;
+      return null
     }
-    let displayValue = value;
-    let sign = "";
+    let displayValue = value
+    let sign = ''
     if (isString(value)) {
-      const isNegative = value.indexOf("-") === 0;
-      sign = isNegative ? "-" : "";
-      displayValue = isNegative ? value.substring(1) : displayValue;
+      const isNegative = value.indexOf('-') === 0
+      sign = isNegative ? '-' : ''
+      displayValue = isNegative ? value.substring(1) : displayValue
     }
-    return usdPrice
-      ? `≈${sign}$${toFixed(usdPrice.mul(displayValue), ETHI_BN_DECIMALS, 2)}`
-      : "";
-  };
+    return usdPrice ? `≈${sign}$${toFixed(usdPrice.mul(displayValue), ETHI_BN_DECIMALS, 2)}` : ''
+  }
 
   const introduceData = [
     {
-      title: "Balance",
-      tip: "The balance of ETHi",
-      content: numeral(
-        toFixed(balanceOfToken, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
-      ).format("0.[0000]a"),
+      title: 'Balance',
+      tip: 'The balance of ETHi',
+      content: numeral(toFixed(balanceOfToken, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
       estimateContent: renderEstimate(balanceOfToken),
       loading,
-      unit: "ETHi",
+      unit: 'ETHi'
     },
     {
-      title: "Unrealized profits",
-      tip: "Potential profit that has not been effected",
-      content: numeral(
-        toFixed(unrealizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
-      ).format("0.[0000]a"),
+      title: 'Unrealized profits',
+      tip: 'Potential profit that has not been effected',
+      content: numeral(toFixed(unrealizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
       estimateContent: renderEstimate(unrealizedProfit),
       loading,
-      unit: "ETHi",
+      unit: 'ETHi'
     },
     {
-      title: "Realized profits",
-      tip: "The profits that have been actualized",
-      content: numeral(
-        toFixed(realizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
-      ).format("0.[0000]a"),
+      title: 'Realized profits',
+      tip: 'The profits that have been actualized',
+      content: numeral(toFixed(realizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
       estimateContent: renderEstimate(realizedProfit),
       loading,
-      unit: "ETHi",
+      unit: 'ETHi'
     },
     {
-      title: "APY(last 7 days)",
-      tip: "Yield over the past 1 week",
-      content: numeral(day7Apy?.apy).format("0,0.00"),
+      title: 'APY(last 7 days)',
+      tip: 'Yield over the past 1 week',
+      content: numeral(day7Apy?.apy).format('0,0.00'),
       loading,
       isAPY: true,
-      unit: "%",
+      unit: '%'
     },
     {
-      title: "APY(last 30 days)",
-      tip: "Yield over the past 1 month",
-      content: numeral(day30Apy?.apy).format("0,0.00"),
+      title: 'APY(last 30 days)',
+      tip: 'Yield over the past 1 month',
+      content: numeral(day30Apy?.apy).format('0,0.00'),
       loading,
       isAPY: true,
-      unit: "%",
-    },
-  ];
+      unit: '%'
+    }
+  ]
 
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Row
-          gutter={[24, 24]}
-          style={{ display: isProEnv(ENV_INDEX) ? "none" : "" }}
-        >
+        <Row gutter={[24, 24]} style={{ display: isProEnv(ENV_INDEX) ? 'none' : '' }}>
           <Col>
             <Input
               value={initialState.address}
               placeholder="请输入用户地址"
-              onChange={(e) =>
-                setInitialState({ ...initialState, address: e.target.value })
-              }
+              onChange={e => setInitialState({ ...initialState, address: e.target.value })}
             />
             <a
               onClick={() =>
                 setInitialState({
                   ...initialState,
-                  address: "0x2346c6b1024e97c50370c783a66d80f577fe991d",
+                  address: '0x2346c6b1024e97c50370c783a66d80f577fe991d'
                 })
               }
             >
@@ -147,7 +128,7 @@ const Personal = () => {
               onClick={() =>
                 setInitialState({
                   ...initialState,
-                  address: "0x375d80da4271f5dcdf821802f981a765a0f11763",
+                  address: '0x375d80da4271f5dcdf821802f981a765a0f11763'
                 })
               }
             >
@@ -158,7 +139,7 @@ const Personal = () => {
               onClick={() =>
                 setInitialState({
                   ...initialState,
-                  address: "0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff",
+                  address: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'
                 })
               }
             >
@@ -169,7 +150,7 @@ const Personal = () => {
               onClick={() =>
                 setInitialState({
                   ...initialState,
-                  address: "0xee3db241031c4aa79feca628f7a00aaa603901a6",
+                  address: '0xee3db241031c4aa79feca628f7a00aaa603901a6'
                 })
               }
             >
@@ -180,47 +161,33 @@ const Personal = () => {
           </Col>
         </Row>
         <Row gutter={[24, 24]}>
-          {map(
-            introduceData,
-            ({ title, tip, loading, content, estimateContent, unit }) => (
-              <Col key={title} {...topColResponsiveProps}>
-                <ChartCard
-                  bordered={false}
-                  title={title}
-                  action={
-                    <Tooltip title={tip}>
-                      <InfoCircleOutlined style={{ fontSize: 22 }} />
-                    </Tooltip>
-                  }
-                  loading={loading}
-                  total={content}
-                  unit={unit}
-                  footer={
-                    <Field style={{ height: "1rem" }} value={estimateContent} />
-                  }
-                />
-              </Col>
-            )
-          )}
+          {map(introduceData, ({ title, tip, loading, content, estimateContent, unit }) => (
+            <Col key={title} {...topColResponsiveProps}>
+              <ChartCard
+                bordered={false}
+                title={title}
+                action={
+                  <Tooltip title={tip}>
+                    <InfoCircleOutlined style={{ fontSize: 22 }} />
+                  </Tooltip>
+                }
+                loading={loading}
+                total={content}
+                unit={unit}
+                footer={<Field style={{ height: '1rem' }} value={estimateContent} />}
+              />
+            </Col>
+          ))}
         </Row>
       </Suspense>
       <Suspense fallback={null}>
-        <DailyTvl
-          title="Daily ETHi"
-          token="ETHi"
-          data={dataSource}
-          loading={loading}
-        />
+        <DailyTvl title="Daily ETHi" token="ETHi" data={dataSource} loading={loading} />
       </Suspense>
       <Suspense fallback={null}>
-        <MonthProfit
-          title="Monthly Profit"
-          data={dataSource}
-          loading={loading}
-        />
+        <MonthProfit title="Monthly Profit" data={dataSource} loading={loading} />
       </Suspense>
     </GridContent>
-  );
-};
+  )
+}
 
-export default Personal;
+export default Personal
