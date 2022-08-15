@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useModel } from 'umi'
+
+// === Services === //
 import { getDashboardDetail } from '@/services/dashboard-service'
 
 // === Utils === //
+import { useModel } from 'umi'
 import isEmpty from 'lodash/isEmpty'
 
 const dataMerge = initialState => {

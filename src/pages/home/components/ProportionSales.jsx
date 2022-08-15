@@ -1,14 +1,17 @@
-import { Donut } from '@ant-design/charts'
-import { Empty } from 'antd'
 import React from 'react'
-import { useModel } from 'umi'
+
+// === Components === //
+import { Empty } from 'antd'
+import { Donut } from '@ant-design/charts'
 
 // === Utils === //
 import BN from 'bignumber.js'
-import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
+import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
 
+// === Styles === //
 import styles from '../style.less'
 
 const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {

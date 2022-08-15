@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
+
+// === Utils === //
 import * as ethers from 'ethers'
 import { getJsonRpcProvider } from '@/utils/json-provider'
+
+// === Constants === //
 import { ETH } from '@/constants/chain'
 
 const { Contract } = ethers

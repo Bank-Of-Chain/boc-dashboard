@@ -1,20 +1,21 @@
-import { useModel } from 'umi'
+import { useEffect, useState } from 'react'
 
+// === Services === //
 import { getProfits, getPersonTvlArray, getMonthProfits, getAccountApyByAddress } from '@/services/api-service'
 
 // === Utils === //
 import moment from 'moment'
-import isEmpty from 'lodash/isEmpty'
-import map from 'lodash/map'
-import { reverse, find } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useModel } from 'umi'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
-import { USDI_BN_DECIMALS } from '@/constants/usdi'
-import { APY_DURATION } from '@/constants/api'
-import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { map, isEmpty, reverse, find } from 'lodash'
 import { getJsonRpcProvider } from '@/utils/json-provider'
+
+// === Constants === //
+import { APY_DURATION } from '@/constants/api'
+import { USDI_BN_DECIMALS } from '@/constants/usdi'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 const { BigNumber } = ethers
 

@@ -1,16 +1,13 @@
 import React from 'react'
-import { useModel } from 'umi'
 
 // === Components === //
 import { Table, Image } from 'antd'
 
 // === Utils === //
-import groupBy from 'lodash/groupBy'
-import reduce from 'lodash/reduce'
-import filter from 'lodash/filter'
-import { mapValues, values } from 'lodash'
-import { toFixed } from '@/utils/number-format'
 import BN from 'bignumber.js'
+import { useModel } from 'umi'
+import { toFixed } from '@/utils/number-format'
+import { mapValues, values, groupBy, reduce, filter } from 'lodash'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Styles === //

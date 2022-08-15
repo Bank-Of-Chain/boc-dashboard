@@ -1,12 +1,13 @@
 import React from 'react'
+
 // === Component === //
-import { InfoCircleOutlined } from '@ant-design/icons'
 import { Col, Row, Tooltip } from 'antd'
 import ChartCard from '@/components/ChartCard'
-import { isMobile } from '@/utils/device'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { map } from 'lodash'
+import { isMobile } from '@/utils/device'
 
 // === Styles === //
 import styles from '../style.less'

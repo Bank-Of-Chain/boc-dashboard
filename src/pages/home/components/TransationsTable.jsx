@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useModel } from 'umi'
 
 // === Components === //
 import { Card, Table, Tooltip, Radio, Select } from 'antd'
@@ -9,6 +8,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import moment from 'moment'
 import map from 'lodash/map'
 import BN from 'bignumber.js'
+import { useModel } from 'umi'
 import { toLeastOneFixed, toFixed } from '@/utils/number-format'
 import { getRecentActivity } from '@/services/dashboard-service'
 

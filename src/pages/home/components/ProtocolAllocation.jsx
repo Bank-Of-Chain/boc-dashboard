@@ -1,10 +1,15 @@
 import React, { Suspense } from 'react'
+
+// === Components === //
 import { Col, Row, Card } from 'antd'
-import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import TopSearch from './TopSearch'
 import ProportionSales from './ProportionSales'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+
+// === Constants === //
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
+// === Styles === //
 import styles from '../style.less'
 
 export default function ProtocolAllocation({

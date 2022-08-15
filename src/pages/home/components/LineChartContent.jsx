@@ -1,8 +1,12 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Card, Tabs, Tooltip, Radio, Select } from 'antd'
+
+// === Components === //
 import { LineEchart } from '@/components/echarts'
+import { Card, Tabs, Tooltip, Radio, Select } from 'antd'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+
+// === Styles === //
 import styles from '../style.less'
 
 const { TabPane } = Tabs
