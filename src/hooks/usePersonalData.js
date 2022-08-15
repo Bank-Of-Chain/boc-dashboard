@@ -48,22 +48,22 @@ const dataMerge = (account, chain, vault, tokenType, requests) => {
     chainId: chain,
     tokenType
   }
-  // 当前天的字符串，按0时区算
+  // date string of UTC0 today
   const date = moment().subtract(1, 'days').utc(0).format('yyyy-MM-DD')
   return Promise.all([
-    // 获取7日apy数值
+    // get weekly apy
     getAccountApyByAddress(account, date, {
       duration: APY_DURATION.weekly,
       ...params
     }),
-    // 获取30日apy数值
+    // get monthly apy
     getAccountApyByAddress(account, date, {
       duration: APY_DURATION.monthly,
       ...params
     }),
-    // 获取tvl数据
+    // get tvl
     getPersonTvlArray(account, params),
-    // 获取月度盈利数据
+    // get monthly profit
     getMonthProfits(account, params),
     getProfits(account, params),
     ...requests
@@ -100,7 +100,7 @@ const dataMerge = (account, chain, vault, tokenType, requests) => {
       return nextData
     })
     .catch(error => {
-      console.error('PersonalV2数据初始化失败', error)
+      console.error('init PersonalV2 data failed', error)
       return {}
     })
 }

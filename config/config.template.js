@@ -1,5 +1,5 @@
 /**
- * {{env}}环境配置文件
+ * {{env}} config
  */
 
 // https://umijs.org/config/
@@ -20,8 +20,6 @@ export default defineConfig({
   },
   antd: {
     dark: true
-    // 启用紧凑模式
-    // compact: true,
   },
   dva: {
     hmr: true
@@ -65,7 +63,6 @@ export default defineConfig({
   manifest: {
     basePath: '/'
   },
-  // Fast Refresh 热更新
   fastRefresh: {},
   openAPI: [],
   nodeModulesTransform: {

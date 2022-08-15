@@ -14,7 +14,7 @@ const start = async () => {
   const insideUrl = `http://172.31.22.200:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`
   const outsideUrl = `http://54.179.161.168:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`
   const { status, data } = await Promise.any([axios.get(insideUrl), axios.get(outsideUrl)]).catch(error => {
-    console.error(`${nextEnv}配置加载失败，url=${url}`)
+    console.error(`load ${nextEnv} config error, url=${url}`)
     return {
       status: 200,
       data: {
@@ -133,7 +133,7 @@ const chooseEnv = () => {
     {
       type: 'list',
       name: 'confirm',
-      message: '请选择需要发布的环境：',
+      message: 'Select env to deploy:',
       choices: [
         {
           key: 'dev-local',
@@ -167,7 +167,7 @@ const chooseEnv = () => {
         },
         {
           key: 'pr-sg',
-          name: 'pr-sg(生产)',
+          name: 'pr-sg(production)',
           value: 'pr-sg'
         }
       ]

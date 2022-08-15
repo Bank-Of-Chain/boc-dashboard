@@ -10,10 +10,10 @@ import isEmpty from 'lodash/isEmpty'
 const dataMerge = initialState => {
   const { vault, chain, vaultAddress, tokenAddress, vaultBufferAddress } = initialState
   if (isEmpty(tokenAddress) || isEmpty(vaultAddress)) {
-    return Promise.reject(new Error('token地址或vault地址获取失败'))
+    return Promise.reject(new Error('fetch tokenAddress or vaultAddress failed'))
   }
   return getDashboardDetail(vault, chain, tokenAddress, vaultAddress, vaultBufferAddress).catch(error => {
-    console.error('DashBoard数据初始化失败', error)
+    console.error('init DashBoard data failed', error)
     return {
       pegToken: {
         totalSupply: '0',

@@ -3,7 +3,9 @@ import lineSimple from '@/components/echarts/options/line/lineSimple'
 import forEach from 'lodash/forEach'
 import isNaN from 'lodash/isNaN'
 import isUndefined from 'lodash/isUndefined'
-import { isNil, filter, size } from 'lodash'
+import isNil from 'lodash/isNil'
+import filter from 'lodash/filter'
+import size from 'lodash/size'
 
 const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
   const {
@@ -23,7 +25,7 @@ const getLineEchartOpt = (data, dataValueKey, seriesName, options = {}) => {
   const seriesData = []
   const xAxisLabels = {}
   data.forEach(o => {
-    // 当天为 23:59 时的数据, 展示到明天 00:00，故加 1
+    // TODO: need comments
     let value = moment(o.date).add(1, 'days').format(tootlTipFormat)
     if (tootlTipSuffix) {
       value = `${value} ${tootlTipSuffix}`

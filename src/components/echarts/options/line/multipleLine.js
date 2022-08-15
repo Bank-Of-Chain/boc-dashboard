@@ -1,7 +1,7 @@
 import { getNoDataGraphic } from '@/components/echarts/options/optionHelper'
 
 /**
- * 多条平滑曲线图
+ * Multiple line chart
  */
 export default function (obj) {
   let data = []

@@ -27,7 +27,7 @@ import useWallet from '@/hooks/useWallet'
 // === Styles === //
 import styles from './index.less'
 
-// 以下路由时，不展示头部的切 vault 下拉框
+// routes which do not show the vault select
 const disabledChangeVaultRoute = ['/strategy']
 
 const GlobalHeaderRight = () => {

@@ -13,7 +13,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Styles === //
 import styles from '../style.less'
 
-// 列表中的平台图标，直接使用透明背景即可
+// strategies which use transparent background-color
 const withoutBackgroundColor = ['Vault']
 
 const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}, unit }) => {
