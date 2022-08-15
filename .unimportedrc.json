@@ -2,7 +2,7 @@
   "entry": [
     "src/app.jsx",
     "src/global.jsx",
-    "src/pages/**/*.{js,jsx}",
+    "src/pages/**/index.{js,jsx}",
     "src/models/**/*.{js,jsx}"
   ],
   "extensions": [".jsx", ".js"],
