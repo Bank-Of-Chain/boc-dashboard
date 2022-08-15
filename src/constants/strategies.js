@@ -17,7 +17,20 @@ const USDI_ETH_STRATEGIES_MAP = [
   'Aura'
 ]
 
-const USDI_MATIC_STRATEGIES_MAP = ['Curve', 'Aave', 'Balancer', 'Gravity', 'Polycat', 'Qi', 'Quickswap', 'Sushi', 'Synapse', 'Dodo', 'Stargate']
+const USDI_MATIC_STRATEGIES_MAP = [
+  'Curve',
+  'Aave',
+  'Balancer',
+  'Gravity',
+  'Polycat',
+  'Qi',
+  'Quickswap',
+  'Sushi',
+  'Synapse',
+  'Dodo',
+  'Stargate',
+  'UniswapV3'
+]
 
 const ETHI_ETH_STRATEGIES_MAP = ['Balancer', 'UniswapV2', 'Convex', 'Aura', 'UniswapV3', 'StakeWise', 'YearnV2']
 
