@@ -5,10 +5,8 @@ import CHAINS from '@/constants/chain'
 import { WALLETS } from '@/constants/wallet'
 
 export const changeNetwork = async (id, userProvider, walletName, params = {}) => {
-  console.log('changeNetwork=')
   const { resolveWhenUnsupport } = params
   const targetNetwork = find(CHAINS, { id })
-  console.log('targetNetwork=', targetNetwork)
   if (isEmpty(targetNetwork)) return
   if (!userProvider) {
     return
@@ -32,20 +30,17 @@ export const changeNetwork = async (id, userProvider, walletName, params = {}) =
       blockExplorerUrls: [targetNetwork.blockExplorer]
     }
   ]
-  console.log('data', data)
 
   let switchTx
   try {
     switchTx = await userProvider.send('wallet_switchEthereumChain', [{ chainId: data[0].chainId }])
   } catch (switchError) {
-    console.log('switchError=', switchTx, switchError)
     if (switchError.code === 4001) {
       return Promise.reject()
     }
     try {
       switchTx = await userProvider.send('wallet_addEthereumChain', data)
     } catch (addError) {
-      console.log('addError=', addError)
       return Promise.reject()
     }
   }

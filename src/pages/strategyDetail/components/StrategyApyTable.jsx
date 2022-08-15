@@ -1,20 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+
+// === Components === //
 import { Card, Table, Space, Tooltip, Divider } from 'antd'
 import { HourglassOutlined, InfoCircleOutlined } from '@ant-design/icons'
-import { useModel, useRequest } from 'umi'
-
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import { getStrategyApyDetails } from '@/services/api-service'
 
 // === Utils === //
-import reduce from 'lodash/reduce'
-import map from 'lodash/map'
-import { toFixed } from '@/utils/number-format'
-import { BigNumber } from 'ethers'
-import { groupBy, isEmpty, isNil, keyBy } from 'lodash'
 import BN from 'bignumber.js'
+import { BigNumber } from 'ethers'
+import { useModel, useRequest } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
+import { toFixed } from '@/utils/number-format'
+import { groupBy, isEmpty, isNil, keyBy, map, reduce } from 'lodash'
+
+// === Services === //
+import { getStrategyApyDetails } from '@/services/api-service'
 
 // === Constants === //
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Card, Table, Tooltip } from 'antd'
-import { useModel } from 'umi'
-import BN from 'bignumber.js'
 
 // === Components === //
+import { Card, Table, Tooltip } from 'antd'
 import { SlidersOutlined } from '@ant-design/icons'
 
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
@@ -16,9 +14,11 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 // === Utils === //
 import moment from 'moment'
 import map from 'lodash/map'
+import BN from 'bignumber.js'
+import { useModel } from 'umi'
+import isEmpty from 'lodash/isEmpty'
 import isUndefined from 'lodash/isUndefined'
 import { toFixed } from '@/utils/number-format'
-import { isEmpty } from 'lodash'
 
 const OPERATION = {
   0: 'harvest',

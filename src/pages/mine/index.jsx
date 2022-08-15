@@ -1,12 +1,18 @@
 import React from 'react'
-import { useModel } from 'umi'
-import { Result } from 'antd'
-import { GridContent } from '@ant-design/pro-layout'
-import isEmpty from 'lodash/isEmpty'
+
+// === Constants === //
 import { VAULT_TYPE } from '@/constants/vault'
-import useWallet from '@/hooks/useWallet'
+
+// === Components === //
+import { Result } from 'antd'
 import ETHi from './ethi'
 import USDi from './usdi'
+import { GridContent } from '@ant-design/pro-layout'
+
+// === Utils === //
+import { useModel } from 'umi'
+import isEmpty from 'lodash/isEmpty'
+import useWallet from '@/hooks/useWallet'
 
 export default function Mine() {
   const { initialState } = useModel('@@initialState')

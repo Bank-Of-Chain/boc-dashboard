@@ -1,7 +1,8 @@
-import { Table, Image } from 'antd'
 import React from 'react'
-import styles from '../style.less'
 import { useModel } from 'umi'
+
+// === Components === //
+import { Table, Image } from 'antd'
 
 // === Utils === //
 import groupBy from 'lodash/groupBy'
@@ -11,6 +12,9 @@ import { mapValues, values } from 'lodash'
 import { toFixed } from '@/utils/number-format'
 import BN from 'bignumber.js'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+
+// === Styles === //
+import styles from '../style.less'
 
 // 列表中的平台图标，直接使用透明背景即可
 const withoutBackgroundColor = ['Vault']

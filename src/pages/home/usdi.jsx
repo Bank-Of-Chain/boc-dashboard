@@ -1,37 +1,35 @@
 import React from 'react'
 import { Suspense, useEffect, useState } from 'react'
+
+// === Components === //
 import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
 import LineChartContent from './components/LineChartContent'
 import ProtocolAllocation from './components/ProtocolAllocation'
 import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
-import { useModel } from 'umi'
-import get from 'lodash/get'
-import numeral from 'numeral'
-import moment from 'moment'
-
-// === Components === //
+import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
+import multipleLine from '@/components/echarts/options/line/multipleLine'
 import ChainChange from '@/components/ChainChange'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
-import { TOKEN_TYPE } from '@/constants/api'
+import { TOKEN_TYPE, APY_DURATION } from '@/constants/api'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { USDI_BN_DECIMALS } from '@/constants/usdi'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
-import { isEmpty, isNil, uniq, find, map, reverse, size, filter } from 'lodash'
-import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
-import multipleLine from '@/components/echarts/options/line/multipleLine'
-import { APY_DURATION } from '@/constants/api'
-import { toFixed } from '@/utils/number-format'
-import { USDI_BN_DECIMALS } from '@/constants/usdi'
-import { appendDate } from '@/utils/array-append'
+import { useModel } from 'umi'
+import numeral from 'numeral'
+import moment from 'moment'
 import { BigNumber } from 'ethers'
+import { toFixed } from '@/utils/number-format'
+import { appendDate } from '@/utils/array-append'
+import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get } from 'lodash'
 
 const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)

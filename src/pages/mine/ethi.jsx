@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react'
 import { useModel } from 'umi'
-import numeral from 'numeral'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -12,16 +11,20 @@ import MonthProfit from './components/MonthProfit'
 
 // === Utils === //
 import map from 'lodash/map'
+import numeral from 'numeral'
 import isString from 'lodash/isString'
 import { toFixed } from '@/utils/number-format'
 import { isProEnv } from '@/services/env-service'
-import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+
+// === Constants === //
 import { TOKEN_TYPE } from '@/constants/api'
+import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Hooks === //
 import usePersonalData from '@/hooks/usePersonalData'
 import useEthPrice from '@/hooks/useEthPrice'
 
+// === Styles === //
 import styles from './style.less'
 
 const topColResponsiveProps = {

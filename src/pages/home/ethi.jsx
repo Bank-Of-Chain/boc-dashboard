@@ -1,32 +1,34 @@
 import React, { Suspense, useEffect, useState } from 'react'
+
+// === Components === //
 import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
 import LineChartContent from './components/LineChartContent'
 import ProtocolAllocation from './components/ProtocolAllocation'
 import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
-import { useModel } from 'umi'
-import numeral from 'numeral'
-import moment from 'moment'
+import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
+import multipleLine from '@/components/echarts/options/line/multipleLine'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE } from '@/constants/api'
+import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { APY_DURATION } from '@/constants/api'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
-import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce } from 'lodash'
-import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
-import multipleLine from '@/components/echarts/options/line/multipleLine'
-import { APY_DURATION } from '@/constants/api'
-import { toFixed } from '@/utils/number-format'
-import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { useModel } from 'umi'
+import numeral from 'numeral'
+import moment from 'moment'
 import BN from 'bignumber.js'
-import { appendDate } from '@/utils/array-append'
 import { BigNumber } from 'ethers'
+import { toFixed } from '@/utils/number-format'
+import { appendDate } from '@/utils/array-append'
+import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce } from 'lodash'
 
 const ETHiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)

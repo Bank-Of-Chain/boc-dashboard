@@ -1,11 +1,4 @@
 import React, { Suspense, useState, useEffect } from 'react'
-import { Col, Row, Card, Image, Descriptions, Spin } from 'antd'
-import { GridContent } from '@ant-design/pro-layout'
-import ReportTable from './components/ReportTable'
-import { history, useModel } from 'umi'
-import { LeftOutlined } from '@ant-design/icons'
-import { LineEchart } from '@/components/echarts'
-import multipleLine from '@/components/echarts/options/line/multipleLine'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP, ETHI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -13,20 +6,24 @@ import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Components === //
-import CoinSuperPosition from '@/components/CoinSuperPosition'
+import { LeftOutlined } from '@ant-design/icons'
+import { LineEchart } from '@/components/echarts'
+import ReportTable from './components/ReportTable'
+import { GridContent } from '@ant-design/pro-layout'
 import StrategyApyTable from './components/StrategyApyTable'
+import CoinSuperPosition from '@/components/CoinSuperPosition'
+import { Col, Row, Card, Image, Descriptions, Spin } from 'antd'
+import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
-import { isEmpty, map, noop, reduce } from 'lodash'
+import moment from 'moment'
+import BN from 'bignumber.js'
+import { history, useModel } from 'umi'
+import { formatToUTC0 } from '@/utils/date'
 import { toFixed } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
-
-import moment from 'moment'
-import _find from 'lodash/find'
-import BN from 'bignumber.js'
-import { get, isNil, keyBy, size, filter } from 'lodash'
-import { formatToUTC0 } from '@/utils/date'
+import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find } from 'lodash'
 
 // === Services === //
 import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails } from '@/services/api-service'
@@ -74,7 +71,7 @@ const Strategy = props => {
     setLoading(true)
     getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100)
       .then(resp => {
-        const strategy = _find(resp.content, item => item.strategyAddress === id)
+        const strategy = find(resp.content, item => item.strategyAddress === id)
         setStrategy(strategy)
       })
       .catch(noop)

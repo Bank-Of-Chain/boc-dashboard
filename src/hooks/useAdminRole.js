@@ -66,13 +66,11 @@ const useAdminRole = address => {
           .isVaultOrGov(userAddress)
           .then(setIsAdmin)
           .catch(error => {
-            console.log('inner error=', error, vaultContract, userProvider)
             setError(error)
             setIsAdmin(false)
           })
       })
       .catch(error => {
-        console.log('outer error=', error, vaultContract, userProvider)
         setError(error)
         setIsAdmin(false)
       })

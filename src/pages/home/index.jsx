@@ -1,8 +1,11 @@
 import React from 'react'
 import { useModel } from 'umi'
 
+// === Components === //
 import ETHi from './ethi'
 import USDi from './usdi'
+
+// === Constants === //
 import { VAULT_TYPE } from '@/constants/vault'
 
 export default function Home() {

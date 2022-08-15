@@ -1,27 +1,30 @@
 import React, { Suspense } from 'react'
-import { useModel } from 'umi'
-import numeral from 'numeral'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { GridContent } from '@ant-design/pro-layout'
 import { Col, Row, Tooltip, Input } from 'antd'
 import ChartCard from '@/components/ChartCard'
+import ChainChange from '@/components/ChainChange'
 import DailyTvl from './components/DailyChart'
 import MonthProfit from './components/MonthProfit'
+
+// === Constants === //
 import { TOKEN_TYPE } from '@/constants/api'
+import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-import ChainChange from '@/components/ChainChange'
 
 // === Utils === //
+import { useModel } from 'umi'
+import numeral from 'numeral'
 import map from 'lodash/map'
 import { toFixed } from '@/utils/number-format'
-import { isProEnv } from '@/services/env-service'
-import { USDI_BN_DECIMALS } from '@/constants/usdi'
 
-// === Hooks === //
+// === Services === //
+import { isProEnv } from '@/services/env-service'
 import usePersonalData from '@/hooks/usePersonalData'
 
+// === Styles === //
 import styles from './style.less'
 
 const topColResponsiveProps = {

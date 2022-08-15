@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Table, Tooltip, Radio, Select } from 'antd'
 import { useModel } from 'umi'
+
+// === Components === //
+import { Card, Table, Tooltip, Radio, Select } from 'antd'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import moment from 'moment'
 import map from 'lodash/map'
 import BN from 'bignumber.js'
 import { toLeastOneFixed, toFixed } from '@/utils/number-format'
+import { getRecentActivity } from '@/services/dashboard-service'
 
+// === Constants === //
 import { USDI_DECIMALS } from '@/constants/usdi'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
-import { getRecentActivity } from '@/services/dashboard-service'
+
+// === Styles === //
 import styles from '../style.less'
 
 const { Option } = Select

@@ -15,7 +15,7 @@ const clearCache = () => {
           caches.delete(key)
         })
       })
-      .catch(e => console.log(e))
+      .catch(console.log)
   }
 } // if pwa is true
 

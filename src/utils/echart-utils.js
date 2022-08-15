@@ -9,7 +9,6 @@ const DEFAULT_OPTIONS = {
 export const bestIntervalForArrays = (arrays = [], options = DEFAULT_OPTIONS) => {
   const maxPercent = 100
   const minPercentArray = map(arrays, i => bestInterval(i, options))
-  console.log('minPercentArray=', minPercentArray)
   return [max(minPercentArray), maxPercent]
 }
 

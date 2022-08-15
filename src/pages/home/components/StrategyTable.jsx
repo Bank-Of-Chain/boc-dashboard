@@ -1,23 +1,23 @@
-import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
 import React, { useState } from 'react'
-import { useModel, useRequest } from 'umi'
-import { filter, isNil, map, sortBy } from 'lodash'
 
 // === Components === //
+import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
+import { useModel, useRequest } from 'umi'
 import { toFixed } from '@/utils/number-format'
+import { isEmpty, filter, isNil, map, sortBy } from 'lodash'
 import BN from 'bignumber.js'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
+// === Styles === //
 import styles from '../style.less'
-import { isEmpty } from 'lodash'
 
 const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
