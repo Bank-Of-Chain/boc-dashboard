@@ -1,7 +1,7 @@
-import { getClient } from "@/apollo/client";
-import { gql } from "@apollo/client";
-import { isEmpty } from "lodash";
-import { VAULT_TYPE } from "@/constants/vault";
+import { getClient } from '@/apollo/client'
+import { gql } from '@apollo/client'
+import { isEmpty } from 'lodash'
+import { VAULT_TYPE } from '@/constants/vault'
 
 const USDI_DASHBOARD_DETAIL_QUERY = `
 query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
@@ -28,7 +28,7 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
     totalSupply
   }
 }
-`;
+`
 const ETHI_DASHBOARD_DETAIL_QUERY = `
 query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
   pegToken(id: $tokenAddress) {
@@ -53,34 +53,28 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
     totalSupply
   }
 }
-`;
+`
 
-export const getDashboardDetail = async (
-  vault,
-  chain,
-  tokenAddress = "",
-  valutAddress = "",
-  vaultBufferAddress = ""
-) => {
-  const client = getClient(vault, chain);
+export const getDashboardDetail = async (vault, chain, tokenAddress = '', valutAddress = '', vaultBufferAddress = '') => {
+  const client = getClient(vault, chain)
   if (isEmpty(client)) {
-    return;
+    return
   }
   const QUERY = {
     [VAULT_TYPE.USDi]: USDI_DASHBOARD_DETAIL_QUERY,
-    [VAULT_TYPE.ETHi]: ETHI_DASHBOARD_DETAIL_QUERY,
-  }[vault];
+    [VAULT_TYPE.ETHi]: ETHI_DASHBOARD_DETAIL_QUERY
+  }[vault]
 
   const { data } = await client.query({
     query: gql(QUERY),
     variables: {
       tokenAddress: tokenAddress.toLowerCase(),
       valutAddress: valutAddress.toLowerCase(),
-      vaultBufferAddress: vaultBufferAddress.toLowerCase(),
-    },
-  });
-  return data;
-};
+      vaultBufferAddress: vaultBufferAddress.toLowerCase()
+    }
+  })
+  return data
+}
 
 const getRecentActivityQuery = () => `
 query($types: [PegTokenUpdateType], $first: Int) {
@@ -112,25 +106,25 @@ query($types: [PegTokenUpdateType], $first: Int) {
     }
   }
 }
-`;
+`
 
 export const getRecentActivity = async (vault, chain, types, total = 100) => {
-  const client = getClient(vault, chain);
+  const client = getClient(vault, chain)
   if (isEmpty(client)) {
-    return;
+    return
   }
   const QUERY = {
     [VAULT_TYPE.USDi]: getRecentActivityQuery(),
-    [VAULT_TYPE.ETHi]: getRecentActivityQuery(),
-  }[vault];
+    [VAULT_TYPE.ETHi]: getRecentActivityQuery()
+  }[vault]
 
   return await client
     .query({
       query: gql(QUERY),
       variables: {
         types,
-        first: total,
-      },
+        first: total
+      }
     })
-    .then((res) => res.data.pegTokenUpdates);
-};
+    .then(res => res.data.pegTokenUpdates)
+}
