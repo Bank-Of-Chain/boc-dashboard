@@ -9,7 +9,7 @@ export default function DailyChart({ title, data, loading, token = 'USDi' }) {
   const deviceType = useDeviceType()
   const { tvls = [] } = data
 
-  // 参考 https://github.com/PiggyFinance/dashboard/issues/166
+  // https://github.com/PiggyFinance/dashboard/issues/166
   const reverseArray = reverse([...tvls])
   const continuousIndex = findIndex(reverseArray, (item, index) => {
     if (index <= 2) return false

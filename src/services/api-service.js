@@ -19,7 +19,7 @@ export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
 }
 
 /**
- * 分页获取调仓报告
+ * get allocation report
  * @param {*} params
  * @param {*} offset
  * @param {*} limit
@@ -38,8 +38,8 @@ export const getReports = (params, offset = 0, limit = 20) => {
 }
 
 /**
- * 按分页查询策略详情
- * @param {String} chainId 链ID
+ * get strategy detail
+ * @param {String} chainId
  * @param {number} offset
  * @param {number} limit
  * @returns
@@ -55,7 +55,7 @@ export const getStrategyDetails = (chainId, vaultAddress, offset = 0, limit = 20
 }
 
 /**
- * 获取币本位的apy数据
+ * get verified apy
  * @param {*} params
  * @param {*} offset
  * @param {*} limit
@@ -73,7 +73,7 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
 }
 
 /**
- * 更新调仓报告的状态
+ * update report status
  * @param {*} reportId
  * @returns
  */
@@ -97,7 +97,7 @@ export const getStrategyDetailsReports = ({ strategyName, vaultAddress, chainId,
 }
 
 /**
- * 获取用户apy
+ * get account apy
  * @param {*} account
  * @param {*} date
  * @param {*} params
@@ -110,7 +110,7 @@ export const getAccountApyByAddress = (account, date, params) => {
 }
 
 /**
- * 获取用户的收益，包括已实现首页和未实现收益
+ * get account profit, include unrealized and realized
  * @param {*} account
  * @param {*} params
  * @returns
@@ -122,7 +122,7 @@ export const getProfits = (account, params) => {
 }
 
 /**
- * 获取总锁仓量数组，默认取1年
+ * get account tvl, default recent 1 year
  * @param {*} account
  * @param {*} params
  * @returns
@@ -137,7 +137,7 @@ export const getPersonTvlArray = (account, params) => {
 }
 
 /**
- * 获取用户月盈利
+ * get account monthly profit
  * @param {*} account
  * @param {*} params
  * @returns
@@ -193,8 +193,8 @@ export const clearAPICache = () => {
 }
 
 /**
- * 按分页查询策略详情
- * @param {String} chainId 链ID
+ * get daily verified apy
+ * @param {String} chainId
  * @param {number} offset
  * @param {number} limit
  * @returns

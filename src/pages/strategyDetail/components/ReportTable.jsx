@@ -88,7 +88,6 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     setPagination(pagination)
   }
 
-  // 固定6位
   const decimal = BN(1e18)
 
   const columns = [

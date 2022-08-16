@@ -94,7 +94,7 @@ const Personal = () => {
           <Col>
             <Input
               value={initialState.address}
-              placeholder="请输入用户地址"
+              placeholder="Enter account address"
               onChange={e => setInitialState({ ...initialState, address: e.target.value })}
             />
             <a
@@ -127,7 +127,7 @@ const Personal = () => {
                 })
               }
             >
-              晓天地址: 0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff
+              Xiaotian: 0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff
             </a>
             <br />
             <a
@@ -138,10 +138,10 @@ const Personal = () => {
                 })
               }
             >
-              ND 测试用户：0xee3db241031c4aa79feca628f7a00aaa603901a6
+              ND Test Account: 0xee3db241031c4aa79feca628f7a00aaa603901a6
             </a>
             <br />
-            <p>该输入框为测试使用，发布前需要删除</p>
+            <p>This is test input, should be deleted before up to production.</p>
           </Col>
         </Row>
         <Row gutter={[24, 24]}>

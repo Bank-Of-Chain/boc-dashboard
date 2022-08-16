@@ -5,7 +5,8 @@ import find from 'lodash/find'
 export const appendDate = (array, valueKey = 'value', limit = 7) => {
   const data = []
   for (let i = 0; i < limit; i++) {
-    const lastestMoment = array[0] ? moment(array[0].date) : moment().utcOffset(0).subtract(1, 'days') // 数据展示到昨天
+    // Time ended yesterday
+    const lastestMoment = array[0] ? moment(array[0].date) : moment().utcOffset(0).subtract(1, 'days')
     const date = lastestMoment.subtract(i, 'days').format('YYYY-MM-DD')
     const item = find(array, item => item.date === date) || {
       date,

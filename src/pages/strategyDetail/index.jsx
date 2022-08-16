@@ -45,7 +45,7 @@ const Strategy = props => {
   const { id, ori = false, vault } = props?.location?.query
   const [loading, setLoading] = useState(false)
   const [strategy, setStrategy] = useState({})
-  // 用于存放所有的apy数据，取代上面的apys和offchainApys
+  // Save all apy data
   const [apyArray, setApyArray] = useState([])
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()

@@ -101,7 +101,7 @@ const Reports = () => {
   const { isAdmin, loading: roleLoading, error: roleError } = useAdminRole(initialState.address)
 
   /**
-   * 驳回调仓报告
+   * Reject allocation report
    * @param {string} id
    */
   const reportCancel = async id => {
@@ -121,7 +121,7 @@ const Reports = () => {
 
   useEffect(() => {
     const { chain, walletChainId } = initialState
-    // 链id不相同，如果是开发环境，且walletChainId=31337，则不展示
+    // Do not show in fork chain
     if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
       if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
         setShowWarningModal(false)
@@ -134,7 +134,7 @@ const Reports = () => {
   }, [initialState])
 
   useEffect(() => {
-    // 加载异常，一定弹窗, 角色会在切换 token 后重新获取
+    // Show modal when load role error
     if (roleError) {
       setShowWarningModal(true)
     }
@@ -204,7 +204,7 @@ const Reports = () => {
       render: (text, record, index) => {
         const { id, isReject, rejectTime, rejecter, type, geneTime } = record
         let rejectElement = null
-        // 如果报告超过1天，则不能进行驳回
+        // Cannot reject report passed 1 day
         if (moment(geneTime).isBetween(moment().subtract(1, 'days'), moment())) {
           if (isAdmin && type === 0) {
             if (roleLoading) {
