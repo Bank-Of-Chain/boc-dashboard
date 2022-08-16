@@ -1,5 +1,10 @@
 {
   "name": "ant-design-pro",
+  "jest": {
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
+  },
   "version": "5.0.0",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
@@ -28,7 +33,7 @@
     "lint:prettier": "prettier --write .",
     "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
     "openapi": "umi openapi",
-    "prettier": "prettier -c --write \"src/**/*\"",
+    "prettier": "prettier -c -w \"src/**/*.{js,jsx}\"",
     "serve": "umi-serve",
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev-local umi dev",
     "start:no-ui": "cross-env UMI_UI=none UMI_ENV=dev-local umi dev",
@@ -50,7 +55,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "echo 'husky' && npm run lint:js"
+      "pre-commit": "lint-staged"
     }
   },
   "browserslist": [
@@ -108,6 +113,7 @@
     "depcheck": "^1.4.3",
     "detect-installer": "^1.0.1",
     "eslint": "^7.1.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.30.1",
     "filemanager-webpack-plugin": "^7.0.0",
     "gh-pages": "^3.0.0",

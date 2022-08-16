@@ -1,5 +1,5 @@
 /**
- * qa04-sg环境配置文件
+ * qa04-sg config
  */
 
 // https://umijs.org/config/
@@ -20,8 +20,6 @@ export default defineConfig({
   },
   antd: {
     dark: true,
-    // 启用紧凑模式
-    // compact: true,
   },
   dva: {
     hmr: true,
@@ -65,7 +63,6 @@ export default defineConfig({
   manifest: {
     basePath: "/",
   },
-  // Fast Refresh 热更新
   fastRefresh: {},
   openAPI: [],
   nodeModulesTransform: {
@@ -98,38 +95,32 @@ export default defineConfig({
   define: {
     ENV_INDEX: "qa04-sg",
     API_SERVER: "https://service-qa04-sg.bankofchain.io",
-    DASHBOARD_ROOT: "http://localhost:8000",
+    DASHBOARD_ROOT: "https://dashboard-qa04-sg.bankofchain.io",
     IMAGE_ROOT: "https://qa04-sg.bankofchain.io",
     CHAIN_BROWSER_URL: {
       1: "https://etherscan.io",
-      56: "https://bscscan.com",
       137: "https://polygonscan.com",
     },
     RPC_URL: {
       1: "https://rpc-qa04-sg.bankofchain.io",
-      56: "https://rpc-qa04-sg.bankofchain.io",
       137: "https://rpc-qa04-sg.bankofchain.io",
       31337: "https://rpc-qa04-sg.bankofchain.io",
     },
     USDI: {
       SUB_GRAPH_URL: {
         1: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
-        56: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
         137: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
       },
       VAULT_ADDRESS: {
         1: "0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC",
-        56: "111",
         137: "13",
       },
       USDI_ADDRESS: {
         1: "0xBe15Eed7D8e91D20263d4521c9eB0F4e3510bfBF",
-        56: "4",
         137: "16",
       },
       VAULT_BUFFER_ADDRESS: {
         1: "8",
-        56: "2",
         137: "14",
       },
     },

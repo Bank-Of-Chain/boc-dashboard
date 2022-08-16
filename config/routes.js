@@ -1,21 +1,21 @@
 export default [
   {
-    path: "/",
-    component: "./home",
+    path: '/',
+    component: './home'
   },
   {
-    path: "/strategy",
-    component: "./strategyDetail",
+    path: '/strategy',
+    component: './strategyDetail'
   },
   {
-    path: "/mine",
-    component: "./mine",
+    path: '/mine',
+    component: './mine'
   },
   {
-    path: "/reports",
-    component: "./reports",
+    path: '/reports',
+    component: './reports'
   },
   {
-    component: "404",
-  },
-];
+    component: '404'
+  }
+]

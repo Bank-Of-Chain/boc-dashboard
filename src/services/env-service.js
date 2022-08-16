@@ -1,5 +1,5 @@
-import isEqual from "lodash/isEqual";
+import isEqual from 'lodash/isEqual'
 
-export const isProEnv = (env) => {
-  return isEqual(env, "pr-sg");
-};
+export const isProEnv = env => {
+  return isEqual(env, 'pr-sg')
+}
