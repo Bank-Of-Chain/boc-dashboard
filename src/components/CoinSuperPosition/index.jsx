@@ -24,6 +24,7 @@ const WSTETH_IMAGE = `${IMAGE_ROOT}/images/0x7f39C581F595B53c5cb19bD0b3f8dA6c935
 const WETH_IMAGE = `${IMAGE_ROOT}/images/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2.png`
 const GUSD_IMAGE = `${IMAGE_ROOT}/images/0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd.png`
 const SUSD_IMAGE = `${IMAGE_ROOT}/images/0x57Ab1ec28D129707052df4dF418D58a2D46d5f51.png`
+const miMATIC_IMAGE = `${IMAGE_ROOT}/images/0xa3Fa99A148fA48D14Ed51d610c367C61876997F1.png`
 
 const addressMap = {
   '0x55d398326f99059ff775485246999027b3197955': USDT_IMAGE,
@@ -61,13 +62,15 @@ const addressMap = {
   '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0': WSTETH_IMAGE,
   '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': WETH_IMAGE,
   '0x056fd409e1d7a124bd7017459dfea2f387b6d5cd': GUSD_IMAGE,
-  '0x57ab1ec28d129707052df4df418d58a2d46d5f51': SUSD_IMAGE
+  '0x57ab1ec28d129707052df4df418d58a2d46d5f51': SUSD_IMAGE,
+  '0xa3fa99a148fa48d14ed51d610c367c61876997f1': miMATIC_IMAGE
 }
 const DEFAULT = `${IMAGE_ROOT}/default.png`
 
 const CoinSuperPosition = ({ array = [], size = 24 }) => {
   const imageRender = (address, i) => (
     <Image
+      title={address}
       preview={false}
       key={`${address + i}`}
       width={size}
