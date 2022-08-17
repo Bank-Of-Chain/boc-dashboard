@@ -16,7 +16,7 @@
     "/api/currentUser": {
       "get": {
         "tags": ["api"],
-        "description": "获取当前的用户",
+        "description": "get current user",
         "operationId": "currentUser",
         "responses": {
           "200": {
@@ -45,14 +45,14 @@
     },
     "/api/login/captcha": {
       "post": {
-        "description": "发送验证码",
+        "description": "send captcha",
         "operationId": "getFakeCaptcha",
         "tags": ["login"],
         "parameters": [
           {
             "name": "phone",
             "in": "query",
-            "description": "手机号",
+            "description": "phone",
             "schema": {
               "type": "string"
             }
@@ -74,7 +74,7 @@
     },
     "/api/login/outLogin": {
       "post": {
-        "description": "登录接口",
+        "description": "login",
         "operationId": "outLogin",
         "tags": ["login"],
         "responses": {
@@ -105,10 +105,10 @@
     "/api/login/account": {
       "post": {
         "tags": ["login"],
-        "description": "登录接口",
+        "description": "login",
         "operationId": "login",
         "requestBody": {
-          "description": "登录系统",
+          "description": "login",
           "content": {
             "application/json": {
               "schema": {
@@ -167,13 +167,13 @@
     "/api/rule": {
       "get": {
         "tags": ["rule"],
-        "description": "获取规则列表",
+        "description": "get rules",
         "operationId": "rule",
         "parameters": [
           {
             "name": "current",
             "in": "query",
-            "description": "当前的页码",
+            "description": "page no",
             "schema": {
               "type": "number"
             }
@@ -181,7 +181,7 @@
           {
             "name": "pageSize",
             "in": "query",
-            "description": "页面的容量",
+            "description": "page size",
             "schema": {
               "type": "number"
             }
@@ -212,7 +212,7 @@
       },
       "post": {
         "tags": ["rule"],
-        "description": "新建规则",
+        "description": "add rule",
         "operationId": "addRule",
         "responses": {
           "200": {
@@ -239,7 +239,7 @@
       },
       "put": {
         "tags": ["rule"],
-        "description": "新建规则",
+        "description": "update rule",
         "operationId": "updateRule",
         "responses": {
           "200": {
@@ -266,7 +266,7 @@
       },
       "delete": {
         "tags": ["rule"],
-        "description": "删除规则",
+        "description": "remove rule",
         "operationId": "removeRule",
         "responses": {
           "200": {
@@ -469,7 +469,7 @@
           },
           "total": {
             "type": "integer",
-            "description": "列表的内容总数",
+            "description": "total",
             "format": "int32"
           },
           "success": {
@@ -512,15 +512,15 @@
         "properties": {
           "errorCode": {
             "type": "string",
-            "description": "业务约定的错误码"
+            "description": "error code"
           },
           "errorMessage": {
             "type": "string",
-            "description": "业务上的错误信息"
+            "description": "error message"
           },
           "success": {
             "type": "boolean",
-            "description": "业务上的请求是否成功"
+            "description": "success or not"
           }
         }
       },
@@ -535,7 +535,7 @@
           },
           "total": {
             "type": "integer",
-            "description": "列表的内容总数",
+            "description": "total",
             "format": "int32"
           },
           "success": {
@@ -545,7 +545,7 @@
       },
       "NoticeIconItemType": {
         "title": "NoticeIconItemType",
-        "description": "已读未读列表的枚举",
+        "description": "enum for notice",
         "type": "string",
         "properties": {},
         "enum": ["notification", "message", "event"]

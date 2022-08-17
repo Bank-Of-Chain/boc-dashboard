@@ -1,3 +1,7 @@
+/**
+ * qa04-sg config
+ */
+
 // https://umijs.org/config/
 import { defineConfig } from "umi";
 import defaultSettings from "./defaultSettings";
@@ -16,8 +20,6 @@ export default defineConfig({
   },
   antd: {
     dark: true,
-    // 启用紧凑模式
-    // compact: true,
   },
   dva: {
     hmr: true,
@@ -61,22 +63,8 @@ export default defineConfig({
   manifest: {
     basePath: "/",
   },
-  // Fast Refresh 热更新
   fastRefresh: {},
-  openAPI: [
-    // {
-    //   requestLibPath: "import { request } from 'umi'",
-    //   // 或者使用在线的版本
-    //   // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-    //   schemaPath: join(__dirname, 'oneapi.json'),
-    //   mock: false,
-    // },
-    // {
-    //   requestLibPath: "import { request } from 'umi'",
-    //   schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-    //   projectName: 'swagger',
-    // },
-  ],
+  openAPI: [],
   nodeModulesTransform: {
     type: "none",
   },
@@ -95,9 +83,7 @@ export default defineConfig({
                   destination:
                     "./zip/dashboard-" +
                     moment().format("yyyyMMDDHHmmss") +
-                    "(" +
-                    UMI_ENV +
-                    ").zip",
+                    "(qa04-sg).zip",
                 },
               ],
             },
@@ -107,19 +93,50 @@ export default defineConfig({
     }
   },
   define: {
-    ENV_INDEX: "pr-sg",
-    API_SERVER: "https://service.bankofchain.io",
-    DASHBOARD_ROOT: "https://dashboard.bankofchain.io",
-    IMAGE_ROOT: "https://v1.bankofchain.io",
+    ENV_INDEX: "qa04-sg",
+    API_SERVER: "https://service-qa04-sg.bankofchain.io",
+    DASHBOARD_ROOT: "https://dashboard-qa04-sg.bankofchain.io",
+    IMAGE_ROOT: "https://qa04-sg.bankofchain.io",
     CHAIN_BROWSER_URL: {
       1: "https://etherscan.io",
-      56: "https://bscscan.com",
       137: "https://polygonscan.com",
     },
     RPC_URL: {
-      1: "https://rpc.ankr.com/eth",
-      56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com",
+      1: "https://rpc-qa04-sg.bankofchain.io",
+      137: "https://rpc-qa04-sg.bankofchain.io",
+      31337: "https://rpc-qa04-sg.bankofchain.io",
+    },
+    USDI: {
+      SUB_GRAPH_URL: {
+        1: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        137: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+      },
+      VAULT_ADDRESS: {
+        1: "0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC",
+        137: "13",
+      },
+      USDI_ADDRESS: {
+        1: "0xBe15Eed7D8e91D20263d4521c9eB0F4e3510bfBF",
+        137: "16",
+      },
+      VAULT_BUFFER_ADDRESS: {
+        1: "8",
+        137: "14",
+      },
+    },
+    ETHI: {
+      SUB_GRAPH_URL: {
+        1: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
+      },
+      VAULT_ADDRESS: {
+        1: "0xDae16f755941cbC0C9D240233a6F581d1734DaA2",
+      },
+      ETHI_ADDRESS: {
+        1: "0x8cB9Aca95D1EdebBfe6BD9Da4DC4a2024457bD32",
+      },
+      VAULT_BUFFER_ADDRESS: {
+        1: "20",
+      },
     },
   },
 });

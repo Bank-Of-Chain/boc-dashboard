@@ -1,35 +1,40 @@
-import React, { Suspense } from "react";
-import { Col, Row, Card } from "antd";
-import { useDeviceType, DEVICE_TYPE } from "@/components/Container/Container";
-import TopSearch from "./TopSearch";
-import ProportionSales from "./ProportionSales";
-import { TOKEN_DISPLAY_DECIMALS } from "@/constants/vault";
+import React, { Suspense } from 'react'
 
-import styles from "../style.less";
+// === Components === //
+import { Col, Row, Card } from 'antd'
+import TopSearch from './TopSearch'
+import ProportionSales from './ProportionSales'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+
+// === Constants === //
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+
+// === Styles === //
+import styles from '../style.less'
 
 export default function ProtocolAllocation({
   loading = false,
   tokenDecimals,
   strategyMap = {},
   vaultData = {},
-  unit = "USD",
-  displayDecimals = TOKEN_DISPLAY_DECIMALS,
+  unit = 'USD',
+  displayDecimals = TOKEN_DISPLAY_DECIMALS
 }) {
-  const deviceType = useDeviceType();
+  const deviceType = useDeviceType()
 
   const protocolResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
-        size: "small",
-      },
+        size: 'small'
+      }
     },
     [DEVICE_TYPE.Mobile]: {
       cardProps: {
-        size: "small",
-      },
-    },
-  }[deviceType];
+        size: 'small'
+      }
+    }
+  }[deviceType]
 
   return (
     <Card
@@ -38,18 +43,12 @@ export default function ProtocolAllocation({
       bordered={false}
       title="Vault Protocol Allocations"
       style={{
-        height: "100%",
-        marginTop: 40,
+        height: '100%',
+        marginTop: 40
       }}
-      bodyStyle={{ padding: "0 2.75rem 1.75rem" }}
       {...protocolResponsiveConfig.cardProps}
     >
-      <Row
-        gutter={24}
-        style={{
-          marginTop: 24,
-        }}
-      >
+      <Row>
         <Col xl={12} lg={24} md={24} sm={24} xs={24}>
           <Suspense fallback={null}>
             <ProportionSales
@@ -76,5 +75,5 @@ export default function ProtocolAllocation({
         </Col>
       </Row>
     </Card>
-  );
+  )
 }
