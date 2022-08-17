@@ -1,5 +1,5 @@
 {
-  "name": "ant-design-pro",
+  "name": "boc-dashboard",
   "jest": {
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
