@@ -1,31 +1,24 @@
-import { message } from "antd";
-import find from "lodash/find";
-import isEmpty from "lodash/isEmpty";
-import CHAINS from "@/constants/chain";
-import { WALLETS } from "@/constants/wallet";
+import { message } from 'antd'
+import find from 'lodash/find'
+import isEmpty from 'lodash/isEmpty'
+import CHAINS from '@/constants/chain'
+import { WALLETS } from '@/constants/wallet'
 
-export const changeNetwork = async (
-  id,
-  userProvider,
-  walletName,
-  params = {}
-) => {
-  console.log("changeNetwork=");
-  const { resolveWhenUnsupport } = params;
-  const targetNetwork = find(CHAINS, { id });
-  console.log("targetNetwork=", targetNetwork);
-  if (isEmpty(targetNetwork)) return;
+export const changeNetwork = async (id, userProvider, walletName, params = {}) => {
+  const { resolveWhenUnsupport } = params
+  const targetNetwork = find(CHAINS, { id })
+  if (isEmpty(targetNetwork)) return
   if (!userProvider) {
-    return;
+    return
   }
 
-  const supportSwitch = [WALLETS.MetaMask.info.symbol];
+  const supportSwitch = [WALLETS.MetaMask.info.symbol]
   if (!supportSwitch.includes(walletName)) {
     if (resolveWhenUnsupport) {
-      return;
+      return
     }
-    message.warning("Switch networks in your wallet, then reconnect");
-    return Promise.reject();
+    message.warning('Switch networks in your wallet, then reconnect')
+    return Promise.reject()
   }
 
   const data = [
@@ -34,30 +27,25 @@ export const changeNetwork = async (
       chainName: targetNetwork.name,
       nativeCurrency: targetNetwork.nativeCurrency,
       rpcUrls: [targetNetwork.rpcUrl],
-      blockExplorerUrls: [targetNetwork.blockExplorer],
-    },
-  ];
-  console.log("data", data);
+      blockExplorerUrls: [targetNetwork.blockExplorer]
+    }
+  ]
 
-  let switchTx;
+  let switchTx
   try {
-    switchTx = await userProvider.send("wallet_switchEthereumChain", [
-      { chainId: data[0].chainId },
-    ]);
+    switchTx = await userProvider.send('wallet_switchEthereumChain', [{ chainId: data[0].chainId }])
   } catch (switchError) {
-    console.log("switchError=", switchTx, switchError);
     if (switchError.code === 4001) {
-      return Promise.reject();
+      return Promise.reject()
     }
     try {
-      switchTx = await userProvider.send("wallet_addEthereumChain", data);
+      switchTx = await userProvider.send('wallet_addEthereumChain', data)
     } catch (addError) {
-      console.log("addError=", addError);
-      return Promise.reject();
+      return Promise.reject()
     }
   }
 
   if (switchTx) {
-    console.log(switchTx);
+    console.log(switchTx)
   }
-};
+}

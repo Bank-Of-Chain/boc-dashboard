@@ -1,17 +1,12 @@
-﻿---
-title: 业务组件
-sidemenu: false
----
+﻿> Provided by [dumi](https://d.umijs.org/zh-CN/guide/advanced#umi-%E9%A1%B9%E7%9B%AE%E9%9B%86%E6%88%90%E6%A8%A1%E5%BC%8F)
 
-> 此功能由[dumi](https://d.umijs.org/zh-CN/guide/advanced#umi-%E9%A1%B9%E7%9B%AE%E9%9B%86%E6%88%90%E6%A8%A1%E5%BC%8F)提供，dumi 是一个 📖 为组件开发场景而生的文档工具，用过的都说好。
+# Business Components
 
-# 业务组件
+Here is a list of all the components used in Pro that are not suitable as component libraries but are really needed in the business. So we prepare this document to guide you whether you need to use this component or not.
 
-这里列举了 Pro 中所有用到的组件，这些组件不适合作为组件库，但是在业务中却真实需要。所以我们准备了这个文档，来指导大家是否需要使用这个组件。
+## Footer
 
-## Footer 页脚组件
-
-这个组件自带了一些 Pro 的配置，你一般都需要改掉它的信息。
+This component comes with some Pro configuration, and you generally need to change its information.
 
 ```tsx
 /**
@@ -23,9 +18,9 @@ import Footer from "@/components/Footer";
 export default () => <Footer />;
 ```
 
-## HeaderDropdown 头部下拉列表
+## HeaderDropdown
 
-HeaderDropdown 是 antd Dropdown 的封装，但是增加了移动端的特殊处理，用法也是相同的。
+HeaderDropdown is package of antd Dropdown, add some adaption in mobile.
 
 ```tsx
 /**
@@ -38,15 +33,15 @@ import HeaderDropdown from "@/components/HeaderDropdown";
 export default () => {
   const menuHeaderDropdown = (
     <Menu selectedKeys={[]}>
-      <Menu.Item key="center">个人中心</Menu.Item>
-      <Menu.Item key="settings">个人设置</Menu.Item>
+      <Menu.Item key="center">User Center</Menu.Item>
+      <Menu.Item key="settings">Account Setting</Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="logout">退出登录</Menu.Item>
+      <Menu.Item key="logout">Logout</Menu.Item>
     </Menu>
   );
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
-      <Button>hover 展示菜单</Button>
+      <Button>hover menu</Button>
     </HeaderDropdown>
   );
 };
@@ -54,12 +49,12 @@ export default () => {
 
 ## RightContent
 
-RightContent 是以上几个组件的组合，同时新增了 plugins 的 `SelectLang` 插件。
+RightContent is the combination of the above components, add plugins `SelectLang`.
 
 ```tsx | pure
 <Space>
   <HeaderSearch
-    placeholder="站内搜索"
+    placeholder="Search in site"
     defaultValue="umi ui"
     options={[
       {
@@ -80,7 +75,7 @@ RightContent 是以上几个组件的组合，同时新增了 plugins 的 `Selec
       },
     ]}
   />
-  <Tooltip title="使用文档">
+  <Tooltip title="Documentation">
     <span
       className={styles.action}
       onClick={() => {
