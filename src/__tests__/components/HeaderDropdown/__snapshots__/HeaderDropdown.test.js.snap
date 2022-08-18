@@ -2,10 +2,13 @@
 
 exports[`HeaderDropdown Component Render 1`] = `
 <DocumentFragment>
-  <span
-    class="ant-dropdown-trigger"
+  <button
+    class="ant-btn ant-btn-default ant-dropdown-trigger"
+    type="button"
   >
-    123
-  </span>
+    <span>
+      hover menu
+    </span>
+  </button>
 </DocumentFragment>
 `;
