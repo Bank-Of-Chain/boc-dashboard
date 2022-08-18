@@ -12,7 +12,7 @@ import { map, isEmpty, reverse, find } from 'lodash'
 import { getJsonRpcProvider } from '@/utils/json-provider'
 
 // === Constants === //
-import { APY_DURATION } from '@/constants/api'
+import { APY_DURATION } from '@/constants'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'

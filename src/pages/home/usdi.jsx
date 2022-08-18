@@ -14,7 +14,7 @@ import ChainChange from '@/components/ChainChange'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
-import { TOKEN_TYPE, APY_DURATION } from '@/constants/api'
+import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 
