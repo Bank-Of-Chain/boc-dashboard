@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HeaderDropdown Component Render 1`] = `
+<DocumentFragment>
+  <span
+    class="ant-dropdown-trigger"
+  >
+    123
+  </span>
+</DocumentFragment>
+`;
