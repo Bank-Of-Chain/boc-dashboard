@@ -1,4 +1,4 @@
-import { map, reverse, findIndex, max, isNil, every } from 'lodash'
+import { map, reverse, findIndex, max, isNil, every, isEmpty } from 'lodash'
 
 const DEFAULT_OPTIONS = {
   rateOfChange: 500, //base 10000,
@@ -6,6 +6,7 @@ const DEFAULT_OPTIONS = {
 }
 export const bestIntervalForArrays = (arrays = [], options = DEFAULT_OPTIONS) => {
   const maxPercent = 100
+  if (isEmpty(arrays)) return [0, maxPercent]
   const minPercentArray = map(arrays, i => bestInterval(i, options))
   return [max(minPercentArray), maxPercent]
 }

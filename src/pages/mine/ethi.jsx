@@ -17,7 +17,7 @@ import { toFixed } from '@/utils/number-format'
 import { isProEnv } from '@/services/env-service'
 
 // === Constants === //
-import { TOKEN_TYPE } from '@/constants/api'
+import { TOKEN_TYPE } from '@/constants'
 import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Hooks === //

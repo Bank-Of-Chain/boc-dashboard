@@ -1,17 +1,11 @@
 import React from 'react'
-import { useIntl } from 'umi'
 import { DefaultFooter } from '@ant-design/pro-layout'
 
 const Footer = () => {
-  const intl = useIntl()
-  const defaultMessage = intl.formatMessage({
-    id: 'app.copyright.produced',
-    defaultMessage: 'Bank Of Chain'
-  })
   const currentYear = new Date().getFullYear()
   return (
     <DefaultFooter
-      copyright={`${defaultMessage} ${currentYear}`}
+      copyright={`Produced by Bank Of Chain ${currentYear}`}
       links={[
         {
           key: 'BOC Homepage',
