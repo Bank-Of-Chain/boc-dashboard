@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 // === Components === //
@@ -15,10 +15,9 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 import moment from 'moment'
 import map from 'lodash/map'
 import BN from 'bignumber.js'
-import { useModel } from 'umi'
 import isEmpty from 'lodash/isEmpty'
-import isUndefined from 'lodash/isUndefined'
 import { toFixed } from '@/utils/number-format'
+import { useModel, useRequest } from 'umi'
 
 const OPERATION = {
   0: 'harvest',
@@ -29,12 +28,6 @@ const OPERATION = {
 
 const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   const { initialState } = useModel('@@initialState')
-  const [dataSource, setDataSource] = useState([])
-  const [tableLoading, setTableLoading] = useState(false)
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10
-  })
   const deviceType = useDeviceType()
   const isETHi = VAULT_TYPE.ETHi === initialState.vault
   const displayDecimals = {
@@ -42,51 +35,47 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
   }[initialState.vault]
 
-  const unit = dataSource[0]?.lpTokenUnit ? `(${dataSource[0]?.lpTokenUnit})` : ''
-
-  const fetch = async () => {
-    setTableLoading(true)
-    getStrategyDetailsReports({
-      strategyName,
-      chainId: initialState.chain,
-      vaultAddress: initialState.vaultAddress,
-      limit: pagination.pageSize,
-      offset: (pagination.current - 1) * pagination.pageSize
-    })
-      .then(data => {
-        setDataSource(data.content)
-        if (isUndefined(pagination.total)) {
-          setPagination({
-            ...pagination,
-            total: data.totalElements
-          })
+  const {
+    data,
+    run,
+    loading: tableLoading,
+    pagination
+  } = useRequest(
+    pagination => {
+      return getStrategyDetailsReports({
+        strategyName,
+        chainId: initialState.chain,
+        vaultAddress: initialState.vaultAddress,
+        limit: pagination.pageSize,
+        offset: (pagination.current - 1) * pagination.pageSize
+      }).catch(() => {
+        return {
+          content: [],
+          total: 0
         }
       })
-      .catch(() => {
-        setDataSource([])
-      })
-      .finally(() => {
-        setTableLoading(false)
-      })
-  }
-
-  useEffect(() => {
-    if (!strategyName) {
-      return
+    },
+    {
+      manual: true,
+      paginated: true,
+      formatResult: resp => {
+        const { content, totalElements } = resp
+        return {
+          list: content,
+          total: totalElements
+        }
+      }
     }
-    fetch()
-  }, [pagination.current, strategyName])
+  )
+  const dataSource = data?.list
+  const unit = dataSource && dataSource[0]?.lpTokenUnit ? `(${dataSource[0]?.lpTokenUnit})` : ''
 
   useEffect(() => {
-    setPagination({
+    run({
       ...pagination,
       current: 1
     })
-  }, [initialState.chain, strategyName])
-
-  const handleTableChange = pagination => {
-    setPagination(pagination)
-  }
+  }, [initialState.chain, initialState.vault, strategyName])
 
   const decimal = BN(1e18)
 
@@ -215,14 +204,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
           columns={columns}
           dataSource={dataSource}
           loading={tableLoading}
-          onChange={handleTableChange}
-          pagination={{
-            showSizeChanger: false,
-            style: {
-              marginBottom: 0,
-            },
-            ...pagination,
-          }}
+          pagination={pagination}
           {...responsiveConfig.tableProps}
         />
       </Card>
