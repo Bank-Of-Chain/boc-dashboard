@@ -64,7 +64,7 @@ const ETHiHome = () => {
       .then(data => {
         const items = appendDate(data.content, 'apy', calDateRange)
         const result = map(reverse(items), ({ date, apy }) => {
-          const apyValue = isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
+          const apyValue = isNil(apy) ? null : `${numeral(apy).format('0.00')}`
           return {
             date,
             apy: apyValue
