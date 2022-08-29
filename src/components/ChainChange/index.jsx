@@ -7,21 +7,28 @@ import { Radio, Row, Col } from 'antd'
 
 // === Constants === //
 import CHAINS from '@/constants/chain'
+import { POLYGON_HIDDEN } from '@/constants'
 
 // === Utils === //
 import map from 'lodash/map'
+import filter from 'lodash/filter'
 import { changeNetwork } from '@/utils/network'
 import useWallet from '@/hooks/useWallet'
 
 // === Styles === //
 import styles from './index.less'
 
-const options = map(CHAINS, i => {
-  return {
-    label: i.name,
-    value: i.id
+const options = map(
+  filter(CHAINS, i => {
+    return !(POLYGON_HIDDEN && i.id === '137')
+  }),
+  i => {
+    return {
+      label: i.name,
+      value: i.id
+    }
   }
-})
+)
 
 const ChainChange = props => {
   const { shouldChangeChain } = props

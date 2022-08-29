@@ -9,3 +9,5 @@ export const TOKEN_TYPE = {
   usdi: 'USDi',
   ethi: 'ETHi'
 }
+
+export const POLYGON_HIDDEN = true
