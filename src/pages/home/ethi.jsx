@@ -12,9 +12,8 @@ import multipleLine from '@/components/echarts/options/line/multipleLine'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
-import { TOKEN_TYPE } from '@/constants/api'
+import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
-import { APY_DURATION } from '@/constants/api'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
@@ -65,7 +64,7 @@ const ETHiHome = () => {
       .then(data => {
         const items = appendDate(data.content, 'apy', calDateRange)
         const result = map(reverse(items), ({ date, apy }) => {
-          const apyValue = isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
+          const apyValue = isNil(apy) ? null : `${numeral(apy).format('0.00')}`
           return {
             date,
             apy: apyValue

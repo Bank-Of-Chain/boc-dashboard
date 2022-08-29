@@ -14,7 +14,7 @@ import ChainChange from '@/components/ChainChange'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
-import { TOKEN_TYPE, APY_DURATION } from '@/constants/api'
+import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 
@@ -66,7 +66,7 @@ const USDiHome = () => {
       .then(data => {
         const items = appendDate(data.content, 'apy', calDateRange)
         const result = map(reverse(items), ({ date, apy }) => {
-          const apyValue = isNil(apy) ? null : `${numeral(apy).format('0,0.00')}`
+          const apyValue = isNil(apy) ? null : `${numeral(apy).format('0.00')}`
           return {
             date,
             apy: apyValue
@@ -204,7 +204,6 @@ const USDiHome = () => {
       unit: '%'
     }
   ]
-
   return (
     <GridContent>
       <Suspense fallback={null}>

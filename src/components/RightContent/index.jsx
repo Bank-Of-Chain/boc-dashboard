@@ -136,10 +136,16 @@ const GlobalHeaderRight = () => {
   return (
     <div className={styles.header}>
       {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
-        <Menu className={styles.headerMenu} onClick={handleMenuClick} selectedKeys={[current]} mode="horizontal">
-          <Menu.Item key="ethi">ETHi</Menu.Item>
-          <Menu.Item key="usdi">USDi</Menu.Item>
-        </Menu>
+        <Menu
+          className={styles.headerMenu}
+          onClick={handleMenuClick}
+          selectedKeys={[current]}
+          mode="horizontal"
+          items={[
+            { label: 'ETHi', key: 'ethi' },
+            { label: 'USDi', key: 'usdi' }
+          ]}
+        />
       ) : (
         <span />
       )}

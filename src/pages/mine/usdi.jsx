@@ -10,7 +10,7 @@ import DailyTvl from './components/DailyChart'
 import MonthProfit from './components/MonthProfit'
 
 // === Constants === //
-import { TOKEN_TYPE } from '@/constants/api'
+import { TOKEN_TYPE } from '@/constants'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
