@@ -1,18 +1,19 @@
-import { Table, Image } from 'antd'
 import React from 'react'
-import styles from '../style.less'
-import { useModel } from 'umi'
+
+// === Components === //
+import { Table, Image } from 'antd'
 
 // === Utils === //
-import groupBy from 'lodash/groupBy'
-import reduce from 'lodash/reduce'
-import filter from 'lodash/filter'
-import { mapValues, values } from 'lodash'
-import { toFixed } from '@/utils/number-format'
 import BN from 'bignumber.js'
+import { useModel } from 'umi'
+import { toFixed } from '@/utils/number-format'
+import { mapValues, values, groupBy, reduce, filter } from 'lodash'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
-// 列表中的平台图标，直接使用透明背景即可
+// === Styles === //
+import styles from '../style.less'
+
+// strategies which use transparent background-color
 const withoutBackgroundColor = ['Vault']
 
 const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}, unit }) => {
@@ -26,14 +27,14 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
     (rs, o) => {
       return rs.plus(o.totalValue)
     },
-    BN(0),
+    BN(0)
   )
 
   const tvl = BN(totalValueInVault).plus(total)
 
   const groupData = groupBy(
     filter(strategies, i => i.totalValue > 0),
-    'protocol',
+    'protocol'
   )
 
   const tableData = [
@@ -44,20 +45,20 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
           (rs, ob) => {
             return rs.plus(ob.totalValue)
           },
-          BN(0),
+          BN(0)
         )
         return {
           name: strategyMap[initialState.chain][key],
           amount,
-          percent: amount.div(tvl),
+          percent: amount.div(tvl)
         }
-      }),
+      })
     ),
     {
       name: 'Vault',
       amount: BN(totalValueInVault),
-      percent: tvl.eq(0) ? '0' : BN(totalValueInVault).div(tvl),
-    },
+      percent: tvl.eq(0) ? '0' : BN(totalValueInVault).div(tvl)
+    }
   ]
 
   const columns = [
@@ -73,12 +74,15 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
             src={`${IMAGE_ROOT}/images/amms/${text}.png`}
             placeholder={text}
             alt={text}
-            style={{ backgroundColor: withoutBackgroundColor.includes(text) ? 'transparent' : '#fff', borderRadius: '50%' }}
+            style={{
+              backgroundColor: withoutBackgroundColor.includes(text) ? 'transparent' : '#fff',
+              borderRadius: '50%'
+            }}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a className={styles.text}>{text}</a>
         </div>
-      ),
+      )
     },
     {
       title: `Asset (${unit})`,
@@ -88,7 +92,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
       sorter: (a, b) => {
         return a.amount.minus(b.amount)
       },
-      render: text => toFixed(text.toString(), tokenDecimals, displayDecimals),
+      render: text => toFixed(text.toString(), tokenDecimals, displayDecimals)
     },
     {
       title: 'Asset Ratio',
@@ -99,8 +103,8 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
       sorter: (a, b) => {
         return a.percent.minus(b.percent)
       },
-      render: text => <span>{toFixed(text, 1e-2, 2)}%</span>,
-    },
+      render: text => <span>{toFixed(text, 1e-2, 2)}%</span>
+    }
   ]
 
   const responsiveConfig = {
@@ -121,18 +125,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
 
   return (
     <div>
-      <Table
-        rowKey={record => record.name}
-        columns={columns}
-        dataSource={tableData}
-        pagination={{
-          style: {
-            marginBottom: 0,
-          },
-          pageSize: 10,
-        }}
-        {...responsiveConfig.tableProps}
-      />
+      <Table rowKey={record => record.name} columns={columns} dataSource={tableData} pagination={false} {...responsiveConfig.tableProps} />
     </div>
   )
 }

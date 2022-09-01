@@ -1,7 +1,6 @@
 const Settings = {
   navTheme: 'realDark',
-  // 拂晓蓝
-  primaryColor: '#13C2C2',
+  primaryColor: '#A68EFE',
   layout: 'top',
   contentWidth: 'Fixed',
   fixedHeader: true,
@@ -12,5 +11,5 @@ const Settings = {
   pwa: false,
   iconfontUrl: '',
   textColor: '#fff'
-};
-export default Settings;
+}
+export default Settings

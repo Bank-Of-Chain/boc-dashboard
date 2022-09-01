@@ -1,30 +1,27 @@
-import { useIntl } from 'umi';
-import { GithubOutlined } from '@ant-design/icons';
-import { DefaultFooter } from '@ant-design/pro-layout';
-export default () => {
-  const intl = useIntl();
-  const defaultMessage = intl.formatMessage({
-    id: 'app.copyright.produced',
-    defaultMessage: 'Bank Of Chain',
-  });
-  const currentYear = new Date().getFullYear();
+import React from 'react'
+import { DefaultFooter } from '@ant-design/pro-layout'
+
+const Footer = () => {
+  const currentYear = new Date().getFullYear()
   return (
     <DefaultFooter
-      copyright={`${defaultMessage} ${currentYear}`}
+      copyright={`Produced by Bank Of Chain ${currentYear}`}
       links={[
         {
           key: 'BOC Homepage',
           title: 'BOC Homepage',
-          href: 'https://web-v1.bankofchain.io/',
-          blankTarget: true,
+          href: 'https://bankofchain.io/',
+          blankTarget: true
         },
         {
           key: 'BOC Dashboard',
           title: 'BOC Dashboard',
-          href: 'https://dashboard-v1.bankofchain.io/',
-          blankTarget: true,
+          href: 'https://dashboard.bankofchain.io/',
+          blankTarget: true
         }
       ]}
     />
-  );
-};
+  )
+}
+
+export default Footer

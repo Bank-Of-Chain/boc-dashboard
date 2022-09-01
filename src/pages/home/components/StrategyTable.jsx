@@ -1,20 +1,22 @@
-import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
 import React, { useState } from 'react'
-import { useModel, useRequest } from 'umi'
-import { filter, isNil } from 'lodash'
 
 // === Components === //
+import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
+import { useModel, useRequest } from 'umi'
 import { toFixed } from '@/utils/number-format'
+import { isEmpty, filter, isNil, map, sortBy } from 'lodash'
 import BN from 'bignumber.js'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
+// === Styles === //
 import styles from '../style.less'
 
 const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
@@ -22,12 +24,12 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
   const { data: searchData } = useRequest(() => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100), {
-    formatResult: resp => resp.content,
+    formatResult: resp => sortBy(resp.content, ['strategyName'])
   })
   if (!initialState.chain) return null
 
   // boc-service fixed the number to 6
-  const decimals = BN(1e6)
+  const decimals = BN(1e18)
   const columns = [
     {
       title: 'Name',
@@ -39,9 +41,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           <Image
             preview={false}
             width={30}
-            src={`${IMAGE_ROOT}/images/amms/${
-              strategyMap[initialState.chain][item.protocol]
-            }.png`}
+            src={`${IMAGE_ROOT}/images/amms/${strategyMap[initialState.chain][item.protocol]}.png`}
             placeholder={item.protocol}
             style={{ backgroundColor: '#fff', borderRadius: '50%' }}
             alt={strategyMap[initialState.chain][item.protocol]}
@@ -49,85 +49,135 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           />
           <a
             target={'_blank'}
-            rel='noreferrer'
+            rel="noreferrer"
             href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}&vault=${initialState.vault}`}
             className={styles.text}
           >
             {text}
           </a>
         </div>
-      ),
+      )
     },
     {
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
       width: 130,
-      render: text => <CoinSuperPosition array={text} />,
+      render: text => !isEmpty(text) && <CoinSuperPosition array={text.split(',')} />
     },
     {
       title: `Asset (${unit})`,
-      dataIndex: 'totalAssetBaseUsd',
-      key: 'totalAssetBaseUsd',
+      dataIndex: 'totalAssetBaseCurrent',
+      key: 'totalAssetBaseCurrent',
       showSorterTooltip: false,
       defaultSortOrder: 'descend',
       sorter: (a, b) => {
-        return BN(a.totalAssetBaseUsd || '0').minus(BN(b.totalAssetBaseUsd || '0'))
+        return BN(a.totalAssetBaseCurrent || '0').minus(BN(b.totalAssetBaseCurrent || '0'))
       },
-      render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>,
+      render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>
     },
     {
-      title: <Tooltip title='Official weekly average APY'>
-        <span>Official APY</span>
-      </Tooltip>,
-      dataIndex: 'officialApyAvg',
-      key: 'officialApyAvg',
+      title: 'Weekly Official Apy',
+      dataIndex: 'officialWeeklyApy',
+      key: 'officialWeeklyApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.officialApyAvg - b.officialApyAvg
+        return a.officialWeeklyApy - b.officialWeeklyApy
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>,
+      render: text => <span>{(100 * text).toFixed(2)} %</span>
     },
     {
-      title: 'Weekly APY',
-      dataIndex: 'apyLP',
-      key: 'apyLP',
+      title: 'Weekly Realized Apy',
+      dataIndex: 'realizedApy',
+      key: 'realizedApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
-        return a.apyLP - b.apyLP
+        const { value: aValue } = a.realizedApy || { value: '0' }
+        const { value: bValue } = b.realizedApy || { value: '0' }
+        return aValue - bValue
       },
-      render: (text = 0, item) => {
-        const { estimateApy } = item
-        const withoutEstimate = isNil(estimateApy)
-        const jsxElement = <Badge dot={!withoutEstimate} color="gold">
-          <span>{(100 * text).toFixed(2)} %</span>
-        </Badge>
-        if (withoutEstimate) {
-          return jsxElement
-        }
-        const nextWeekApyJsx = <span>Estimate Apy: {(100 * estimateApy).toFixed(2)} %</span>
-        return <Tooltip title={nextWeekApyJsx}>
-          {jsxElement}
-        </Tooltip>
+      render: data => {
+        if (isEmpty(data)) return <span>0.00%</span>
+        const { value, detail } = data
+        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        if (isEmpty(detail)) return jsxElement
+        const nextWeekApyJsx = (
+          <div>
+            {map(detail, (i, index) => (
+              <span key={index} style={{ display: 'block' }}>
+                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
+              </span>
+            ))}
+          </div>
+        )
+        return (
+          <span>
+            {jsxElement}&nbsp;
+            <Tooltip title={nextWeekApyJsx}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </span>
+        )
       }
     },
     {
-      title: 'Weekly Profit',
-      dataIndex: 'weeklyProfit',
-      key: 'weeklyProfit',
+      title: 'Weekly Unrealized Apy',
+      dataIndex: 'unrealizedApy',
+      key: 'unrealizedApy',
+      showSorterTooltip: false,
+      sorter: (a, b) => {
+        const { value: aValue } = a.unrealizedApy || { value: '0' }
+        const { value: bValue } = b.unrealizedApy || { value: '0' }
+        return aValue - bValue
+      },
+      render: data => {
+        if (isEmpty(data)) return <span>0.00%</span>
+        const { value, detail } = data
+
+        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        if (isEmpty(detail)) return jsxElement
+        const nextWeekApyJsx = (
+          <div>
+            {map(detail, (i, index) => (
+              <span key={index} style={{ display: 'block' }}>
+                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
+              </span>
+            ))}
+          </div>
+        )
+        return (
+          <span>
+            {jsxElement}&nbsp;
+            <Tooltip title={nextWeekApyJsx}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </span>
+        )
+      }
+    },
+    {
+      title: 'Weekly Realized Profit',
+      dataIndex: 'weekProfit',
+      key: 'weekProfit',
       render: (text = 0, item) => {
         const { estimateProfit, tokenUnit = '' } = item
         const withoutEstimate = isNil(estimateProfit)
-        const jsxElement = <Badge dot={!withoutEstimate} color="gold" >
-          <span>{toFixed(text || '0', decimals, displayDecimals)} {tokenUnit || ''}</span>
-        </Badge>
+        const jsxElement = (
+          <Badge dot={!withoutEstimate} color="gold">
+            <span>
+              {toFixed(text || '0', decimals, displayDecimals)} {tokenUnit || ''}
+            </span>
+          </Badge>
+        )
         if (withoutEstimate) {
           return jsxElement
         }
-        const nextWeekProfitJsx = <span>Estimate Profit: {toFixed(estimateProfit, decimals, displayDecimals)} {tokenUnit || ''}</span>
-        return <Tooltip title={nextWeekProfitJsx}>
-          {jsxElement}
-        </Tooltip>
+        const nextWeekProfitJsx = (
+          <span>
+            Estimate Profit: {toFixed(estimateProfit, decimals, displayDecimals)} {tokenUnit || ''}
+          </span>
+        )
+        return <Tooltip title={nextWeekProfitJsx}>{jsxElement}</Tooltip>
       }
     },
     {
@@ -136,15 +186,11 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       key: 'strategyAddress',
       align: 'center',
       render: (text, item) => (
-        <a
-          target="_blank"
-          rel="noreferrer"
-          href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}
-        >
-          <img width={21} src="./images/link.png" alt="link" />
+        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}>
+          <img width={21} src={`${IMAGE_ROOT}/link.png`} alt="link" />
         </a>
-      ),
-    },
+      )
+    }
   ]
   const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
   const responsiveConfig = {
@@ -155,7 +201,8 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       },
       tableProps: {
         size: 'small',
-        rowClassName: 'tablet-font-size'
+        rowClassName: 'tablet-font-size',
+        scroll: { x: 900 }
       }
     },
     [DEVICE_TYPE.Mobile]: {
@@ -164,28 +211,34 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       },
       tableProps: {
         size: 'small',
-        rowClassName: 'mobile-font-sizee'
+        rowClassName: 'mobile-font-size',
+        scroll: { x: 900 }
       }
     }
   }[deviceType]
+
+  let title = 'Vault Strategies Allocations'
+  if (deviceType === DEVICE_TYPE.Mobile) {
+    title = 'Strategies Allocations'
+  }
 
   return (
     <div>
       <Card
         loading={loading}
         bordered={false}
-        title='Vault Strategies Allocations'
+        title={title}
         extra={
           <div>
             <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-            <Tooltip title='show all strategies added in vault'>
+            <Tooltip title="show all strategies added in vault">
               <span style={{ padding: 10 }}>Show All</span>
             </Tooltip>
           </div>
         }
         style={{
           height: '100%',
-          marginTop: 32,
+          marginTop: 40
         }}
         {...responsiveConfig.cardProps}
       >
@@ -193,12 +246,14 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           rowKey={record => record.strategyAddress}
           columns={columns}
           dataSource={data}
-          pagination={{
-            style: {
-              marginBottom: 0,
-            },
-            pageSize: 10,
-          }}
+          pagination={
+            data?.length > 10 && {
+              style: {
+                marginBottom: 0
+              },
+              pageSize: 10
+            }
+          }
           {...responsiveConfig.tableProps}
         />
       </Card>

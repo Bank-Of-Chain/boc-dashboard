@@ -1,4 +1,4 @@
-@import '~antd/es/style/themes/default.less';
+@import "~antd/es/style/themes/default.less";
 
 .salesCard {
   .salesBar {
@@ -34,15 +34,19 @@
   height: inherit;
 }
 
-.vaultKeyCard{
+.vaultKeyCard {
   .tabMobile {
-    :global(.ant-tabs-tab + .ant-tabs-tab) {
-      margin: 0 0 0 24px;
+    :global {
+      .ant-tabs-tab + .ant-tabs-tab {
+        margin: 0 0 0 0.5rem;
+      }
+      .ant-tabs-tab {
+        padding: 0 0 0.5rem;
+      }
     }
   }
   .chartDiv {
     height: 300px;
-    padding: 1.25rem;
   }
   .chartDivMobile {
     height: 250px;
@@ -50,7 +54,6 @@
   }
   :global {
     .ant-tabs-nav {
-      padding: 0 1.25rem;
       margin-bottom: 0;
     }
   }
@@ -89,6 +92,57 @@
 
 .chartWrapper {
   position: relative;
-  min-height: 340px;
   height: calc(100% - 48px);
+  min-height: 340px;
+}
+
+.buttons {
+  :global {
+    .ant-radio-button-wrapper {
+      width: 7.5rem;
+      height: 2.25rem;
+      line-height: 2rem;
+    }
+    @media screen and (max-width: 780px) {
+      .ant-radio-button-wrapper {
+        width: 5rem;
+        height: 2.25rem;
+        padding: 0 1rem;
+        line-height: 2rem;
+      }
+    }
+    @media screen and (max-width: 554px) {
+      .ant-radio-button-wrapper {
+        width: auto;
+        height: auto;
+        padding: 0 0.4rem;
+        font-size: 0.4rem;
+        line-height: 1.5rem;
+      }
+    }
+    @media screen and (max-width: 400px) {
+      .ant-radio-button-wrapper {
+        width: auto;
+        height: auto;
+        padding: 0 0.3rem;
+        font-size: 0.4rem;
+        line-height: 1.2rem;
+      }
+    }
+  }
+}
+
+.field {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  .label,
+  .number {
+    font-size: @font-size-base;
+    line-height: 22px;
+  }
+  .number {
+    color: @heading-color;
+  }
 }

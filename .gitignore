@@ -8,6 +8,7 @@ _roadhog-api-doc
 
 # production
 /dist
+/zip
 /.vscode
 
 # misc
@@ -35,5 +36,3 @@ functions/*
 screenshot
 .firebase
 .eslintcache
-
-build

@@ -1,23 +1,36 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { useModel, history } from 'umi'
 
 // === Components === //
-import { Tabs } from 'antd'
+import { Radio, Row, Col } from 'antd'
 
 // === Constants === //
 import CHAINS from '@/constants/chain'
+import { POLYGON_HIDDEN } from '@/constants'
 
 // === Utils === //
 import map from 'lodash/map'
-import { changeNetwork } from "@/utils/network"
-
+import filter from 'lodash/filter'
+import { changeNetwork } from '@/utils/network'
 import useWallet from '@/hooks/useWallet'
+
 // === Styles === //
 import styles from './index.less'
 
-const { TabPane } = Tabs
+const options = map(
+  filter(CHAINS, i => {
+    return !(POLYGON_HIDDEN && i.id === '137')
+  }),
+  i => {
+    return {
+      label: i.name,
+      value: i.id
+    }
+  }
+)
 
-export default function ChainChange (props) {
+const ChainChange = props => {
   const { shouldChangeChain } = props
 
   const { initialState } = useModel('@@initialState')
@@ -26,27 +39,41 @@ export default function ChainChange (props) {
   const changeChain = value => {
     const { vault } = history.location.query
     let promise = Promise.resolve()
-    if (shouldChangeChain){
-      promise = changeNetwork(value, userProvider, getWalletName(), { resolveWhenUnsupport: true })
+    if (shouldChangeChain) {
+      promise = changeNetwork(value, userProvider, getWalletName(), {
+        resolveWhenUnsupport: true
+      })
     }
     promise.then(() => {
       history.push({
         query: {
           chain: value,
-          vault,
-        },
+          vault
+        }
       })
       setTimeout(() => {
         location.reload()
-      }, 1)
+      }, 100)
     })
   }
 
   return (
-    <Tabs activeKey={initialState.chain} className={styles.tabs} centered onChange={changeChain}>
-      {map(CHAINS, i => (
-        <TabPane tab={<span style={{ fontSize: '1.125rem' }}>{i.name}</span>} key={i.id} />
-      ))}
-    </Tabs>
+    <Row>
+      <Col span={24} className={styles.container}>
+        <Radio.Group onChange={v => changeChain(v.target.value)} value={initialState.chain} buttonStyle="outline">
+          {map(options, (item, key) => (
+            <Radio.Button value={item.value} key={key}>
+              {item.label}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      </Col>
+    </Row>
   )
 }
+
+ChainChange.propTypes = {
+  shouldChangeChain: PropTypes.bool
+}
+
+export default ChainChange

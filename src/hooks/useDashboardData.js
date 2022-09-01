@@ -1,28 +1,39 @@
-import { useEffect, useState } from 'react';
-import { useModel } from 'umi';
-import { getDashboardDetail } from '@/services/dashboard-service';
+import { useEffect, useState } from 'react'
+
+// === Services === //
+import { getDashboardDetail } from '@/services/dashboard-service'
 
 // === Utils === //
-import isEmpty from 'lodash/isEmpty';
+import { useModel } from 'umi'
+import isEmpty from 'lodash/isEmpty'
 
-const dataMerge = (initialState) => {
-  const { vault, chain, vaultAddress, tokenAddress } = initialState
-  if(isEmpty(tokenAddress) || isEmpty(vaultAddress)) {
-    return Promise.reject(new Error('token地址或vault地址获取失败'))
+const dataMerge = initialState => {
+  const { vault, chain, vaultAddress, tokenAddress, vaultBufferAddress } = initialState
+  if (isEmpty(tokenAddress) || isEmpty(vaultAddress)) {
+    return Promise.reject(new Error('fetch tokenAddress or vaultAddress failed'))
   }
-  return getDashboardDetail(vault, chain, tokenAddress, vaultAddress)
-    .catch((error) => {
-      console.error('DashBoard数据初始化失败', error);
-      return {}
-    });
-};
+  return getDashboardDetail(vault, chain, tokenAddress, vaultAddress, vaultBufferAddress).catch(error => {
+    console.error('init DashBoard data failed', error)
+    return {
+      pegToken: {
+        totalSupply: '0',
+        holderCount: '0'
+      },
+      vault: {
+        totalAssets: '0',
+        strategies: []
+      },
+      vaultBuffer: {
+        totalSupply: '0'
+      }
+    }
+  })
+}
 
 export default function useDashboardData() {
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(false)
-  const {
-    initialState
-  } = useModel('@@initialState')
+  const { initialState } = useModel('@@initialState')
 
   useEffect(() => {
     if (initialState?.chain) {
@@ -37,6 +48,6 @@ export default function useDashboardData() {
 
   return {
     dataSource: data,
-    loading,
-  };
+    loading
+  }
 }

@@ -1,23 +1,23 @@
 import React from 'react'
-import { LogoutOutlined, WalletOutlined } from '@ant-design/icons'
-import { Avatar, Menu, Spin } from 'antd'
+import { LogoutOutlined, WalletOutlined, CopyOutlined } from '@ant-design/icons'
+import { Menu, Spin } from 'antd'
 import { useModel } from 'umi'
 
 // === Components === //
 import HeaderDropdown from '../HeaderDropdown'
-import Address from './../Address'
+import Address from '../Address'
 
 import styles from './index.less'
 
-const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet }) => {
+const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet, onCopy }) => {
   const { initialState } = useModel('@@initialState')
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
       <Spin
-        size='small'
+        size="small"
         style={{
           marginLeft: 8,
-          marginRight: 8,
+          marginRight: 8
         }}
       />
     </span>
@@ -30,12 +30,16 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
   const menuHeaderDropdown = (
     <Menu className={styles.avatarMenu}>
       {showChangeWallet && (
-        <Menu.Item key='change' onClick={onChangeWallet}>
+        <Menu.Item key="change" onClick={onChangeWallet}>
           <WalletOutlined />
           Change Wallet
         </Menu.Item>
       )}
-      <Menu.Item key='logout' onClick={logoutOfWeb3Modal}>
+      <Menu.Item key="copy" onClick={onCopy}>
+        <CopyOutlined />
+        Copy Address
+      </Menu.Item>
+      <Menu.Item key="logout" onClick={logoutOfWeb3Modal}>
         <LogoutOutlined />
         Disconnect
       </Menu.Item>
@@ -44,13 +48,8 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Address size='short' wrapClassName={`${styles.name} anticon`} address={address} />
-        <Avatar
-          size='small'
-          className={styles.avatar}
-          src='https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
-          alt='avatar'
-        />
+        <div className={styles.dot}></div>
+        <Address size="short" wrapClassName={`${styles.name} anticon`} address={address} />
       </span>
     </HeaderDropdown>
   )

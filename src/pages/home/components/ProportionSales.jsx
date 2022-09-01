@@ -1,14 +1,17 @@
-import { Donut } from '@ant-design/charts'
-import { Empty } from 'antd'
 import React from 'react'
-import { useModel } from 'umi'
+
+// === Components === //
+import { Empty } from 'antd'
+import { Donut } from '@ant-design/charts'
 
 // === Utils === //
 import BN from 'bignumber.js'
-import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
+import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
 
+// === Styles === //
 import styles from '../style.less'
 
 const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {
@@ -24,15 +27,15 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     (rs, o) => {
       return rs.plus(o.totalValue)
     },
-    BN(0),
+    BN(0)
   )
   const tvl = BN(totalValueInVault).plus(total)
   const groupData = groupBy(
     filter(strategies, i => i.totalValue > 0),
-    'protocol',
+    'protocol'
   )
   const vaultDisplayValue = toFixed(tvl, tokenDecimals, displayDecimals)
-  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty />
+  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty style={{ marginBottom: '1rem' }} />
 
   const tableData = [
     ...values(
@@ -42,26 +45,34 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
           (rs, ob) => {
             return rs.plus(ob.totalValue)
           },
-          BN(0),
+          BN(0)
         )
         return {
           Protocol: `${strategyMap[initialState.chain][key]}${suffix}`,
-          amount: toFixed(amount, tokenDecimals, displayDecimals),
+          amount: toFixed(amount, tokenDecimals, displayDecimals)
         }
-      }),
+      })
     ),
     {
       Protocol: `Vault${suffix}`,
-      amount: toFixed(totalValueInVault, tokenDecimals, displayDecimals),
-    },
+      amount: toFixed(totalValueInVault, tokenDecimals, displayDecimals)
+    }
   ]
 
   const responsiveConfig = {
-    [DEVICE_TYPE.Desktop]: {},
-    [DEVICE_TYPE.Tablet]: {},
+    [DEVICE_TYPE.Desktop]: {
+      legendProps: {
+        position: 'bottom-center'
+      }
+    },
+    [DEVICE_TYPE.Tablet]: {
+      legendProps: {
+        position: 'bottom-center'
+      }
+    },
     [DEVICE_TYPE.Mobile]: {
       legendProps: {
-        position: 'top'
+        position: 'bottom-center'
       }
     }
   }[deviceType]
@@ -70,29 +81,20 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     <div className={styles.chartWrapper}>
       <Donut
         forceFit
-        height={340}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        }}
-        radius={1}
-        innerRadius={0.75}
-        angleField='amount'
-        colorField='Protocol'
+        padding="auto"
+        angleField="amount"
+        color={['#A68EFE', '#2ec7c9', '#5ab1ef', '#ffb980', '#d87a80', '#8d98b3', '#e5cf0d', '#97b552', '#95706d', '#dc69aa', '#07a2a4']}
+        colorField="Protocol"
         data={tableData}
         legend={{
           visible: true,
           text: {
             style: {
-              fill: '#fff',
+              fill: '#fff'
             },
-            formatter: (value) => {
+            formatter: value => {
               return value.replace(suffix, '')
-            },
+            }
           },
           ...responsiveConfig.legendProps
         }}
@@ -102,15 +104,15 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
           offset: 20,
           formatter: (text, item) => {
             return `${item._origin.Protocol}: ${item._origin.amount}`
-          },
+          }
         }}
         interactions={[{ type: 'element-selected' }, { type: 'element-active' }]}
         statistic={{
           visible: true,
           content: {
             value: toFixed(tvl, tokenDecimals, displayDecimals),
-            name: `TVL${suffix}`,
-          },
+            name: `TVL${suffix}`
+          }
         }}
       />
     </div>

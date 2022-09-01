@@ -1,30 +1,18 @@
-import React from "react"
-import map from "lodash/map"
-import classNames from "classnames"
-import { Modal } from "antd"
+import React from 'react'
+import map from 'lodash/map'
+import classNames from 'classnames'
+import { Modal } from 'antd'
 import styles from './index.less'
 
-export default function WalletModal({
-  visible,
-  onCancel,
-  connectTo,
-  selected,
-  walletOptions = []
-}) {
-
-  const handleConnect = (name) => {
+export default function WalletModal({ visible, onCancel, connectTo, selected, walletOptions = [] }) {
+  const handleConnect = name => {
     connectTo(name)
   }
 
   return (
-    <Modal
-      visible={visible}
-      onCancel={onCancel}
-      footer={null}
-      title="Select a Wallet"
-    >
+    <Modal className={styles.modal} visible={visible} onCancel={onCancel} footer={null} title="Select a wallet">
       <div className={styles.content}>
-        {map(walletOptions, (wallet) => (
+        {map(walletOptions, wallet => (
           <div
             key={wallet.value}
             className={classNames(styles.walletItemWrapper, {

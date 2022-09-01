@@ -1,4 +1,4 @@
-@import '~antd/es/style/themes/default.less';
+@import "~antd/es/style/themes/default.less";
 
 @pro-header-hover-bg: rgba(0, 0, 0, 0.025);
 
@@ -13,12 +13,12 @@
 }
 
 :global(.ant-pro-top-nav-header .ant-pro-top-nav-header-menu) {
-  width: 0;
   flex: 0 !important;
+  width: 0;
 }
 
 :global(.ant-pro-right-content) {
-  flex: 1
+  flex: 1;
 }
 
 .header {
@@ -26,30 +26,29 @@
   justify-content: flex-end;
 }
 
-
 .headerMenu {
   position: absolute;
-  left: 50%;
   top: 0;
+  left: 50%;
   min-width: 150px;
+  font-size: 16px;
   border-bottom: 0;
   transform: translate(-50%, 0);
-  font-size: 16px;
 
   :global(.ant-menu-item) {
     position: relative;
   }
 
   :global(.ant-menu-item:first-child:before) {
-    content: '';
     position: absolute;
     top: 50%;
     right: 0;
-    height: 18px;
     width: 1px;
+    height: 18px;
     margin-top: 2px;
-    transform: translate(0, -50%);
     background-color: #434343;
+    transform: translate(0, -50%);
+    content: "";
   }
 
   :global(.ant-menu-item.ant-menu-item-active) {
@@ -80,20 +79,21 @@
 
 .right {
   display: flex;
-  height: 48px;
   overflow: hidden;
   .action {
     display: flex;
     align-items: center;
     height: 32px;
-    padding: 0 12px;
+    padding: 0 1rem;
+    background: #313036;
+    border: 2px solid #d7a1f6;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s;
-    background: rgba(255, 255, 255, 0.08);
     > span {
       vertical-align: middle;
       &.name {
-        width: 100px;
+        margin-left: 0.625rem;
       }
     }
     &:hover {
@@ -117,6 +117,12 @@
       background: rgba(255, 255, 255, 0.85);
     }
   }
+  .dot {
+    width: 10px;
+    height: 10px;
+    background: #55e752;
+    border-radius: 50%;
+  }
 }
 
 .dark {
@@ -135,6 +141,14 @@
 
 .chainSelect {
   width: 6.5rem;
+}
+
+.myDasboardBtn {
+  background: linear-gradient(223.3deg, #a68efd 20.71%, #f4acf3 103.56%);
+  border: none;
+  &:hover {
+    background: linear-gradient(223.3deg, #a68efd 20.71%, #f4acf3 103.56%);
+  }
 }
 
 @media only screen and (max-width: @screen-md) {
@@ -171,13 +185,13 @@
   }
 
   .headerMenu {
-    font-size: 1.25rem;
+    min-width: 110px;
     :global(.ant-menu-item.ant-menu-overflow-item) {
-      padding: 0 6px
+      padding: 0 6px;
     }
     :global(.ant-menu-item.ant-menu-overflow-item:after) {
+      right: 6px;
       left: 6px;
-      right: 6px
     }
   }
 
@@ -185,4 +199,3 @@
     width: 5rem;
   }
 }
-

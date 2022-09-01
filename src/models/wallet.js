@@ -1,12 +1,12 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback } from 'react'
 import keys from 'lodash/keys'
-import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal"
-import { Web3Provider } from "@ethersproject/providers"
+import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
+import { Web3Provider } from '@ethersproject/providers'
 import { WALLETS } from '@/constants/wallet'
 
 const createWeb3Modal = () => {
   let providerOptions = {}
-  keys(WALLETS).forEach((name) => {
+  keys(WALLETS).forEach(name => {
     providerOptions = {
       ...providerOptions,
       ...WALLETS[name].getProviderOption()
@@ -24,7 +24,7 @@ export default () => {
   const [provider, setProvider] = useState()
   const [userProvider, setUserProvider] = useState()
 
-  const setCurrentProvider = useCallback((provider) => {
+  const setCurrentProvider = useCallback(provider => {
     setProvider(provider)
     setUserProvider(provider ? new Web3Provider(provider) : undefined)
   }, [])

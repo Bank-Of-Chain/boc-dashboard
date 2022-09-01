@@ -1,22 +1,25 @@
-// https://umijs.org/config/
-import { defineConfig } from 'umi';
-import { join } from 'path';
-import defaultSettings from './defaultSettings';
-import proxy from './proxy';
-import routes from './routes';
+/**
+ * qa04-sg config
+ */
 
-const { REACT_APP_ENV } = process.env;
+// https://umijs.org/config/
+import { defineConfig } from "umi";
+import defaultSettings from "./defaultSettings";
+import proxy from "./proxy";
+import routes from "./routes";
+import FileManagerPlugin from "filemanager-webpack-plugin";
+import moment from "moment";
+
+const { REACT_APP_ENV, UMI_ENV, NODE_ENV } = process.env;
 export default defineConfig({
-  base: '/',
-  publicPath: '/',
+  base: "/",
+  publicPath: "/",
   hash: true,
-  history:{
-    type: 'hash',
+  history: {
+    type: "hash",
   },
   antd: {
     dark: true,
-    // 启用紧凑模式
-    // compact: true,
   },
   dva: {
     hmr: true,
@@ -30,13 +33,13 @@ export default defineConfig({
   // https://umijs.org/zh-CN/plugins/plugin-locale
   locale: {
     // default zh-CN
-    default: 'en-US',
+    default: "en-US",
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: false,
   },
   dynamicImport: {
-    loading: '@ant-design/pro-layout/es/PageLoading',
+    loading: "@ant-design/pro-layout/es/PageLoading",
   },
   targets: {
     ie: 11,
@@ -45,85 +48,95 @@ export default defineConfig({
   routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
-    'primary-color': defaultSettings.primaryColor,
-    'text-color': defaultSettings.textColor,
-    'card-head-color': defaultSettings.textColor,
-    'table-header-color': defaultSettings.textColor,
-    'modal-heading-color': defaultSettings.textColor,
+    "primary-color": defaultSettings.primaryColor,
+    "text-color": defaultSettings.textColor,
+    "card-head-color": defaultSettings.textColor,
+    "table-header-color": defaultSettings.textColor,
+    "modal-heading-color": defaultSettings.textColor,
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild
   esbuild: {},
   title: false,
   ignoreMomentLocale: true,
-  proxy: proxy[REACT_APP_ENV || 'dev'],
+  proxy: proxy[REACT_APP_ENV || "dev"],
   manifest: {
-    basePath: '/',
+    basePath: "/",
   },
-  // Fast Refresh 热更新
   fastRefresh: {},
-  openAPI: [
-    // {
-    //   requestLibPath: "import { request } from 'umi'",
-    //   // 或者使用在线的版本
-    //   // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-    //   schemaPath: join(__dirname, 'oneapi.json'),
-    //   mock: false,
-    // },
-    // {
-    //   requestLibPath: "import { request } from 'umi'",
-    //   schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-    //   projectName: 'swagger',
-    // },
-  ],
+  openAPI: [],
   nodeModulesTransform: {
-    type: 'none',
+    type: "none",
   },
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+  chainWebpack: (config) => {
+    if (NODE_ENV === "production") {
+      config.plugin("FileManagerPlugin").use(
+        new FileManagerPlugin({
+          events: {
+            onEnd: {
+              archive: [
+                {
+                  source: "./dist",
+                  destination:
+                    "./zip/dashboard-" +
+                    moment().format("yyyyMMDDHHmmss") +
+                    "(qa04-sg).zip",
+                },
+              ],
+            },
+          },
+        })
+      );
+    }
+  },
   define: {
-    ENV_INDEX: 'pr-sg',
-    API_SERVER: 'https://service.bankofchain.io',
-    DASHBOARD_ROOT: 'https://dashboard.bankofchain.io',
-    IMAGE_ROOT: 'https://v1.bankofchain.io',
+    ENV_INDEX: "qa04-sg",
+    API_SERVER: "https://service-qa04-sg.bankofchain.io",
+    DASHBOARD_ROOT: "https://dashboard-qa04-sg.bankofchain.io",
+    IMAGE_ROOT: "https://qa04-sg.bankofchain.io",
     CHAIN_BROWSER_URL: {
-      1: 'https://etherscan.io',
-      56: 'https://bscscan.com',
-      137: 'https://polygonscan.com',
+      1: "https://etherscan.io",
+      137: "https://polygonscan.com",
     },
     RPC_URL: {
-      1: "https://rpc.ankr.com/eth",
-      56: "https://bsc-dataseed.binance.org",
-      137: "https://rpc-mainnet.maticvigil.com"
+      1: "https://rpc-qa04-sg.bankofchain.io",
+      137: "https://rpc-qa04-sg.bankofchain.io",
+      31337: "https://rpc-qa04-sg.bankofchain.io",
     },
     USDI: {
       SUB_GRAPH_URL: {
-        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-eth',
-        56: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-bsc',
-        137: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-matic',
+        1: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
+        137: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth",
       },
-      USDI_VAULT_ADDRESS: {
-        1: '0x008586B7f6768EDc269D9e5cd276316d33CECE6d',
-        56: '0x699F86dd50224544E6c23670Af44682CAe9db3c5',
-        137: '0xFB7f340A7DEfD3bB0072844db6D5EbdFAD765dea'
+      VAULT_ADDRESS: {
+        1: "0xd5C7A01E49ab534e31ABcf63bA5a394fF1E5EfAC",
+        137: "13",
       },
-      USDI_ADDRESS:{
-        1: '0x70bDA08DBe07363968e9EE53d899dFE48560605B',
-        56: '0x937f8bb67B61ad405D56BD3e1094b172D96B4038',
-        137: '0xe47F0396CfCB8134A791246924171950f1a83053'
+      USDI_ADDRESS: {
+        1: "0xBe15Eed7D8e91D20263d4521c9eB0F4e3510bfBF",
+        137: "16",
+      },
+      VAULT_BUFFER_ADDRESS: {
+        1: "8",
+        137: "14",
       },
     },
     ETHI: {
       SUB_GRAPH_URL: {
-        1: 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi',
+        1: "https://qa04-sg-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi",
       },
       VAULT_ADDRESS: {
-        1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
+        1: "0xDae16f755941cbC0C9D240233a6F581d1734DaA2",
       },
       ETHI_ADDRESS: {
-        1: '0x76609c83dD684F0D4c0F0c9849db0a1b5a96CAB2',
-      }
-    }
+        1: "0x8cB9Aca95D1EdebBfe6BD9Da4DC4a2024457bD32",
+      },
+      VAULT_BUFFER_ADDRESS: {
+        1: "20",
+      },
+    },
   },
 });

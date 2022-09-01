@@ -1,20 +1,18 @@
-import { useEffect, useCallback } from "react"
-import { useModel } from "umi"
-import { isInMobileWalletApp, isInMobileH5 } from "@/utils/device"
+import { useEffect, useCallback } from 'react'
+import { useModel } from 'umi'
+import { isInMobileWalletApp, isInMobileH5 } from '@/utils/device'
 
 function useWallet() {
-  const {
-    web3Modal,
-    provider,
-    setCurrentProvider,
-    userProvider,
-  } =  useModel('wallet')
+  const { web3Modal, provider, setCurrentProvider, userProvider } = useModel('wallet')
 
-  const connectTo = useCallback(async (name) => {
-    const provider = await web3Modal.connectTo(name)
-    setCurrentProvider(provider)
-    return provider
-  }, [web3Modal, setCurrentProvider])
+  const connectTo = useCallback(
+    async name => {
+      const provider = await web3Modal.connectTo(name)
+      setCurrentProvider(provider)
+      return provider
+    },
+    [web3Modal, setCurrentProvider]
+  )
 
   const requestProvider = useCallback(async () => {
     const provider = await web3Modal.requestProvider()
@@ -22,13 +20,16 @@ function useWallet() {
     return provider
   }, [web3Modal, setCurrentProvider])
 
-  const connect = useCallback(async (name) => {
-    return name ? connectTo(name) : requestProvider()
-  }, [connectTo, requestProvider])
+  const connect = useCallback(
+    async name => {
+      return name ? connectTo(name) : requestProvider()
+    },
+    [connectTo, requestProvider]
+  )
 
   const disconnectPassive = useCallback(async () => {
-    // walletconnect 异常关闭下 session 会一直存在，这边做个移除
-    localStorage.removeItem("walletconnect")
+    // walletconnect close by exception, remove localStorage
+    localStorage.removeItem('walletconnect')
     await web3Modal.clearCachedProvider()
     setTimeout(() => {
       window.location.reload()
@@ -42,7 +43,7 @@ function useWallet() {
     await disconnectPassive()
   }, [provider, disconnectPassive])
 
-  const getChainId = (userProvider) => {
+  const getChainId = userProvider => {
     return userProvider && userProvider._network && userProvider._network.chainId
   }
 
@@ -63,38 +64,38 @@ function useWallet() {
   const getProviderType = useCallback(() => {
     const providers = web3Modal?.providerController?.providers
     const id = web3Modal?.providerController?.cachedProvider
-    return providers.find((item) => item.id === id)?.type
+    return providers.find(item => item.id === id)?.type
   }, [web3Modal])
 
   useEffect(() => {
     if (!provider) {
       return
     }
-    const chainChanged = async (chainId) => {
+    const chainChanged = async chainId => {
       console.log(`chain changed to ${chainId}! updating providers`)
       const provider = await web3Modal.requestProvider()
       setCurrentProvider(provider)
     }
-    const accountsChanged = async (accounts) => {
+    const accountsChanged = async accounts => {
       console.log(`account changed!`, accounts)
       const provider = await web3Modal.requestProvider()
       setCurrentProvider(provider)
     }
 
     const disconnect = async (code, reason) => {
-      console.log("disconnect", code, reason)
-      if (getProviderType() !== "injected") {
+      console.log('disconnect', code, reason)
+      if (getProviderType() !== 'injected') {
         await disconnectPassive()
       }
     }
-    provider.on("chainChanged", chainChanged)
-    provider.on("accountsChanged", accountsChanged)
-    provider.on("disconnect", disconnect)
+    provider.on('chainChanged', chainChanged)
+    provider.on('accountsChanged', accountsChanged)
+    provider.on('disconnect', disconnect)
 
     return () => {
-      provider.removeListener("chainChanged", chainChanged)
-      provider.removeListener("accountsChanged", accountsChanged)
-      provider.removeListener("disconnect", disconnect)
+      provider.removeListener('chainChanged', chainChanged)
+      provider.removeListener('accountsChanged', accountsChanged)
+      provider.removeListener('disconnect', disconnect)
     }
   }, [provider, disconnectPassive, getProviderType])
 
@@ -114,8 +115,8 @@ function useWallet() {
     disconnect,
     disconnectPassive,
     getChainId,
-    getWalletName,
+    getWalletName
   }
 }
 
-export default useWallet;
+export default useWallet

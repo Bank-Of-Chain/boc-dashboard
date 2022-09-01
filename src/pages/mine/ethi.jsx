@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react'
-import {useModel} from 'umi'
-import numeral from 'numeral'
+import { useModel } from 'umi'
 
 // === Components === //
 import { InfoCircleOutlined } from '@ant-design/icons'
@@ -11,19 +10,21 @@ import DailyTvl from './components/DailyChart'
 import MonthProfit from './components/MonthProfit'
 
 // === Utils === //
-import _min from 'lodash/min'
-import _max from 'lodash/max'
 import map from 'lodash/map'
+import numeral from 'numeral'
 import isString from 'lodash/isString'
 import { toFixed } from '@/utils/number-format'
-import { isProEnv } from "@/services/env-service"
-import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from "@/constants/ethi"
-import { TOKEN_TYPE } from '@/constants/api'
+import { isProEnv } from '@/services/env-service'
+
+// === Constants === //
+import { TOKEN_TYPE } from '@/constants'
+import { ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Hooks === //
 import usePersonalData from '@/hooks/usePersonalData'
-import useEthPrice from "@/hooks/useEthPrice"
+import useEthPrice from '@/hooks/useEthPrice'
 
+// === Styles === //
 import styles from './style.less'
 
 const topColResponsiveProps = {
@@ -31,23 +32,24 @@ const topColResponsiveProps = {
   sm: 8,
   md: 8,
   lg: 8,
-  xl: 8,
+  xl: 8
 }
 
+const Field = ({ label, value, ...rest }) => (
+  <div className={styles.field} {...rest}>
+    <span className={styles.label}>{label}</span>
+    <span className={styles.number}>{value}</span>
+  </div>
+)
+
 const Personal = () => {
-  const {dataSource, loading} = usePersonalData(TOKEN_TYPE.ethi)
+  const { dataSource, loading } = usePersonalData(TOKEN_TYPE.ethi)
   const { loading: priceLoading, value: usdPrice } = useEthPrice()
-  const {initialState, setInitialState} = useModel('@@initialState')
+  const { initialState, setInitialState } = useModel('@@initialState')
 
-  const {
-    day7Apy,
-    day30Apy,
-    realizedProfit,
-    unrealizedProfit,
-    balanceOfToken
-  } = dataSource
+  const { day7Apy, day30Apy, realizedProfit, unrealizedProfit, balanceOfToken } = dataSource
 
-  const renderEstimate = (value) => {
+  const renderEstimate = value => {
     if (!value || priceLoading) {
       return null
     }
@@ -61,37 +63,48 @@ const Personal = () => {
     return usdPrice ? `≈${sign}$${toFixed(usdPrice.mul(displayValue), ETHI_BN_DECIMALS, 2)}` : ''
   }
 
-  const introduceData = [{
-    title: 'Balance (ETHi)',
-    tip: 'The balance of ETHi',
-    content: toFixed(balanceOfToken, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
-    estimateContent: renderEstimate(balanceOfToken),
-    loading,
-  }, {
-    title: 'Unrealized profits (ETHi)',
-    tip: 'Potential profit that has not been effected',
-    content: toFixed(unrealizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
-    estimateContent: renderEstimate(unrealizedProfit),
-    loading,
-  }, {
-    title: 'Realized profits (ETHi)',
-    tip: 'The profits that have been actualized',
-    content: toFixed(realizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS),
-    estimateContent: renderEstimate(realizedProfit),
-    loading,
-  }, {
-    title: 'APY(last 7 days)',
-    tip: 'Yield over the past 1 week',
-    content: `${numeral(day7Apy?.apy).format('0,0.00')}%`,
-    loading,
-    isAPY: true
-  }, {
-    title: 'APY(last 30 days)',
-    tip: 'Yield over the past 1 month',
-    content: `${numeral(day30Apy?.apy).format('0,0.00')}%`,
-    loading,
-    isAPY: true
-  }]
+  const introduceData = [
+    {
+      title: 'Balance',
+      tip: 'The balance of ETHi',
+      content: numeral(toFixed(balanceOfToken, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
+      estimateContent: renderEstimate(balanceOfToken),
+      loading,
+      unit: 'ETHi'
+    },
+    {
+      title: 'Unrealized profits',
+      tip: 'Potential profit that has not been effected',
+      content: numeral(toFixed(unrealizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
+      estimateContent: renderEstimate(unrealizedProfit),
+      loading,
+      unit: 'ETHi'
+    },
+    {
+      title: 'Realized profits',
+      tip: 'The profits that have been actualized',
+      content: numeral(toFixed(realizedProfit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
+      estimateContent: renderEstimate(realizedProfit),
+      loading,
+      unit: 'ETHi'
+    },
+    {
+      title: 'APY(last 7 days)',
+      tip: 'Yield over the past 1 week',
+      content: numeral(day7Apy?.apy).format('0,0.00'),
+      loading,
+      isAPY: true,
+      unit: '%'
+    },
+    {
+      title: 'APY(last 30 days)',
+      tip: 'Yield over the past 1 month',
+      content: numeral(day30Apy?.apy).format('0,0.00'),
+      loading,
+      isAPY: true,
+      unit: '%'
+    }
+  ]
 
   return (
     <GridContent>
@@ -100,50 +113,72 @@ const Personal = () => {
           <Col>
             <Input
               value={initialState.address}
-              placeholder='请输入用户地址'
-              onChange={e => setInitialState({...initialState, address: e.target.value})}
+              placeholder="Enter account address"
+              onChange={e => setInitialState({ ...initialState, address: e.target.value })}
             />
             <a
-              onClick={() => setInitialState({...initialState, address: '0x2346c6b1024e97c50370c783a66d80f577fe991d'})}>eth/bsc:
-              0x2346c6b1024e97c50370c783a66d80f577fe991d</a>
-            <br/>
-            <a
-              onClick={() => setInitialState({...initialState, address: '0x375d80da4271f5dcdf821802f981a765a0f11763'})}>matic:
-              0x375d80da4271f5dcdf821802f981a765a0f11763</a>
-            <br/>
-            <a
-              onClick={() => setInitialState({...initialState, address: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'})}>晓天地址:
-              0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff</a>
-            <br/>
-            <a onClick={() => setInitialState({ ...initialState, address: '0xee3db241031c4aa79feca628f7a00aaa603901a6', })}>
-              ND 测试用户：0xee3db241031c4aa79feca628f7a00aaa603901a6
+              onClick={() =>
+                setInitialState({
+                  ...initialState,
+                  address: '0x2346c6b1024e97c50370c783a66d80f577fe991d'
+                })
+              }
+            >
+              eth: 0x2346c6b1024e97c50370c783a66d80f577fe991d
             </a>
             <br />
-            <p>该输入框为测试使用，发布前需要删除</p>
+            <a
+              onClick={() =>
+                setInitialState({
+                  ...initialState,
+                  address: '0x375d80da4271f5dcdf821802f981a765a0f11763'
+                })
+              }
+            >
+              matic: 0x375d80da4271f5dcdf821802f981a765a0f11763
+            </a>
+            <br />
+            <a
+              onClick={() =>
+                setInitialState({
+                  ...initialState,
+                  address: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'
+                })
+              }
+            >
+              Xiaotian: 0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff
+            </a>
+            <br />
+            <a
+              onClick={() =>
+                setInitialState({
+                  ...initialState,
+                  address: '0xee3db241031c4aa79feca628f7a00aaa603901a6'
+                })
+              }
+            >
+              ND Test Account: 0xee3db241031c4aa79feca628f7a00aaa603901a6
+            </a>
+            <br />
+            <p>This is test input, should be deleted before up to production.</p>
           </Col>
         </Row>
         <Row gutter={[24, 24]}>
-          {map(introduceData, ({ title, tip, loading, content, estimateContent, isAPY }) => (
+          {map(introduceData, ({ title, tip, loading, content, estimateContent, unit }) => (
             <Col key={title} {...topColResponsiveProps}>
               <ChartCard
                 bordered={false}
                 title={title}
                 action={
                   <Tooltip title={tip}>
-                    <InfoCircleOutlined />
+                    <InfoCircleOutlined style={{ fontSize: 22 }} />
                   </Tooltip>
                 }
                 loading={loading}
-              >
-              {isAPY ? (
-                <div className={styles.apyNumber}>{content}</div>
-              ) : (
-                <div className={styles.ethiCardContent}>
-                  <div className={styles.ethiNumber}>{content}</div>
-                  <div className={styles.estimateNumber}>{estimateContent}</div>
-                </div>
-              )}
-              </ChartCard>
+                total={content}
+                unit={unit}
+                footer={<Field style={{ height: '1rem' }} value={estimateContent} />}
+              />
             </Col>
           ))}
         </Row>

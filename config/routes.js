@@ -1,20 +1,21 @@
-export default [{
+export default [
+  {
     path: '/',
-    component: './home',
+    component: './home'
   },
   {
     path: '/strategy',
-    component: './strategyDetail',
+    component: './strategyDetail'
   },
   {
     path: '/mine',
-    component: './mine',
+    component: './mine'
   },
   {
     path: '/reports',
-    component: './reports',
+    component: './reports'
   },
   {
-    component: '404',
-  },
-];
+    component: '404'
+  }
+]

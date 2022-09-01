@@ -1,22 +1,22 @@
-import loadable from "@loadable/component";
-import {Spin} from "antd";
+import React from 'react'
 
-const DEFAULT_THEME = "dark";
+import loadable from '@loadable/component'
+import { Spin } from 'antd'
 
 const loaddingCom = (
   <Spin
     style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       minHeight: 20,
-      fontSize: 14,
+      fontSize: 14
     }}
     tip="Loading...."
   />
-);
-const LineEchart = loadable(() => import("./line"), {fallback: loaddingCom});
-const BarEchart = loadable(() => import("./bar"), {fallback: loaddingCom});
-const PieEchart = loadable(() => import("./pie"), {fallback: loaddingCom});
+)
+const LineEchart = loadable(() => import('./line'), { fallback: loaddingCom })
+const BarEchart = loadable(() => import('./bar'), { fallback: loaddingCom })
+const PieEchart = loadable(() => import('./pie'), { fallback: loaddingCom })
 
-export {LineEchart, BarEchart, PieEchart};
+export { LineEchart, BarEchart, PieEchart }
