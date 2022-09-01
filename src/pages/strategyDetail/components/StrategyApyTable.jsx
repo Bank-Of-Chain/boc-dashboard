@@ -149,7 +149,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
     }
   ]
 
-  const array = [`Weighted Assets(${unit})`, `Profits(${unit})`, 'Official APY', 'BOC Verify APY']
+  const array = [`Weighted Assets(${unit})`, `Profits(${unit})`, 'Official APY', 'BOC Verified APY']
   const dataSource1 = map(array, (i, index) => {
     const obj = map(keyBy(dataSource, 'date'), (j, key) => {
       let value = ''
