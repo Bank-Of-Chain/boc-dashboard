@@ -20,6 +20,7 @@
     "apollo:qa04-sg": "node config/apollo.js --env=qa04-sg",
     "apollo:stage-sg": "node config/apollo.js --env=stage-sg",
     "apollo:pr-sg": "node config/apollo.js --env=pr-sg",
+    "apollo:pr02-sg": "node config/apollo.js --env=pr02-sg",
     "analyze": "cross-env ANALYZE=1 umi build",
     "dev": "npm run start:local",
     "gh-pages": "gh-pages -d dist",

@@ -7,7 +7,7 @@ export const WALLETS = {
       name: 'MetaMask',
       value: 'injected', // param connectTo
       symbol: 'metamask',
-      logo: './images/wallets/MetaMask.png'
+      logo: 'https://bankofchain.io/images/wallets/MetaMask.png'
     },
     getProviderOption: () => {}
   },
@@ -16,7 +16,7 @@ export const WALLETS = {
       name: 'WalletConnect',
       value: 'walletconnect',
       symbol: 'walletconnect',
-      logo: './images/wallets/WalletConnect.png'
+      logo: 'https://bankofchain.io/images/wallets/WalletConnect.png'
     },
     getProviderOption: () => ({
       walletconnect: {
