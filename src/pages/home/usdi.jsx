@@ -27,7 +27,7 @@ import { useModel } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import { BigNumber } from 'ethers'
-import { toFixed } from '@/utils/number-format'
+import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
 import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get } from 'lodash'
 
@@ -81,7 +81,7 @@ const USDiHome = () => {
         const lengndData = []
         const data1 = map(xAxisData, date => {
           const item = find(result, { date })
-          return item ? item.apy : null
+          return item ? formatApyValue(item.apy) : null
         })
         const columeArray = [
           {
@@ -199,7 +199,7 @@ const USDiHome = () => {
     {
       title: 'APY (last 30 days)',
       tip: 'Yield over the past 1 month',
-      content: numeral(apy30).format('0,0.00'),
+      content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
       unit: '%'
     }
