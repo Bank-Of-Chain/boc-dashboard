@@ -25,7 +25,7 @@ import numeral from 'numeral'
 import moment from 'moment'
 import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { toFixed, formatApyLabel } from '@/utils/number-format'
+import { toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
 import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce } from 'lodash'
 
@@ -195,7 +195,7 @@ const ETHiHome = () => {
     {
       title: 'APY (last 30 days)',
       tip: 'Yield over the past 1 month',
-      content: formatApyLabel(numeral(apy30).format('0,0.00')),
+      content: numeral(apy30).format('0,0.00'),
       loading,
       unit: '%'
     }

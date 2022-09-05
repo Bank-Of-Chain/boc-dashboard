@@ -27,7 +27,7 @@ import { useModel } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import { BigNumber } from 'ethers'
-import { toFixed, formatApyLabel } from '@/utils/number-format'
+import { toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
 import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get } from 'lodash'
 
@@ -199,7 +199,7 @@ const USDiHome = () => {
     {
       title: 'APY (last 30 days)',
       tip: 'Yield over the past 1 month',
-      content: formatApyLabel(numeral(apy30).format('0,0.00')),
+      content: numeral(apy30).format('0,0.00'),
       loading,
       unit: '%'
     }
