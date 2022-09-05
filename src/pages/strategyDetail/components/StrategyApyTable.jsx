@@ -149,7 +149,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
     }
   ]
 
-  const array = [`Weighted Assets(${unit})`, `Profits(${unit})`, 'Official APY', 'BOC Verified APY']
+  const array = [`Weighted Assets(${unit})`, `Profits(${unit})`, 'Official APY', 'BoC Verified APY']
   const dataSource1 = map(array, (i, index) => {
     const obj = map(keyBy(dataSource, 'date'), (j, key) => {
       let value = ''
@@ -194,7 +194,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="The apy verified by the BOC strategy is calculated by profit and weighted assets.">
+            <Tooltip title="The apy verified by the BoC strategy is calculated by profit and weighted assets.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
