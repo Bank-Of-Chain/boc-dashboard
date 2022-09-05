@@ -30,3 +30,27 @@ export const toLeastOneFixed = (balance, decimals, displayDecimals = DISPLAY_DEC
   displayValue = toFixed(value, decimalsValue, displayDecimals)
   return parseFloat(displayValue)
 }
+
+// APY > 1000, show 1000+
+export const formatApyLabel = (value) => {
+  const result = parseFloat(value)
+  if (isNaN(result)) {
+    return value
+  }
+  if (result <= 1000) {
+    return result
+  }
+  return '1000+'
+}
+
+// APY > 1000, use 1000 to render chart
+export const formatApyValue = (value) => {
+  const result = parseFloat(value)
+  if (isNaN(result)) {
+    return value
+  }
+  if (result <= 1000) {
+    return result
+  }
+  return 1000
+}

@@ -21,7 +21,7 @@ import moment from 'moment'
 import BN from 'bignumber.js'
 import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
-import { toFixed } from '@/utils/number-format'
+import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
 import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find } from 'lodash'
 
@@ -40,6 +40,13 @@ const feeApyStatusMap = {
   0: 'Unrealized',
   1: 'Realized'
 }
+
+const getMarker = color => {
+  return `<br/><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`
+}
+
+const subMarker =
+  '<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>'
 
 const Strategy = props => {
   const { id, ori = false, vault } = props?.location?.query
@@ -176,7 +183,8 @@ const Strategy = props => {
   const lengndData = [OFFICIAL_APY, VERIFIED_APY]
   const data1 = map(apyArray, i => {
     return {
-      value: i.officialApy,
+      value: formatApyValue(i.officialApy),
+      label: `${formatApyLabel(i.officialApy)}%`,
       unit: '%'
     }
   })
@@ -189,7 +197,11 @@ const Strategy = props => {
     },
     {
       seriesName: VERIFIED_APY,
-      seriesData: apyArray,
+      seriesData: apyArray.map(i => ({
+        ...i,
+        value: formatApyValue(i.value),
+        label: `${formatApyLabel(i.value)}%`
+      })),
       showSymbol: size(filter(data2, i => !isNil(i))) === 1
     }
   ]
@@ -197,8 +209,9 @@ const Strategy = props => {
   if (ori) {
     const data3 = map(apyArray, i => {
       return {
-        value: i.originApy,
+        value: formatApyValue(i.originApy),
         offcialDetail: i.offcialDetail,
+        label: `${formatApyLabel(i.originApy)}%`,
         unit: '%'
       }
     })
@@ -211,9 +224,10 @@ const Strategy = props => {
 
     const data4 = map(apyArray, i => {
       return {
-        value: i.dailyVerifiedApy,
+        value: formatApyValue(i.dailyVerifiedApy),
         realizedApyDetail: i.realizedApyDetail,
         unrealizedApyDetail: i.unrealizedApyDetail,
+        label: `${formatApyLabel(i.dailyVerifiedApy)}%`,
         unit: '%'
       }
     })
@@ -267,20 +281,20 @@ const Strategy = props => {
           let message = ''
           message += `${params[0].axisValueLabel}`
           params.forEach(param => {
-            message += `<br/>${param.marker}${param.seriesName}: ${isNil(param.value) ? '-' : param.value + unit}`
-            if (param?.seriesName === VERIFIED_APY) {
-              const realizedApy = param?.data?.realizedApy
-              const unrealizedApy = param?.data?.unrealizedApy
-              const realizedApyText = `${isNil(realizedApy) ? '-' : realizedApy + unit}`
-              const unrealizedApyText = `${isNil(unrealizedApy) ? '-' : unrealizedApy + unit}`
-              message += `<br/><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#dc69aa;"></span>Realized APY: ${realizedApyText}`
-              message += `<br/><span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#95706d;"></span>UnRealized APY: ${unrealizedApyText}`
+            message += `<br/>${param.marker}${param.seriesName}: ${isNil(param.value) ? '-' : param.data?.label}`
+            if (param.seriesName === VERIFIED_APY) {
+              const realizedApy = param.data?.realizedApy
+              const unrealizedApy = param.data?.unrealizedApy
+              const realizedApyText = `${isNil(realizedApy) ? '-' : formatApyLabel(realizedApy) + unit}`
+              const unrealizedApyText = `${isNil(unrealizedApy) ? '-' : formatApyLabel(unrealizedApy) + unit}`
+              message += `${getMarker('#dc69aa')}Realized APY: ${realizedApyText}`
+              message += `${getMarker('#95706d')}UnRealized APY: ${unrealizedApyText}`
             }
             if (param?.seriesName === OFFICIAL_DAILY_APY) {
               const offcialDetail = param?.data?.offcialDetail
               const stringArray = map(offcialDetail, i => {
                 const text = `${isNil(i.feeApy) ? '-' : (100 * i.feeApy).toFixed(2) + unit}`
-                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${i.feeName}: ${text}`
+                return `${subMarker}${i.feeName}: ${text}`
               })
               message += stringArray.join('')
             }
@@ -289,17 +303,13 @@ const Strategy = props => {
               const unrealizedApyDetail = param?.data?.unrealizedApyDetail
               const stringArray = map(realizedApyDetail, i => {
                 const text = `${isNil(i.feeApy) ? '-' : (100 * i.feeApy).toFixed(2) + unit}`
-                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${
-                  i.feeName
-                }: ${text} (${feeApyStatusMap[i.feeApyStatus]})`
+                return `${subMarker}${i.feeName}: ${text} (${feeApyStatusMap[i.feeApyStatus]})`
               })
 
               message += stringArray.join('')
               const stringArray1 = map(unrealizedApyDetail, i => {
                 const text = `${isNil(i.feeApy) ? '-' : (100 * i.feeApy).toFixed(2) + unit}`
-                return `<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>${
-                  i.feeName
-                }: ${text} (${feeApyStatusMap[i.feeApyStatus]})`
+                return `${subMarker}${i.feeName}: ${text} (${feeApyStatusMap[i.feeApyStatus]})`
               })
               message += stringArray1.join('')
             }
