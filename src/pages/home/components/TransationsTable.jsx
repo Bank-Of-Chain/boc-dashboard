@@ -7,6 +7,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Utils === //
 import moment from 'moment'
 import map from 'lodash/map'
+import compact from 'lodash/compact'
 import BN from 'bignumber.js'
 import { useModel } from 'umi'
 import { toLeastOneFixed, toFixed } from '@/utils/number-format'
@@ -45,9 +46,20 @@ const TransationsTable = ({
     const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : [filter]
     setTableLoading(true)
     getRecentActivity(initialState.vault, initialState.chain, types)
-      .then(data => {
+      .then(datas => {
+        const nextDatas = compact(
+          map(datas, item => {
+            if (item.type === 'Mint') return
+            if (item.type === 'Deposit')
+              return {
+                ...item,
+                type: 'Mint'
+              }
+            return item
+          })
+        )
         setCurrentPage(1)
-        setData(data)
+        setData(nextDatas)
       })
       .finally(() => {
         setTableLoading(false)
@@ -99,11 +111,9 @@ const TransationsTable = ({
       key: 'detail',
       render: (text, item) => {
         const { type, transferredAmount, toAccountUpdate, fromAccountUpdate, totalSupplyChangeAmount } = item
-        const changeValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
         const rebaseValue = toLeastOneFixed(totalSupplyChangeAmount, decimals, dispalyDecimal)
         const absChangeValue = toLeastOneFixed(BN(transferredAmount).abs(), decimals, dispalyDecimal)
         const transferValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
-        const changeValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
         const rebaseValueTitle = toFixed(totalSupplyChangeAmount, BN(10 ** decimals))
         const absChangeValueTitle = toFixed(BN(transferredAmount).abs(), BN(10 ** decimals))
         const transferValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
@@ -112,7 +122,7 @@ const TransationsTable = ({
         const fns = {
           Mint: () => (
             <>
-              {type} <span title={changeValueTitle}>{changeValue}</span> {token} to {renderAddress(to)}
+              {type} <span title={transferValueTitle}>{transferValue}</span> {token} from {renderAddress(from)} to {renderAddress(to)}
             </>
           ),
           Burn: () => (
@@ -198,7 +208,7 @@ const TransationsTable = ({
     <Radio.Group value={filter} onChange={handleChange} buttonStyle="outline" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
       {map(FILTER_OPTIONS, (value, key) => (
         <Radio.Button value={value} key={key}>
-          {value}
+          {key}
         </Radio.Button>
       ))}
     </Radio.Group>
@@ -208,7 +218,7 @@ const TransationsTable = ({
       <Select style={{ width: 120 }} value={filter} onChange={handleChange}>
         {map(FILTER_OPTIONS, (value, key) => (
           <Option value={value} key={key}>
-            {value}
+            {key}
           </Option>
         ))}
       </Select>
