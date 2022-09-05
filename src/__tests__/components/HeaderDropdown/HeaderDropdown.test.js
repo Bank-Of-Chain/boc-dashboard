@@ -5,7 +5,7 @@ import HeaderDropdown from '@/components/HeaderDropdown/index'
 
 test('HeaderDropdown Component Render', () => {
   const menuHeaderDropdown = (
-    <Menu selectedKeys={[]}>
+    <Menu selectedKeys={['center']}>
       <Menu.Item key="center">User Center</Menu.Item>
       <Menu.Item key="settings">Account Setting</Menu.Item>
       <Menu.Divider />

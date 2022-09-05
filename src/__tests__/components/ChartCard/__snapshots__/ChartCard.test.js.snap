@@ -3,27 +3,24 @@
 exports[`ChartCard Component Render 1`] = `
 <DocumentFragment>
   <div
-    class="ant-card ant-card-loading ant-card-bordered"
+    class="ant-card ant-card-bordered"
   >
     <div
       class="ant-card-body"
     >
-      <div
-        class="ant-skeleton ant-skeleton-active"
-      >
+      <div>
         <div
-          class="ant-skeleton-content"
+          class=""
         >
-          <ul
-            class="ant-skeleton-paragraph"
-          >
-            <li />
-            <li />
-            <li />
-            <li
-              style="width: 61%;"
-            />
-          </ul>
+          <div />
+          <div>
+            <div>
+              <span>
+                test text
+              </span>
+              <span />
+            </div>
+          </div>
         </div>
       </div>
     </div>

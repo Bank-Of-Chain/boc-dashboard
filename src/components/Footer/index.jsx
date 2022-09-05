@@ -8,15 +8,15 @@ const Footer = () => {
       copyright={`Produced by Bank Of Chain ${currentYear}`}
       links={[
         {
-          key: 'BOC Homepage',
-          title: 'BOC Homepage',
-          href: 'https://bankofchain.io/',
+          key: 'BoC Homepage',
+          title: 'BoC Homepage',
+          href: 'https://v2.bankofchain.io/',
           blankTarget: true
         },
         {
-          key: 'BOC Dashboard',
-          title: 'BOC Dashboard',
-          href: 'https://dashboard.bankofchain.io/',
+          key: 'BoC Dashboard',
+          title: 'BoC Dashboard',
+          href: 'https://dashboard-v2.bankofchain.io/',
           blankTarget: true
         }
       ]}
