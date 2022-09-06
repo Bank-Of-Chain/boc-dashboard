@@ -11,7 +11,7 @@ import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
 import { useModel, useRequest } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
-import { toFixed } from '@/utils/number-format'
+import { toFixed, formatApyLabel } from '@/utils/number-format'
 import { groupBy, isEmpty, isNil, keyBy, map, reduce } from 'lodash'
 
 // === Services === //
@@ -46,7 +46,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
               {map(officialDetail, (i, index) => (
                 <span key={index} style={{ display: 'block' }}>
                   {i.feeName}:&nbsp;
-                  {(100 * i.feeApy).toFixed(2)}%{' '}
+                  {formatApyLabel((100 * i.feeApy).toFixed(2))}%
                 </span>
               ))}
             </div>
@@ -64,7 +64,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
                     <span key={index} style={{ display: 'block' }}>
                       {i.feeName}:&nbsp;
                       {toFixed(i.feeValue, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals)}
-                      &nbsp;{unit}({(100 * i.feeApy).toFixed(2)}%)
+                      &nbsp;{unit}({formatApyLabel((100 * i.feeApy).toFixed(2))}%)
                     </span>
                   ))
                 ]
@@ -86,20 +86,20 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
             ) : isEmpty(officialDetail) ? (
               `${toFixed(new BN(i.dailyOfficialApy).multipliedBy(100), 1, 2)}%`
             ) : (
-              <Tooltip title={officialApyJsx}>{`${toFixed(new BN(i.dailyOfficialApy).multipliedBy(100), 1, 2)}%`}</Tooltip>
+              <Tooltip title={officialApyJsx}>{`${formatApyLabel(toFixed(new BN(i.dailyOfficialApy).multipliedBy(100), 1, 2))}%`}</Tooltip>
             ),
             verifyApy:
               i.dailyWeightAsset === '0' ? (
                 'N/A'
               ) : isEmpty(detail) ? (
                 <div>
-                  {`${toFixed(new BN(dailyApy).multipliedBy(100), 1, 2)}%`}
+                  {`${formatApyLabel(toFixed(new BN(dailyApy).multipliedBy(100), 1, 2))}%`}
                   {i.dailyUnrealizedApy > 0 && comp}
                 </div>
               ) : (
                 <Tooltip title={dailyOfficialApyJsx}>
                   <div>
-                    {`${toFixed(new BN(dailyApy).multipliedBy(100), 1, 2)}%`}
+                    {`${formatApyLabel(toFixed(new BN(dailyApy).multipliedBy(100), 1, 2))}%`}
                     {i.dailyUnrealizedApy > 0 && comp}
                   </div>
                 </Tooltip>
@@ -111,13 +111,13 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
                 {i.weeklyUnrealizedProfit !== '0' && comp}
               </div>
             ),
-            weeklyApy: isNil(i.weeklyOfficialApy) ? 'N/A' : `${toFixed(new BN(i.weeklyOfficialApy).multipliedBy(100), 1, 2)}%`,
+            weeklyApy: isNil(i.weeklyOfficialApy) ? 'N/A' : `${formatApyLabel(toFixed(new BN(i.weeklyOfficialApy).multipliedBy(100), 1, 2))}%`,
             weeklyVerifyApy:
               i.weeklyWeightAsset === '0' ? (
                 'N/A'
               ) : (
                 <div>
-                  {`${toFixed(new BN(weeklyApy).multipliedBy(100), 1, 2)}%`}
+                  {`${formatApyLabel(toFixed(new BN(weeklyApy).multipliedBy(100), 1, 2))}%`}
                   {i.weeklyUnrealizedApy > 0 && comp}
                 </div>
               )

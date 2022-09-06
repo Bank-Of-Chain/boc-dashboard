@@ -8,7 +8,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { useModel, useRequest } from 'umi'
-import { toFixed } from '@/utils/number-format'
+import { toFixed, formatApyLabel } from '@/utils/number-format'
 import { isEmpty, filter, isNil, map, sortBy } from 'lodash'
 import BN from 'bignumber.js'
 
@@ -84,7 +84,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       sorter: (a, b) => {
         return a.officialWeeklyApy - b.officialWeeklyApy
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>
+      render: text => <span>{formatApyLabel((100 * text).toFixed(2))}%</span>
     },
     {
       title: 'Weekly Realized Apy',
@@ -99,13 +99,13 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: data => {
         if (isEmpty(data)) return <span>0.00%</span>
         const { value, detail } = data
-        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        const jsxElement = <span>{formatApyLabel((100 * value).toFixed(2))}%</span>
         if (isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
               <span key={index} style={{ display: 'block' }}>
-                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
+                {i.feeName}: {formatApyLabel((100 * i.feeApy).toFixed(2))}%
               </span>
             ))}
           </div>
@@ -134,13 +134,13 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
         if (isEmpty(data)) return <span>0.00%</span>
         const { value, detail } = data
 
-        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        const jsxElement = <span>{formatApyLabel((100 * value).toFixed(2))}%</span>
         if (isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
               <span key={index} style={{ display: 'block' }}>
-                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
+                {i.feeName}: {formatApyLabel((100 * i.feeApy).toFixed(2))}%
               </span>
             ))}
           </div>

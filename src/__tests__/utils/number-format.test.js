@@ -1,4 +1,4 @@
-import { toFixed, toLeastOneFixed } from '@/utils/number-format'
+import { toFixed, toLeastOneFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 
 test('number-format toFixed', () => {
   const text = toFixed('10000', '100')
@@ -28,4 +28,34 @@ test('number-format toFixed with decimals null', () => {
 test('number-format toLeastOneFixed', () => {
   const text = toLeastOneFixed('10000', 2)
   expect(text).toBe(100)
+})
+
+test('number-format formatApyLabel', () => {
+  const text = formatApyLabel('10000')
+  expect(text).toBe('1000+')
+})
+
+test('number-format formatApyLabel', () => {
+  const text = formatApyLabel('10')
+  expect(text).toBe(10)
+})
+
+test('number-format formatApyLabel', () => {
+  const text = formatApyLabel(null)
+  expect(text).toBe(null)
+})
+
+test('number-format formatApyValue', () => {
+  const text = formatApyValue('10000')
+  expect(text).toBe(1000)
+})
+
+test('number-format formatApyValue', () => {
+  const text = formatApyValue('100')
+  expect(text).toBe(100)
+})
+
+test('number-format formatApyValue', () => {
+  const text = formatApyValue(null)
+  expect(text).toBe(null)
 })
