@@ -43,7 +43,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
             width={30}
             src={`${IMAGE_ROOT}/images/amms/${strategyMap[initialState.chain][item.protocol]}.png`}
             placeholder={item.protocol}
-            style={{ backgroundColor: '#fff', borderRadius: '50%' }}
+            style={{ borderRadius: '50%' }}
             alt={strategyMap[initialState.chain][item.protocol]}
             fallback={`${IMAGE_ROOT}/default.png`}
           />

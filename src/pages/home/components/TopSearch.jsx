@@ -13,9 +13,6 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Styles === //
 import styles from '../style.less'
 
-// strategies which use transparent background-color
-const withoutBackgroundColor = ['Vault']
-
 const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}, unit }) => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
@@ -74,10 +71,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
             src={`${IMAGE_ROOT}/images/amms/${text}.png`}
             placeholder={text}
             alt={text}
-            style={{
-              backgroundColor: withoutBackgroundColor.includes(text) ? 'transparent' : '#fff',
-              borderRadius: '50%'
-            }}
+            style={{ borderRadius: '50%' }}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a className={styles.text}>{text}</a>
