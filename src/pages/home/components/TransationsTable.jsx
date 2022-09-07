@@ -57,7 +57,8 @@ const TransationsTable = ({
           map(datas, item => {
             if (
               item.type === filterOptions.Mint &&
-              item?.toAccountUpdate?.account?.id === getVaultConfig(initialState.chain, initialState.vault).vaultBufferAddress
+              item?.toAccountUpdate?.account?.id?.toLowerCase() ===
+                getVaultConfig(initialState.chain, initialState.vault)?.vaultBufferAddress?.toLowerCase()
             )
               return
             if (item.type === filterOptions.Deposit)
