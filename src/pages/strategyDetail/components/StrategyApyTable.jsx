@@ -20,7 +20,7 @@ import { getStrategyApyDetails } from '@/services/api-service'
 // === Constants === //
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
-const dateFormat = 'MMMM DD'
+const dateFormat = 'MMM DD'
 
 const comp = <HourglassOutlined style={{ color: '#a68efe' }} />
 
