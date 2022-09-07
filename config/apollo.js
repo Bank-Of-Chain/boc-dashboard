@@ -186,7 +186,7 @@ const chooseEnv = () => {
 }
 
 try {
-  start()
+  start().then(() => process.exit(0))
 } catch (error) {
   process.exit(2)
 }

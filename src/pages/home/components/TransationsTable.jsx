@@ -7,11 +7,13 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Utils === //
 import moment from 'moment'
 import map from 'lodash/map'
+import { omit } from 'lodash'
 import compact from 'lodash/compact'
 import BN from 'bignumber.js'
 import { useModel } from 'umi'
 import { toLeastOneFixed, toFixed } from '@/utils/number-format'
 import { getRecentActivity } from '@/services/dashboard-service'
+import { getVaultConfig } from '@/utils/vault'
 
 // === Constants === //
 import { USDI_DECIMALS } from '@/constants/usdi'
@@ -37,23 +39,31 @@ const TransationsTable = ({
 
   const FILTER_OPTIONS = {
     All: 'All',
-    ...filterOptions
+    ...omit(filterOptions, [filterOptions.Deposit])
   }
   const [filter, setFilter] = useState(FILTER_OPTIONS.All)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : [filter]
+    const nextFilter = [filter]
+    if (filter === RECENT_ACTIVITY_TYPE.Mint) {
+      nextFilter.push(RECENT_ACTIVITY_TYPE.Deposit)
+    }
+    const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : nextFilter
     setTableLoading(true)
     getRecentActivity(initialState.vault, initialState.chain, types)
       .then(datas => {
         const nextDatas = compact(
           map(datas, item => {
-            if (item.type === 'Mint') return
-            if (item.type === 'Deposit')
+            if (
+              item.type === filterOptions.Mint &&
+              item?.toAccountUpdate?.account?.id === getVaultConfig(initialState.chain, initialState.vault).vaultBufferAddress
+            )
+              return
+            if (item.type === filterOptions.Deposit)
               return {
                 ...item,
-                type: 'Mint'
+                type: filterOptions.Mint
               }
             return item
           })
@@ -122,7 +132,7 @@ const TransationsTable = ({
         const fns = {
           Mint: () => (
             <>
-              {type} <span title={transferValueTitle}>{transferValue}</span> {token} from {renderAddress(from)} to {renderAddress(to)}
+              {type} <span title={transferValueTitle}>{transferValue}</span> {token} to {renderAddress(to)}
             </>
           ),
           Burn: () => (
