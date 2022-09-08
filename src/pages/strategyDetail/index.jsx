@@ -433,7 +433,7 @@ const Strategy = props => {
                     {strategy.strategyName}
                   </a>
                 </Descriptions.Item>
-                <Descriptions.Item label="Underlying Token">
+                <Descriptions.Item label="Underlying Token(s)">
                   {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
                 </Descriptions.Item>
                 <Descriptions.Item label="Asset Value">{toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
@@ -446,7 +446,7 @@ const Strategy = props => {
       <Suspense fallback={null}>
         <Card
           loading={loading}
-          title="Apy (%)"
+          title="APY (%)"
           className={styles.offlineCard}
           bordered={false}
           style={{

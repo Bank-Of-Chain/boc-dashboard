@@ -77,7 +77,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>
     },
     {
-      title: 'Weekly Official Apy',
+      title: 'Weekly Official APY',
       dataIndex: 'officialWeeklyApy',
       key: 'officialWeeklyApy',
       showSorterTooltip: false,
@@ -87,7 +87,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: text => <span>{formatApyLabel((100 * text).toFixed(2))}%</span>
     },
     {
-      title: 'Weekly Realized Apy',
+      title: 'Weekly Realized APY',
       dataIndex: 'realizedApy',
       key: 'realizedApy',
       showSorterTooltip: false,
@@ -121,7 +121,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
-      title: 'Weekly Unrealized Apy',
+      title: 'Weekly Unrealized APY',
       dataIndex: 'unrealizedApy',
       key: 'unrealizedApy',
       showSorterTooltip: false,

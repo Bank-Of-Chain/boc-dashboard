@@ -20,6 +20,8 @@ import { getStrategyApyDetails } from '@/services/api-service'
 // === Constants === //
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
+import styles from './style.less'
+
 const dateFormat = 'MMM DD'
 
 const comp = <HourglassOutlined style={{ color: '#a68efe' }} />
@@ -149,7 +151,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
     }
   ]
 
-  const array = [`Weighted Assets(${unit})`, `Profits(${unit})`, 'Official APY', 'BoC Verified APY']
+  const array = [`Weighted Assets (${unit})`, `Profits (${unit})`, 'Official APY', 'BoC Verified APY']
   const dataSource1 = map(array, (i, index) => {
     const obj = map(keyBy(dataSource, 'date'), (j, key) => {
       let value = ''
@@ -161,7 +163,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="Time weighted assets daily/weekly.">
+            <Tooltip title="Assets deposited daily/weekly into the strategy.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
@@ -172,7 +174,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="Strategy profit daily/weekly.">
+            <Tooltip title="Daily/Weekly strategy profit.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
@@ -183,7 +185,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="The official apy of the 3rd pool, through the raw data statistics on the chain.">
+            <Tooltip title="Official third-party pools APY, obtained through raw data statistics provided on chain.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
@@ -194,7 +196,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="The apy verified by the BoC strategy is calculated by profit and weighted assets.">
+            <Tooltip title="APY verified by the BoC strategy, calculated by using the corresponding profits and weighted assets.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
@@ -274,11 +276,13 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
           pagination={false}
           {...responsiveConfig.tableProps}
         />
-        <br />
-        <p>
-          Warning: Official APY calculation is affected by the price of reward token, reward rate, and changes in principal within{' '}
-          <span style={{ color: '#a68efe', fontWeight: 'bold' }}>24</span> hour, and the statistical data is not absolutely accurate.
-        </p>
+        <div className={styles.tip}>
+          <div>Warning:</div>
+          <div className={styles.right}>
+            Official APY calculation is also affected by the price of reward token, reward rate and any changes in principal within{' '}
+            <span style={{ color: '#a68efe', fontWeight: 'bold' }}>24</span> hours, therefore statistical data could be inaccurate at times.
+          </div>
+        </div>
       </Card>
     </div>
   )
