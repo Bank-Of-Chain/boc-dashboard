@@ -179,7 +179,7 @@ const Strategy = props => {
           unrealizedApyDetail,
           dailyVerifiedApy
         }
-        hasMatch = i === lastDailyItem?.apyValidateTime
+        hasMatch = hasMatch || i === lastDailyItem?.apyValidateTime
         preDayOfficialApy = nextItem.officialApy
         return nextItem
       })
