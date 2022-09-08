@@ -19,6 +19,7 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Utils === //
 import moment from 'moment'
 import BN from 'bignumber.js'
+import last from 'lodash/last'
 import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
@@ -26,7 +27,7 @@ import { bestIntervalForArrays } from '@/utils/echart-utils'
 import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find } from 'lodash'
 
 // === Services === //
-import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails } from '@/services/api-service'
+import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails } from '@/services/api-service'
 
 // === Styles === //
 import styles from './style.less'
@@ -108,8 +109,9 @@ const Strategy = props => {
         },
         0,
         365
-      ).catch(() => {})
-    ]).then(([apys = { content: [] }, offChainApys]) => {
+      ).catch(() => {}),
+      getStrategyApyDetails(initialState.chain, initialState.vaultAddress, strategy?.strategyAddress, 0, 10)
+    ]).then(([apys = { content: [] }, offChainApys, dailyApy]) => {
       const startMoment = moment().utcOffset(0).subtract(366, 'day').startOf('day')
       const calcArray = reduce(
         new Array(366),
@@ -147,6 +149,9 @@ const Strategy = props => {
         }),
         'date'
       )
+      const lastDailyItem = last(filter(dailyApy, i => !isNil(i.dailyApy)))
+      let preDayOfficialApy = null
+      let hasMatch = false
 
       const nextApyArray = map(calcArray, i => {
         const { officialApy, originApy, offcialDetail } = get(offChainApyMap, i, {
@@ -162,11 +167,11 @@ const Strategy = props => {
           realizedApyDetail: [],
           unrealizedApyDetail: []
         })
-        return {
+        const nextItem = {
           date: i,
           originApy,
           value: expectedApy,
-          officialApy,
+          officialApy: hasMatch ? null : isNil(officialApy) ? preDayOfficialApy : officialApy,
           realizedApy,
           unrealizedApy,
           offcialDetail,
@@ -174,6 +179,9 @@ const Strategy = props => {
           unrealizedApyDetail,
           dailyVerifiedApy
         }
+        hasMatch = i === lastDailyItem?.apyValidateTime
+        preDayOfficialApy = nextItem.officialApy
+        return nextItem
       })
       setApyArray(nextApyArray)
     })
