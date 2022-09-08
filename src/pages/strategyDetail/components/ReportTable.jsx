@@ -68,7 +68,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
     }
   )
   const dataSource = data?.list
-  const unit = dataSource && dataSource[0]?.lpTokenUnit ? `(${dataSource[0]?.lpTokenUnit})` : ''
+  const unit = dataSource && dataSource[0]?.lpTokenUnit ? ` (${dataSource[0]?.lpTokenUnit})` : ''
 
   useEffect(() => {
     run({
@@ -100,7 +100,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       render: text => <span title={toFixed(text, decimal)}>{toFixed(text, decimal, displayDecimals)}</span>
     },
     {
-      title: `Asset Changed${unit}`,
+      title: `Asset Variation${unit}`,
       dataIndex: 'assetChange',
       key: 'assetChange',
       render: (text, item) => {
