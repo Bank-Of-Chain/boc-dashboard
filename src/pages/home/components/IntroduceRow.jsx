@@ -31,7 +31,7 @@ const IntroduceRow = ({ data = [] }) => {
   return (
     <Row gutter={[24, 24]}>
       {map(data, ({ title, tip, loading, content, unit, subTitle }) => {
-        let footer = <Field style={{ height: '1rem' }} value={subTitle} />
+        let footer = <Field style={{ height: '1.5rem' }} value={subTitle} />
         if (!subTitle && isMobile()) {
           footer = null
         }
