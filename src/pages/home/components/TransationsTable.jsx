@@ -110,7 +110,7 @@ const TransationsTable = ({
       )
     },
     {
-      title: 'Method',
+      title: 'Operation',
       dataIndex: 'type',
       key: 'type',
       ellipsis: {
@@ -118,7 +118,7 @@ const TransationsTable = ({
       }
     },
     {
-      title: 'Detail',
+      title: 'Details',
       key: 'detail',
       render: (text, item) => {
         const { type, transferredAmount, toAccountUpdate, fromAccountUpdate, totalSupplyChangeAmount } = item

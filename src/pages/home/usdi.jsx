@@ -81,13 +81,18 @@ const USDiHome = () => {
         const lengndData = []
         const data1 = map(xAxisData, date => {
           const item = find(result, { date })
-          return item ? formatApyValue(item.apy) : null
+          return item
+            ? {
+                value: formatApyValue(item.apy),
+                label: `${formatApyLabel(item.apy)}%`
+              }
+            : null
         })
         const columeArray = [
           {
             seriesName: 'APY',
             seriesData: data1,
-            showSymbol: size(filter(data1, i => !isNil(i))) === 1
+            showSymbol: size(filter(data1, i => !isNil(i.value))) === 1
           }
         ]
         const obj = {
@@ -132,6 +137,22 @@ const USDiHome = () => {
         option.yAxis.splitLine = {
           lineStyle: {
             color: '#454459'
+          }
+        }
+        option.tooltip = {
+          ...option.tooltip,
+          formatter: params => {
+            if (params.length > 0) {
+              const { axisValueLabel, marker, seriesName, data } = params[0]
+              let tooltip = `${axisValueLabel}<br/>${marker}${seriesName}: `
+              // value maybe null
+              if (data?.value) {
+                tooltip += data?.label
+              } else {
+                tooltip += '-'
+              }
+              return tooltip
+            }
           }
         }
         setApyEchartOpt(option)
@@ -184,7 +205,7 @@ const USDiHome = () => {
   const introduceData = [
     {
       title: 'Total Supply',
-      tip: 'Current total USDi supply',
+      tip: 'Current total USDi supply.',
       content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)).format('0.[0000]a') : 0,
       loading,
       unit: 'USDi',
@@ -192,13 +213,13 @@ const USDiHome = () => {
     },
     {
       title: 'Holders',
-      tip: 'Number Of USDi holders',
+      tip: 'Number Of USDi holders.',
       content: numeral(pegToken?.holderCount).format('0.[0000]a'),
       loading
     },
     {
       title: 'APY (last 30 days)',
-      tip: 'Yield over the past 1 month',
+      tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
       unit: '%'
