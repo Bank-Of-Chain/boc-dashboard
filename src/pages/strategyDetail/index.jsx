@@ -149,7 +149,7 @@ const Strategy = props => {
         }),
         'date'
       )
-      const lastDailyItem = last(filter(dailyApy, i => !isNil(i.dailyApy)))
+      const lastDailyItem = last(filter(dailyApy, i => !isNil(i.apyValidateTime)))
       let preDayOfficialApy = null
       let hasMatch = false
 
