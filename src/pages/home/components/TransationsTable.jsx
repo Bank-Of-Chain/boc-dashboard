@@ -7,10 +7,13 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Utils === //
 import moment from 'moment'
 import map from 'lodash/map'
+import { omit } from 'lodash'
+import compact from 'lodash/compact'
 import BN from 'bignumber.js'
 import { useModel } from 'umi'
 import { toLeastOneFixed, toFixed } from '@/utils/number-format'
 import { getRecentActivity } from '@/services/dashboard-service'
+import { getVaultConfig } from '@/utils/vault'
 
 // === Constants === //
 import { USDI_DECIMALS } from '@/constants/usdi'
@@ -36,18 +39,38 @@ const TransationsTable = ({
 
   const FILTER_OPTIONS = {
     All: 'All',
-    ...filterOptions
+    ...omit(filterOptions, [filterOptions.Deposit])
   }
   const [filter, setFilter] = useState(FILTER_OPTIONS.All)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : [filter]
+    const nextFilter = [filter]
+    if (filter === RECENT_ACTIVITY_TYPE.Mint) {
+      nextFilter.push(RECENT_ACTIVITY_TYPE.Deposit)
+    }
+    const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : nextFilter
     setTableLoading(true)
     getRecentActivity(initialState.vault, initialState.chain, types)
-      .then(data => {
+      .then(datas => {
+        const nextDatas = compact(
+          map(datas, item => {
+            if (
+              item.type === filterOptions.Mint &&
+              item?.toAccountUpdate?.account?.id?.toLowerCase() ===
+                getVaultConfig(initialState.chain, initialState.vault)?.vaultBufferAddress?.toLowerCase()
+            )
+              return
+            if (item.type === filterOptions.Deposit)
+              return {
+                ...item,
+                type: filterOptions.Mint
+              }
+            return item
+          })
+        )
         setCurrentPage(1)
-        setData(data)
+        setData(nextDatas)
       })
       .finally(() => {
         setTableLoading(false)
@@ -87,7 +110,7 @@ const TransationsTable = ({
       )
     },
     {
-      title: 'Method',
+      title: 'Operation',
       dataIndex: 'type',
       key: 'type',
       ellipsis: {
@@ -95,15 +118,13 @@ const TransationsTable = ({
       }
     },
     {
-      title: 'Detail',
+      title: 'Details',
       key: 'detail',
       render: (text, item) => {
         const { type, transferredAmount, toAccountUpdate, fromAccountUpdate, totalSupplyChangeAmount } = item
-        const changeValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
         const rebaseValue = toLeastOneFixed(totalSupplyChangeAmount, decimals, dispalyDecimal)
         const absChangeValue = toLeastOneFixed(BN(transferredAmount).abs(), decimals, dispalyDecimal)
         const transferValue = toLeastOneFixed(transferredAmount, decimals, dispalyDecimal)
-        const changeValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
         const rebaseValueTitle = toFixed(totalSupplyChangeAmount, BN(10 ** decimals))
         const absChangeValueTitle = toFixed(BN(transferredAmount).abs(), BN(10 ** decimals))
         const transferValueTitle = toFixed(transferredAmount, BN(10 ** decimals))
@@ -112,7 +133,7 @@ const TransationsTable = ({
         const fns = {
           Mint: () => (
             <>
-              {type} <span title={changeValueTitle}>{changeValue}</span> {token} to {renderAddress(to)}
+              {type} <span title={transferValueTitle}>{transferValue}</span> {token} to {renderAddress(to)}
             </>
           ),
           Burn: () => (
@@ -198,7 +219,7 @@ const TransationsTable = ({
     <Radio.Group value={filter} onChange={handleChange} buttonStyle="outline" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
       {map(FILTER_OPTIONS, (value, key) => (
         <Radio.Button value={value} key={key}>
-          {value}
+          {key}
         </Radio.Button>
       ))}
     </Radio.Group>
@@ -208,7 +229,7 @@ const TransationsTable = ({
       <Select style={{ width: 120 }} value={filter} onChange={handleChange}>
         {map(FILTER_OPTIONS, (value, key) => (
           <Option value={value} key={key}>
-            {value}
+            {key}
           </Option>
         ))}
       </Select>

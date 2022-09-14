@@ -72,6 +72,10 @@ const isPrSg = () => {
   return nextEnv === 'pr-sg'
 }
 
+const isPr02Sg = () => {
+  return nextEnv === 'pr02-sg'
+}
+
 const isDevLocal = () => {
   return nextEnv === 'local'
 }
@@ -85,46 +89,51 @@ const getApiServer = () => {
 const getDashboardRoot = () => {
   if (isDevLocal()) return 'http://localhost:8000'
   if (isPrSg()) return 'https://dashboard.bankofchain.io'
+  if (isPr02Sg()) return 'https://dashboard-v2.bankofchain.io'
   return `https://dashboard-${nextEnv}.bankofchain.io`
 }
 
 const getImageRoot = () => {
   if (isDevLocal()) return 'http://localhost:3001'
   if (isPrSg()) return 'https://bankofchain.io'
+  if (isPr02Sg()) return 'https://v2.bankofchain.io'
   return `https://${nextEnv}.bankofchain.io`
 }
 
 const getRpcFor1 = () => {
   if (isDevLocal()) return 'http://localhost:8545'
-  if (isPrSg()) return 'https://rpc.ankr.com/eth'
+  if (isPrSg() || isPr02Sg()) return 'https://rpc.ankr.com/eth'
   return `https://rpc-${nextEnv}.bankofchain.io`
 }
 const getRpcFor137 = () => {
   if (isDevLocal()) return 'http://localhost:8545'
-  if (isPrSg()) return 'https://rpc-mainnet.maticvigil.com'
+  if (isPrSg() || isPr02Sg()) return 'https://rpc-mainnet.maticvigil.com'
   return `https://rpc-${nextEnv}.bankofchain.io`
 }
 const getRpcFor31337 = () => {
   if (isDevLocal()) return 'http://localhost:8545'
-  if (isPrSg()) return ''
+  if (isPrSg() || isPr02Sg()) return ''
   return `https://rpc-${nextEnv}.bankofchain.io`
 }
 
 const getSubgraphForEthUsdi = () => {
   if (isDevLocal()) return 'http://localhost:8000'
   if (isPrSg()) return 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethereum'
+  if (isPr02Sg()) return 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-ethereum'
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`
 }
 
 const getSubgraphForMaticUsdi = () => {
   if (isDevLocal()) return 'http://localhost:8000'
   if (isPrSg()) return 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-polygon'
+  if (isPr02Sg()) return ''
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-eth`
 }
 
 const getSubgraphForEthEthi = () => {
   if (isDevLocal()) return 'http://localhost:8000'
   if (isPrSg()) return 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi'
+  if (isPr02Sg()) return 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-ethi'
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi`
 }
 
@@ -177,7 +186,7 @@ const chooseEnv = () => {
 }
 
 try {
-  start()
+  start().then(() => process.exit(0))
 } catch (error) {
   process.exit(2)
 }

@@ -2,6 +2,7 @@ import BN from 'bignumber.js'
 
 export const RECENT_ACTIVITY_TYPE = {
   Mint: 'Mint',
+  Deposit: 'Deposit',
   Burn: 'Burn',
   Rebase: 'Rebase',
   Transfer: 'Transfer'

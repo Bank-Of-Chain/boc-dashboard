@@ -8,7 +8,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { useModel, useRequest } from 'umi'
-import { toFixed } from '@/utils/number-format'
+import { toFixed, formatApyLabel } from '@/utils/number-format'
 import { isEmpty, filter, isNil, map, sortBy } from 'lodash'
 import BN from 'bignumber.js'
 
@@ -43,7 +43,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
             width={30}
             src={`${IMAGE_ROOT}/images/amms/${strategyMap[initialState.chain][item.protocol]}.png`}
             placeholder={item.protocol}
-            style={{ backgroundColor: '#fff', borderRadius: '50%' }}
+            style={{ borderRadius: '50%' }}
             alt={strategyMap[initialState.chain][item.protocol]}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
@@ -77,17 +77,17 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>
     },
     {
-      title: 'Weekly Official Apy',
+      title: 'Weekly Official APY',
       dataIndex: 'officialWeeklyApy',
       key: 'officialWeeklyApy',
       showSorterTooltip: false,
       sorter: (a, b) => {
         return a.officialWeeklyApy - b.officialWeeklyApy
       },
-      render: text => <span>{(100 * text).toFixed(2)} %</span>
+      render: text => <span>{formatApyLabel((100 * text).toFixed(2))}%</span>
     },
     {
-      title: 'Weekly Realized Apy',
+      title: 'Weekly Realized APY',
       dataIndex: 'realizedApy',
       key: 'realizedApy',
       showSorterTooltip: false,
@@ -99,13 +99,13 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: data => {
         if (isEmpty(data)) return <span>0.00%</span>
         const { value, detail } = data
-        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        const jsxElement = <span>{formatApyLabel((100 * value).toFixed(2))}%</span>
         if (isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
               <span key={index} style={{ display: 'block' }}>
-                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
+                {i.feeName}: {formatApyLabel((100 * i.feeApy).toFixed(2))}%
               </span>
             ))}
           </div>
@@ -121,7 +121,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
-      title: 'Weekly Unrealized Apy',
+      title: 'Weekly Unrealized APY',
       dataIndex: 'unrealizedApy',
       key: 'unrealizedApy',
       showSorterTooltip: false,
@@ -134,13 +134,13 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
         if (isEmpty(data)) return <span>0.00%</span>
         const { value, detail } = data
 
-        const jsxElement = <span>{(100 * value).toFixed(2)} %</span>
+        const jsxElement = <span>{formatApyLabel((100 * value).toFixed(2))}%</span>
         if (isEmpty(detail)) return jsxElement
         const nextWeekApyJsx = (
           <div>
             {map(detail, (i, index) => (
               <span key={index} style={{ display: 'block' }}>
-                {i.feeName}: {(100 * i.feeApy).toFixed(2)} %
+                {i.feeName}: {formatApyLabel((100 * i.feeApy).toFixed(2))}%
               </span>
             ))}
           </div>

@@ -13,20 +13,20 @@ exports[`Footer Component Render 1`] = `
         class="ant-pro-global-footer-links"
       >
         <a
-          href="https://bankofchain.io/"
+          href="https://v2.bankofchain.io/"
           rel="noreferrer"
           target="_blank"
-          title="BOC Homepage"
+          title="BoC Homepage"
         >
-          BOC Homepage
+          BoC Homepage
         </a>
         <a
-          href="https://dashboard.bankofchain.io/"
+          href="https://dashboard-v2.bankofchain.io/"
           rel="noreferrer"
           target="_blank"
-          title="BOC Dashboard"
+          title="BoC Dashboard"
         >
-          BOC Dashboard
+          BoC Dashboard
         </a>
       </div>
       <div
