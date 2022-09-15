@@ -29,7 +29,7 @@ import moment from 'moment'
 import { BigNumber } from 'ethers'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
-import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get } from 'lodash'
+import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
@@ -209,13 +209,18 @@ const USDiHome = () => {
     history.push(`/prices?chain=${initialState.chain}&vault=${initialState.vault}`)
   }
 
+  const text = toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
+  const totalSupplyTextWithSymbol = numeral(text).format('0.[00] a')
+  const [totalSupplyText, symbol] = totalSupplyTextWithSymbol.split(' ')
+  const isNotNumber = isNaN(new Number(symbol))
+
   const introduceData = [
     {
       title: 'Total Supply',
       tip: 'Current total USDi supply.',
-      content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)).format('0.[0000]a') : 0,
+      content: !isEmpty(pegToken) ? `${totalSupplyText}${isNotNumber ? '' : symbol}` : 0,
       loading,
-      unit: 'USDi',
+      unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} USDi`,
       subTitle: (
         <p>
           1USDi ≈ {price()}USD{' '}

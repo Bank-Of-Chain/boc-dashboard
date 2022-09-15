@@ -52,6 +52,7 @@ const subMarker =
 const Strategy = props => {
   const { id, ori = false, vault } = props?.location?.query
   const [loading, setLoading] = useState(false)
+  const [apyLoading, setApyLoading] = useState(false)
   const [strategy, setStrategy] = useState({})
   // Save all apy data
   const [apyArray, setApyArray] = useState([])
@@ -90,6 +91,7 @@ const Strategy = props => {
 
   useEffect(() => {
     if (isEmpty(strategy?.strategyName)) return
+    setApyLoading(true)
     Promise.all([
       getBaseApyByPage(
         {
@@ -111,80 +113,84 @@ const Strategy = props => {
         365
       ).catch(() => {}),
       getStrategyApyDetails(initialState.chain, initialState.vaultAddress, strategy?.strategyAddress, 0, 10)
-    ]).then(([apys = { content: [] }, offChainApys, dailyApy]) => {
-      const startMoment = moment().utcOffset(0).subtract(366, 'day').startOf('day')
-      const calcArray = reduce(
-        new Array(366),
-        rs => {
-          const currentMoment = startMoment.subtract(-1, 'day')
-          rs.push(currentMoment.format('yyyy-MM-DD'))
-          return rs
-        },
-        []
-      )
+    ])
+      .then(([apys = { content: [] }, offChainApys, dailyApy]) => {
+        const startMoment = moment().utcOffset(0).subtract(366, 'day').startOf('day')
+        const calcArray = reduce(
+          new Array(366),
+          rs => {
+            const currentMoment = startMoment.subtract(-1, 'day')
+            rs.push(currentMoment.format('yyyy-MM-DD'))
+            return rs
+          },
+          []
+        )
 
-      const offChainApyMap = keyBy(
-        map(offChainApys.content, i => {
-          return {
-            value: 100 * i.apy,
-            officialApy: (i.apy * 100).toFixed(2),
-            originApy: (i.originApy * 100).toFixed(2),
-            offcialDetail: i.detail,
-            date: formatToUTC0(i.fetchTime * 1000, 'yyyy-MM-DD')
-          }
-        }),
-        'date'
-      )
-      const extentApyMap = keyBy(
-        map(apys.content, i => {
-          return {
-            realizedApy: (i.realizedApy?.value * 100).toFixed(2),
-            realizedApyDetail: i.realizedApy?.detail,
-            unrealizedApy: (i.unrealizedApy?.value * 100).toFixed(2),
-            unrealizedApyDetail: i.unrealizedApy?.detail,
-            expectedApy: (i.verifiedApy * 100).toFixed(2),
-            dailyVerifiedApy: (i.dailyVerifiedApy * 100).toFixed(2),
-            date: formatToUTC0(i.scheduleTimestamp * 1000, 'yyyy-MM-DD')
-          }
-        }),
-        'date'
-      )
-      const lastDailyItem = last(filter(dailyApy, i => !isNil(i.apyValidateTime)))
-      let preDayOfficialApy = null
-      let hasMatch = false
+        const offChainApyMap = keyBy(
+          map(offChainApys.content, i => {
+            return {
+              value: 100 * i.apy,
+              officialApy: (i.apy * 100).toFixed(2),
+              originApy: (i.originApy * 100).toFixed(2),
+              offcialDetail: i.detail,
+              date: formatToUTC0(i.fetchTime * 1000, 'yyyy-MM-DD')
+            }
+          }),
+          'date'
+        )
+        const extentApyMap = keyBy(
+          map(apys.content, i => {
+            return {
+              realizedApy: (i.realizedApy?.value * 100).toFixed(2),
+              realizedApyDetail: i.realizedApy?.detail,
+              unrealizedApy: (i.unrealizedApy?.value * 100).toFixed(2),
+              unrealizedApyDetail: i.unrealizedApy?.detail,
+              expectedApy: (i.verifiedApy * 100).toFixed(2),
+              dailyVerifiedApy: (i.dailyVerifiedApy * 100).toFixed(2),
+              date: formatToUTC0(i.scheduleTimestamp * 1000, 'yyyy-MM-DD')
+            }
+          }),
+          'date'
+        )
+        const lastDailyItem = last(filter(dailyApy, i => !isNil(i.apyValidateTime)))
+        let preDayOfficialApy = null
+        let hasMatch = false
 
-      const nextApyArray = map(calcArray, i => {
-        const { officialApy, originApy, offcialDetail } = get(offChainApyMap, i, {
-          officialApy: null,
-          originApy: null,
-          offcialDetail: []
+        const nextApyArray = map(calcArray, i => {
+          const { officialApy, originApy, offcialDetail } = get(offChainApyMap, i, {
+            officialApy: null,
+            originApy: null,
+            offcialDetail: []
+          })
+          const { expectedApy, realizedApy, unrealizedApy, dailyVerifiedApy, realizedApyDetail, unrealizedApyDetail } = get(extentApyMap, i, {
+            expectedApy: null,
+            unrealizedApy: null,
+            realizedApy: null,
+            dailyVerifiedApy: null,
+            realizedApyDetail: [],
+            unrealizedApyDetail: []
+          })
+          const nextItem = {
+            date: i,
+            originApy,
+            value: expectedApy,
+            officialApy: hasMatch ? null : isNil(officialApy) ? preDayOfficialApy : officialApy,
+            realizedApy,
+            unrealizedApy,
+            offcialDetail,
+            realizedApyDetail,
+            unrealizedApyDetail,
+            dailyVerifiedApy
+          }
+          hasMatch = hasMatch || i === lastDailyItem?.apyValidateTime
+          preDayOfficialApy = nextItem.officialApy
+          return nextItem
         })
-        const { expectedApy, realizedApy, unrealizedApy, dailyVerifiedApy, realizedApyDetail, unrealizedApyDetail } = get(extentApyMap, i, {
-          expectedApy: null,
-          unrealizedApy: null,
-          realizedApy: null,
-          dailyVerifiedApy: null,
-          realizedApyDetail: [],
-          unrealizedApyDetail: []
-        })
-        const nextItem = {
-          date: i,
-          originApy,
-          value: expectedApy,
-          officialApy: hasMatch ? null : isNil(officialApy) ? preDayOfficialApy : officialApy,
-          realizedApy,
-          unrealizedApy,
-          offcialDetail,
-          realizedApyDetail,
-          unrealizedApyDetail,
-          dailyVerifiedApy
-        }
-        hasMatch = hasMatch || i === lastDailyItem?.apyValidateTime
-        preDayOfficialApy = nextItem.officialApy
-        return nextItem
+        setApyArray(nextApyArray)
       })
-      setApyArray(nextApyArray)
-    })
+      .finally(() => {
+        setApyLoading(false)
+      })
   }, [strategy, strategy?.strategyName])
 
   const intervalArray = []
@@ -346,13 +352,6 @@ const Strategy = props => {
     }
   ]
 
-  if (loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <Spin size="large" />
-      </div>
-    )
-  }
   if (!initialState.chain || isEmpty(strategy)) return null
 
   const { underlyingTokens, totalAssetBaseCurrent } = strategy
@@ -453,7 +452,6 @@ const Strategy = props => {
       </Suspense>
       <Suspense fallback={null}>
         <Card
-          loading={loading}
           title="APY (%)"
           className={styles.offlineCard}
           bordered={false}
@@ -463,7 +461,13 @@ const Strategy = props => {
           {...chartResponsiveConfig.cardProps}
         >
           <div style={chartResponsiveConfig.chartStyle}>
-            <LineEchart option={option} style={{ height: '100%', width: '100%' }} />
+            {apyLoading ? (
+              <div className={styles.loadingContainer}>
+                <Spin size="large" />
+              </div>
+            ) : (
+              <LineEchart option={option} style={{ height: '100%', width: '100%' }} />
+            )}
           </div>
         </Card>
       </Suspense>
