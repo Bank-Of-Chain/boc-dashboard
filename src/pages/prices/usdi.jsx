@@ -4,6 +4,7 @@ import React, { Suspense } from 'react'
 import { useModel, useRequest } from 'umi'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import map from 'lodash/map'
+import { formatToUTC0 } from '@/utils/date'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
@@ -33,7 +34,7 @@ const USDIPrice = () => {
   const showData = map(data?.list, i => {
     return {
       value: i.rate,
-      date: i.validateTime
+      date: formatToUTC0(i.validateTime, 'MM-DD')
     }
   })
   const tvlEchartOpt = getLineEchartOpt(showData, 'value', 'date', {
@@ -48,7 +49,7 @@ const USDIPrice = () => {
     yAxis: {
       axisLabel: {
         formatter: v => {
-          const value = new BigNumber(v).minus(1e17)
+          const value = new BigNumber(v).minus(1e18)
           return `${value.gt(0) ? '+' : ''} ${value.toFormat()}`
         }
       }
