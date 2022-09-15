@@ -18,7 +18,7 @@ import BigNumber from 'bignumber.js'
 const USDIPrice = () => {
   const { initialState } = useModel('@@initialState')
 
-  const { data } = useRequest(() => getPrices(initialState.chain, initialState.vaultAddress), {
+  const { data, loading } = useRequest(() => getPrices(initialState.chain, initialState.vaultAddress), {
     manual: false,
     paginated: true,
     formatResult: resp => {
@@ -50,7 +50,8 @@ const USDIPrice = () => {
       axisLabel: {
         formatter: v => {
           const value = new BigNumber(v).minus(1e18)
-          return `${value.gt(0) ? '+' : ''} ${value.toFormat()}`
+          if (value.eq(0)) return '1.0000'
+          return ''
         }
       }
     },
@@ -66,7 +67,7 @@ const USDIPrice = () => {
       <Suspense fallback={null}>
         <ChainChange />
       </Suspense>
-      <Suspense fallback={null}>
+      <Suspense fallback={loading}>
         <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />
       </Suspense>
     </GridContent>

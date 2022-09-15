@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 
 // === Utils === //
 import { useModel, useRequest } from 'umi'
@@ -16,7 +16,7 @@ import BigNumber from 'bignumber.js'
 
 const ETHIPrice = () => {
   const { initialState } = useModel('@@initialState')
-  const { data } = useRequest(() => getPrices(initialState.chain, initialState.vaultAddress), {
+  const { data, loading } = useRequest(() => getPrices(initialState.chain, initialState.vaultAddress), {
     manual: false,
     paginated: true,
     formatResult: resp => {
@@ -35,7 +35,7 @@ const ETHIPrice = () => {
       date: formatToUTC0(i.validateTime, 'MM-DD')
     }
   })
-  const tvlEchartOpt = getLineEchartOpt(showData, 'value', 'date', {
+  const tvlEchartOpt = getLineEchartOpt(showData, 'value', 'price', {
     format: 'MM-DD',
     yAxisMin: value => value.min,
     yAxisMax: value => value.max,
@@ -48,7 +48,9 @@ const ETHIPrice = () => {
       axisLabel: {
         formatter: v => {
           const value = new BigNumber(v).minus(1e18)
-          return `${value.gt(0) ? '+' : ''} ${value.toFormat()}`
+          if (value.eq(0)) return '1.0000'
+          return ''
+          // return `${value.gt(0) ? '+' : ''} ${value.toFormat()}`
         }
       }
     },
@@ -62,7 +64,9 @@ const ETHIPrice = () => {
   return (
     <Row>
       <Col span={24}>
-        <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />
+        <Suspense fallback={loading}>
+          <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />
+        </Suspense>
       </Col>
     </Row>
   )
