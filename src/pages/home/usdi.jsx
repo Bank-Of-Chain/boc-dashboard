@@ -23,13 +23,16 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
-import { useModel } from 'umi'
+import { useModel, history } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import { BigNumber } from 'ethers'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
 import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get } from 'lodash'
+
+// === Styles === //
+import styles from './style.less'
 
 const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -202,6 +205,10 @@ const USDiHome = () => {
     return toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)
   }
 
+  const handleHistoryClick = () => {
+    history.push(`/prices?chain=${initialState.chain}&vault=${initialState.vault}`)
+  }
+
   const introduceData = [
     {
       title: 'Total Supply',
@@ -209,7 +216,14 @@ const USDiHome = () => {
       content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)).format('0.[0000]a') : 0,
       loading,
       unit: 'USDi',
-      subTitle: `1USDi ≈ ${price()}USD`
+      subTitle: (
+        <p>
+          1USDi ≈ {price()}USD{' '}
+          <span className={styles.history} onClick={handleHistoryClick}>
+            History
+          </span>
+        </p>
+      )
     },
     {
       title: 'Holders',
