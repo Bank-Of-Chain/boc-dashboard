@@ -206,7 +206,7 @@ const ETHiHome = () => {
   }
 
   const text = toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
-  const totalSupplyTextWithSymbol = numeral(text).format('0.[00] a')
+  const totalSupplyTextWithSymbol = numeral(text).format('0.00 a')
   const [totalSupplyText, symbol] = totalSupplyTextWithSymbol.split(' ')
   const isNotNumber = isNaN(new Number(symbol))
 
