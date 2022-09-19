@@ -5,6 +5,7 @@ import { useModel, useRequest } from 'umi'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import map from 'lodash/map'
 import { formatToUTC0 } from '@/utils/date'
+import { toFixed } from '@/utils/number-format'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
@@ -13,7 +14,6 @@ import { LineEchart } from '@/components/echarts'
 
 // === Services === //
 import { getPrices } from '@/services/price-service'
-import BigNumber from 'bignumber.js'
 
 const USDIPrice = () => {
   const { initialState } = useModel('@@initialState')
@@ -33,8 +33,8 @@ const USDIPrice = () => {
   })
   const showData = map(data?.list, i => {
     return {
-      value: i.rate,
-      date: formatToUTC0(i.validateTime, 'MM-DD')
+      value: toFixed(i.rate, 1e18),
+      date: formatToUTC0(i.validateTime, 'YYYY-MM-DD')
     }
   })
   const tvlEchartOpt = getLineEchartOpt(showData, 'value', 'date', {
@@ -49,8 +49,7 @@ const USDIPrice = () => {
     yAxis: {
       axisLabel: {
         formatter: v => {
-          const value = new BigNumber(v).minus(1e18)
-          if (value.eq(0)) return '1.0000'
+          if (v === 1) return '1.0000'
           return ''
         }
       }
