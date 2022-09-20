@@ -8,7 +8,7 @@ import { formatToUTC0 } from '@/utils/date'
 import { toFixed } from '@/utils/number-format'
 
 // === Components === //
-import { Row, Col } from 'antd'
+import { GridContent } from '@ant-design/pro-layout'
 import { LineEchart } from '@/components/echarts'
 
 // === Services === //
@@ -60,13 +60,9 @@ const ETHIPrice = () => {
     ]
   })
   return (
-    <Row>
-      <Col span={24}>
-        <Suspense fallback={loading}>
-          <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />
-        </Suspense>
-      </Col>
-    </Row>
+    <GridContent>
+      <Suspense fallback={null}>{!loading && <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />}</Suspense>
+    </GridContent>
   )
 }
 export default ETHIPrice
