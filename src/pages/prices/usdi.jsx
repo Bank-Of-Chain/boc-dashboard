@@ -66,9 +66,7 @@ const USDIPrice = () => {
       <Suspense fallback={null}>
         <ChainChange />
       </Suspense>
-      <Suspense fallback={loading}>
-        <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />
-      </Suspense>
+      <Suspense fallback={null}>{!loading && <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />}</Suspense>
     </GridContent>
   )
 }
