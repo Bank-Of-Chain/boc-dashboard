@@ -11,6 +11,7 @@ import { useModel, useRequest } from 'umi'
 import { toFixed, formatApyLabel } from '@/utils/number-format'
 import { isEmpty, filter, isNil, map, sortBy } from 'lodash'
 import BN from 'bignumber.js'
+import { isMarketingHost } from '@/utils/location'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
@@ -50,7 +51,9 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           <a
             target={'_blank'}
             rel="noreferrer"
-            href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}&vault=${initialState.vault}`}
+            href={`${isMarketingHost() ? 'https://dashboard.bankofchain.io' : DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${
+              initialState.chain
+            }&vault=${initialState.vault}`}
             className={styles.text}
           >
             {text}
