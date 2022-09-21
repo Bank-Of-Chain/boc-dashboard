@@ -3,5 +3,5 @@
  * @returns
  */
 export const isMarketingHost = () => {
-  return location.host === 'dashboard.bankofchain.io' || location.host === 'dashboard-qa03-sg.bankofchain.io'
+  return location.host === 'dashboard.bankofchain.io'
 }

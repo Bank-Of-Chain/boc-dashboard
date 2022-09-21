@@ -14,13 +14,13 @@ const Footer = () => {
         {
           key: 'BoC Homepage',
           title: 'BoC Homepage',
-          href: isMarketing ? 'https://bankofchain.io/' : 'https://v2.bankofchain.io/',
+          href: isMarketing ? 'https://bankofchain.io/' : IMAGE_ROOT,
           blankTarget: true
         },
         {
           key: 'BoC Dashboard',
           title: 'BoC Dashboard',
-          href: isMarketing ? 'https://dashboard.bankofchain.io/' : 'https://dashboard-v2.bankofchain.io/',
+          href: isMarketing ? 'https://dashboard.bankofchain.io/' : DASHBOARD_ROOT,
           blankTarget: true
         }
       ]}
