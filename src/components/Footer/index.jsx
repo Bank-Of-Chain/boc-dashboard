@@ -1,8 +1,12 @@
 import React from 'react'
 import { DefaultFooter } from '@ant-design/pro-layout'
 
+// === Utils === //
+import { isMarketingHost } from '@/utils/location'
+
 const Footer = () => {
   const currentYear = new Date().getFullYear()
+  const isMarketing = isMarketingHost()
   return (
     <DefaultFooter
       copyright={`Produced by Bank Of Chain ${currentYear}`}
@@ -10,13 +14,13 @@ const Footer = () => {
         {
           key: 'BoC Homepage',
           title: 'BoC Homepage',
-          href: 'https://v2.bankofchain.io/',
+          href: isMarketing ? 'https://bankofchain.io/' : 'https://v2.bankofchain.io/',
           blankTarget: true
         },
         {
           key: 'BoC Dashboard',
           title: 'BoC Dashboard',
-          href: 'https://dashboard-v2.bankofchain.io/',
+          href: isMarketing ? 'https://dashboard.bankofchain.io/' : 'https://dashboard-v2.bankofchain.io/',
           blankTarget: true
         }
       ]}
