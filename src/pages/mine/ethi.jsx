@@ -73,7 +73,7 @@ const Personal = () => {
       unit: 'ETHi'
     },
     {
-      title: 'Profit',
+      title: 'Profits',
       tip: 'Total profits from BoC.',
       content: numeral(profit).format('0,0.00'),
       loading,
