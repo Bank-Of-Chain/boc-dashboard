@@ -67,7 +67,11 @@ const dataMerge = (account, chain, vault, tokenType, requests) => {
     // get monthly profit
     getMonthProfits(account, params),
     getProfits(account, params),
-    getLatestProfit(account, chain, tokenType),
+    getLatestProfit(account, chain, tokenType).catch(() => {
+      return {
+        profit: '0'
+      }
+    }),
     ...requests
   ])
     .then(rs => {

@@ -59,7 +59,7 @@ const Personal = () => {
     {
       title: 'Profits',
       tip: 'Total profits from BoC.',
-      content: numeral(profit).format('0,0.00'),
+      content: numeral(toFixed(profit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)).format('0,0.00'),
       loading,
       unit: latestProfit?.tokenType
     },
