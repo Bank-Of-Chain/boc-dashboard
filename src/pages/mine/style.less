@@ -13,3 +13,39 @@
   font-size: 30px;
   line-height: 70px;
 }
+
+.buttons {
+  :global {
+    .ant-radio-button-wrapper {
+      width: 7.5rem;
+      height: 2.25rem;
+      line-height: 2rem;
+    }
+    @media screen and (max-width: 780px) {
+      .ant-radio-button-wrapper {
+        width: 5rem;
+        height: 2.25rem;
+        padding: 0 1rem;
+        line-height: 2rem;
+      }
+    }
+    @media screen and (max-width: 554px) {
+      .ant-radio-button-wrapper {
+        width: auto;
+        height: auto;
+        padding: 0 0.4rem;
+        font-size: 0.4rem;
+        line-height: 1.5rem;
+      }
+    }
+    @media screen and (max-width: 400px) {
+      .ant-radio-button-wrapper {
+        width: auto;
+        height: auto;
+        padding: 0 0.3rem;
+        font-size: 0.4rem;
+        line-height: 1.2rem;
+      }
+    }
+  }
+}
