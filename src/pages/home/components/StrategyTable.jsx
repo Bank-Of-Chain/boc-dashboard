@@ -33,7 +33,19 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   const decimals = BN(1e18)
   const columns = [
     {
-      title: 'Name',
+      title: (
+        <div>
+          Name&nbsp;&nbsp;
+          <Tooltip
+            placement="topLeft"
+            arrowPointAtCenter
+            overlayStyle={{ width: 300 }}
+            title="By clicking on the strategy name you will be directed to the strategy page with all the related information viewable, e.g., strategy profits and official APY."
+          >
+            <InfoCircleOutlined />
+          </Tooltip>
+        </div>
+      ),
       dataIndex: 'strategyName',
       key: 'strategyName',
       width: 320,

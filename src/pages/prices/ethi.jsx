@@ -37,8 +37,12 @@ const ETHIPrice = () => {
   })
   const tvlEchartOpt = getLineEchartOpt(showData, 'value', 'price', {
     format: 'MM-DD',
-    yAxisMin: value => value.min,
-    yAxisMax: value => value.max,
+    yAxisMin: value => {
+      return (1 - Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 0.99995
+    },
+    yAxisMax: value => {
+      return (1 + Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 1.00005
+    },
     xAxis: {
       axisTick: {
         alignWithLabel: true
@@ -47,8 +51,7 @@ const ETHIPrice = () => {
     yAxis: {
       axisLabel: {
         formatter: v => {
-          if (v === 1) return '1.0000'
-          return ''
+          return v.toFixed(6)
         }
       }
     },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 // === Services === //
+import { getLatestProfit } from '@/services/profits-service'
 import { getProfits, getPersonTvlArray, getMonthProfits, getAccountApyByAddress } from '@/services/api-service'
 
 // === Utils === //
@@ -66,11 +67,11 @@ const dataMerge = (account, chain, vault, tokenType, requests) => {
     // get monthly profit
     getMonthProfits(account, params),
     getProfits(account, params),
+    getLatestProfit(account, chain, tokenType),
     ...requests
   ])
     .then(rs => {
-      const [day7Apy, day30Apy, tvls, monthProfits, profit, balanceOfToken] = rs
-
+      const [day7Apy, day30Apy, tvls, monthProfits, profit, latestProfit, balanceOfToken] = rs
       const displayDecimals = {
         [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
         [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
@@ -92,9 +93,9 @@ const dataMerge = (account, chain, vault, tokenType, requests) => {
           }))
         ),
         monthProfits: reverse(monthProfitsData),
-        realizedProfit: profit.realizedProfit,
-        unrealizedProfit: profit.unrealizedProfit,
-        balanceOfToken
+        profit: profit.profit,
+        balanceOfToken,
+        latestProfit
       }
 
       return nextData
