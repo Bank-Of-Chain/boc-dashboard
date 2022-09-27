@@ -59,3 +59,8 @@ test('number-format formatApyValue', () => {
   const text = formatApyValue(null)
   expect(text).toBe(null)
 })
+
+test('number-format toLeastOneFixed small value', () => {
+  const text = toLeastOneFixed(815436538078, 18, 4)
+  expect(text).toBe('0.0000008')
+})
