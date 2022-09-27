@@ -5,6 +5,7 @@ import { Empty } from 'antd'
 import { Donut } from '@ant-design/charts'
 
 // === Utils === //
+import numeral from 'numeral'
 import BN from 'bignumber.js'
 import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
@@ -35,7 +36,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     'protocol'
   )
   const vaultDisplayValue = toFixed(tvl, tokenDecimals, displayDecimals)
-  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty style={{ marginBottom: '1rem' }} />
+  if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty style={{ marginTop: '4rem' }} />
 
   const tableData = [
     ...values(
@@ -110,7 +111,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
         statistic={{
           visible: true,
           content: {
-            value: toFixed(tvl, tokenDecimals, displayDecimals),
+            value: numeral(toFixed(tvl, tokenDecimals, displayDecimals)).format('0.[0000]a'),
             name: `TVL${suffix}`
           }
         }}
