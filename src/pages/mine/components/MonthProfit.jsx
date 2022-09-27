@@ -74,6 +74,16 @@ export default function MonthProfit({ title }) {
   }, [initialState, segmentType])
 
   const option = {
+    title: {
+      show: true,
+      textStyle: {
+        color: 'rgb(157 157 157)',
+        fontSize: 25
+      },
+      text: 'No Data',
+      left: 'center',
+      top: 'center'
+    },
     textStyle: {
       color: '#fff'
     },
