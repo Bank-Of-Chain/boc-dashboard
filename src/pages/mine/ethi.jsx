@@ -191,7 +191,7 @@ const Personal = () => {
         />
       </Suspense>
       <Suspense fallback={null}>
-        <MonthProfit title="Monthly Profit" />
+        <MonthProfit title="Profit" />
       </Suspense>
     </GridContent>
   )
