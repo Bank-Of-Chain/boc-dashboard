@@ -1,6 +1,6 @@
 export const VAULT_TYPE = {
-  USDi: 'usdi',
-  ETHi: 'ethi'
+  USDi: 'USDi',
+  ETHi: 'ETHi'
 }
 
 export const TOKEN_DISPLAY_DECIMALS = 2
