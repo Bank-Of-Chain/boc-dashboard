@@ -482,7 +482,7 @@ const Reports = () => {
 
   return (
     <GridContent>
-      {initialState.vault === 'USDi' && <ChainChange shouldChangeChain />}
+      {initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}
       <Suspense fallback={null}>
         <Card bordered={false} title="Allocation Reports" {...listResponsiveConfig.cardProps}>
           <Table

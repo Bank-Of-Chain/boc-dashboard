@@ -76,7 +76,7 @@ const GlobalHeaderRight = () => {
   const handleMenuClick = e => {
     const vault = e.key
     let promise = Promise.resolve()
-    if (history.location.pathname === '/reports' && vault === 'ETHi') {
+    if (history.location.pathname === '/reports' && vault === 'ethi') {
       promise = changeNetwork('1', userProvider, getWalletName(), {
         resolveWhenUnsupport: true
       })
@@ -142,8 +142,8 @@ const GlobalHeaderRight = () => {
           selectedKeys={[current]}
           mode="horizontal"
           items={[
-            { label: 'ETHi', key: 'ETHi' },
-            { label: 'USDi', key: 'USDi' }
+            { label: 'ETHi', key: 'ethi' },
+            { label: 'USDi', key: 'usdi' }
           ]}
         />
       ) : (
