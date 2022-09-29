@@ -75,8 +75,8 @@ const Personal = () => {
     {
       title: 'Profits',
       tip: 'Total profits from BoC.',
-      content: numeral(toFixed(profit, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0,0.00'),
-      estimateContent: `+${numeral(latestProfit?.profit).format('0,0.00')} ${latestProfit?.tokenType}`,
+      content: numeral(toFixed(profit, ETHI_BN_DECIMALS)).format('0,0.[0000]'),
+      estimateContent: `+${numeral(latestProfit?.profit).format('0,0.[000000]')} ${latestProfit?.tokenType}`,
       loading,
       unit: latestProfit?.tokenType
     },

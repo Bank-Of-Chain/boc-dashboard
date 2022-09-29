@@ -22,6 +22,7 @@ import { TOKEN_TYPE } from '@/constants'
 
 // === Styles === //
 import styles from './../style.less'
+import { toFixed } from '@/utils/number-format'
 
 const { Option } = Select
 
@@ -99,7 +100,7 @@ export default function MonthProfit({ title, isEthi }) {
         console.log('params=', param)
         let message = ''
         message += `${param.name}`
-        message += `<br/>${param.marker}${param.seriesName}: ${param.value}`
+        message += `<br/>${param.marker}${param.seriesName}: ${toFixed(`${param.value}`, 1, isEthi ? 6 : 2)}`
         if (segmentType === WEEK) {
           message += `<br/>${getMarker('#fff')}Begin: ${param.data.segmentBegin}`
           message += `<br/>${getMarker('#fff')}End: ${param.data.segmentEnd}`
