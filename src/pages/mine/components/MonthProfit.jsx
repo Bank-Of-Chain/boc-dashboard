@@ -18,6 +18,7 @@ import { reverse } from 'lodash'
 
 // === Constants === //
 import { SEGMENT_TYPES, DAY, WEEK, MONTH } from '@/constants/date'
+import { TOKEN_TYPE } from '@/constants'
 
 // === Styles === //
 import styles from './../style.less'
@@ -28,7 +29,7 @@ const getMarker = color => {
   return `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`
 }
 
-export default function MonthProfit({ title }) {
+export default function MonthProfit({ title, isEthi }) {
   const deviceType = useDeviceType()
 
   const [loading, setLoading] = useState(false)
@@ -58,7 +59,7 @@ export default function MonthProfit({ title }) {
   useEffect(() => {
     if (isEmpty(segmentType)) return
     setLoading(true)
-    getSegmentProfit(initialState.address, initialState.chain, initialState.vault, segmentType)
+    getSegmentProfit(initialState.address, initialState.chain, isEthi ? TOKEN_TYPE.ethi : TOKEN_TYPE.usdi, segmentType)
       .then(resp => {
         setData(
           map(reverse(resp.profits), i => {
