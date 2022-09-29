@@ -58,9 +58,16 @@ const Personal = () => {
     },
     {
       title: 'Profits',
-      tip: 'Total profits from BoC.',
+      tip: 'Total profits from BoC that are withdrawable and cumulative.',
       content: numeral(toFixed(profit, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)).format('0,0.[00]'),
-      estimateContent: `+${numeral(latestProfit?.profit).format('0,0.[00]')} ${latestProfit?.tokenType}`,
+      estimateContent: (
+        <div>
+          {`+${numeral(latestProfit?.profit).format('0,0.[00]')} ${latestProfit?.tokenType}`}&nbsp;&nbsp;
+          <Tooltip arrowPointAtCenter title={'Profits obtained each time after rebase.'}>
+            <InfoCircleOutlined style={{ fontSize: 14 }} />
+          </Tooltip>
+        </div>
+      ),
       loading,
       unit: latestProfit?.tokenType
     },
