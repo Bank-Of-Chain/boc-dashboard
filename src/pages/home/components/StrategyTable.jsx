@@ -11,6 +11,7 @@ import { useModel, useRequest } from 'umi'
 import { toFixed, formatApyLabel } from '@/utils/number-format'
 import { isEmpty, filter, isNil, map, sortBy } from 'lodash'
 import BN from 'bignumber.js'
+import { isMarketingHost } from '@/utils/location'
 
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
@@ -32,7 +33,19 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   const decimals = BN(1e18)
   const columns = [
     {
-      title: 'Name',
+      title: (
+        <div>
+          Name&nbsp;&nbsp;
+          <Tooltip
+            placement="topLeft"
+            arrowPointAtCenter
+            overlayStyle={{ width: 300 }}
+            title="By clicking on the strategy name you will be directed to the strategy page with all the related information viewable, e.g., strategy profits and official APY."
+          >
+            <InfoCircleOutlined />
+          </Tooltip>
+        </div>
+      ),
       dataIndex: 'strategyName',
       key: 'strategyName',
       width: 320,
@@ -50,7 +63,9 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           <a
             target={'_blank'}
             rel="noreferrer"
-            href={`${DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${initialState.chain}&vault=${initialState.vault}`}
+            href={`${isMarketingHost() ? 'https://dashboard.bankofchain.io' : DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${
+              initialState.chain
+            }&vault=${initialState.vault}`}
             className={styles.text}
           >
             {text}

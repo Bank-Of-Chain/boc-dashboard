@@ -1,27 +1,121 @@
-import React from 'react'
-import { Card } from 'antd'
-import moment from 'moment'
+import React, { useEffect, useState } from 'react'
+
 import { BarEchart } from '@/components/echarts'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
-export default function MonthProfit({ title, data, loading }) {
-  const deviceType = useDeviceType()
-  const { monthProfits = [] } = data
+// === Components === //
+import { Card, Radio, Select } from 'antd'
 
-  const monthOffset = moment().utcOffset(0).month() + 1
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  const array = months.slice(monthOffset)
-  const array1 = months.splice(0, monthOffset)
-  const nextMonths = [...array, ...array1]
+// === Services === //
+import { getSegmentProfit } from '@/services/profits-service'
+
+// === Utils === //
+import { useModel } from 'umi'
+import moment from 'moment'
+import map from 'lodash/map'
+import isEmpty from 'lodash/isEmpty'
+import { reverse } from 'lodash'
+
+// === Constants === //
+import { SEGMENT_TYPES, DAY, WEEK, MONTH } from '@/constants/date'
+import { TOKEN_TYPE } from '@/constants'
+
+// === Styles === //
+import styles from './../style.less'
+import { toFixed } from '@/utils/number-format'
+
+const { Option } = Select
+
+const getMarker = color => {
+  return `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`
+}
+
+export default function MonthProfit({ title, isEthi }) {
+  const deviceType = useDeviceType()
+
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+  const [segmentType, setSegmentType] = useState(DAY)
+  const { initialState } = useModel('@@initialState')
+
+  const titleRender = (title = '') => {
+    const isWeek = segmentType === WEEK
+    if (isWeek) {
+      const [, index] = title.split('-')
+      return `No.${index}`
+    }
+    const isMonth = segmentType === MONTH
+    if (isMonth) {
+      return `${moment(title).format('MMM')}.`
+    }
+
+    const isDay = segmentType === DAY
+    if (isDay) {
+      const [, m, d] = title.split('-')
+      return `${m}-${d}`
+    }
+    return title
+  }
+
+  useEffect(() => {
+    if (isEmpty(segmentType)) return
+    setLoading(true)
+    getSegmentProfit(initialState.address, initialState.chain, isEthi ? TOKEN_TYPE.ethi : TOKEN_TYPE.usdi, segmentType)
+      .then(resp => {
+        setData(
+          map(reverse(resp.profits), i => {
+            return {
+              ...i,
+              segmentTime: titleRender(i.segmentTime),
+              value: 1 * i.profit
+            }
+          })
+        )
+      })
+      .finally(() => setLoading(false))
+  }, [initialState, segmentType])
 
   const option = {
+    title: {
+      show: true,
+      textStyle: {
+        color: 'rgb(157 157 157)',
+        fontSize: 25
+      },
+      text: isEmpty(data) ? 'No Data' : '',
+      left: 'center',
+      top: 'center'
+    },
     textStyle: {
       color: '#fff'
     },
     color: ['#A68EFE', '#5470c6'],
-    tooltip: {},
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
+      formatter: function (params) {
+        const param = params[0]
+        console.log('params=', param)
+        let message = ''
+        message += `${param.name}`
+        message += `<br/>${param.marker}${param.seriesName}: ${toFixed(`${param.value}`, 1, isEthi ? 6 : 2)}`
+        if (segmentType === WEEK) {
+          message += `<br/>${getMarker('#fff')}Begin: ${param.data.segmentBegin}`
+          message += `<br/>${getMarker('#fff')}End: ${param.data.segmentEnd}`
+        }
+        return message
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
     xAxis: {
-      data: nextMonths,
+      data: map(data, 'segmentTime'),
       axisLine: { onZero: true },
       splitLine: { show: false },
       splitArea: { show: false },
@@ -36,24 +130,30 @@ export default function MonthProfit({ title, data, loading }) {
         }
       }
     },
-    grid: {},
     series: [
       {
-        name: 'Total',
+        name: 'Profits',
         type: 'bar',
-        stack: 'one',
-        data: monthProfits
+        data: data
       }
     ]
   }
-
   const responsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
       cardProps: {
         style: {
           height: '452px'
         }
-      }
+      },
+      extra: (
+        <Radio.Group value={segmentType} onChange={event => setSegmentType(event.target.value)} buttonStyle="outline" className={styles.buttons}>
+          {map(SEGMENT_TYPES, (value, key) => (
+            <Radio.Button value={value} key={key}>
+              {value}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      )
     },
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
@@ -61,7 +161,16 @@ export default function MonthProfit({ title, data, loading }) {
         style: {
           height: '402px'
         }
-      }
+      },
+      extra: (
+        <Radio.Group value={segmentType} onChange={event => setSegmentType(event.target.value)} buttonStyle="outline" className={styles.buttons}>
+          {map(SEGMENT_TYPES, (value, key) => (
+            <Radio.Button value={value} key={key}>
+              {value}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      )
     },
     [DEVICE_TYPE.Mobile]: {
       cardProps: {
@@ -69,7 +178,16 @@ export default function MonthProfit({ title, data, loading }) {
         style: {
           height: '302px'
         }
-      }
+      },
+      extra: (
+        <Select style={{ width: 120 }} value={segmentType} onChange={event => setSegmentType(event.target.value)}>
+          {map(SEGMENT_TYPES, (value, key) => (
+            <Option value={value} key={key}>
+              {value}
+            </Option>
+          ))}
+        </Select>
+      )
     }
   }[deviceType]
 
@@ -78,6 +196,7 @@ export default function MonthProfit({ title, data, loading }) {
       loading={loading}
       bordered={false}
       size={responsiveConfig.cardProps.size}
+      extra={responsiveConfig.extra}
       bodyStyle={{
         paddingLeft: 0,
         paddingRight: 0,

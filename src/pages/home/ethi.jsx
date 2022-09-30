@@ -20,7 +20,7 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
-import { useModel } from 'umi'
+import { useModel, history } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import BN from 'bignumber.js'
@@ -28,6 +28,9 @@ import { BigNumber } from 'ethers'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
 import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce } from 'lodash'
+
+// === Styles === //
+import styles from './style.less'
 
 const ETHiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -198,14 +201,30 @@ const ETHiHome = () => {
     return toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)
   }
 
+  const handleHistoryClick = () => {
+    history.push(`/prices?chain=${initialState.chain}&vault=${initialState.vault}`)
+  }
+
+  const text = toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
+  const totalSupplyTextWithSymbol = numeral(text).format('0.00 a')
+  const [totalSupplyText, symbol] = totalSupplyTextWithSymbol.split(' ')
+  const isNotNumber = isNaN(new Number(symbol))
+
   const introduceData = [
     {
       title: 'Total Supply',
       tip: 'Current total ETHi supply.',
-      content: !isEmpty(pegToken) ? numeral(toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a') : 0,
+      content: !isEmpty(pegToken) ? `${totalSupplyText}${isNotNumber ? '' : symbol}` : 0,
       loading,
-      unit: 'ETHi',
-      subTitle: `1ETHi ≈ ${price()}ETH`
+      unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} ETHi`,
+      subTitle: (
+        <p>
+          1ETHi ≈ {price()}ETH{' '}
+          <span className={styles.history} onClick={handleHistoryClick}>
+            History
+          </span>
+        </p>
+      )
     },
     {
       title: 'Holders',

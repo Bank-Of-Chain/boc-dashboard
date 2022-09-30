@@ -74,7 +74,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
             style={{ borderRadius: '50%' }}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
-          <a className={styles.text}>{text}</a>
+          <span className={styles.text}>{text}</span>
         </div>
       )
     },

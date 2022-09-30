@@ -16,6 +16,10 @@ export default [
     component: './reports'
   },
   {
+    path: '/prices',
+    component: './prices'
+  },
+  {
     component: '404'
   }
 ]
