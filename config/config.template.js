@@ -94,6 +94,8 @@ export default defineConfig({
     API_SERVER: '{{{API_SERVER}}}',
     DASHBOARD_ROOT: '{{{DASHBOARD_ROOT}}}',
     IMAGE_ROOT: '{{{IMAGE_ROOT}}}',
+    PUBLISH_TIME: '{{{PUBLISH_TIME}}}',
+    PUBLISH_BRANCH: '{{{PUBLISH_BRANCH}}}',
     CHAIN_BROWSER_URL: {
       1: 'https://etherscan.io',
       137: 'https://polygonscan.com'

@@ -2,7 +2,9 @@ const fs = require('fs')
 const argv = require('minimist')(process.argv.slice(2))
 const axios = require('axios')
 const inquirer = require('inquirer')
+const moment = require('moment')
 const { isEmpty } = require('lodash')
+const { execSync } = require('child_process')
 
 const { env } = argv
 let nextEnv = env
@@ -61,7 +63,9 @@ const start = async () => {
       SUB_GRAPH_URL_FOR_ETHI: getSubgraphForEthEthi(),
       RPC_FOR_1: getRpcFor1(),
       RPC_FOR_137: getRpcFor137(),
-      RPC_FOR_31337: getRpcFor31337()
+      RPC_FOR_31337: getRpcFor31337(),
+      PUBLISH_TIME: moment().utcOffset(8).format('YYYY-MM-DD HH:mm:ss'),
+      PUBLISH_BRANCH: getGitBranch()
     }
     fs.writeFileSync('./config/address.json', JSON.stringify(config, undefined, 2))
     console.log('write json success')
@@ -135,6 +139,11 @@ const getSubgraphForEthEthi = () => {
   if (isPrSg()) return 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-subgraph-ethi'
   if (isPr02Sg()) return 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-ethi'
   return `https://${nextEnv}-subgraph.bankofchain.io/subgraphs/name/boc-v1_5/subgraph-ethi`
+}
+
+function getGitBranch() {
+  const res = execSync('git symbolic-ref --short HEAD').toString()
+  return res.replace('\n', '')
 }
 
 const chooseEnv = () => {
