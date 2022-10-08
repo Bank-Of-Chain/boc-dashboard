@@ -388,7 +388,7 @@ const Reports = () => {
     operateLoss,
     originalApr,
     originalGain,
-    fun,
+    totalDeltaGain,
     durationDays,
     originalHarvestFee = [],
     harvestFee,
@@ -586,7 +586,7 @@ const Reports = () => {
               Profit
             </Divider>
             <Descriptions {...detailHeaderResponsiveConfig.lastDescProps}>
-              <Descriptions.Item label="Allocation Profit">{(-1 * fun).toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label="Allocation Profit">{totalDeltaGain.toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label="Allocation Cost">{sum(operateLoss).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label="Operate Gas Fee">{sum(operateFee).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label="Exchange Loss">{sum(exchangeLoss).toFixed(6)}</Descriptions.Item>
