@@ -388,7 +388,7 @@ const Reports = () => {
     operateLoss,
     originalApr,
     originalGain,
-    totalDeltaGain,
+    totalDeltaGain = 0,
     durationDays,
     originalHarvestFee = [],
     harvestFee,
