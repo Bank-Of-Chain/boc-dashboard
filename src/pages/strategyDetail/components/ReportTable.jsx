@@ -47,7 +47,8 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         chainId: initialState.chain,
         vaultAddress: initialState.vaultAddress,
         limit: pagination.pageSize,
-        offset: (pagination.current - 1) * pagination.pageSize
+        offset: (pagination.current - 1) * pagination.pageSize,
+        sort: 'fetch_index desc'
       }).catch(() => {
         return {
           content: [],
