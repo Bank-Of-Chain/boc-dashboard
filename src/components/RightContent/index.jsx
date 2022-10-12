@@ -7,7 +7,7 @@ import copy from 'copy-to-clipboard'
 // === Components === //
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
-import { LoadingOutlined, AreaChartOutlined } from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
@@ -105,9 +105,9 @@ const GlobalHeaderRight = () => {
     })
   }
 
-  const goToMine = () => {
-    history.push(`/mine?chain=${initialState.chain}&vault=${initialState.vault}`)
-  }
+  // const goToMine = () => {
+  //   history.push(`/mine?chain=${initialState.chain}&vault=${initialState.vault}`)
+  // }
 
   const copyAddress = () => {
     copy(address)
@@ -172,9 +172,7 @@ const GlobalHeaderRight = () => {
               logoutOfWeb3Modal={disconnect}
               onCopy={copyAddress}
             />,
-            <Button className={styles.myDasboardBtn} key="mine" icon={<AreaChartOutlined />} type="primary" onClick={goToMine}>
-              My Dashboard
-            </Button>
+            <Button className={styles.myDasboardBtn} key="mine" type="primary" disabled />
           ]
         )}
       </Space>
