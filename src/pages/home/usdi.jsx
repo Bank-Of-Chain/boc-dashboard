@@ -244,6 +244,7 @@ const USDiHome = () => {
       unit: '%'
     }
   ]
+  console.log('tvlEchartOpt=', tvlEchartOpt)
   return (
     <GridContent>
       <Suspense fallback={null}>

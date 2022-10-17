@@ -1,4 +1,4 @@
-import { Space, Button, Menu, message } from 'antd'
+import { Space, Button, Menu, message, Dropdown } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
@@ -7,7 +7,7 @@ import copy from 'copy-to-clipboard'
 // === Components === //
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
-import { LoadingOutlined } from '@ant-design/icons'
+import { LoadingOutlined, DownOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
@@ -33,7 +33,7 @@ const disabledChangeVaultRoute = ['/strategy']
 const GlobalHeaderRight = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
-  const [current, setCurrent] = useState(initialState.vault)
+  const [, setCurrent] = useState(initialState.vault)
   const [walletModalVisible, setWalletModalVisible] = useState(false)
   const connectTimer = useRef(null)
 
@@ -136,16 +136,40 @@ const GlobalHeaderRight = () => {
   return (
     <div className={styles.header}>
       {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
-        <Menu
-          className={styles.headerMenu}
-          onClick={handleMenuClick}
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={[
-            { label: 'ETHi', key: 'ethi' },
-            { label: 'USDi', key: 'usdi' }
-          ]}
-        />
+        <Dropdown
+          overlay={
+            <Menu
+              onClick={handleMenuClick}
+              style={{ padding: '0 2rem', textAlign: 'center' }}
+              items={[
+                {
+                  label: 'USDi',
+                  key: 'usdi'
+                },
+                {
+                  label: 'ETHi',
+                  key: 'ethi'
+                },
+                {
+                  label: 'USDr',
+                  key: 'usdr'
+                },
+                {
+                  label: 'ETHr',
+                  key: 'ethr'
+                }
+              ]}
+            />
+          }
+          open={open}
+        >
+          <a style={{ marginRight: '2rem' }} onClick={e => e.preventDefault()}>
+            <Space>
+              Vaults
+              <DownOutlined />
+            </Space>
+          </a>
+        </Dropdown>
       ) : (
         <span />
       )}

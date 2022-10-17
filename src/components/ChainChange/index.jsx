@@ -60,9 +60,9 @@ const ChainChange = props => {
   return (
     <Row>
       <Col span={24} className={styles.container}>
-        <Radio.Group onChange={v => changeChain(v.target.value)} value={initialState.chain} buttonStyle="outline">
+        <Radio.Group size="large" onChange={v => changeChain(v.target.value)} value={initialState.chain} buttonStyle="solid">
           {map(options, (item, key) => (
-            <Radio.Button value={item.value} key={key}>
+            <Radio.Button style={{ padding: '1rem 5rem', height: 'auto', lineHeight: 1 }} value={item.value} key={key}>
               {item.label}
             </Radio.Button>
           ))}

@@ -10,4 +10,4 @@ export const TOKEN_TYPE = {
   ethi: 'ETHi'
 }
 
-export const POLYGON_HIDDEN = true
+export const POLYGON_HIDDEN = false

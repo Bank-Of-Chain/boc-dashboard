@@ -1,4 +1,5 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
@@ -9,12 +10,13 @@ import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
-import { Typography, Row, Col } from 'antd'
+import ChainChange from '@/components/ChainChange'
 
 // === Constants === //
-import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
+import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
-import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { USDI_BN_DECIMALS } from '@/constants/usdi'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
@@ -24,18 +26,15 @@ import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/servi
 import { useModel, history } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
-import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
-import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce } from 'lodash'
+import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
 
-const { Title } = Typography
-
-const ETHiHome = () => {
+const ETHr = () => {
   const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [apyEchartOpt, setApyEchartOpt] = useState({})
@@ -65,7 +64,7 @@ const ETHiHome = () => {
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
       limit: calDateRange,
-      tokenType: TOKEN_TYPE.ethi
+      tokenType: TOKEN_TYPE.usdi
     })
       .then(data => {
         const items = appendDate(data.content, 'apy', calDateRange)
@@ -76,9 +75,11 @@ const ETHiHome = () => {
             apy: apyValue
           }
         })
-        setApy30(data.content[0] ? data.content[0].apy : 0)
+        const nextApy30 = get(data, 'content.[0].apy', 0)
+        setApy30(nextApy30)
 
         const xAxisData = uniq(map(result, ({ date }) => date))
+
         // option for multi line
         const lengndData = []
         const data1 = map(xAxisData, date => {
@@ -165,16 +166,16 @@ const ETHiHome = () => {
     getTokenTotalSupplyList({
       chainId: initialState.chain,
       limit: calDateRange,
-      tokenType: TOKEN_TYPE.ethi
+      tokenType: TOKEN_TYPE.usdi
     })
       .then(data => {
         const items = appendDate(data.content, 'totalSupply', calDateRange)
         const result = map(reverse(items), ({ date, totalSupply }) => ({
           date,
-          totalSupply: toFixed(totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
+          totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
         }))
         setTvlEchartOpt(
-          getLineEchartOpt(result, 'totalSupply', 'ETHi', {
+          getLineEchartOpt(result, 'totalSupply', 'USDi', {
             ...params,
             yAxisMin: value => Math.floor(value.min * 0.998),
             yAxisMax: value => Math.ceil(value.max * 1.001)
@@ -208,7 +209,7 @@ const ETHiHome = () => {
     history.push(`/prices?chain=${initialState.chain}&vault=${initialState.vault}`)
   }
 
-  const text = toFixed(pegToken?.totalSupply, ETHI_BN_DECIMALS, ETHI_DISPLAY_DECIMALS)
+  const text = toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
   const totalSupplyTextWithSymbol = numeral(text).format('0.00 a')
   const [totalSupplyText, symbol] = totalSupplyTextWithSymbol.split(' ')
   const isNotNumber = isNaN(new Number(symbol))
@@ -216,13 +217,13 @@ const ETHiHome = () => {
   const introduceData = [
     {
       title: 'Total Supply',
-      tip: 'Current total ETHi supply.',
+      tip: 'Current total USDi supply.',
       content: !isEmpty(pegToken) ? `${totalSupplyText}${isNotNumber ? '' : symbol}` : 0,
       loading,
-      unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} ETHi`,
+      unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} USDi`,
       subTitle: (
         <p>
-          1ETHi ≈ {price()}ETH{' '}
+          1USDi ≈ {price()}USD{' '}
           <span className={styles.history} onClick={handleHistoryClick}>
             History
           </span>
@@ -231,7 +232,7 @@ const ETHiHome = () => {
     },
     {
       title: 'Holders',
-      tip: 'Number Of ETHi holders.',
+      tip: 'Number Of USDi holders.',
       content: numeral(pegToken?.holderCount).format('0.[0000]a'),
       loading
     },
@@ -243,72 +244,36 @@ const ETHiHome = () => {
       unit: '%'
     }
   ]
-
-  const vaultData = cloneDeep(dataSource.vault)
-  if (vaultData) {
-    const strategyTotal = reduce(
-      vaultData.strategies,
-      (rs, o) => {
-        return rs.plus(o.debtRecordInVault)
-      },
-      BN(0)
-    )
-    vaultData.totalValueInVault = BN(vaultData.totalAssets).minus(strategyTotal).toString()
-    vaultData.strategies.map(item => (item.totalValue = item.debtRecordInVault))
-  }
-
   return (
     <GridContent>
-      <Row gutter={[24, 24]}>
-        <Col span={24}>
-          <Suspense fallback={null}>
-            <Title level={1}>Board for USDr</Title>
-            <IntroduceRow data={introduceData} />
-          </Suspense>
-        </Col>
-        <Col span={24}>
-          <Suspense fallback={null}>
-            <LineChartContent
-              loading={loading}
-              calDateRange={calDateRange}
-              onCalDateRangeClick={setCalDateRange}
-              apyEchartOpt={apyEchartOpt}
-              tvlEchartOpt={tvlEchartOpt}
-            />
-          </Suspense>
-        </Col>
-        <Col span={24}>
-          <Suspense fallback={null}>
-            <ProtocolAllocation
-              loading={loading}
-              strategyMap={ETHI_STRATEGIES_MAP}
-              tokenDecimals={ETHI_BN_DECIMALS}
-              displayDecimals={ETHI_DISPLAY_DECIMALS}
-              vaultData={vaultData}
-              unit="ETH"
-            />
-          </Suspense>
-        </Col>
-        <Col span={24}>
-          <Suspense fallback={null}>
-            <StrategyTable unit="ETH" loading={loading} strategyMap={ETHI_STRATEGIES_MAP} displayDecimals={ETHI_DISPLAY_DECIMALS} />
-          </Suspense>
-        </Col>
-        <Col span={24}>
-          <Suspense fallback={null}>
-            <TransationsTable
-              token="ETHi"
-              decimals={ETHI_DECIMALS}
-              dispalyDecimal={ETHI_DISPLAY_DECIMALS}
-              filterOptions={RECENT_ACTIVITY_TYPE}
-              loading={loading}
-            />
-          </Suspense>
-        </Col>
-        <Col span={24}></Col>
-      </Row>
+      <Suspense fallback={null}>
+        <ChainChange />
+      </Suspense>
+      <Suspense fallback={null}>
+        <IntroduceRow data={introduceData} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <LineChartContent
+          isUsdi
+          loading={loading}
+          calDateRange={calDateRange}
+          onCalDateRangeClick={setCalDateRange}
+          apyEchartOpt={apyEchartOpt}
+          tvlEchartOpt={tvlEchartOpt}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <TransationsTable loading={loading} />
+      </Suspense>
     </GridContent>
   )
 }
 
-export default ETHiHome
+export default ETHr
