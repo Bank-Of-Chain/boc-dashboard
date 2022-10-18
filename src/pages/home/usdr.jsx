@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
-import { Row, Col, Typography, Table, Card, Collapse } from 'antd'
+import { Row, Col, Typography, Card } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
 import ChainChange from '@/components/ChainChange'
@@ -18,90 +18,61 @@ import numeral from 'numeral'
 // === Styles === //
 
 const { Title } = Typography
-const { Panel } = Collapse
 
 const USDiHome = () => {
   const loading = false
   const introduceData = [
     {
-      title: 'Vaults',
-      tip: 'Current total USDi supply.',
-      content: numeral('33222112').format('0.[0000]a'),
+      title: 'Deposit',
+      tip: 'All Vault Net Deposit.',
+      content: numeral('332221').format('0.[0000]a'),
       loading,
-      unit: '',
-      subTitle: <p>+ 335 (last 24h)</p>
+      unit: 'WETH'
+    },
+    {
+      title: 'Current Value',
+      tip: 'All Vault Current Value.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
+    },
+    {
+      title: 'Unrealized Profit',
+      tip: 'All Vault Unrealized Profit.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
     },
     {
       title: 'Holders',
       tip: 'Number Of USDi holders.',
-      content: numeral('123124').format('0.[0000]a'),
-      loading
-    },
-    {
-      title: 'APY (last 30 days)',
-      tip: 'Yield over the past month.',
-      content: numeral('123124').format('0.[0000]a'),
+      content: numeral('5').format('0.[0000]a'),
       loading,
       unit: ''
+    },
+    {
+      title: 'AAVE Outstanding Loan',
+      tip: 'All Vault AAVE Outstanding Loan.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
+    },
+    {
+      title: 'AAVE Collateral',
+      tip: 'All Vault AAVE Collateral.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
+    },
+    {
+      title: 'Uniswap Position Value',
+      tip: 'All Vault Uniswap Position Value.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
     }
   ]
 
-  const dataSource = [
-    {
-      key: '1',
-      name: '胡彦斌',
-      age: 32,
-      address: '西湖区湖底公园1号'
-    },
-    {
-      key: '2',
-      name: '胡彦祖',
-      age: 42,
-      address: '西湖区湖底公园1号'
-    },
-    {
-      key: '3',
-      name: '胡彦斌',
-      age: 32,
-      address: '西湖区湖底公园1号'
-    },
-    {
-      key: '4',
-      name: '胡彦祖',
-      age: 42,
-      address: '西湖区湖底公园1号'
-    },
-    {
-      key: '5',
-      name: '胡彦斌',
-      age: 32,
-      address: '西湖区湖底公园1号'
-    },
-    {
-      key: '6',
-      name: '胡彦祖',
-      age: 42,
-      address: '西湖区湖底公园1号'
-    }
-  ]
-
-  const columns = [
-    {
-      title: '姓名',
-      dataIndex: 'name',
-      key: 'name'
-    },
-    {
-      title: '年龄',
-      dataIndex: 'age',
-      key: 'age'
-    },
-    {
-      title: '住址',
-      dataIndex: 'address',
-      key: 'address'
-    }
-  ]
   const options = {
     animation: false,
     textStyle: {
@@ -229,20 +200,15 @@ const USDiHome = () => {
       </Col>
       <Col span={24}>
         <Suspense fallback={null}>
-          <IntroduceRow data={introduceData} />
-        </Suspense>
-      </Col>
-      <Col span={24}>
-        <Suspense fallback={null}>
-          <Card title={'IRR'}>
+          <Card title="Uniswap APY">
             <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
           </Card>
         </Suspense>
       </Col>
       <Col span={24}>
         <Suspense>
-          <Card title={'My Vaults'}>
-            <Table dataSource={dataSource} columns={columns} />
+          <Card title="Sample APY">
+            <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
           </Card>
         </Suspense>
       </Col>
@@ -261,9 +227,9 @@ const USDiHome = () => {
           </Suspense>
         </Col>
         <Col span={24}>
-          <Collapse defaultActiveKey={['1']}>
+          {jsx}
+          {/* <Collapse defaultActiveKey={['1']}>
             <Panel header="xxxxxxxxxxxxxxxxxxxxx" key="1">
-              {jsx}
             </Panel>
             <Panel header="xxxxxxxxxxxxxxxxxxxxx" key="2">
               {jsx}
@@ -271,7 +237,7 @@ const USDiHome = () => {
             <Panel header="xxxxxxxxxxxxxxxxxxx" key="3">
               {jsx}
             </Panel>
-          </Collapse>
+          </Collapse> */}
         </Col>
       </Row>
     </GridContent>
