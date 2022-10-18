@@ -151,11 +151,11 @@ const GlobalHeaderRight = () => {
                   key: 'ethi'
                 },
                 {
-                  label: 'USDr',
+                  label: 'USDr Vault',
                   key: 'usdr'
                 },
                 {
-                  label: 'ETHr',
+                  label: 'ETHr Vault',
                   key: 'ethr'
                 }
               ]}

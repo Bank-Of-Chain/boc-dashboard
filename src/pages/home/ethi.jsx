@@ -9,7 +9,7 @@ import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
-import { Typography, Row, Col } from 'antd'
+import { Row, Col } from 'antd'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -32,8 +32,6 @@ import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, redu
 
 // === Styles === //
 import styles from './style.less'
-
-const { Title } = Typography
 
 const ETHiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -262,7 +260,6 @@ const ETHiHome = () => {
       <Row gutter={[24, 24]}>
         <Col span={24}>
           <Suspense fallback={null}>
-            <Title level={1}>Board for USDr</Title>
             <IntroduceRow data={introduceData} />
           </Suspense>
         </Col>

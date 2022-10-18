@@ -1,279 +1,242 @@
 import React from 'react'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
+import { Row, Col, Card } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
-import LineChartContent from './components/LineChartContent'
-import ProtocolAllocation from './components/ProtocolAllocation'
-import StrategyTable from './components/StrategyTable'
-import TransationsTable from './components/TransationsTable'
-import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
-import multipleLine from '@/components/echarts/options/line/multipleLine'
+import { LineEchart } from '@/components/echarts'
 import ChainChange from '@/components/ChainChange'
 
 // === Constants === //
-import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
-import { TOKEN_TYPE, APY_DURATION } from '@/constants'
-import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-import { USDI_BN_DECIMALS } from '@/constants/usdi'
 
 // === Services === //
-import useDashboardData from '@/hooks/useDashboardData'
-import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
-import { useModel, history } from 'umi'
 import numeral from 'numeral'
-import moment from 'moment'
-import { BigNumber } from 'ethers'
-import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
-import { appendDate } from '@/utils/array-append'
-import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN } from 'lodash'
 
 // === Styles === //
-import styles from './style.less'
 
-const ETHr = () => {
-  const [calDateRange, setCalDateRange] = useState(31)
-  const [tvlEchartOpt, setTvlEchartOpt] = useState({})
-  const [apyEchartOpt, setApyEchartOpt] = useState({})
-  const [apy30, setApy30] = useState(0)
-
-  const { initialState } = useModel('@@initialState')
-
-  const { dataSource = {}, loading } = useDashboardData()
-  const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource
-
-  useEffect(() => {
-    if (!initialState.chain) {
-      return
-    }
-    const params = {
-      xAxis: {
-        axisTick: {
-          alignWithLabel: true
-        }
-      },
-      format: 'MM-DD HH:mm'
-    }
-    if (calDateRange > 7) {
-      params.format = 'MM-DD'
-    }
-    getValutAPYList({
-      chainId: initialState.chain,
-      duration: APY_DURATION.monthly,
-      limit: calDateRange,
-      tokenType: TOKEN_TYPE.usdi
-    })
-      .then(data => {
-        const items = appendDate(data.content, 'apy', calDateRange)
-        const result = map(reverse(items), ({ date, apy }) => {
-          const apyValue = isNil(apy) ? null : `${numeral(apy).format('0.00')}`
-          return {
-            date,
-            apy: apyValue
-          }
-        })
-        const nextApy30 = get(data, 'content.[0].apy', 0)
-        setApy30(nextApy30)
-
-        const xAxisData = uniq(map(result, ({ date }) => date))
-
-        // option for multi line
-        const lengndData = []
-        const data1 = map(xAxisData, date => {
-          const item = find(result, { date })
-          return item
-            ? {
-                value: formatApyValue(item.apy),
-                label: `${formatApyLabel(item.apy)}%`
-              }
-            : null
-        })
-        const columeArray = [
-          {
-            seriesName: 'APY',
-            seriesData: data1,
-            showSymbol: size(filter(data1, i => !isNil(i.value))) === 1
-          }
-        ]
-        const obj = {
-          legend: {
-            data: lengndData,
-            textStyle: { color: '#fff' }
-          },
-          xAxisData,
-          data: columeArray
-        }
-        const option = multipleLine(obj)
-        option.color = ['#A68EFE', '#5470c6', '#91cc75']
-        option.series.forEach(serie => {
-          serie.connectNulls = true
-          if (serie.name === 'Estimated APY') {
-            serie.lineStyle = {
-              width: 2,
-              type: 'dotted'
-            }
-          }
-        })
-        option.grid = {
-          top: 40,
-          left: '0%',
-          right: '5%',
-          bottom: '0%',
-          containLabel: true
-        }
-        const xAxisLabels = []
-        option.xAxis.data = option.xAxis.data.map(item => {
-          // time format to tomorrow datetime string
-          const value = `${moment(item).add(1, 'days').format('YYYY-MM-DD HH:mm')} (UTC)`
-          xAxisLabels[value] = moment(item).add(1, 'days').format(params.format)
-          return value
-        })
-        option.xAxis.axisLabel = {
-          formatter: value => xAxisLabels[value]
-        }
-        option.xAxis.axisTick = {
-          alignWithLabel: true
-        }
-        option.yAxis.splitLine = {
-          lineStyle: {
-            color: '#454459'
-          }
-        }
-        option.tooltip = {
-          ...option.tooltip,
-          formatter: params => {
-            if (params.length > 0) {
-              const { axisValueLabel, marker, seriesName, data } = params[0]
-              let tooltip = `${axisValueLabel}<br/>${marker}${seriesName}: `
-              // value maybe null
-              if (data?.value) {
-                tooltip += data?.label
-              } else {
-                tooltip += '-'
-              }
-              return tooltip
-            }
-          }
-        }
-        setApyEchartOpt(option)
-      })
-      .catch(e => {
-        console.error(e)
-      })
-    getTokenTotalSupplyList({
-      chainId: initialState.chain,
-      limit: calDateRange,
-      tokenType: TOKEN_TYPE.usdi
-    })
-      .then(data => {
-        const items = appendDate(data.content, 'totalSupply', calDateRange)
-        const result = map(reverse(items), ({ date, totalSupply }) => ({
-          date,
-          totalSupply: toFixed(totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
-        }))
-        setTvlEchartOpt(
-          getLineEchartOpt(result, 'totalSupply', 'USDi', {
-            ...params,
-            yAxisMin: value => Math.floor(value.min * 0.998),
-            yAxisMax: value => Math.ceil(value.max * 1.001)
-          })
-        )
-      })
-      .catch(e => {
-        console.error(e)
-      })
-  }, [calDateRange, initialState.chain])
-
-  useEffect(() => {
-    return () => {
-      clearAPICache()
-    }
-  }, [])
-
-  if (isEmpty(initialState.chain)) return null
-
-  const price = () => {
-    if (isEmpty(pegToken) || pegToken?.totalSupply === '0' || isEmpty(vault?.totalAssets)) return '1'
-    if (!isEmpty(vaultBuffer)) {
-      if (vault.isAdjust) {
-        return toFixed(BigNumber.from(vault.totalAssets).sub(vaultBuffer.totalSupply), pegToken?.totalSupply, 6)
-      }
-    }
-    return toFixed(vault?.totalAssets, pegToken?.totalSupply, 6)
-  }
-
-  const handleHistoryClick = () => {
-    history.push(`/prices?chain=${initialState.chain}&vault=${initialState.vault}`)
-  }
-
-  const text = toFixed(pegToken?.totalSupply, USDI_BN_DECIMALS, TOKEN_DISPLAY_DECIMALS)
-  const totalSupplyTextWithSymbol = numeral(text).format('0.00 a')
-  const [totalSupplyText, symbol] = totalSupplyTextWithSymbol.split(' ')
-  const isNotNumber = isNaN(new Number(symbol))
-
+const USDiHome = () => {
+  const loading = false
   const introduceData = [
     {
-      title: 'Total Supply',
-      tip: 'Current total USDi supply.',
-      content: !isEmpty(pegToken) ? `${totalSupplyText}${isNotNumber ? '' : symbol}` : 0,
+      title: 'Deposit',
+      tip: 'All Vault Net Deposit.',
+      content: numeral('332221').format('0.[0000]a'),
       loading,
-      unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} USDi`,
-      subTitle: (
-        <p>
-          1USDi ≈ {price()}USD{' '}
-          <span className={styles.history} onClick={handleHistoryClick}>
-            History
-          </span>
-        </p>
-      )
+      unit: 'WETH'
+    },
+    {
+      title: 'Current Value',
+      tip: 'All Vault Current Value.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
+    },
+    {
+      title: 'Unrealized Profit',
+      tip: 'All Vault Unrealized Profit.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
     },
     {
       title: 'Holders',
       tip: 'Number Of USDi holders.',
-      content: numeral(pegToken?.holderCount).format('0.[0000]a'),
-      loading
+      content: numeral('5').format('0.[0000]a'),
+      loading,
+      unit: ''
     },
     {
-      title: 'APY (last 30 days)',
-      tip: 'Yield over the past month.',
-      content: formatApyLabel(parseFloat(apy30).toFixed(2)),
+      title: 'AAVE Outstanding Loan',
+      tip: 'All Vault AAVE Outstanding Loan.',
+      content: numeral('123124').format('0.[0000]a'),
       loading,
-      unit: '%'
+      unit: 'WETH'
+    },
+    {
+      title: 'AAVE Collateral',
+      tip: 'All Vault AAVE Collateral.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
+    },
+    {
+      title: 'Uniswap Position Value',
+      tip: 'All Vault Uniswap Position Value.',
+      content: numeral('123124').format('0.[0000]a'),
+      loading,
+      unit: 'WETH'
     }
   ]
+
+  const options = {
+    animation: false,
+    textStyle: {
+      color: '#fff'
+    },
+    grid: {
+      top: 40,
+      left: '0%',
+      right: '5%',
+      bottom: '0%',
+      containLabel: true
+    },
+    tooltip: {
+      trigger: 'axis',
+      borderWidth: 0,
+      backgroundColor: '#292B2E',
+      textStyle: {
+        color: '#fff'
+      }
+    },
+    xAxis: {
+      axisLabel: {},
+      type: 'category',
+      data: [
+        '2022-09-14 00:00 (UTC)',
+        '2022-09-15 00:00 (UTC)',
+        '2022-09-16 00:00 (UTC)',
+        '2022-09-17 00:00 (UTC)',
+        '2022-09-18 00:00 (UTC)',
+        '2022-09-19 00:00 (UTC)',
+        '2022-09-20 00:00 (UTC)',
+        '2022-09-21 00:00 (UTC)',
+        '2022-09-22 00:00 (UTC)',
+        '2022-09-23 00:00 (UTC)',
+        '2022-09-24 00:00 (UTC)',
+        '2022-09-25 00:00 (UTC)',
+        '2022-09-26 00:00 (UTC)',
+        '2022-09-27 00:00 (UTC)',
+        '2022-09-28 00:00 (UTC)',
+        '2022-09-29 00:00 (UTC)',
+        '2022-09-30 00:00 (UTC)',
+        '2022-10-01 00:00 (UTC)',
+        '2022-10-02 00:00 (UTC)',
+        '2022-10-03 00:00 (UTC)',
+        '2022-10-04 00:00 (UTC)',
+        '2022-10-05 00:00 (UTC)',
+        '2022-10-06 00:00 (UTC)',
+        '2022-10-07 00:00 (UTC)',
+        '2022-10-08 00:00 (UTC)',
+        '2022-10-09 00:00 (UTC)',
+        '2022-10-10 00:00 (UTC)',
+        '2022-10-11 00:00 (UTC)',
+        '2022-10-12 00:00 (UTC)',
+        '2022-10-13 00:00 (UTC)',
+        '2022-10-14 00:00 (UTC)'
+      ],
+      axisTick: {
+        alignWithLabel: true
+      }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: {
+        lineStyle: {
+          color: '#454459'
+        }
+      }
+    },
+    dataZoom: null,
+    color: ['#A68EFE', '#5470c6', '#91cc75'],
+    series: [
+      {
+        name: 'USDi',
+        data: [
+          '1.88',
+          '1.25',
+          '1.86',
+          '1.86',
+          '1.75',
+          '1.49',
+          '1.59',
+          '1.32',
+          '1.19',
+          '1.19',
+          '1.19',
+          '0.99',
+          '1.79',
+          '2.47',
+          '2.47',
+          '4.76',
+          '4.76',
+          '4.78',
+          '4.94',
+          '4.94',
+          '4.83',
+          '4.24',
+          '4.00',
+          '4.00',
+          '4.69',
+          '4.40',
+          '4.40',
+          '4.80',
+          '4.13',
+          '4.13',
+          '4.72'
+        ],
+        type: 'line',
+        lineStyle: {
+          width: 5,
+          cap: 'round'
+        },
+        smooth: false,
+        connectNulls: true,
+        showSymbol: false
+      }
+    ]
+  }
+
+  const jsx = (
+    <Row gutter={[24, 24]}>
+      <Col span={24}>
+        <Suspense fallback={null}>
+          <IntroduceRow data={introduceData} />
+        </Suspense>
+      </Col>
+      <Col span={24}>
+        <Suspense fallback={null}>
+          <Card title="Uniswap APY (%)">
+            <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+          </Card>
+        </Suspense>
+      </Col>
+      <Col span={24}>
+        <Suspense>
+          <Card title="Sample APY (%)">
+            <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+          </Card>
+        </Suspense>
+      </Col>
+    </Row>
+  )
+
   return (
     <GridContent>
-      <Suspense fallback={null}>
-        <ChainChange />
-      </Suspense>
-      <Suspense fallback={null}>
-        <IntroduceRow data={introduceData} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LineChartContent
-          isUsdi
-          loading={loading}
-          calDateRange={calDateRange}
-          onCalDateRangeClick={setCalDateRange}
-          apyEchartOpt={apyEchartOpt}
-          tvlEchartOpt={tvlEchartOpt}
-        />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <TransationsTable loading={loading} />
-      </Suspense>
+      <Row gutter={[24, 24]}>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <ChainChange />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          {jsx}
+          {/* <Collapse defaultActiveKey={['1']}>
+            <Panel header="xxxxxxxxxxxxxxxxxxxxx" key="1">
+            </Panel>
+            <Panel header="xxxxxxxxxxxxxxxxxxxxx" key="2">
+              {jsx}
+            </Panel>
+            <Panel header="xxxxxxxxxxxxxxxxxxx" key="3">
+              {jsx}
+            </Panel>
+          </Collapse> */}
+        </Col>
+      </Row>
     </GridContent>
   )
 }
 
-export default ETHr
+export default USDiHome

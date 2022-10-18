@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
-import { Row, Col, Typography, Card } from 'antd'
+import { Row, Col, Card } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
 import ChainChange from '@/components/ChainChange'
@@ -17,8 +17,6 @@ import numeral from 'numeral'
 
 // === Styles === //
 
-const { Title } = Typography
-
 const USDiHome = () => {
   const loading = false
   const introduceData = [
@@ -27,21 +25,21 @@ const USDiHome = () => {
       tip: 'All Vault Net Deposit.',
       content: numeral('332221').format('0.[0000]a'),
       loading,
-      unit: 'WETH'
+      unit: 'USDC'
     },
     {
       title: 'Current Value',
       tip: 'All Vault Current Value.',
       content: numeral('123124').format('0.[0000]a'),
       loading,
-      unit: 'WETH'
+      unit: 'USDC'
     },
     {
       title: 'Unrealized Profit',
       tip: 'All Vault Unrealized Profit.',
       content: numeral('123124').format('0.[0000]a'),
       loading,
-      unit: 'WETH'
+      unit: 'USDC'
     },
     {
       title: 'Holders',
@@ -55,21 +53,21 @@ const USDiHome = () => {
       tip: 'All Vault AAVE Outstanding Loan.',
       content: numeral('123124').format('0.[0000]a'),
       loading,
-      unit: 'WETH'
+      unit: 'USDC'
     },
     {
       title: 'AAVE Collateral',
       tip: 'All Vault AAVE Collateral.',
       content: numeral('123124').format('0.[0000]a'),
       loading,
-      unit: 'WETH'
+      unit: 'USDC'
     },
     {
       title: 'Uniswap Position Value',
       tip: 'All Vault Uniswap Position Value.',
       content: numeral('123124').format('0.[0000]a'),
       loading,
-      unit: 'WETH'
+      unit: 'USDC'
     }
   ]
 
@@ -147,37 +145,37 @@ const USDiHome = () => {
       {
         name: 'USDi',
         data: [
-          '149291.88',
-          '149314.25',
-          '149362.86',
-          '149362.86',
-          '149376.75',
-          '149398.49',
-          '149400.59',
-          '149465.32',
-          '149357.19',
-          '149357.19',
-          '149357.19',
-          '49416.99',
-          '49999.79',
-          '200015.47',
-          '200015.47',
-          '400992.76',
-          '400992.76',
-          '401081.78',
-          '401256.94',
-          '401256.94',
-          '401280.83',
-          '401542.24',
-          '401679.00',
-          '401679.00',
-          '401696.69',
-          '401729.40',
-          '401729.40',
-          '401856.80',
-          '401921.13',
-          '401921.13',
-          '404621.72'
+          '1.88',
+          '1.25',
+          '1.86',
+          '1.86',
+          '1.75',
+          '1.49',
+          '1.59',
+          '1.32',
+          '1.19',
+          '1.19',
+          '1.19',
+          '0.99',
+          '1.79',
+          '2.47',
+          '2.47',
+          '4.76',
+          '4.76',
+          '4.78',
+          '4.94',
+          '4.94',
+          '4.83',
+          '4.24',
+          '4.00',
+          '4.00',
+          '4.69',
+          '4.40',
+          '4.40',
+          '4.80',
+          '4.13',
+          '4.13',
+          '4.72'
         ],
         type: 'line',
         lineStyle: {
@@ -200,14 +198,14 @@ const USDiHome = () => {
       </Col>
       <Col span={24}>
         <Suspense fallback={null}>
-          <Card title="Uniswap APY">
+          <Card title="Uniswap APY (%)">
             <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
           </Card>
         </Suspense>
       </Col>
       <Col span={24}>
         <Suspense>
-          <Card title="Sample APY">
+          <Card title="Sample APY (%)">
             <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
           </Card>
         </Suspense>
@@ -220,9 +218,6 @@ const USDiHome = () => {
       <Row gutter={[24, 24]}>
         <Col span={24}>
           <Suspense fallback={null}>
-            <Title style={{ textAlign: 'center' }} level={1}>
-              Board for USDr
-            </Title>
             <ChainChange />
           </Suspense>
         </Col>
