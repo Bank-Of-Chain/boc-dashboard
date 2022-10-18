@@ -241,7 +241,7 @@ const USDiHome = () => {
       tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
-      unit: '%'
+      unit: '%11'
     }
   ]
   console.log('tvlEchartOpt=', tvlEchartOpt)
