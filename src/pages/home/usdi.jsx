@@ -11,6 +11,7 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import ChainChange from '@/components/ChainChange'
+import VaultChange from '@/components/VaultChange'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -33,6 +34,11 @@ import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN } fr
 
 // === Styles === //
 import styles from './style.less'
+
+const CHAINS = [
+  { label: 'Ethereum', key: '1' },
+  { label: 'Polygon', key: '137' }
+]
 
 const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -241,14 +247,15 @@ const USDiHome = () => {
       tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
-      unit: '%11'
+      unit: '%'
     }
   ]
   console.log('tvlEchartOpt=', tvlEchartOpt)
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <ChainChange />
+        <VaultChange />
+        <ChainChange chains={CHAINS} />
       </Suspense>
       <Suspense fallback={null}>
         <IntroduceRow data={introduceData} />
