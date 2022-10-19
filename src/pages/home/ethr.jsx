@@ -6,7 +6,7 @@ import { GridContent } from '@ant-design/pro-layout'
 import { Row, Col, Card } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
-import ChainChange from '@/components/ChainChange'
+import VaultChange from '@/components/VaultChange'
 
 // === Constants === //
 
@@ -218,7 +218,7 @@ const USDiHome = () => {
       <Row gutter={[24, 24]}>
         <Col span={24}>
           <Suspense fallback={null}>
-            <ChainChange />
+            <VaultChange />
           </Suspense>
         </Col>
         <Col span={24}>

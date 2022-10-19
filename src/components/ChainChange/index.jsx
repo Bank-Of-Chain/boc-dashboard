@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useModel, history } from 'umi'
 
 // === Components === //
-import { Radio, Row, Col } from 'antd'
+import { Menu } from 'antd'
 
 // === Constants === //
 import CHAINS from '@/constants/chain'
@@ -31,23 +31,27 @@ const options = map(
 )
 
 const ChainChange = props => {
-  const { shouldChangeChain } = props
+  const { chains = options, shouldChangeChain } = props
+
+  if (chains.length <= 1) {
+    return null
+  }
 
   const { initialState } = useModel('@@initialState')
   const { userProvider, getWalletName } = useWallet()
 
-  const changeChain = value => {
+  const changeChain = ({ key }) => {
     const { vault } = history.location.query
     let promise = Promise.resolve()
     if (shouldChangeChain) {
-      promise = changeNetwork(value, userProvider, getWalletName(), {
+      promise = changeNetwork(key, userProvider, getWalletName(), {
         resolveWhenUnsupport: true
       })
     }
     promise.then(() => {
       history.push({
         query: {
-          chain: value,
+          chain: key,
           vault
         }
       })
@@ -57,18 +61,16 @@ const ChainChange = props => {
     })
   }
 
+  const style = {
+    borderBottom: 'none',
+    justifyContent: 'center',
+    backgroundColor: 'transparent'
+  }
+
   return (
-    <Row>
-      <Col span={24} className={styles.container}>
-        <Radio.Group size="large" onChange={v => changeChain(v.target.value)} value={initialState.chain} buttonStyle="solid">
-          {map(options, (item, key) => (
-            <Radio.Button style={{ padding: '1rem 5rem', height: 'auto', lineHeight: 1 }} value={item.value} key={key}>
-              {item.label}
-            </Radio.Button>
-          ))}
-        </Radio.Group>
-      </Col>
-    </Row>
+    <div className={styles.container}>
+      <Menu mode="horizontal" style={style} items={chains} selectedKeys={[initialState.chain]} onClick={changeChain} />
+    </div>
   )
 }
 

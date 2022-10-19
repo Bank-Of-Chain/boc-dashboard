@@ -6,6 +6,7 @@ import { GridContent } from '@ant-design/pro-layout'
 import { Row, Col, Card } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
+import VaultChange from '@/components/VaultChange'
 import ChainChange from '@/components/ChainChange'
 
 // === Constants === //
@@ -16,6 +17,11 @@ import ChainChange from '@/components/ChainChange'
 import numeral from 'numeral'
 
 // === Styles === //
+
+const CHAINS = [
+  { label: 'Polygon', key: '137' }
+  // { label: 'Arbitrum', key: '42161' }
+]
 
 const USDiHome = () => {
   const loading = false
@@ -215,10 +221,11 @@ const USDiHome = () => {
 
   return (
     <GridContent>
-      <Row gutter={[24, 24]}>
+      <Row gutter={[0, 24]}>
         <Col span={24}>
           <Suspense fallback={null}>
-            <ChainChange />
+            <VaultChange />
+            <ChainChange chains={CHAINS} />
           </Suspense>
         </Col>
         <Col span={24}>

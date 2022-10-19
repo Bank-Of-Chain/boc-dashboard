@@ -1,4 +1,4 @@
-import { Space, Button, Menu, message, Dropdown } from 'antd'
+import { Button,  message } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
@@ -7,17 +7,13 @@ import copy from 'copy-to-clipboard'
 // === Components === //
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
-import { LoadingOutlined, DownOutlined } from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
-import { getVaultConfig } from '@/utils/vault'
 import { isInMobileWalletApp, isInMobileH5 } from '@/utils/device'
-import { changeNetwork } from '@/utils/network'
 
 // === Contansts === //
-import { ETH } from '@/constants/chain'
-import { VAULT_TYPE } from '@/constants/vault'
 import { WALLET_OPTIONS } from '@/constants/wallet'
 
 // === Hooks === //
@@ -28,7 +24,7 @@ import useWallet from '@/hooks/useWallet'
 import styles from './index.less'
 
 // routes which do not show the vault select
-const disabledChangeVaultRoute = ['/strategy']
+// const disabledChangeVaultRoute = ['/strategy']
 
 const GlobalHeaderRight = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -73,38 +69,6 @@ const GlobalHeaderRight = () => {
     }
   }
 
-  const handleMenuClick = e => {
-    const vault = e.key
-    let promise = Promise.resolve()
-    if (history.location.pathname === '/reports' && vault === 'ethi') {
-      promise = changeNetwork('1', userProvider, getWalletName(), {
-        resolveWhenUnsupport: true
-      })
-    }
-    promise.then(() => {
-      setCurrent(vault)
-      const pathname = history.location.pathname
-      const query = history.location.query
-      query.chain = query.chain || ETH.id
-      if (vault === VAULT_TYPE.ETHi) {
-        query.chain = ETH.id
-      }
-      setInitialState({
-        ...initialState,
-        chain: query.chain,
-        vault,
-        ...getVaultConfig(query.chain, vault)
-      })
-      history.push({
-        pathname: pathname,
-        query: {
-          ...query,
-          vault
-        }
-      })
-    })
-  }
-
   // const goToMine = () => {
   //   history.push(`/mine?chain=${initialState.chain}&vault=${initialState.vault}`)
   // }
@@ -135,49 +99,11 @@ const GlobalHeaderRight = () => {
 
   return (
     <div className={styles.header}>
-      {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
-        <Dropdown
-          overlay={
-            <Menu
-              onClick={handleMenuClick}
-              style={{ padding: '0 2rem', textAlign: 'center' }}
-              items={[
-                {
-                  label: 'USDi',
-                  key: 'usdi'
-                },
-                {
-                  label: 'ETHi',
-                  key: 'ethi'
-                },
-                {
-                  label: 'USDr Vault',
-                  key: 'usdr'
-                },
-                {
-                  label: 'ETHr Vault',
-                  key: 'ethr'
-                }
-              ]}
-            />
-          }
-          open={open}
-        >
-          <a style={{ marginRight: '2rem' }} onClick={e => e.preventDefault()}>
-            <Space>
-              Vaults
-              <DownOutlined />
-            </Space>
-          </a>
-        </Dropdown>
-      ) : (
-        <span />
-      )}
-      <Space
-        size={20}
+      <div
         className={classNames(styles.right, styles.dark, {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
+        style={{ width: 160 }}
       >
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
@@ -199,7 +125,7 @@ const GlobalHeaderRight = () => {
             <Button className={styles.myDasboardBtn} key="mine" type="primary" disabled />
           ]
         )}
-      </Space>
+      </div>
       <WalletModal
         visible={walletModalVisible}
         onCancel={handleCancel}
