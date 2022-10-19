@@ -200,15 +200,6 @@ exports[`LineChartContent Component Render 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                aria-hidden="true"
-                aria-labelledby="rc-tabs-test-tab-totalSupply"
-                class="ant-tabs-tabpane"
-                id="rc-tabs-test-panel-totalSupply"
-                role="tabpanel"
-                style="visibility: hidden; height: 0px; overflow-y: hidden;"
-                tabindex="-1"
-              />
             </div>
           </div>
         </div>
