@@ -44,7 +44,7 @@ const VaultChange = () => {
       <Col span={24} className={styles.container}>
         <Radio.Group size="large" onChange={v => changeChain(v.target.value)} value={initialState.vault} buttonStyle="solid">
           {map(options, (item, key) => (
-            <Radio.Button style={{ padding: '1rem 5rem', height: 'auto', lineHeight: 1 }} value={item.value} key={key}>
+            <Radio.Button value={item.value} key={key}>
               {item.label}
             </Radio.Button>
           ))}
