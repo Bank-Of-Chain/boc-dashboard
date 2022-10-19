@@ -1,6 +1,6 @@
 {
   "name": "boc-dashboard",
-  "homepage": "https://bank-of-chain.github.io/boc-dashboard",
+  "homepage": "https://risk-on-dashboard.bankofchain.io",
   "jest": {
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
