@@ -10,6 +10,7 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { Row, Col } from 'antd'
+import VaultChange from '@/components/VaultChange'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -258,6 +259,9 @@ const ETHiHome = () => {
   return (
     <GridContent>
       <Row gutter={[24, 24]}>
+        <Col span={24}>
+          <VaultChange />
+        </Col>
         <Col span={24}>
           <Suspense fallback={null}>
             <IntroduceRow data={introduceData} />
