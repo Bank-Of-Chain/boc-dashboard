@@ -10,42 +10,124 @@ import VaultChange from '@/components/VaultChange'
 import ChainChange from '@/components/ChainChange'
 
 // === Constants === //
+import { VAULT_FACTORY_ABI } from '@/constants/abis'
+import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
+import { BN_6 } from '@/constants/big-number'
 
 // === Services === //
+import { getDataByType } from '@/services/api-service'
+
+// === Hooks === //
+import useWallet from '@/hooks/useWallet'
+import useVaultFactory from '@/hooks/useVaultFactory'
+import { useAsync } from 'react-async-hook'
 
 // === Utils === //
 import numeral from 'numeral'
+import get from 'lodash/get'
+import { groupBy, reduce } from 'lodash'
+import * as ethers from 'ethers'
+import { toFixed } from '@/utils/number-format'
 
 // === Styles === //
+
+const { BigNumber } = ethers
 
 const CHAINS = [
   { label: 'Polygon', key: '137' }
   // { label: 'Arbitrum', key: '42161' }
 ]
 
-const USDiHome = () => {
+const CHAIN_ID = 137
+
+const symbol = 'USDC'
+
+const UsdrHome = () => {
+  const VAULT_FACTORY_ADDRESS = '0x8013Dd64084e9c9122567563AA86981F4C20576B'
+
+  const { userProvider } = useWallet()
+  const { personalVault } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
+  const groupMap = groupBy(personalVault, 'token')
+  const calcArray = get(groupMap, USDC_ADDRESS_MATIC, [])
+  console.log('calcArray=', calcArray)
+
+  const netMarketMakingAmountTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      rs.add(item.netMarketMakingAmount)
+      return rs
+    },
+    BigNumber.from(0)
+  )
+  const estimatedTotalAssetsTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      rs.add(item.estimatedTotalAssets)
+      return rs
+    },
+    BigNumber.from(0)
+  )
+
+  const currentBorrowTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      rs.add(item.currentBorrow)
+      return rs
+    },
+    BigNumber.from(0)
+  )
+  const totalCollateralTokenAmountTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      rs.add(item.totalCollateralTokenAmount)
+      return rs
+    },
+    BigNumber.from(0)
+  )
+  const depositTo3rdPoolTotalAssetsTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      rs.add(item.depositTo3rdPoolTotalAssets)
+      return rs
+    },
+    BigNumber.from(0)
+  )
+
+  console.log('netMarketMakingAmountTotal=', netMarketMakingAmountTotal.toString())
+  console.log('estimatedTotalAssetsTotal=', estimatedTotalAssetsTotal.toString())
+  console.log('currentBorrow=', currentBorrowTotal.toString())
+  console.log('totalCollateralTokenAmountTotal=', totalCollateralTokenAmountTotal.toString())
+  console.log('depositTo3rdPoolTotalAssetsTotal=', depositTo3rdPoolTotalAssetsTotal.toString())
+
+  const aaaa = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-outstanding-loan'), [VAULT_FACTORY_ADDRESS])
+  const bbbb = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-collateral'), [VAULT_FACTORY_ADDRESS])
+  const cccc = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-health-ratio'), [VAULT_FACTORY_ADDRESS])
+  const dddd = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'uniswap-position-value'), [VAULT_FACTORY_ADDRESS])
+  const eeee = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'profit'), [VAULT_FACTORY_ADDRESS])
+  const ffff = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'net-deposit'), [VAULT_FACTORY_ADDRESS])
+  console.log('aaaa=', aaaa, bbbb, cccc, dddd, eeee, ffff)
   const loading = false
   const introduceData = [
     {
       title: 'Deposit',
       tip: 'All Vault Net Deposit.',
-      content: numeral('332221').format('0.[0000]a'),
+      content: numeral(toFixed(netMarketMakingAmountTotal, BN_6)).format('0.[0000]a'),
       loading,
-      unit: 'USDC'
+      unit: symbol
     },
     {
       title: 'Current Value',
       tip: 'All Vault Current Value.',
-      content: numeral('123124').format('0.[0000]a'),
+      content: numeral(toFixed(estimatedTotalAssetsTotal, BN_6)).format('0.[0000]a'),
       loading,
-      unit: 'USDC'
+      unit: symbol
     },
     {
       title: 'Unrealized Profit',
       tip: 'All Vault Unrealized Profit.',
       content: numeral('123124').format('0.[0000]a'),
       loading,
-      unit: 'USDC'
+      unit: symbol
     },
     {
       title: 'Holders',
@@ -57,23 +139,23 @@ const USDiHome = () => {
     {
       title: 'AAVE Outstanding Loan',
       tip: 'All Vault AAVE Outstanding Loan.',
-      content: numeral('123124').format('0.[0000]a'),
+      content: numeral(toFixed(currentBorrowTotal, BN_6)).format('0.[0000]a'),
       loading,
-      unit: 'USDC'
+      unit: symbol
     },
     {
       title: 'AAVE Collateral',
       tip: 'All Vault AAVE Collateral.',
-      content: numeral('123124').format('0.[0000]a'),
+      content: numeral(toFixed(totalCollateralTokenAmountTotal, BN_6)).format('0.[0000]a'),
       loading,
-      unit: 'USDC'
+      unit: symbol
     },
     {
       title: 'Uniswap Position Value',
       tip: 'All Vault Uniswap Position Value.',
-      content: numeral('123124').format('0.[0000]a'),
+      content: numeral(toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6)).format('0.[0000]a'),
       loading,
-      unit: 'USDC'
+      unit: symbol
     }
   ]
 
@@ -195,30 +277,6 @@ const USDiHome = () => {
     ]
   }
 
-  const jsx = (
-    <Row gutter={[24, 24]}>
-      <Col span={24}>
-        <Suspense fallback={null}>
-          <IntroduceRow data={introduceData} />
-        </Suspense>
-      </Col>
-      <Col span={24}>
-        <Suspense fallback={null}>
-          <Card title="Uniswap APY (%)">
-            <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-          </Card>
-        </Suspense>
-      </Col>
-      <Col span={24}>
-        <Suspense>
-          <Card title="Sample APY (%)">
-            <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-          </Card>
-        </Suspense>
-      </Col>
-    </Row>
-  )
-
   return (
     <GridContent>
       <Row gutter={[0, 24]}>
@@ -229,21 +287,31 @@ const USDiHome = () => {
           </Suspense>
         </Col>
         <Col span={24}>
-          {jsx}
-          {/* <Collapse defaultActiveKey={['1']}>
-            <Panel header="xxxxxxxxxxxxxxxxxxxxx" key="1">
-            </Panel>
-            <Panel header="xxxxxxxxxxxxxxxxxxxxx" key="2">
-              {jsx}
-            </Panel>
-            <Panel header="xxxxxxxxxxxxxxxxxxx" key="3">
-              {jsx}
-            </Panel>
-          </Collapse> */}
+          <Row gutter={[24, 24]}>
+            <Col span={24}>
+              <Suspense fallback={null}>
+                <IntroduceRow data={introduceData} />
+              </Suspense>
+            </Col>
+            <Col span={24}>
+              <Suspense fallback={null}>
+                <Card title="Uniswap APY (%)">
+                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                </Card>
+              </Suspense>
+            </Col>
+            <Col span={24}>
+              <Suspense>
+                <Card title="Sample APY (%)">
+                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                </Card>
+              </Suspense>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </GridContent>
   )
 }
 
-export default USDiHome
+export default UsdrHome
