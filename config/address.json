@@ -17,5 +17,7 @@
   "SUB_GRAPH_URL_FOR_ETHI": "https://api.thegraph.com/subgraphs/name/bankofchain/boc-ethi",
   "RPC_FOR_1": "https://rpc.ankr.com/eth",
   "RPC_FOR_137": "https://rpc-mainnet.maticvigil.com",
-  "RPC_FOR_31337": ""
+  "RPC_FOR_31337": "",
+  "VAULT_FACTORY_FOR_USDR_MATIC": "0x8013Dd64084e9c9122567563AA86981F4C20576B",
+  "VAULT_FACTORY_FOR_ETHR_MATIC": "0x8013Dd64084e9c9122567563AA86981F4C20576B"
 }
