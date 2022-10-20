@@ -210,3 +210,18 @@ export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, of
     params: nextParams
   })
 }
+
+/**
+ * fetch mystatement data by type
+ * @param {*} chainId
+ * @param {*} vaultAddress
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getDataByType = (chainId, vaultAddress, type, params = { limit: 30 }) => {
+  const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/data_collects/types/${type}`
+  return request(url, {
+    params
+  })
+}
