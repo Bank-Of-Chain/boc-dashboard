@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
-import { Row, Col, Card } from 'antd'
+import { Row, Col, Card, Table, Radio } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
 import VaultChange from '@/components/VaultChange'
@@ -25,11 +25,14 @@ import { useAsync } from 'react-async-hook'
 // === Utils === //
 import numeral from 'numeral'
 import get from 'lodash/get'
+import map from 'lodash/map'
 import { groupBy, reduce } from 'lodash'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
+import { useState } from 'react'
 
 // === Styles === //
+import styles from './style.less'
 
 const { BigNumber } = ethers
 
@@ -49,7 +52,8 @@ const UsdrHome = () => {
   const { personalVault } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
   const groupMap = groupBy(personalVault, 'token')
   const calcArray = get(groupMap, USDC_ADDRESS_MATIC, [])
-  console.log('calcArray=', calcArray)
+  const [filter, setFilter] = useState('All')
+  console.log('calcArray=', calcArray, filter)
 
   const netMarketMakingAmountTotal = reduce(
     calcArray,
@@ -277,6 +281,42 @@ const UsdrHome = () => {
     ]
   }
 
+  const dataSource = []
+
+  const columns = [
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date'
+    },
+    {
+      title: 'Operation',
+      dataIndex: 'operation',
+      key: 'operation'
+    },
+    {
+      title: 'Details',
+      dataIndex: 'details',
+      key: 'details'
+    },
+    {
+      title: 'Tx Address',
+      dataIndex: 'tx',
+      key: 'tx'
+    }
+  ]
+
+  const FILTER_OPTIONS = { All: 'All', Create: 'Create', Deposit: 'Deposit', Burn: 'Burn' }
+  const extra = (
+    <Radio.Group value={filter} onChange={e => setFilter(e.target.value)} buttonStyle="solid" className={styles.buttons}>
+      {map(FILTER_OPTIONS, (value, key) => (
+        <Radio.Button value={value} key={key}>
+          {value}
+        </Radio.Button>
+      ))}
+    </Radio.Group>
+  )
+
   return (
     <GridContent>
       <Row gutter={[0, 24]}>
@@ -304,6 +344,13 @@ const UsdrHome = () => {
               <Suspense>
                 <Card title="Sample APY (%)">
                   <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                </Card>
+              </Suspense>
+            </Col>
+            <Col span={24}>
+              <Suspense>
+                <Card extra={extra} title="Recent Activity">
+                  <Table dataSource={dataSource} columns={columns} />
                 </Card>
               </Suspense>
             </Col>
