@@ -16,7 +16,7 @@ import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_6 } from '@/constants/big-number'
 
 // === Services === //
-import { getDataByType } from '@/services/api-service'
+import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn } from '@/services/api-service'
 
 // === Hooks === //
 import useWallet from '@/hooks/useWallet'
@@ -39,8 +39,6 @@ const CHAINS = [
   // { label: 'Arbitrum', key: '42161' }
 ]
 
-const CHAIN_ID = 137
-
 const symbol = 'USDC'
 
 const UsdrHome = () => {
@@ -50,21 +48,18 @@ const UsdrHome = () => {
   const { personalVault } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
   const groupMap = groupBy(personalVault, 'token')
   const calcArray = get(groupMap, USDC_ADDRESS_MATIC, [])
-  console.log('calcArray=', calcArray)
 
   const netMarketMakingAmountTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.netMarketMakingAmount)
-      return rs
+      return rs.add(item.netMarketMakingAmount)
     },
     BigNumber.from(0)
   )
   const estimatedTotalAssetsTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.estimatedTotalAssets)
-      return rs
+      return rs.add(item.estimatedTotalAssets)
     },
     BigNumber.from(0)
   )
@@ -72,24 +67,37 @@ const UsdrHome = () => {
   const currentBorrowTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.currentBorrow)
-      return rs
+      return rs.add(item.currentBorrow)
     },
     BigNumber.from(0)
   )
   const totalCollateralTokenAmountTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.totalCollateralTokenAmount)
-      return rs
+      return rs.add(item.totalCollateralTokenAmount)
     },
     BigNumber.from(0)
   )
   const depositTo3rdPoolTotalAssetsTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.depositTo3rdPoolTotalAssets)
-      return rs
+      return rs.add(item.depositTo3rdPoolTotalAssets)
+    },
+    BigNumber.from(0)
+  )
+
+  const stablecoinInvestorSetLenTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      return rs.add(item._stablecoinInvestorSetLen)
+    },
+    BigNumber.from(0)
+  )
+
+  const profitTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      return rs.add(item.profit)
     },
     BigNumber.from(0)
   )
@@ -100,13 +108,10 @@ const UsdrHome = () => {
   console.log('totalCollateralTokenAmountTotal=', totalCollateralTokenAmountTotal.toString())
   console.log('depositTo3rdPoolTotalAssetsTotal=', depositTo3rdPoolTotalAssetsTotal.toString())
 
-  const aaaa = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-outstanding-loan'), [VAULT_FACTORY_ADDRESS])
-  const bbbb = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-collateral'), [VAULT_FACTORY_ADDRESS])
-  const cccc = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-health-ratio'), [VAULT_FACTORY_ADDRESS])
-  const dddd = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'uniswap-position-value'), [VAULT_FACTORY_ADDRESS])
-  const eeee = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'profit'), [VAULT_FACTORY_ADDRESS])
-  const ffff = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'net-deposit'), [VAULT_FACTORY_ADDRESS])
-  console.log('aaaa=', aaaa, bbbb, cccc, dddd, eeee, ffff)
+  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const officialApy = useAsync(() => getOffcialApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const sampleApy = useAsync(() => getApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  console.log('verifiedApy=', verifiedApy, officialApy, sampleApy)
   const loading = false
   const introduceData = [
     {
@@ -124,16 +129,16 @@ const UsdrHome = () => {
       unit: symbol
     },
     {
-      title: 'Unrealized Profit',
-      tip: 'All Vault Unrealized Profit.',
-      content: numeral('123124').format('0.[0000]a'),
+      title: 'Profits',
+      tip: 'All Vault Profits.',
+      content: numeral(toFixed(profitTotal, BN_6)).format('0.[0000]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Holders',
       tip: 'Number Of USDi holders.',
-      content: numeral('5').format('0.[0000]a'),
+      content: numeral(stablecoinInvestorSetLenTotal).format('0.[0000]a'),
       loading,
       unit: ''
     },
@@ -296,16 +301,26 @@ const UsdrHome = () => {
             </Col>
             <Col span={24}>
               <Suspense fallback={null}>
-                <Card title="Uniswap APY (%)">
-                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-                </Card>
+                <OnBuilding>
+                  <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
+                    {verifiedApy.error ? (
+                      <div>Error: {verifiedApy?.error?.message}</div>
+                    ) : (
+                      <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                    )}
+                  </Card>
+                </OnBuilding>
               </Suspense>
             </Col>
             <Col span={24}>
               <Suspense>
                 <OnBuilding>
-                  <Card title="Sample APY (%)">
-                    <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                  <Card title="Sample APY (%)" loading={sampleApy.loading}>
+                    {sampleApy.error ? (
+                      <div>Error: {sampleApy.error.message}</div>
+                    ) : (
+                      <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                    )}
                   </Card>
                 </OnBuilding>
               </Suspense>
