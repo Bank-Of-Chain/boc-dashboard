@@ -8,6 +8,7 @@ import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
 import VaultChange from '@/components/VaultChange'
 import ChainChange from '@/components/ChainChange'
+import OnBuilding from '@/components/OnBuilding'
 
 // === Constants === //
 import { VAULT_FACTORY_ABI } from '@/constants/abis'
@@ -302,9 +303,11 @@ const UsdrHome = () => {
             </Col>
             <Col span={24}>
               <Suspense>
-                <Card title="Sample APY (%)">
-                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-                </Card>
+                <OnBuilding>
+                  <Card title="Sample APY (%)">
+                    <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                  </Card>
+                </OnBuilding>
               </Suspense>
             </Col>
           </Row>
