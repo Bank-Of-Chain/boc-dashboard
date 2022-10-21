@@ -216,7 +216,7 @@ const TransationsTable = ({
   }[deviceType]
 
   let extra = (
-    <Radio.Group value={filter} onChange={handleChange} buttonStyle="outline" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
+    <Radio.Group value={filter} onChange={handleChange} buttonStyle="solid" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
       {map(FILTER_OPTIONS, (value, key) => (
         <Radio.Button value={value} key={key}>
           {key}
