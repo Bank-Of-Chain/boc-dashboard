@@ -22,10 +22,12 @@ const options = [
 ]
 
 const VaultChange = () => {
-  const { initialState,setInitialState } = useModel('@@initialState')
+  const { initialState, setInitialState } = useModel('@@initialState')
+  console.log('initialState', initialState)
 
   const changeChain = vault => {
     const { chain } = history.location.query
+    console.log('chain', chain)
     setInitialState({
       ...initialState,
       vault,
@@ -33,7 +35,7 @@ const VaultChange = () => {
     })
     history.push({
       query: {
-        chain,
+        chain: chain || initialState.chain,
         vault
       }
     })

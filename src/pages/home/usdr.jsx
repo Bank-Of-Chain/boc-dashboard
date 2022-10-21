@@ -8,6 +8,7 @@ import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
 import VaultChange from '@/components/VaultChange'
 import ChainChange from '@/components/ChainChange'
+import OnBuilding from '@/components/OnBuilding'
 
 // === Constants === //
 import { VAULT_FACTORY_ABI } from '@/constants/abis'
@@ -300,24 +301,28 @@ const UsdrHome = () => {
             </Col>
             <Col span={24}>
               <Suspense fallback={null}>
-                <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
-                  {verifiedApy.error ? (
-                    <div>Error: {verifiedApy?.error?.message}</div>
-                  ) : (
-                    <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-                  )}
-                </Card>
+                <OnBuilding>
+                  <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
+                    {verifiedApy.error ? (
+                      <div>Error: {verifiedApy?.error?.message}</div>
+                    ) : (
+                      <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                    )}
+                  </Card>
+                </OnBuilding>
               </Suspense>
             </Col>
             <Col span={24}>
               <Suspense>
-                <Card title="Sample APY (%)" loading={sampleApy.loading}>
-                  {sampleApy.error ? (
-                    <div>Error: {sampleApy.error.message}</div>
-                  ) : (
-                    <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-                  )}
-                </Card>
+                <OnBuilding>
+                  <Card title="Sample APY (%)" loading={sampleApy.loading}>
+                    {sampleApy.error ? (
+                      <div>Error: {sampleApy.error.message}</div>
+                    ) : (
+                      <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                    )}
+                  </Card>
+                </OnBuilding>
               </Suspense>
             </Col>
           </Row>
