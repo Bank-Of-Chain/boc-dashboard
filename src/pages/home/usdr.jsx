@@ -45,14 +45,13 @@ const CHAINS = [
 const symbol = 'USDC'
 
 const UsdrHome = () => {
-  const VAULT_FACTORY_ADDRESS = '0x8013Dd64084e9c9122567563AA86981F4C20576B'
+  const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS['137']
 
   const { userProvider } = useWallet()
-  const { personalVault } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
+  const { personalVault, loading } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
   const groupMap = groupBy(personalVault, 'token')
   const calcArray = get(groupMap, USDC_ADDRESS_MATIC, [])
   const [filter, setFilter] = useState('All')
-  console.log('calcArray=', calcArray, filter)
 
   const netMarketMakingAmountTotal = reduce(
     calcArray,
@@ -72,7 +71,7 @@ const UsdrHome = () => {
   const currentBorrowTotal = reduce(
     calcArray,
     (rs, item) => {
-      return rs.add(item.currentBorrow)
+      return rs.add(item.currentBorrowWithCanonical)
     },
     BigNumber.from(0)
   )
@@ -107,17 +106,6 @@ const UsdrHome = () => {
     BigNumber.from(0)
   )
 
-  console.log('netMarketMakingAmountTotal=', netMarketMakingAmountTotal.toString())
-  console.log('estimatedTotalAssetsTotal=', estimatedTotalAssetsTotal.toString())
-  console.log('currentBorrow=', currentBorrowTotal.toString())
-  console.log('totalCollateralTokenAmountTotal=', totalCollateralTokenAmountTotal.toString())
-  console.log('depositTo3rdPoolTotalAssetsTotal=', depositTo3rdPoolTotalAssetsTotal.toString())
-
-  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
-  const officialApy = useAsync(() => getOffcialApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
-  const sampleApy = useAsync(() => getApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
-  console.log('verifiedApy=', verifiedApy, officialApy, sampleApy)
-  const loading = false
   const introduceData = [
     {
       title: 'Deposit',
@@ -170,123 +158,9 @@ const UsdrHome = () => {
     }
   ]
 
-  const options = {
-    animation: false,
-    textStyle: {
-      color: '#fff'
-    },
-    grid: {
-      top: 40,
-      left: '0%',
-      right: '5%',
-      bottom: '0%',
-      containLabel: true
-    },
-    tooltip: {
-      trigger: 'axis',
-      borderWidth: 0,
-      backgroundColor: '#292B2E',
-      textStyle: {
-        color: '#fff'
-      }
-    },
-    xAxis: {
-      axisLabel: {},
-      type: 'category',
-      data: [
-        '2022-09-14 00:00 (UTC)',
-        '2022-09-15 00:00 (UTC)',
-        '2022-09-16 00:00 (UTC)',
-        '2022-09-17 00:00 (UTC)',
-        '2022-09-18 00:00 (UTC)',
-        '2022-09-19 00:00 (UTC)',
-        '2022-09-20 00:00 (UTC)',
-        '2022-09-21 00:00 (UTC)',
-        '2022-09-22 00:00 (UTC)',
-        '2022-09-23 00:00 (UTC)',
-        '2022-09-24 00:00 (UTC)',
-        '2022-09-25 00:00 (UTC)',
-        '2022-09-26 00:00 (UTC)',
-        '2022-09-27 00:00 (UTC)',
-        '2022-09-28 00:00 (UTC)',
-        '2022-09-29 00:00 (UTC)',
-        '2022-09-30 00:00 (UTC)',
-        '2022-10-01 00:00 (UTC)',
-        '2022-10-02 00:00 (UTC)',
-        '2022-10-03 00:00 (UTC)',
-        '2022-10-04 00:00 (UTC)',
-        '2022-10-05 00:00 (UTC)',
-        '2022-10-06 00:00 (UTC)',
-        '2022-10-07 00:00 (UTC)',
-        '2022-10-08 00:00 (UTC)',
-        '2022-10-09 00:00 (UTC)',
-        '2022-10-10 00:00 (UTC)',
-        '2022-10-11 00:00 (UTC)',
-        '2022-10-12 00:00 (UTC)',
-        '2022-10-13 00:00 (UTC)',
-        '2022-10-14 00:00 (UTC)'
-      ],
-      axisTick: {
-        alignWithLabel: true
-      }
-    },
-    yAxis: {
-      type: 'value',
-      splitLine: {
-        lineStyle: {
-          color: '#454459'
-        }
-      }
-    },
-    dataZoom: null,
-    color: ['#A68EFE', '#5470c6', '#91cc75'],
-    series: [
-      {
-        name: 'USDi',
-        data: [
-          '1.88',
-          '1.25',
-          '1.86',
-          '1.86',
-          '1.75',
-          '1.49',
-          '1.59',
-          '1.32',
-          '1.19',
-          '1.19',
-          '1.19',
-          '0.99',
-          '1.79',
-          '2.47',
-          '2.47',
-          '4.76',
-          '4.76',
-          '4.78',
-          '4.94',
-          '4.94',
-          '4.83',
-          '4.24',
-          '4.00',
-          '4.00',
-          '4.69',
-          '4.40',
-          '4.40',
-          '4.80',
-          '4.13',
-          '4.13',
-          '4.72'
-        ],
-        type: 'line',
-        lineStyle: {
-          width: 5,
-          cap: 'round'
-        },
-        smooth: false,
-        connectNulls: true,
-        showSymbol: false
-      }
-    ]
-  }
+  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const officialApy = useAsync(() => getOffcialApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const sampleApy = useAsync(() => getApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
 
   const dataSource = []
 
@@ -345,9 +219,128 @@ const UsdrHome = () => {
                 <OnBuilding>
                   <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
                     {verifiedApy.error ? (
-                      <div>Error: {verifiedApy?.error?.message}</div>
+                      <div style={{ minHeight: '10rem' }}>Error: {verifiedApy?.error?.message}</div>
                     ) : (
-                      <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                      <LineEchart
+                        option={{
+                          animation: false,
+                          textStyle: {
+                            color: '#fff'
+                          },
+                          grid: {
+                            top: 40,
+                            left: '0%',
+                            right: '5%',
+                            bottom: '0%',
+                            containLabel: true
+                          },
+                          tooltip: {
+                            trigger: 'axis',
+                            borderWidth: 0,
+                            backgroundColor: '#292B2E',
+                            textStyle: {
+                              color: '#fff'
+                            }
+                          },
+                          xAxis: {
+                            axisLabel: {},
+                            type: 'category',
+                            data: [
+                              '2022-09-14 00:00 (UTC)',
+                              '2022-09-15 00:00 (UTC)',
+                              '2022-09-16 00:00 (UTC)',
+                              '2022-09-17 00:00 (UTC)',
+                              '2022-09-18 00:00 (UTC)',
+                              '2022-09-19 00:00 (UTC)',
+                              '2022-09-20 00:00 (UTC)',
+                              '2022-09-21 00:00 (UTC)',
+                              '2022-09-22 00:00 (UTC)',
+                              '2022-09-23 00:00 (UTC)',
+                              '2022-09-24 00:00 (UTC)',
+                              '2022-09-25 00:00 (UTC)',
+                              '2022-09-26 00:00 (UTC)',
+                              '2022-09-27 00:00 (UTC)',
+                              '2022-09-28 00:00 (UTC)',
+                              '2022-09-29 00:00 (UTC)',
+                              '2022-09-30 00:00 (UTC)',
+                              '2022-10-01 00:00 (UTC)',
+                              '2022-10-02 00:00 (UTC)',
+                              '2022-10-03 00:00 (UTC)',
+                              '2022-10-04 00:00 (UTC)',
+                              '2022-10-05 00:00 (UTC)',
+                              '2022-10-06 00:00 (UTC)',
+                              '2022-10-07 00:00 (UTC)',
+                              '2022-10-08 00:00 (UTC)',
+                              '2022-10-09 00:00 (UTC)',
+                              '2022-10-10 00:00 (UTC)',
+                              '2022-10-11 00:00 (UTC)',
+                              '2022-10-12 00:00 (UTC)',
+                              '2022-10-13 00:00 (UTC)',
+                              '2022-10-14 00:00 (UTC)'
+                            ],
+                            axisTick: {
+                              alignWithLabel: true
+                            }
+                          },
+                          yAxis: {
+                            type: 'value',
+                            splitLine: {
+                              lineStyle: {
+                                color: '#454459'
+                              }
+                            }
+                          },
+                          dataZoom: null,
+                          color: ['#A68EFE', '#5470c6', '#91cc75'],
+                          series: [
+                            {
+                              name: 'USDi',
+                              data: [
+                                '1.88',
+                                '1.25',
+                                '1.86',
+                                '1.86',
+                                '1.75',
+                                '1.49',
+                                '1.59',
+                                '1.32',
+                                '1.19',
+                                '1.19',
+                                '1.19',
+                                '0.99',
+                                '1.79',
+                                '2.47',
+                                '2.47',
+                                '4.76',
+                                '4.76',
+                                '4.78',
+                                '4.94',
+                                '4.94',
+                                '4.83',
+                                '4.24',
+                                '4.00',
+                                '4.00',
+                                '4.69',
+                                '4.40',
+                                '4.40',
+                                '4.80',
+                                '4.13',
+                                '4.13',
+                                '4.72'
+                              ],
+                              type: 'line',
+                              lineStyle: {
+                                width: 5,
+                                cap: 'round'
+                              },
+                              smooth: false,
+                              connectNulls: true,
+                              showSymbol: false
+                            }
+                          ]
+                        }}
+                        style={{ minHeight: '500px', width: '100%' }}
+                      />
                     )}
                   </Card>
                 </OnBuilding>
@@ -358,9 +351,128 @@ const UsdrHome = () => {
                 <OnBuilding>
                   <Card title="Sample APY (%)" loading={sampleApy.loading}>
                     {sampleApy.error ? (
-                      <div>Error: {sampleApy.error.message}</div>
+                      <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
                     ) : (
-                      <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                      <LineEchart
+                        option={{
+                          animation: false,
+                          textStyle: {
+                            color: '#fff'
+                          },
+                          grid: {
+                            top: 40,
+                            left: '0%',
+                            right: '5%',
+                            bottom: '0%',
+                            containLabel: true
+                          },
+                          tooltip: {
+                            trigger: 'axis',
+                            borderWidth: 0,
+                            backgroundColor: '#292B2E',
+                            textStyle: {
+                              color: '#fff'
+                            }
+                          },
+                          xAxis: {
+                            axisLabel: {},
+                            type: 'category',
+                            data: [
+                              '2022-09-14 00:00 (UTC)',
+                              '2022-09-15 00:00 (UTC)',
+                              '2022-09-16 00:00 (UTC)',
+                              '2022-09-17 00:00 (UTC)',
+                              '2022-09-18 00:00 (UTC)',
+                              '2022-09-19 00:00 (UTC)',
+                              '2022-09-20 00:00 (UTC)',
+                              '2022-09-21 00:00 (UTC)',
+                              '2022-09-22 00:00 (UTC)',
+                              '2022-09-23 00:00 (UTC)',
+                              '2022-09-24 00:00 (UTC)',
+                              '2022-09-25 00:00 (UTC)',
+                              '2022-09-26 00:00 (UTC)',
+                              '2022-09-27 00:00 (UTC)',
+                              '2022-09-28 00:00 (UTC)',
+                              '2022-09-29 00:00 (UTC)',
+                              '2022-09-30 00:00 (UTC)',
+                              '2022-10-01 00:00 (UTC)',
+                              '2022-10-02 00:00 (UTC)',
+                              '2022-10-03 00:00 (UTC)',
+                              '2022-10-04 00:00 (UTC)',
+                              '2022-10-05 00:00 (UTC)',
+                              '2022-10-06 00:00 (UTC)',
+                              '2022-10-07 00:00 (UTC)',
+                              '2022-10-08 00:00 (UTC)',
+                              '2022-10-09 00:00 (UTC)',
+                              '2022-10-10 00:00 (UTC)',
+                              '2022-10-11 00:00 (UTC)',
+                              '2022-10-12 00:00 (UTC)',
+                              '2022-10-13 00:00 (UTC)',
+                              '2022-10-14 00:00 (UTC)'
+                            ],
+                            axisTick: {
+                              alignWithLabel: true
+                            }
+                          },
+                          yAxis: {
+                            type: 'value',
+                            splitLine: {
+                              lineStyle: {
+                                color: '#454459'
+                              }
+                            }
+                          },
+                          dataZoom: null,
+                          color: ['#A68EFE', '#5470c6', '#91cc75'],
+                          series: [
+                            {
+                              name: 'USDi',
+                              data: [
+                                '1.88',
+                                '1.25',
+                                '1.86',
+                                '1.86',
+                                '1.75',
+                                '1.49',
+                                '1.59',
+                                '1.32',
+                                '1.19',
+                                '1.19',
+                                '1.19',
+                                '0.99',
+                                '1.79',
+                                '2.47',
+                                '2.47',
+                                '4.76',
+                                '4.76',
+                                '4.78',
+                                '4.94',
+                                '4.94',
+                                '4.83',
+                                '4.24',
+                                '4.00',
+                                '4.00',
+                                '4.69',
+                                '4.40',
+                                '4.40',
+                                '4.80',
+                                '4.13',
+                                '4.13',
+                                '4.72'
+                              ],
+                              type: 'line',
+                              lineStyle: {
+                                width: 5,
+                                cap: 'round'
+                              },
+                              smooth: false,
+                              connectNulls: true,
+                              showSymbol: false
+                            }
+                          ]
+                        }}
+                        style={{ minHeight: '500px', width: '100%' }}
+                      />
                     )}
                   </Card>
                 </OnBuilding>
@@ -368,9 +480,11 @@ const UsdrHome = () => {
             </Col>
             <Col span={24}>
               <Suspense>
-                <Card extra={extra} title="Recent Activity">
-                  <Table dataSource={dataSource} columns={columns} />
-                </Card>
+                <OnBuilding>
+                  <Card extra={extra} title="Recent Activity">
+                    <Table dataSource={dataSource} columns={columns} />
+                  </Card>
+                </OnBuilding>
               </Suspense>
             </Col>
           </Row>

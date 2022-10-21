@@ -21,7 +21,7 @@ const indicator = (
 const OnBuilding = props => {
   const { children } = props
   return (
-    <Spin size="large" indicator={indicator}>
+    <Spin size="large" indicator={indicator} style={{ background: 'rgb(0,0,0,0.5)' }}>
       {children}
     </Spin>
   )

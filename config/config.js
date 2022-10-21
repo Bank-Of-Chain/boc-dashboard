@@ -137,12 +137,12 @@ export default defineConfig({
     },
     USDR: {
       VAULT_FACTORY_ADDRESS: {
-        137: '0x8013Dd64084e9c9122567563AA86981F4C20576B'
+        137: '0x9853Eb1dc3946F78f043EA513Ed87ADBdA6eeE09'
       }
     },
     ETHR: {
       VAULT_FACTORY_ADDRESS: {
-        137: '0x8013Dd64084e9c9122567563AA86981F4C20576B'
+        137: '0x9853Eb1dc3946F78f043EA513Ed87ADBdA6eeE09'
       }
     }
   }
