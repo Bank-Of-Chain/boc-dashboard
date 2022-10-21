@@ -225,3 +225,39 @@ export const getDataByType = (chainId, vaultAddress, type, params = { limit: 30 
     params
   })
 }
+
+/**
+ *
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getVerifiedApyInRiskOn = params => {
+  return request(`${API_SERVER}/verifiedApy/riskon`, {
+    params
+  })
+}
+
+/**
+ *
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getOffcialApyInRiskOn = params => {
+  return request(`${API_SERVER}/officialApy/riskon`, {
+    params
+  })
+}
+
+/**
+ *
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getApyInRiskOn = params => {
+  return request(`${API_SERVER}/sampleApy/riskon`, {
+    params
+  })
+}

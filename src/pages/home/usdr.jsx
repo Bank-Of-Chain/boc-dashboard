@@ -15,7 +15,7 @@ import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_6 } from '@/constants/big-number'
 
 // === Services === //
-import { getDataByType } from '@/services/api-service'
+import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn } from '@/services/api-service'
 
 // === Hooks === //
 import useWallet from '@/hooks/useWallet'
@@ -37,8 +37,6 @@ const CHAINS = [
   { label: 'Polygon', key: '137' }
   // { label: 'Arbitrum', key: '42161' }
 ]
-
-const CHAIN_ID = 137
 
 const symbol = 'USDC'
 
@@ -99,13 +97,10 @@ const UsdrHome = () => {
   console.log('totalCollateralTokenAmountTotal=', totalCollateralTokenAmountTotal.toString())
   console.log('depositTo3rdPoolTotalAssetsTotal=', depositTo3rdPoolTotalAssetsTotal.toString())
 
-  const aaaa = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-outstanding-loan'), [VAULT_FACTORY_ADDRESS])
-  const bbbb = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-collateral'), [VAULT_FACTORY_ADDRESS])
-  const cccc = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'aave-health-ratio'), [VAULT_FACTORY_ADDRESS])
-  const dddd = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'uniswap-position-value'), [VAULT_FACTORY_ADDRESS])
-  const eeee = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'profit'), [VAULT_FACTORY_ADDRESS])
-  const ffff = useAsync(() => getDataByType(CHAIN_ID, VAULT_FACTORY_ADDRESS, 'net-deposit'), [VAULT_FACTORY_ADDRESS])
-  console.log('aaaa=', aaaa, bbbb, cccc, dddd, eeee, ffff)
+  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const officialApy = useAsync(() => getOffcialApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const sampleApy = useAsync(() => getApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  console.log('verifiedApy=', verifiedApy, officialApy, sampleApy)
   const loading = false
   const introduceData = [
     {
@@ -295,15 +290,23 @@ const UsdrHome = () => {
             </Col>
             <Col span={24}>
               <Suspense fallback={null}>
-                <Card title="Uniswap APY (%)">
-                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
+                  {verifiedApy.error ? (
+                    <div>Error: {verifiedApy?.error?.message}</div>
+                  ) : (
+                    <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                  )}
                 </Card>
               </Suspense>
             </Col>
             <Col span={24}>
               <Suspense>
-                <Card title="Sample APY (%)">
-                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                <Card title="Sample APY (%)" loading={sampleApy.loading}>
+                  {sampleApy.error ? (
+                    <div>Error: {sampleApy.error.message}</div>
+                  ) : (
+                    <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+                  )}
                 </Card>
               </Suspense>
             </Col>
