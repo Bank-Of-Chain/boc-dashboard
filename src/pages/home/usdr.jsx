@@ -47,21 +47,18 @@ const UsdrHome = () => {
   const { personalVault } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
   const groupMap = groupBy(personalVault, 'token')
   const calcArray = get(groupMap, USDC_ADDRESS_MATIC, [])
-  console.log('calcArray=', calcArray)
 
   const netMarketMakingAmountTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.netMarketMakingAmount)
-      return rs
+      return rs.add(item.netMarketMakingAmount)
     },
     BigNumber.from(0)
   )
   const estimatedTotalAssetsTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.estimatedTotalAssets)
-      return rs
+      return rs.add(item.estimatedTotalAssets)
     },
     BigNumber.from(0)
   )
@@ -69,24 +66,37 @@ const UsdrHome = () => {
   const currentBorrowTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.currentBorrow)
-      return rs
+      return rs.add(item.currentBorrow)
     },
     BigNumber.from(0)
   )
   const totalCollateralTokenAmountTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.totalCollateralTokenAmount)
-      return rs
+      return rs.add(item.totalCollateralTokenAmount)
     },
     BigNumber.from(0)
   )
   const depositTo3rdPoolTotalAssetsTotal = reduce(
     calcArray,
     (rs, item) => {
-      rs.add(item.depositTo3rdPoolTotalAssets)
-      return rs
+      return rs.add(item.depositTo3rdPoolTotalAssets)
+    },
+    BigNumber.from(0)
+  )
+
+  const stablecoinInvestorSetLenTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      return rs.add(item._stablecoinInvestorSetLen)
+    },
+    BigNumber.from(0)
+  )
+
+  const profitTotal = reduce(
+    calcArray,
+    (rs, item) => {
+      return rs.add(item.profit)
     },
     BigNumber.from(0)
   )
@@ -118,16 +128,16 @@ const UsdrHome = () => {
       unit: symbol
     },
     {
-      title: 'Unrealized Profit',
-      tip: 'All Vault Unrealized Profit.',
-      content: numeral('123124').format('0.[0000]a'),
+      title: 'Profits',
+      tip: 'All Vault Profits.',
+      content: numeral(toFixed(profitTotal, BN_6)).format('0.[0000]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Holders',
       tip: 'Number Of USDi holders.',
-      content: numeral('5').format('0.[0000]a'),
+      content: numeral(stablecoinInvestorSetLenTotal).format('0.[0000]a'),
       loading,
       unit: ''
     },

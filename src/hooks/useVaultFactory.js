@@ -27,9 +27,11 @@ const useVaultFactory = (vaultFactoryAddress, VAULT_FACTORY_ABI, userProvider) =
 
   const getDetails = useCallback(
     (helperAddress, personalVaultAddress) => {
+      const vaultFactoryContract = new Contract(vaultFactoryAddress, VAULT_FACTORY_ABI, userProvider)
       const contract = new Contract(personalVaultAddress, UNISWAPV3_RISK_ON_VAULT, userProvider)
       const helperContract = new Contract(helperAddress, UNISWAPV3_RISK_ON_HELPER, userProvider)
       return Promise.all([
+        vaultFactoryContract.getTwoInvestorlistLen(),
         contract.borrowToken().then(async i => {
           const tokenContract = new Contract(i, IERC20_ABI, userProvider)
           return { borrowToken: i, name: await tokenContract.symbol(), borrowTokenDecimals: BigNumber.from(10).pow(await tokenContract.decimals()) }
@@ -39,7 +41,7 @@ const useVaultFactory = (vaultFactoryAddress, VAULT_FACTORY_ABI, userProvider) =
           return { wantToken: i, name: await tokenContract.symbol(), wantTokenDecimals: BigNumber.from(10).pow(await tokenContract.decimals()) }
         })
       ])
-        .then(([borrowInfo, wantInfo]) => {
+        .then(([{ _wethInvestorSetLen, _stablecoinInvestorSetLen }, borrowInfo, wantInfo]) => {
           const { borrowToken } = borrowInfo
           const { wantToken } = wantInfo
           return Promise.all([
@@ -59,7 +61,9 @@ const useVaultFactory = (vaultFactoryAddress, VAULT_FACTORY_ABI, userProvider) =
                 estimatedTotalAssets,
                 wantInfo,
                 borrowInfo,
-                result: depositTo3rdPoolTotalAssets.add(totalCollateralTokenAmount).sub(netMarketMakingAmount).sub(currentBorrowWithCanonical)
+                _wethInvestorSetLen,
+                _stablecoinInvestorSetLen,
+                profit: depositTo3rdPoolTotalAssets.add(totalCollateralTokenAmount).sub(netMarketMakingAmount).sub(currentBorrowWithCanonical)
               }
               return nextBaseInfo
             })
