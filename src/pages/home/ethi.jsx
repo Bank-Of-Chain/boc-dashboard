@@ -258,7 +258,7 @@ const ETHiHome = () => {
 
   return (
     <GridContent>
-      <Row gutter={[24, 24]}>
+      <Row gutter={[0, 40]}>
         <Col span={24}>
           <VaultChange />
         </Col>
@@ -306,7 +306,6 @@ const ETHiHome = () => {
             />
           </Suspense>
         </Col>
-        <Col span={24}></Col>
       </Row>
     </GridContent>
   )

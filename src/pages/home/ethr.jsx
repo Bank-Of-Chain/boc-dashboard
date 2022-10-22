@@ -278,7 +278,7 @@ const EthrHome = () => {
 
   return (
     <GridContent>
-      <Row gutter={[0, 24]}>
+      <Row gutter={[0, 40]}>
         <Col span={24}>
           <Suspense fallback={null}>
             <VaultChange />
@@ -286,27 +286,23 @@ const EthrHome = () => {
           </Suspense>
         </Col>
         <Col span={24}>
-          <Row gutter={[24, 24]}>
-            <Col span={24}>
-              <Suspense fallback={null}>
-                <IntroduceRow data={introduceData} />
-              </Suspense>
-            </Col>
-            <Col span={24}>
-              <Suspense fallback={null}>
-                <Card title="Uniswap APY (%)">
-                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-                </Card>
-              </Suspense>
-            </Col>
-            <Col span={24}>
-              <Suspense>
-                <Card title="Sample APY (%)">
-                  <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
-                </Card>
-              </Suspense>
-            </Col>
-          </Row>
+          <Suspense fallback={null}>
+            <IntroduceRow data={introduceData} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <Card title="Uniswap APY (%)">
+              <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+            </Card>
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense>
+            <Card title="Sample APY (%)">
+              <LineEchart option={options} style={{ minHeight: '500px', width: '100%' }} />
+            </Card>
+          </Suspense>
         </Col>
       </Row>
     </GridContent>

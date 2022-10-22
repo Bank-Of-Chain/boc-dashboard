@@ -251,10 +251,6 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
             </Tooltip>
           </div>
         }
-        style={{
-          height: '100%',
-          marginTop: 40
-        }}
         {...responsiveConfig.cardProps}
       >
         <Table
