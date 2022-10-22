@@ -2,6 +2,7 @@ import React from 'react'
 import { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
+import { Row, Col } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
 import LineChartContent from './components/LineChartContent'
@@ -253,33 +254,44 @@ const USDiHome = () => {
   console.log('tvlEchartOpt=', tvlEchartOpt)
   return (
     <GridContent>
-      <Suspense fallback={null}>
-        <VaultChange />
-        <ChainChange chains={CHAINS} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <IntroduceRow data={introduceData} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LineChartContent
-          isUsdi
-          loading={loading}
-          calDateRange={calDateRange}
-          onCalDateRangeClick={setCalDateRange}
-          apyEchartOpt={apyEchartOpt}
-          tvlEchartOpt={tvlEchartOpt}
-        />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <TransationsTable loading={loading} />
-      </Suspense>
+      <Row gutter={[0, 40]}>
+        <Col span={24}>
+          <VaultChange />
+          <ChainChange chains={CHAINS} />
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <IntroduceRow data={introduceData} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <LineChartContent
+              isUsdi
+              loading={loading}
+              calDateRange={calDateRange}
+              onCalDateRangeClick={setCalDateRange}
+              apyEchartOpt={apyEchartOpt}
+              tvlEchartOpt={tvlEchartOpt}
+            />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <TransationsTable loading={loading} />
+          </Suspense>
+        </Col>
+      </Row>
     </GridContent>
   )
 }

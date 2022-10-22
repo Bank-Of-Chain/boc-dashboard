@@ -243,10 +243,6 @@ const TransationsTable = ({
         bordered={false}
         title="Recent Activity"
         extra={extra}
-        style={{
-          height: '100%',
-          marginTop: 40
-        }}
         {...responsiveConfig.cardProps}
       >
         <Table

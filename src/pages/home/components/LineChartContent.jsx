@@ -83,7 +83,7 @@ export default function LineChartContent({
   }
 
   return (
-    <Card loading={loading} bordered={false} style={{ marginTop: 40 }} {...chartResponsiveConfig.cardProps}>
+    <Card loading={loading} bordered={false} {...chartResponsiveConfig.cardProps}>
       <div className={styles.vaultKeyCard}>
         <Tabs animated className={classNames(chartResponsiveConfig.tabClassName)} tabBarExtraContent={extra}>
           <TabPane tab="APY (%)" key="apy">
