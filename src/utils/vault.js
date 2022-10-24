@@ -11,6 +11,12 @@ export const getVaultConfig = (chain, vault) => {
       vaultAddress: ETHI.VAULT_ADDRESS[chain],
       tokenAddress: ETHI.ETHI_ADDRESS[chain],
       vaultBufferAddress: ETHI.VAULT_BUFFER_ADDRESS[chain]
+    },
+    [VAULT_TYPE.ETHr]: {
+      vaultFactoryAddress: ETHR.VAULT_FACTORY_ADDRESS[chain]
+    },
+    [VAULT_TYPE.USDr]: {
+      vaultFactoryAddress: USDR.VAULT_FACTORY_ADDRESS[chain]
     }
   }[vault]
 }

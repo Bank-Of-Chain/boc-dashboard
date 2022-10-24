@@ -1,15 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useModel, history } from 'umi'
+import { useModel, history, useLocation } from 'umi'
 
 // === Components === //
 import { Radio, Row, Col } from 'antd'
 
-// === Constants === //
+// === Hooks === //
+import useWallet from '@/hooks/useWallet'
 
 // === Utils === //
 import map from 'lodash/map'
 import { getVaultConfig } from '@/utils/vault'
+import { changeNetwork } from '@/utils/network'
+
+// === Constants === //
+import { ETH, MATIC } from '@/constants/chain'
+import { VAULT_TYPE } from '@/constants/vault'
 
 // === Styles === //
 import styles from './index.less'
@@ -22,20 +28,34 @@ const options = [
 ]
 
 const VaultChange = () => {
+  const { userProvider, getWalletName } = useWallet()
   const { initialState, setInitialState } = useModel('@@initialState')
+  const location = useLocation()
 
   const changeChain = vault => {
-    const { chain } = history.location.query
-    setInitialState({
-      ...initialState,
-      vault,
-      ...getVaultConfig(chain, vault)
-    })
-    history.push({
-      query: {
-        chain: chain || initialState.chain,
-        vault
+    let { chain } = location.query
+    let promise = Promise.resolve()
+
+    if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
+      chain = MATIC.id
+      if (initialState.walletChainId !== MATIC.id) {
+        promise = changeNetwork(chain, userProvider, getWalletName())
       }
+    } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
+      chain = ETH.id
+    }
+    promise.then(() => {
+      setInitialState({
+        ...initialState,
+        vault,
+        ...getVaultConfig(chain, vault)
+      })
+      history.push({
+        query: {
+          chain: chain || initialState.chain,
+          vault
+        }
+      })
     })
   }
 
