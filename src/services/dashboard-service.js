@@ -126,5 +126,5 @@ export const getRecentActivity = async (vault, chain, types, total = 100) => {
         first: total
       }
     })
-    .then(res => res.data.pegTokenUpdates)
+    .then(res => res?.data?.pegTokenUpdates)
 }

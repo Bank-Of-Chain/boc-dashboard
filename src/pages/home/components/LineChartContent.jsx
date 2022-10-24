@@ -59,7 +59,7 @@ export default function LineChartContent({
 
   let extra = (
     <div className={styles.buttons}>
-      <Radio.Group value={calDateRange} onChange={onDateChange}>
+      <Radio.Group value={calDateRange} onChange={onDateChange} buttonStyle="solid">
         <Tooltip title="last 7 days">
           <Radio.Button value={7}>WEEK</Radio.Button>
         </Tooltip>
