@@ -234,7 +234,11 @@ export const getDataByType = (chainId, vaultAddress, type, params = { limit: 30 
  */
 export const getVerifiedApyInRiskOn = params => {
   return request(`${API_SERVER}/verifiedApy/riskon`, {
-    params
+    params: {
+      offset: 0,
+      limit: 30,
+      ...params
+    }
   })
 }
 
@@ -246,7 +250,11 @@ export const getVerifiedApyInRiskOn = params => {
  */
 export const getOffcialApyInRiskOn = params => {
   return request(`${API_SERVER}/officialApy/riskon`, {
-    params
+    params: {
+      offset: 0,
+      limit: 30,
+      ...params
+    }
   })
 }
 
@@ -257,7 +265,7 @@ export const getOffcialApyInRiskOn = params => {
  * @returns
  */
 export const getApyInRiskOn = params => {
-  return request(`${API_SERVER}/sampleApy/riskon`, {
+  return request(`${API_SERVER}/getSampleApy`, {
     params
   })
 }
