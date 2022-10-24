@@ -27,7 +27,9 @@ import { useAsync } from 'react-async-hook'
 import numeral from 'numeral'
 import get from 'lodash/get'
 import map from 'lodash/map'
-import { groupBy, reduce } from 'lodash'
+import groupBy from 'lodash/groupBy'
+import reduce from 'lodash/reduce'
+import reverse from 'lodash/reverse'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
 import { useState } from 'react'
@@ -44,7 +46,8 @@ const CHAINS = [
 
 const symbol = 'USDC'
 
-const UsdrHome = () => {
+const UsdrHome = props => {
+  const { ori = false } = props?.location?.query
   const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS['137']
 
   const { userProvider } = useWallet()
@@ -56,6 +59,9 @@ const UsdrHome = () => {
   const netMarketMakingAmountTotal = reduce(
     calcArray,
     (rs, item) => {
+      if (!item.netMarketMakingAmount) {
+        return rs
+      }
       return rs.add(item.netMarketMakingAmount)
     },
     BigNumber.from(0)
@@ -63,6 +69,9 @@ const UsdrHome = () => {
   const estimatedTotalAssetsTotal = reduce(
     calcArray,
     (rs, item) => {
+      if (!item.estimatedTotalAssets) {
+        return rs
+      }
       return rs.add(item.estimatedTotalAssets)
     },
     BigNumber.from(0)
@@ -71,6 +80,9 @@ const UsdrHome = () => {
   const currentBorrowTotal = reduce(
     calcArray,
     (rs, item) => {
+      if (!item.currentBorrowWithCanonical) {
+        return rs
+      }
       return rs.add(item.currentBorrowWithCanonical)
     },
     BigNumber.from(0)
@@ -78,6 +90,9 @@ const UsdrHome = () => {
   const totalCollateralTokenAmountTotal = reduce(
     calcArray,
     (rs, item) => {
+      if (!item.totalCollateralTokenAmount) {
+        return rs
+      }
       return rs.add(item.totalCollateralTokenAmount)
     },
     BigNumber.from(0)
@@ -85,6 +100,9 @@ const UsdrHome = () => {
   const depositTo3rdPoolTotalAssetsTotal = reduce(
     calcArray,
     (rs, item) => {
+      if (!item.depositTo3rdPoolTotalAssets) {
+        return rs
+      }
       return rs.add(item.depositTo3rdPoolTotalAssets)
     },
     BigNumber.from(0)
@@ -93,6 +111,9 @@ const UsdrHome = () => {
   const stablecoinInvestorSetLenTotal = reduce(
     calcArray,
     (rs, item) => {
+      if (!item._stablecoinInvestorSetLen) {
+        return rs
+      }
       return rs.add(item._stablecoinInvestorSetLen)
     },
     BigNumber.from(0)
@@ -101,6 +122,9 @@ const UsdrHome = () => {
   const profitTotal = reduce(
     calcArray,
     (rs, item) => {
+      if (!item.profit) {
+        return rs
+      }
       return rs.add(item.profit)
     },
     BigNumber.from(0)
@@ -158,10 +182,159 @@ const UsdrHome = () => {
     }
   ]
 
-  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
-  const officialApy = useAsync(() => getOffcialApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn({ type: 'USDr' }), [VAULT_FACTORY_ADDRESS])
+  const officialApy = useAsync(() => getOffcialApyInRiskOn({ type: 'USDr' }), [VAULT_FACTORY_ADDRESS])
   const sampleApy = useAsync(() => getApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
 
+  const uniswapApyOption = {
+    animation: false,
+    textStyle: {
+      color: '#fff'
+    },
+    grid: {
+      top: 40,
+      left: '0%',
+      right: '5%',
+      bottom: '0%',
+      containLabel: true
+    },
+    legend: {
+      textStyle: {
+        color: '#fff'
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+      borderWidth: 0,
+      backgroundColor: '#292B2E',
+      textStyle: {
+        color: '#fff'
+      }
+    },
+    xAxis: {
+      axisLabel: {},
+      data: map(officialApy.result?.content, item => item.apyValidateTime),
+      axisTick: {
+        alignWithLabel: true
+      }
+    },
+    yAxis: {
+      splitLine: {
+        lineStyle: {
+          color: '#454459'
+        }
+      }
+    },
+    color: ['#A68EFE', '#2ec7c9', '#ffb980', '#d87a80', '#e5cf0d', '#97b552', '#8d98b3', '#07a2a4', '#95706d', '#dc69aa'],
+    series: [
+      {
+        name: 'Official Weekly APY',
+        data: map(officialApy.result?.content, item => (item.apy * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          width: 5,
+          cap: 'round'
+        },
+        connectNulls: true,
+        showSymbol: false
+      },
+      {
+        name: 'Verified Weekly APY',
+        data: map(verifiedApy.result?.content, item => (item.verifiedApy * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          width: 5,
+          cap: 'round'
+        },
+        connectNulls: true,
+        showSymbol: false
+      }
+    ]
+  }
+  if (ori) {
+    uniswapApyOption.series.push(
+      {
+        name: 'Official Daily APY',
+        data: map(officialApy.result?.content, item => (item.originApy * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          width: 5,
+          cap: 'round'
+        },
+        connectNulls: true,
+        showSymbol: false
+      },
+      {
+        name: 'Verified Daily APY',
+        data: map(verifiedApy.result?.content, item => (item.dailyVerifiedApy * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          width: 5,
+          cap: 'round'
+        },
+        connectNulls: true,
+        showSymbol: false
+      }
+    )
+  }
+
+  const sampleApyOption = {
+    animation: false,
+    textStyle: {
+      color: '#fff'
+    },
+    grid: {
+      top: 40,
+      left: '0%',
+      right: '5%',
+      bottom: '0%',
+      containLabel: true
+    },
+    tooltip: {
+      trigger: 'axis',
+      borderWidth: 0,
+      backgroundColor: '#292B2E',
+      textStyle: {
+        color: '#fff'
+      }
+    },
+    xAxis: {
+      axisLabel: {},
+      data: map(reverse(sampleApy.result?.data), item => item.apyValidateTime),
+      axisTick: {
+        alignWithLabel: true
+      }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: {
+        lineStyle: {
+          color: '#454459'
+        }
+      }
+    },
+    dataZoom: [
+      {
+        type: 'slider'
+      }
+    ],
+    color: ['#A68EFE', '#5470c6', '#91cc75'],
+    series: [
+      {
+        data: map(reverse(sampleApy.result?.data), item => (item.apy * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          width: 5,
+          cap: 'round'
+        },
+        smooth: false,
+        connectNulls: true,
+        showSymbol: false
+      }
+    ]
+  }
+
+  // TODO
   const dataSource = []
 
   const columns = [
@@ -214,266 +387,24 @@ const UsdrHome = () => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <OnBuilding>
-              <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
-                {verifiedApy.error ? (
-                  <div style={{ minHeight: '10rem' }}>Error: {verifiedApy?.error?.message}</div>
-                ) : (
-                  <LineEchart
-                    option={{
-                      animation: false,
-                      textStyle: {
-                        color: '#fff'
-                      },
-                      grid: {
-                        top: 40,
-                        left: '0%',
-                        right: '5%',
-                        bottom: '0%',
-                        containLabel: true
-                      },
-                      tooltip: {
-                        trigger: 'axis',
-                        borderWidth: 0,
-                        backgroundColor: '#292B2E',
-                        textStyle: {
-                          color: '#fff'
-                        }
-                      },
-                      xAxis: {
-                        axisLabel: {},
-                        type: 'category',
-                        data: [
-                          '2022-09-14 00:00 (UTC)',
-                          '2022-09-15 00:00 (UTC)',
-                          '2022-09-16 00:00 (UTC)',
-                          '2022-09-17 00:00 (UTC)',
-                          '2022-09-18 00:00 (UTC)',
-                          '2022-09-19 00:00 (UTC)',
-                          '2022-09-20 00:00 (UTC)',
-                          '2022-09-21 00:00 (UTC)',
-                          '2022-09-22 00:00 (UTC)',
-                          '2022-09-23 00:00 (UTC)',
-                          '2022-09-24 00:00 (UTC)',
-                          '2022-09-25 00:00 (UTC)',
-                          '2022-09-26 00:00 (UTC)',
-                          '2022-09-27 00:00 (UTC)',
-                          '2022-09-28 00:00 (UTC)',
-                          '2022-09-29 00:00 (UTC)',
-                          '2022-09-30 00:00 (UTC)',
-                          '2022-10-01 00:00 (UTC)',
-                          '2022-10-02 00:00 (UTC)',
-                          '2022-10-03 00:00 (UTC)',
-                          '2022-10-04 00:00 (UTC)',
-                          '2022-10-05 00:00 (UTC)',
-                          '2022-10-06 00:00 (UTC)',
-                          '2022-10-07 00:00 (UTC)',
-                          '2022-10-08 00:00 (UTC)',
-                          '2022-10-09 00:00 (UTC)',
-                          '2022-10-10 00:00 (UTC)',
-                          '2022-10-11 00:00 (UTC)',
-                          '2022-10-12 00:00 (UTC)',
-                          '2022-10-13 00:00 (UTC)',
-                          '2022-10-14 00:00 (UTC)'
-                        ],
-                        axisTick: {
-                          alignWithLabel: true
-                        }
-                      },
-                      yAxis: {
-                        type: 'value',
-                        splitLine: {
-                          lineStyle: {
-                            color: '#454459'
-                          }
-                        }
-                      },
-                      dataZoom: null,
-                      color: ['#A68EFE', '#5470c6', '#91cc75'],
-                      series: [
-                        {
-                          name: 'USDi',
-                          data: [
-                            '1.88',
-                            '1.25',
-                            '1.86',
-                            '1.86',
-                            '1.75',
-                            '1.49',
-                            '1.59',
-                            '1.32',
-                            '1.19',
-                            '1.19',
-                            '1.19',
-                            '0.99',
-                            '1.79',
-                            '2.47',
-                            '2.47',
-                            '4.76',
-                            '4.76',
-                            '4.78',
-                            '4.94',
-                            '4.94',
-                            '4.83',
-                            '4.24',
-                            '4.00',
-                            '4.00',
-                            '4.69',
-                            '4.40',
-                            '4.40',
-                            '4.80',
-                            '4.13',
-                            '4.13',
-                            '4.72'
-                          ],
-                          type: 'line',
-                          lineStyle: {
-                            width: 5,
-                            cap: 'round'
-                          },
-                          smooth: false,
-                          connectNulls: true,
-                          showSymbol: false
-                        }
-                      ]
-                    }}
-                    style={{ minHeight: '500px', width: '100%' }}
-                  />
-                )}
-              </Card>
-            </OnBuilding>
+            <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
+              {verifiedApy.error ? (
+                <div style={{ minHeight: '10rem' }}>Error: {verifiedApy?.error?.message}</div>
+              ) : (
+                <LineEchart option={uniswapApyOption} style={{ minHeight: '500px', width: '100%' }} />
+              )}
+            </Card>
           </Suspense>
         </Col>
         <Col span={24}>
           <Suspense>
-            <OnBuilding>
-              <Card title="Sample APY (%)" loading={sampleApy.loading}>
-                {sampleApy.error ? (
-                  <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
-                ) : (
-                  <LineEchart
-                    option={{
-                      animation: false,
-                      textStyle: {
-                        color: '#fff'
-                      },
-                      grid: {
-                        top: 40,
-                        left: '0%',
-                        right: '5%',
-                        bottom: '0%',
-                        containLabel: true
-                      },
-                      tooltip: {
-                        trigger: 'axis',
-                        borderWidth: 0,
-                        backgroundColor: '#292B2E',
-                        textStyle: {
-                          color: '#fff'
-                        }
-                      },
-                      xAxis: {
-                        axisLabel: {},
-                        type: 'category',
-                        data: [
-                          '2022-09-14 00:00 (UTC)',
-                          '2022-09-15 00:00 (UTC)',
-                          '2022-09-16 00:00 (UTC)',
-                          '2022-09-17 00:00 (UTC)',
-                          '2022-09-18 00:00 (UTC)',
-                          '2022-09-19 00:00 (UTC)',
-                          '2022-09-20 00:00 (UTC)',
-                          '2022-09-21 00:00 (UTC)',
-                          '2022-09-22 00:00 (UTC)',
-                          '2022-09-23 00:00 (UTC)',
-                          '2022-09-24 00:00 (UTC)',
-                          '2022-09-25 00:00 (UTC)',
-                          '2022-09-26 00:00 (UTC)',
-                          '2022-09-27 00:00 (UTC)',
-                          '2022-09-28 00:00 (UTC)',
-                          '2022-09-29 00:00 (UTC)',
-                          '2022-09-30 00:00 (UTC)',
-                          '2022-10-01 00:00 (UTC)',
-                          '2022-10-02 00:00 (UTC)',
-                          '2022-10-03 00:00 (UTC)',
-                          '2022-10-04 00:00 (UTC)',
-                          '2022-10-05 00:00 (UTC)',
-                          '2022-10-06 00:00 (UTC)',
-                          '2022-10-07 00:00 (UTC)',
-                          '2022-10-08 00:00 (UTC)',
-                          '2022-10-09 00:00 (UTC)',
-                          '2022-10-10 00:00 (UTC)',
-                          '2022-10-11 00:00 (UTC)',
-                          '2022-10-12 00:00 (UTC)',
-                          '2022-10-13 00:00 (UTC)',
-                          '2022-10-14 00:00 (UTC)'
-                        ],
-                        axisTick: {
-                          alignWithLabel: true
-                        }
-                      },
-                      yAxis: {
-                        type: 'value',
-                        splitLine: {
-                          lineStyle: {
-                            color: '#454459'
-                          }
-                        }
-                      },
-                      dataZoom: null,
-                      color: ['#A68EFE', '#5470c6', '#91cc75'],
-                      series: [
-                        {
-                          name: 'USDi',
-                          data: [
-                            '1.88',
-                            '1.25',
-                            '1.86',
-                            '1.86',
-                            '1.75',
-                            '1.49',
-                            '1.59',
-                            '1.32',
-                            '1.19',
-                            '1.19',
-                            '1.19',
-                            '0.99',
-                            '1.79',
-                            '2.47',
-                            '2.47',
-                            '4.76',
-                            '4.76',
-                            '4.78',
-                            '4.94',
-                            '4.94',
-                            '4.83',
-                            '4.24',
-                            '4.00',
-                            '4.00',
-                            '4.69',
-                            '4.40',
-                            '4.40',
-                            '4.80',
-                            '4.13',
-                            '4.13',
-                            '4.72'
-                          ],
-                          type: 'line',
-                          lineStyle: {
-                            width: 5,
-                            cap: 'round'
-                          },
-                          smooth: false,
-                          connectNulls: true,
-                          showSymbol: false
-                        }
-                      ]
-                    }}
-                    style={{ minHeight: '500px', width: '100%' }}
-                  />
-                )}
-              </Card>
-            </OnBuilding>
+            <Card title="Sample APY (%)" loading={sampleApy.loading}>
+              {sampleApy.error ? (
+                <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
+              ) : (
+                <LineEchart option={sampleApyOption} style={{ minHeight: '500px', width: '100%' }} />
+              )}
+            </Card>
           </Suspense>
         </Col>
         <Col span={24}>

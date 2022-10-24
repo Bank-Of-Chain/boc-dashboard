@@ -14,7 +14,7 @@ import { VAULT_TYPE } from '@/constants/vault'
 // === Utils === //
 import isUndefined from 'lodash/isUndefined'
 
-export default function Home() {
+export default function Home(props) {
   const { initialState } = useModel('@@initialState')
   const Comp = {
     [VAULT_TYPE.USDi]: USDi,
@@ -25,5 +25,5 @@ export default function Home() {
 
   if (isUndefined(Comp)) return <NoFoundPage />
 
-  return <Comp />
+  return <Comp {...props} />
 }
