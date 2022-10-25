@@ -12,6 +12,7 @@ import useWallet from '@/hooks/useWallet'
 import map from 'lodash/map'
 import { getVaultConfig } from '@/utils/vault'
 import { changeNetwork } from '@/utils/network'
+import { isProEnv } from '@/services/env-service'
 
 // === Constants === //
 import { ETH, MATIC } from '@/constants/chain'
@@ -35,14 +36,15 @@ const VaultChange = () => {
   const changeChain = vault => {
     let { chain } = location.query
     let promise = Promise.resolve()
-
-    if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
-      chain = MATIC.id
-      if (initialState.walletChainId !== MATIC.id) {
-        promise = changeNetwork(chain, userProvider, getWalletName())
+    if (isProEnv(ENV_INDEX)) {
+      if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
+        chain = MATIC.id
+        if (initialState.walletChainId !== MATIC.id) {
+          promise = changeNetwork(chain, userProvider, getWalletName())
+        }
+      } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
+        chain = ETH.id
       }
-    } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
-      chain = ETH.id
     }
     promise.then(() => {
       setInitialState({
