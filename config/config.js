@@ -90,8 +90,8 @@ export default defineConfig({
     }
   },
   define: {
-    ENV_INDEX: 'qa02-sg',
-    API_SERVER: 'https://service-qa02-sg.bankofchain.io',
+    ENV_INDEX: 'qa03-sg',
+    API_SERVER: 'https://service-qa03-sg.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-v2.bankofchain.io',
     IMAGE_ROOT: 'https://v2.bankofchain.io',
     CHAIN_BROWSER_URL: {
