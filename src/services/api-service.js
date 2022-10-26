@@ -269,3 +269,18 @@ export const getApyInRiskOn = params => {
     params
   })
 }
+
+/**
+ *
+ * @param {*} chain
+ * @param {*} type
+ * @returns
+ */
+export const getProfitsByType = (chain, type) => {
+  const params = {
+    type
+  }
+  return request(`${API_SERVER}/chains/${chain}/data_collects/profit`, {
+    params
+  })
+}
