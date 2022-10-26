@@ -23,7 +23,9 @@ const OPERATION = {
   0: 'harvest',
   1: 'lend',
   2: 'withdraw',
-  3: 'redeem'
+  3: 'redeem',
+  4: 'exchange',
+  5: 'rebalance'
 }
 
 const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
