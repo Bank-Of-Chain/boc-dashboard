@@ -12,7 +12,7 @@ import OnBuilding from '@/components/OnBuilding'
 
 // === Constants === //
 import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
-import { BN_6 } from '@/constants/big-number'
+import { BN_6, BN_18 } from '@/constants/big-number'
 
 // === Services === //
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
@@ -123,49 +123,49 @@ const UsdrHome = props => {
     {
       title: 'Deposit',
       tip: 'All Vault Net Deposit.',
-      content: numeral(toFixed(netMarketMakingAmountTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(netMarketMakingAmountTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Current Value',
       tip: 'All Vault Current Value.',
-      content: numeral(toFixed(estimatedTotalAssetsTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(estimatedTotalAssetsTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profits?.result, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(profits?.result?.result, BN_18, 6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Holders',
       tip: 'Number Of USDi holders.',
-      content: numeral(stablecoinInvestorSetLenTotal).format('0.[0000]a'),
+      content: numeral(stablecoinInvestorSetLenTotal).format('0.[00]a'),
       loading,
       unit: ''
     },
     {
       title: 'AAVE Outstanding Loan',
       tip: 'All Vault AAVE Outstanding Loan.',
-      content: numeral(toFixed(currentBorrowTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(currentBorrowTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'AAVE Collateral',
       tip: 'All Vault AAVE Collateral.',
-      content: numeral(toFixed(totalCollateralTokenAmountTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(totalCollateralTokenAmountTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Uniswap Position Value',
       tip: 'All Vault Uniswap Position Value.',
-      content: numeral(toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     }

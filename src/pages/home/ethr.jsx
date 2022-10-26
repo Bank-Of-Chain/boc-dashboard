@@ -55,7 +55,7 @@ const EthrHome = props => {
   const [filter, setFilter] = useState('All')
 
   const profits = useAsync(() => getProfitsByType(MATIC.id, 'ETHr').catch(() => BigNumber.from('0')))
-  
+
   const netMarketMakingAmountTotal = reduce(
     calcArray,
     (rs, item) => {
@@ -137,7 +137,7 @@ const EthrHome = props => {
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profits?.result, BN_18)).format('0.[0000]a'),
+      content: numeral(toFixed(profits?.result?.result, BN_18)).format('0.[0000]a'),
       loading,
       unit: symbol
     },
