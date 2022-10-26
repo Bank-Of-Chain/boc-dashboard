@@ -11,23 +11,21 @@ import ChainChange from '@/components/ChainChange'
 import OnBuilding from '@/components/OnBuilding'
 
 // === Constants === //
-import { VAULT_FACTORY_ABI } from '@/constants/abis'
 import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
-import { BN_6 } from '@/constants/big-number'
+import { BN_6, BN_18 } from '@/constants/big-number'
 
 // === Services === //
-import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn } from '@/services/api-service'
+import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
 
 // === Hooks === //
 import useWallet from '@/hooks/useWallet'
-import useVaultFactory from '@/hooks/useVaultFactory'
+import useVaultFactoryAll from '@/hooks/useVaultFactoryAll'
 import { useAsync } from 'react-async-hook'
 
 // === Utils === //
 import numeral from 'numeral'
-import get from 'lodash/get'
 import map from 'lodash/map'
-import groupBy from 'lodash/groupBy'
+import _filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
@@ -35,6 +33,7 @@ import { useState } from 'react'
 
 // === Styles === //
 import styles from './style.less'
+import { MATIC } from '@/constants/chain'
 
 const { BigNumber } = ethers
 
@@ -47,13 +46,14 @@ const symbol = 'USDC'
 
 const UsdrHome = props => {
   const { ori = false } = props?.location?.query
-  const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS['137']
+  const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS[MATIC.id]
 
   const { userProvider } = useWallet()
-  const { personalVault, loading } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
-  const groupMap = groupBy(personalVault, 'token')
-  const calcArray = get(groupMap, USDC_ADDRESS_MATIC, [])
+  const { vaults, loading } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
+  const calcArray = _filter(vaults, item => item?.wantInfo?.wantToken === USDC_ADDRESS_MATIC)
   const [filter, setFilter] = useState('All')
+
+  const profits = useAsync(() => getProfitsByType(MATIC.id, 'USDr').catch(() => BigNumber.from('0')))
 
   const netMarketMakingAmountTotal = reduce(
     calcArray,
@@ -118,64 +118,53 @@ const UsdrHome = props => {
     BigNumber.from(0)
   )
 
-  const profitTotal = reduce(
-    calcArray,
-    (rs, item) => {
-      if (!item.profit) {
-        return rs
-      }
-      return rs.add(item.profit)
-    },
-    BigNumber.from(0)
-  )
-
   const introduceData = [
     {
       title: 'Deposit',
       tip: 'All Vault Net Deposit.',
-      content: numeral(toFixed(netMarketMakingAmountTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(netMarketMakingAmountTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Current Value',
       tip: 'All Vault Current Value.',
-      content: numeral(toFixed(estimatedTotalAssetsTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(estimatedTotalAssetsTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profitTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(profits?.result?.result, BN_18, 6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Holders',
       tip: 'Number Of USDi holders.',
-      content: numeral(stablecoinInvestorSetLenTotal).format('0.[0000]a'),
+      content: numeral(stablecoinInvestorSetLenTotal).format('0.[00]a'),
       loading,
       unit: ''
     },
     {
       title: 'AAVE Outstanding Loan',
       tip: 'All Vault AAVE Outstanding Loan.',
-      content: numeral(toFixed(currentBorrowTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(currentBorrowTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'AAVE Collateral',
       tip: 'All Vault AAVE Collateral.',
-      content: numeral(toFixed(totalCollateralTokenAmountTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(totalCollateralTokenAmountTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Uniswap Position Value',
       tip: 'All Vault Uniswap Position Value.',
-      content: numeral(toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6)).format('0.[0000]a'),
+      content: numeral(toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6)).format('0.[00]a'),
       loading,
       unit: symbol
     }

@@ -11,23 +11,22 @@ import ChainChange from '@/components/ChainChange'
 import OnBuilding from '@/components/OnBuilding'
 
 // === Constants === //
-import { VAULT_FACTORY_ABI } from '@/constants/abis'
 import { WETH_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_18 } from '@/constants/big-number'
+import { MATIC } from '@/constants/chain'
 
 // === Services === //
-import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn } from '@/services/api-service'
+import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
 
 // === Hooks === //
 import useWallet from '@/hooks/useWallet'
-import useVaultFactory from '@/hooks/useVaultFactory'
+import useVaultFactoryAll from '@/hooks/useVaultFactoryAll'
 import { useAsync } from 'react-async-hook'
 
 // === Utils === //
 import numeral from 'numeral'
-import get from 'lodash/get'
+import _filter from 'lodash/filter'
 import map from 'lodash/map'
-import groupBy from 'lodash/groupBy'
 import reduce from 'lodash/reduce'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
@@ -47,13 +46,14 @@ const symbol = 'WETH'
 
 const EthrHome = props => {
   const { ori = false } = props?.location?.query
-  const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS['137']
+  const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS[MATIC.id]
 
   const { userProvider } = useWallet()
-  const { personalVault, loading } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
-  const groupMap = groupBy(personalVault, 'token')
-  const calcArray = get(groupMap, WETH_ADDRESS_MATIC, [])
+  const { vaults, loading } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
+  const calcArray = _filter(vaults, item => item?.wantInfo?.wantToken === WETH_ADDRESS_MATIC)
   const [filter, setFilter] = useState('All')
+
+  const profits = useAsync(() => getProfitsByType(MATIC.id, 'ETHr').catch(() => BigNumber.from('0')))
 
   const netMarketMakingAmountTotal = reduce(
     calcArray,
@@ -118,17 +118,6 @@ const EthrHome = props => {
     BigNumber.from(0)
   )
 
-  const profitTotal = reduce(
-    calcArray,
-    (rs, item) => {
-      if (!item.profit) {
-        return rs
-      }
-      return rs.add(item.profit)
-    },
-    BigNumber.from(0)
-  )
-
   const introduceData = [
     {
       title: 'Deposit',
@@ -147,7 +136,7 @@ const EthrHome = props => {
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profitTotal, BN_18)).format('0.[0000]a'),
+      content: numeral(toFixed(profits?.result?.result, BN_18)).format('0.[0000]a'),
       loading,
       unit: symbol
     },
