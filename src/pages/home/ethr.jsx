@@ -286,7 +286,6 @@ const EthrHome = props => {
       top: 40,
       left: '0%',
       right: '5%',
-      bottom: '0%',
       containLabel: true
     },
     tooltip: {
