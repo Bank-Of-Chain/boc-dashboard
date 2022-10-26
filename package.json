@@ -11,7 +11,7 @@
   "description": "An out-of-box UI solution for enterprise applications",
   "scripts": {
     "apollo": "node ./config/apollo.js",
-    "mustache": "mustache ./configs/address.json ./configs/config.template.js > ./config/config.js",
+    "mustache": "mustache ./config/address.json ./config/config.template.js > ./config/config.js",
     "start": "umi dev",
     "build": "umi build",
     "apollo:local": "node config/apollo.js --env=local",
