@@ -29,7 +29,6 @@ import get from 'lodash/get'
 import map from 'lodash/map'
 import groupBy from 'lodash/groupBy'
 import reduce from 'lodash/reduce'
-import reverse from 'lodash/reverse'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
 import { useState } from 'react'
@@ -184,7 +183,7 @@ const EthrHome = props => {
 
   const verifiedApy = useAsync(() => getVerifiedApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
   const officialApy = useAsync(() => getOffcialApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
-  const sampleApy = useAsync(() => getApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const sampleApy = useAsync(() => getApyInRiskOn({ underlyingToken: 'ETH' }), [VAULT_FACTORY_ADDRESS])
 
   const uniswapApyOption = {
     animation: false,
@@ -300,7 +299,7 @@ const EthrHome = props => {
     },
     xAxis: {
       axisLabel: {},
-      data: map(reverse(sampleApy.result?.data), item => item.apyValidateTime),
+      data: map(sampleApy.result?.data, item => item.apyValidateTime),
       axisTick: {
         alignWithLabel: true
       }

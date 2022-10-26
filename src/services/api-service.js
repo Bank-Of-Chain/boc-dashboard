@@ -265,7 +265,7 @@ export const getOffcialApyInRiskOn = params => {
  * @returns
  */
 export const getApyInRiskOn = params => {
-  return request(`${API_SERVER}/getSampleApy`, {
+  return request(`${API_SERVER}/riskon/getSampleApy`, {
     params
   })
 }
