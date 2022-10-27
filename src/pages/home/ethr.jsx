@@ -49,7 +49,7 @@ const EthrHome = props => {
   const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS[MATIC.id]
 
   const { userProvider } = useWallet()
-  const { vaults, loading } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
+  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
   const calcArray = _filter(vaults, item => item?.wantInfo?.wantToken === WETH_ADDRESS_MATIC)
   const [filter, setFilter] = useState('All')
 
@@ -107,16 +107,7 @@ const EthrHome = props => {
     BigNumber.from(0)
   )
 
-  const stablecoinInvestorSetLenTotal = reduce(
-    calcArray,
-    (rs, item) => {
-      if (!item._stablecoinInvestorSetLen) {
-        return rs
-      }
-      return rs.add(item._stablecoinInvestorSetLen)
-    },
-    BigNumber.from(0)
-  )
+  const _stablecoinInvestorSetLen = holderInfo._stablecoinInvestorSetLen.toString()
 
   const introduceData = [
     {
@@ -142,8 +133,8 @@ const EthrHome = props => {
     },
     {
       title: 'Holders',
-      tip: 'Number Of USDi holders.',
-      content: numeral(stablecoinInvestorSetLenTotal).format('0.[0000]a'),
+      tip: 'Number Of ETHr holders.',
+      content: numeral(_stablecoinInvestorSetLen).format('0.[0000]a'),
       loading,
       unit: ''
     },
