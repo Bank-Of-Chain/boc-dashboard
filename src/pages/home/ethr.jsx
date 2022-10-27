@@ -107,7 +107,7 @@ const EthrHome = props => {
     BigNumber.from(0)
   )
 
-  const _stablecoinInvestorSetLen = holderInfo._stablecoinInvestorSetLen.toString()
+  const _wethInvestorSetLen = holderInfo._wethInvestorSetLen.toString()
 
   const introduceData = [
     {
@@ -134,7 +134,7 @@ const EthrHome = props => {
     {
       title: 'Holders',
       tip: 'Number Of ETHr holders.',
-      content: numeral(_stablecoinInvestorSetLen).format('0.[0000]a'),
+      content: numeral(_wethInvestorSetLen).format('0.[0000]a'),
       loading,
       unit: ''
     },
