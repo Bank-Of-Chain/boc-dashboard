@@ -13,14 +13,16 @@ const { Contract, BigNumber } = ethers
 const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
   const [loading, setLoading] = useState(false)
   const [vaults, setVaults] = useState([])
+  const [holderInfo, setHolderInfo] = useState({
+    _wethInvestorSetLen: 0,
+    _stablecoinInvestorSetLen: 0
+  })
 
   const getDetails = useCallback(
     (helperAddress, personalVaultAddress) => {
-      const vaultFactoryContract = new Contract(vaultFactoryAddress, VAULT_FACTORY_ABI, userProvider)
       const contract = new Contract(personalVaultAddress, UNISWAPV3_RISK_ON_VAULT, userProvider)
       const helperContract = new Contract(helperAddress, UNISWAPV3_RISK_ON_HELPER, userProvider)
       return Promise.all([
-        vaultFactoryContract.getTwoInvestorlistLen(),
         contract.borrowToken().then(async i => {
           const tokenContract = new Contract(i, IERC20_ABI, userProvider)
           return { borrowToken: i, name: await tokenContract.symbol(), borrowTokenDecimals: BigNumber.from(10).pow(await tokenContract.decimals()) }
@@ -30,7 +32,7 @@ const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
           return { wantToken: i, name: await tokenContract.symbol(), wantTokenDecimals: BigNumber.from(10).pow(await tokenContract.decimals()) }
         })
       ])
-        .then(([{ _wethInvestorSetLen, _stablecoinInvestorSetLen }, borrowInfo, wantInfo]) => {
+        .then(([borrowInfo, wantInfo]) => {
           const { borrowToken } = borrowInfo
           const { wantToken } = wantInfo
           return Promise.all([
@@ -50,8 +52,6 @@ const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
                 estimatedTotalAssets,
                 wantInfo,
                 borrowInfo,
-                _wethInvestorSetLen,
-                _stablecoinInvestorSetLen,
                 profit: depositTo3rdPoolTotalAssets.add(totalCollateralTokenAmount).sub(netMarketMakingAmount).sub(currentBorrowWithCanonical)
               }
               return nextBaseInfo
@@ -71,8 +71,16 @@ const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
     if (isEmpty(vaultFactoryAddress) || isEmpty(userProvider)) return
     setLoading(true)
     const vaultFactoryContract = new Contract(vaultFactoryAddress, VAULT_FACTORY_ABI, userProvider)
-    Promise.all([vaultFactoryContract.uniswapV3RiskOnHelper(), vaultFactoryContract.getTotalVaultAddrList()])
-      .then(([helperAddress, vaultAddrList]) => {
+    Promise.all([
+      vaultFactoryContract.uniswapV3RiskOnHelper(),
+      vaultFactoryContract.getTotalVaultAddrList(),
+      vaultFactoryContract.getTwoInvestorlistLen()
+    ])
+      .then(([helperAddress, vaultAddrList, { _wethInvestorSetLen, _stablecoinInvestorSetLen }]) => {
+        setHolderInfo({
+          _wethInvestorSetLen,
+          _stablecoinInvestorSetLen
+        })
         const requestArray = map(vaultAddrList, async vaultAddrListItem => {
           return getDetails(helperAddress, vaultAddrListItem)
         })
@@ -89,7 +97,8 @@ const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
   return {
     vaultFactoryAddress,
     loading,
-    vaults
+    vaults,
+    holderInfo
   }
 }
 
