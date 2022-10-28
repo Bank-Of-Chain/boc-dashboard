@@ -90,8 +90,8 @@ export default defineConfig({
     }
   },
   define: {
-    ENV_INDEX: 'qa03-sg',
-    API_SERVER: 'https://service-qa03-sg.bankofchain.io',
+    ENV_INDEX: 'pr02-sg',
+    API_SERVER: 'https://service-pr02-sg.bankofchain.io',
     DASHBOARD_ROOT: 'https://dashboard-v2.bankofchain.io',
     IMAGE_ROOT: 'https://v2.bankofchain.io',
     CHAIN_BROWSER_URL: {
@@ -137,12 +137,12 @@ export default defineConfig({
     },
     USDR: {
       VAULT_FACTORY_ADDRESS: {
-        137: '0x9853Eb1dc3946F78f043EA513Ed87ADBdA6eeE09'
+        137: '0xA92C91Fe965D7497A423d951fCDFA221fC354B5a'
       }
     },
     ETHR: {
       VAULT_FACTORY_ADDRESS: {
-        137: '0x9853Eb1dc3946F78f043EA513Ed87ADBdA6eeE09'
+        137: '0xA92C91Fe965D7497A423d951fCDFA221fC354B5a'
       }
     }
   }
