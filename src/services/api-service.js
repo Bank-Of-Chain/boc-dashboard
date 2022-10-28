@@ -237,6 +237,7 @@ export const getVerifiedApyInRiskOn = params => {
     params: {
       offset: 0,
       limit: 30,
+      sort: 'schedule_timestamp asc',
       ...params
     }
   })
@@ -253,6 +254,7 @@ export const getOffcialApyInRiskOn = params => {
     params: {
       offset: 0,
       limit: 30,
+      sort: 'fetch_time asc',
       ...params
     }
   })
