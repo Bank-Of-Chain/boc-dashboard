@@ -13,6 +13,7 @@ import OnBuilding from '@/components/OnBuilding'
 // === Constants === //
 import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_6, BN_18 } from '@/constants/big-number'
+import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
 // === Services === //
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
@@ -126,7 +127,7 @@ const UsdrHome = props => {
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profits?.result?.result, BN_18, 6)).format('0.[00]a'),
+      content: numeral(toFixed(profits?.result?.result, BN_18, TOKEN_DISPLAY_DECIMALS)).format('0.[00]a'),
       loading,
       unit: symbol
     },

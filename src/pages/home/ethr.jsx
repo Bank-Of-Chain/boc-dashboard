@@ -14,6 +14,7 @@ import OnBuilding from '@/components/OnBuilding'
 import { WETH_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_18 } from '@/constants/big-number'
 import { MATIC } from '@/constants/chain'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Services === //
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
@@ -127,7 +128,7 @@ const EthrHome = props => {
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profits?.result?.result, BN_18)).format('0.[0000]a'),
+      content: numeral(toFixed(profits?.result?.result, BN_18, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
       loading,
       unit: symbol
     },
