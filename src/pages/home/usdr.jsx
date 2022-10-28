@@ -2,12 +2,13 @@ import React, { useState, Suspense } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
-import { Row, Col, Card, Table, Radio } from 'antd'
+import { Row, Col, Card, Table, Radio, Tooltip } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
 import VaultChange from '@/components/VaultChange'
 import ChainChange from '@/components/ChainChange'
 import OnBuilding from '@/components/OnBuilding'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Constants === //
 import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
@@ -389,7 +390,18 @@ const UsdrHome = props => {
         </Col>
         <Col span={24}>
           <Suspense>
-            <Card title="Sample APY (%)" loading={sampleApy.loading}>
+            <Card
+              title="Sample APY (%)"
+              extra={
+                <Tooltip
+                  placement="topRight"
+                  title={'The estimated return if invested on any day in the past 365 days and held it on vault until today'}
+                >
+                  <InfoCircleOutlined style={{ fontSize: 22 }} />
+                </Tooltip>
+              }
+              loading={sampleApy.loading}
+            >
               {sampleApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
               ) : (
