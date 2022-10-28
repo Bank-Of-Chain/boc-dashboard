@@ -29,6 +29,8 @@ import _filter from 'lodash/filter'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import size from 'lodash/size'
+import forEach from 'lodash/forEach'
+import find from 'lodash/find'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
 
@@ -161,9 +163,20 @@ const EthrHome = props => {
     }
   ]
 
-  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
   const officialApy = useAsync(() => getOffcialApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
-  const sampleApy = useAsync(() => getApyInRiskOn({ underlyingToken: 'ETH' }), [VAULT_FACTORY_ADDRESS])
+  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
+  const dateArray = []
+  const verifiedApyArray = []
+  const verifiedDailyApyArray = []
+  // Maybe the data of verifiedApy is less than officialApy
+  forEach(officialApy.result?.content, item => {
+    dateArray.push(item.apyValidateTime)
+    const findItem = find(verifiedApy.result?.content, el => el.apyValidateTime === item.apyValidateTime)
+    const verify = findItem ? (findItem.verifiedApy * 100).toFixed(2) : ''
+    const verifyDaily = findItem ? (findItem.dailyVerifiedApy * 100).toFixed(2) : ''
+    verifiedApyArray.push(verify)
+    verifiedDailyApyArray.push(verifyDaily)
+  })
 
   const uniswapApyOption = {
     animation: false,
@@ -192,7 +205,7 @@ const EthrHome = props => {
     },
     xAxis: {
       axisLabel: {},
-      data: map(officialApy.result?.content, item => item.apyValidateTime),
+      data: dateArray,
       axisTick: {
         alignWithLabel: true
       }
@@ -219,7 +232,7 @@ const EthrHome = props => {
       },
       {
         name: 'Verified Weekly APY',
-        data: map(verifiedApy.result?.content, item => (item.verifiedApy * 100).toFixed(2)),
+        data: verifiedApyArray,
         type: 'line',
         lineStyle: {
           width: 5,
@@ -245,7 +258,7 @@ const EthrHome = props => {
       },
       {
         name: 'Verified Daily APY',
-        data: map(verifiedApy.result?.content, item => (item.dailyVerifiedApy * 100).toFixed(2)),
+        data: verifiedDailyApyArray,
         type: 'line',
         lineStyle: {
           width: 5,
@@ -257,6 +270,7 @@ const EthrHome = props => {
     )
   }
 
+  const sampleApy = useAsync(() => getApyInRiskOn({ underlyingToken: 'ETH' }), [VAULT_FACTORY_ADDRESS])
   const sampleApyOption = {
     animation: false,
     textStyle: {
