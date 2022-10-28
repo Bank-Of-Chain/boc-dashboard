@@ -14,6 +14,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import { USDC_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_6, BN_18 } from '@/constants/big-number'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { MATIC } from '@/constants/chain'
 
 // === Services === //
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
@@ -36,7 +37,6 @@ import { toFixed } from '@/utils/number-format'
 
 // === Styles === //
 import styles from './style.less'
-import { MATIC } from '@/constants/chain'
 
 const { BigNumber } = ethers
 
@@ -391,14 +391,17 @@ const UsdrHome = props => {
         <Col span={24}>
           <Suspense>
             <Card
-              title="Sample APY (%)"
-              extra={
-                <Tooltip
-                  placement="topRight"
-                  title={'The estimated return if invested on any day in the past 365 days and held it on vault until today'}
-                >
-                  <InfoCircleOutlined style={{ fontSize: 22 }} />
-                </Tooltip>
+              title={
+                <div className={styles.title}>
+                  <span>Sample APY (%)</span>
+                  <Tooltip
+                    placement="topLeft"
+                    arrowPointAtCenter
+                    title="The estimated return if invested on anyday and held it on vault until today."
+                  >
+                    <InfoCircleOutlined className={styles.icon} />
+                  </Tooltip>
+                </div>
               }
               loading={sampleApy.loading}
             >

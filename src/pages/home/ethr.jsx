@@ -392,14 +392,17 @@ const EthrHome = props => {
         <Col span={24}>
           <Suspense>
             <Card
-              title="Sample APY (%)"
-              extra={
-                <Tooltip
-                  placement="topRight"
-                  title={'The estimated return if invested on any day in the past 365 days and held it on vault until today'}
-                >
-                  <InfoCircleOutlined style={{ fontSize: 22 }} />
-                </Tooltip>
+              title={
+                <div className={styles.title}>
+                  <span>Sample APY (%)</span>
+                  <Tooltip
+                    placement="topLeft"
+                    arrowPointAtCenter
+                    title="The estimated return if invested on anyday and held it on vault until today."
+                  >
+                    <InfoCircleOutlined className={styles.icon} />
+                  </Tooltip>
+                </div>
               }
               loading={sampleApy.loading}
             >
