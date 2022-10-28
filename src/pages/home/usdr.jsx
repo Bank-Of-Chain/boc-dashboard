@@ -1,5 +1,4 @@
-import React from 'react'
-import { Suspense } from 'react'
+import React, { useState, Suspense } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
@@ -28,9 +27,9 @@ import numeral from 'numeral'
 import map from 'lodash/map'
 import _filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
+import size from 'lodash/size'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
-import { useState } from 'react'
 
 // === Styles === //
 import styles from './style.less'
@@ -215,7 +214,7 @@ const UsdrHome = props => {
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(officialApy.result?.content) === 1
       },
       {
         name: 'Verified Weekly APY',
@@ -226,7 +225,7 @@ const UsdrHome = props => {
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(verifiedApy.result?.content) === 1
       }
     ]
   }
@@ -241,7 +240,7 @@ const UsdrHome = props => {
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(officialApy.result?.content) === 1
       },
       {
         name: 'Verified Daily APY',
@@ -252,7 +251,7 @@ const UsdrHome = props => {
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(verifiedApy.result?.content) === 1
       }
     )
   }
@@ -307,7 +306,7 @@ const UsdrHome = props => {
         },
         smooth: false,
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(sampleApy.result?.data) === 1
       }
     ]
   }
