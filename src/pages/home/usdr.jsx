@@ -33,7 +33,7 @@ import size from 'lodash/size'
 import forEach from 'lodash/forEach'
 import find from 'lodash/find'
 import * as ethers from 'ethers'
-import { toFixed } from '@/utils/number-format'
+import { toFixed, numberSplit } from '@/utils/number-format'
 
 // === Styles === //
 import styles from './style.less'
@@ -111,27 +111,40 @@ const UsdrHome = props => {
   )
 
   const _stablecoinInvestorSetLen = holderInfo._stablecoinInvestorSetLen.toString()
+
+  const [netMarketMakingAmountTotalText, netMarketMakingAmountTotalSymbol] = numberSplit(toFixed(netMarketMakingAmountTotal, BN_6), '0.[00]')
+  const [estimatedTotalAssetsTotalText, estimatedTotalAssetsTotalSymbol] = numberSplit(toFixed(estimatedTotalAssetsTotal, BN_6), '0.[00]')
+  const [profitsText, profitsSymbol] = numberSplit(toFixed(profits?.result?.result, BN_18, TOKEN_DISPLAY_DECIMALS), '0.[00]')
+  const [currentBorrowText, currentBorrowSymbol] = numberSplit(toFixed(currentBorrowTotal, BN_6), '0.[00]')
+  const [totalCollateralTokenAmountTotalText, totalCollateralTokenAmountTotalSymbol] = numberSplit(
+    toFixed(totalCollateralTokenAmountTotal, BN_6),
+    '0.[00]'
+  )
+  const [depositTo3rdPoolTotalAssetsTotalText, depositTo3rdPoolTotalAssetsTotalSymbol] = numberSplit(
+    toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6),
+    '0.[00]'
+  )
   const introduceData = [
     {
       title: 'Deposit',
       tip: 'All Vault Net Deposit.',
-      content: numeral(toFixed(netMarketMakingAmountTotal, BN_6)).format('0.[00]a'),
+      content: netMarketMakingAmountTotalText,
       loading,
-      unit: symbol
+      unit: [netMarketMakingAmountTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Current Value',
       tip: 'All Vault Current Value.',
-      content: numeral(toFixed(estimatedTotalAssetsTotal, BN_6)).format('0.[00]a'),
+      content: estimatedTotalAssetsTotalText,
       loading,
-      unit: symbol
+      unit: [estimatedTotalAssetsTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profits?.result?.result, BN_18, TOKEN_DISPLAY_DECIMALS)).format('0.[00]a'),
+      content: profitsText,
       loading,
-      unit: symbol
+      unit: [profitsSymbol, symbol].join(' ')
     },
     {
       title: 'Holders',
@@ -143,23 +156,23 @@ const UsdrHome = props => {
     {
       title: 'AAVE Outstanding Loan',
       tip: 'All Vault AAVE Outstanding Loan.',
-      content: numeral(toFixed(currentBorrowTotal, BN_6)).format('0.[00]a'),
+      content: currentBorrowText,
       loading,
-      unit: symbol
+      unit: [currentBorrowSymbol, symbol].join(' ')
     },
     {
       title: 'AAVE Collateral',
       tip: 'All Vault AAVE Collateral.',
-      content: numeral(toFixed(totalCollateralTokenAmountTotal, BN_6)).format('0.[00]a'),
+      content: totalCollateralTokenAmountTotalText,
       loading,
-      unit: symbol
+      unit: [totalCollateralTokenAmountTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Uniswap Position Value',
       tip: 'All Vault Uniswap Position Value.',
-      content: numeral(toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6)).format('0.[00]a'),
+      content: depositTo3rdPoolTotalAssetsTotalText,
       loading,
-      unit: symbol
+      unit: [depositTo3rdPoolTotalAssetsTotalSymbol, symbol].join(' ')
     }
   ]
 
