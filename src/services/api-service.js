@@ -237,6 +237,7 @@ export const getVerifiedApyInRiskOn = params => {
     params: {
       offset: 0,
       limit: 30,
+      sort: 'schedule_timestamp asc',
       ...params
     }
   })
@@ -253,6 +254,7 @@ export const getOffcialApyInRiskOn = params => {
     params: {
       offset: 0,
       limit: 30,
+      sort: 'fetch_time asc',
       ...params
     }
   })
@@ -265,7 +267,22 @@ export const getOffcialApyInRiskOn = params => {
  * @returns
  */
 export const getApyInRiskOn = params => {
-  return request(`${API_SERVER}/getSampleApy`, {
+  return request(`${API_SERVER}/riskon/getSampleApy`, {
+    params
+  })
+}
+
+/**
+ *
+ * @param {*} chain
+ * @param {*} type
+ * @returns
+ */
+export const getProfitsByType = (chain, type) => {
+  const params = {
+    type
+  }
+  return request(`${API_SERVER}/chains/${chain}/data_collects/profit`, {
     params
   })
 }

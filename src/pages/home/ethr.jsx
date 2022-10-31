@@ -1,38 +1,39 @@
-import React from 'react'
-import { Suspense } from 'react'
+import React, { useState, Suspense } from 'react'
 
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
-import { Row, Col, Card, Table, Radio } from 'antd'
+import { Row, Col, Card, Table, Radio, Tooltip } from 'antd'
 import IntroduceRow from './components/IntroduceRow'
 import { LineEchart } from '@/components/echarts'
 import VaultChange from '@/components/VaultChange'
 import ChainChange from '@/components/ChainChange'
 import OnBuilding from '@/components/OnBuilding'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Constants === //
-import { VAULT_FACTORY_ABI } from '@/constants/abis'
 import { WETH_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_18 } from '@/constants/big-number'
+import { MATIC } from '@/constants/chain'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Services === //
-import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn } from '@/services/api-service'
+import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
 
 // === Hooks === //
 import useWallet from '@/hooks/useWallet'
-import useVaultFactory from '@/hooks/useVaultFactory'
+import useVaultFactoryAll from '@/hooks/useVaultFactoryAll'
 import { useAsync } from 'react-async-hook'
 
 // === Utils === //
 import numeral from 'numeral'
-import get from 'lodash/get'
+import _filter from 'lodash/filter'
 import map from 'lodash/map'
-import groupBy from 'lodash/groupBy'
 import reduce from 'lodash/reduce'
-import reverse from 'lodash/reverse'
+import size from 'lodash/size'
+import forEach from 'lodash/forEach'
+import find from 'lodash/find'
 import * as ethers from 'ethers'
 import { toFixed } from '@/utils/number-format'
-import { useState } from 'react'
 
 // === Styles === //
 import styles from './style.less'
@@ -48,13 +49,14 @@ const symbol = 'WETH'
 
 const EthrHome = props => {
   const { ori = false } = props?.location?.query
-  const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS['137']
+  const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS[MATIC.id]
 
   const { userProvider } = useWallet()
-  const { personalVault, loading } = useVaultFactory(VAULT_FACTORY_ADDRESS, VAULT_FACTORY_ABI, userProvider)
-  const groupMap = groupBy(personalVault, 'token')
-  const calcArray = get(groupMap, WETH_ADDRESS_MATIC, [])
+  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
+  const calcArray = _filter(vaults, item => item?.wantInfo?.wantToken === WETH_ADDRESS_MATIC)
   const [filter, setFilter] = useState('All')
+
+  const profits = useAsync(() => getProfitsByType(MATIC.id, 'ETHr').catch(() => BigNumber.from('0')))
 
   const netMarketMakingAmountTotal = reduce(
     calcArray,
@@ -108,27 +110,7 @@ const EthrHome = props => {
     BigNumber.from(0)
   )
 
-  const stablecoinInvestorSetLenTotal = reduce(
-    calcArray,
-    (rs, item) => {
-      if (!item._stablecoinInvestorSetLen) {
-        return rs
-      }
-      return rs.add(item._stablecoinInvestorSetLen)
-    },
-    BigNumber.from(0)
-  )
-
-  const profitTotal = reduce(
-    calcArray,
-    (rs, item) => {
-      if (!item.profit) {
-        return rs
-      }
-      return rs.add(item.profit)
-    },
-    BigNumber.from(0)
-  )
+  const _wethInvestorSetLen = holderInfo._wethInvestorSetLen.toString()
 
   const introduceData = [
     {
@@ -148,14 +130,14 @@ const EthrHome = props => {
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profitTotal, BN_18)).format('0.[0000]a'),
+      content: numeral(toFixed(profits?.result?.result, BN_18, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
       loading,
       unit: symbol
     },
     {
       title: 'Holders',
-      tip: 'Number Of USDi holders.',
-      content: numeral(stablecoinInvestorSetLenTotal).format('0.[0000]a'),
+      tip: 'Number Of ETHr holders.',
+      content: numeral(_wethInvestorSetLen).format('0.[0000]a'),
       loading,
       unit: ''
     },
@@ -182,9 +164,20 @@ const EthrHome = props => {
     }
   ]
 
-  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
   const officialApy = useAsync(() => getOffcialApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
-  const sampleApy = useAsync(() => getApyInRiskOn(), [VAULT_FACTORY_ADDRESS])
+  const verifiedApy = useAsync(() => getVerifiedApyInRiskOn({ type: 'ETHr' }), [VAULT_FACTORY_ADDRESS])
+  const dateArray = []
+  const verifiedApyArray = []
+  const verifiedDailyApyArray = []
+  // Maybe the data of verifiedApy is less than officialApy
+  forEach(officialApy.result?.content, item => {
+    dateArray.push(item.apyValidateTime)
+    const findItem = find(verifiedApy.result?.content, el => el.apyValidateTime === item.apyValidateTime)
+    const verify = findItem ? (findItem.verifiedApy * 100).toFixed(2) : ''
+    const verifyDaily = findItem ? (findItem.dailyVerifiedApy * 100).toFixed(2) : ''
+    verifiedApyArray.push(verify)
+    verifiedDailyApyArray.push(verifyDaily)
+  })
 
   const uniswapApyOption = {
     animation: false,
@@ -213,7 +206,7 @@ const EthrHome = props => {
     },
     xAxis: {
       axisLabel: {},
-      data: map(officialApy.result?.content, item => item.apyValidateTime),
+      data: dateArray,
       axisTick: {
         alignWithLabel: true
       }
@@ -236,18 +229,18 @@ const EthrHome = props => {
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(officialApy.result?.content) === 1
       },
       {
         name: 'Verified Weekly APY',
-        data: map(verifiedApy.result?.content, item => (item.verifiedApy * 100).toFixed(2)),
+        data: verifiedApyArray,
         type: 'line',
         lineStyle: {
           width: 5,
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(verifiedApy.result?.content) === 1
       }
     ]
   }
@@ -262,22 +255,23 @@ const EthrHome = props => {
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(officialApy.result?.content) === 1
       },
       {
         name: 'Verified Daily APY',
-        data: map(verifiedApy.result?.content, item => (item.dailyVerifiedApy * 100).toFixed(2)),
+        data: verifiedDailyApyArray,
         type: 'line',
         lineStyle: {
           width: 5,
           cap: 'round'
         },
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(verifiedApy.result?.content) === 1
       }
     )
   }
 
+  const sampleApy = useAsync(() => getApyInRiskOn({ underlyingToken: 'ETH' }), [VAULT_FACTORY_ADDRESS])
   const sampleApyOption = {
     animation: false,
     textStyle: {
@@ -287,7 +281,6 @@ const EthrHome = props => {
       top: 40,
       left: '0%',
       right: '5%',
-      bottom: '0%',
       containLabel: true
     },
     tooltip: {
@@ -300,7 +293,7 @@ const EthrHome = props => {
     },
     xAxis: {
       axisLabel: {},
-      data: map(reverse(sampleApy.result?.data), item => item.apyValidateTime),
+      data: map(sampleApy.result?.data, item => item.apyValidateTime),
       axisTick: {
         alignWithLabel: true
       }
@@ -329,7 +322,7 @@ const EthrHome = props => {
         },
         smooth: false,
         connectNulls: true,
-        showSymbol: false
+        showSymbol: size(sampleApy.result?.data) === 1
       }
     ]
   }
@@ -398,7 +391,21 @@ const EthrHome = props => {
         </Col>
         <Col span={24}>
           <Suspense>
-            <Card title="Sample APY (%)" loading={sampleApy.loading}>
+            <Card
+              title={
+                <div className={styles.title}>
+                  <span>Sample APY (%)</span>
+                  <Tooltip
+                    placement="topLeft"
+                    arrowPointAtCenter
+                    title="The estimated return if invested on anyday and held it on vault until today."
+                  >
+                    <InfoCircleOutlined className={styles.icon} />
+                  </Tooltip>
+                </div>
+              }
+              loading={sampleApy.loading}
+            >
               {sampleApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
               ) : (
