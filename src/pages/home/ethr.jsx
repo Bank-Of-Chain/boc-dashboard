@@ -14,7 +14,6 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import { WETH_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_18 } from '@/constants/big-number'
 import { MATIC } from '@/constants/chain'
-import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Services === //
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
@@ -112,38 +111,38 @@ const EthrHome = props => {
 
   const _wethInvestorSetLen = holderInfo._wethInvestorSetLen.toString()
 
-  const [netMarketMakingAmountTotalText, netMarketMakingAmountTotalSymbol] = numberSplit(toFixed(netMarketMakingAmountTotal, BN_18), '0.[0000]')
-  const [estimatedTotalAssetsTotalText, estimatedTotalAssetsTotalSymbol] = numberSplit(toFixed(estimatedTotalAssetsTotal, BN_18), '0.[0000]')
-  const [profitsText, profitsSymbol] = numberSplit(toFixed(profits?.result?.result, BN_18, ETHI_DISPLAY_DECIMALS), '0.[0000]')
-  const [currentBorrowText, currentBorrowSymbol] = numberSplit(toFixed(currentBorrowTotal, BN_18), '0.[0000]')
-  const [totalCollateralTokenAmountTotalText, totalCollateralTokenAmountTotalSymbol] = numberSplit(
-    toFixed(totalCollateralTokenAmountTotal, BN_18),
-    '0.[0000]'
-  )
-  const [depositTo3rdPoolTotalAssetsTotalText, depositTo3rdPoolTotalAssetsTotalSymbol] = numberSplit(
-    toFixed(depositTo3rdPoolTotalAssetsTotal, BN_18),
-    '0.[0000]'
-  )
+  const value1 = toFixed(netMarketMakingAmountTotal, BN_18)
+  const value2 = toFixed(estimatedTotalAssetsTotal, BN_18)
+  const value3 = toFixed(profits?.result?.result, BN_18)
+  const value4 = toFixed(currentBorrowTotal, BN_18)
+  const value5 = toFixed(totalCollateralTokenAmountTotal, BN_18)
+  const value6 = toFixed(depositTo3rdPoolTotalAssetsTotal, BN_18)
+  const [netMarketMakingAmountTotalText, netMarketMakingAmountTotalSymbol] = numberSplit(value1, '0.[0000]')
+  const [estimatedTotalAssetsTotalText, estimatedTotalAssetsTotalSymbol] = numberSplit(value2, '0.[0000]')
+  const [profitsText, profitsSymbol] = numberSplit(value3, '0.[0000]')
+  const [currentBorrowText, currentBorrowSymbol] = numberSplit(value4, '0.[0000]')
+  const [totalCollateralTokenAmountTotalText, totalCollateralTokenAmountTotalSymbol] = numberSplit(value5, '0.[0000]')
+  const [depositTo3rdPoolTotalAssetsTotalText, depositTo3rdPoolTotalAssetsTotalSymbol] = numberSplit(value6, '0.[0000]')
 
   const introduceData = [
     {
       title: 'Deposit',
       tip: 'All Vault Net Deposit.',
-      content: netMarketMakingAmountTotalText,
+      content: <span title={value1}>{netMarketMakingAmountTotalText}</span>,
       loading,
       unit: [netMarketMakingAmountTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Current Value',
       tip: 'All Vault Current Value.',
-      content: estimatedTotalAssetsTotalText,
+      content: <span title={value2}>{estimatedTotalAssetsTotalText}</span>,
       loading,
       unit: [estimatedTotalAssetsTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: profitsText,
+      content: <span title={value3}>{profitsText}</span>,
       loading,
       unit: [profitsSymbol, symbol].join(' ')
     },
@@ -157,21 +156,21 @@ const EthrHome = props => {
     {
       title: 'AAVE Outstanding Loan',
       tip: 'All Vault AAVE Outstanding Loan.',
-      content: currentBorrowText,
+      content: <span title={value4}>{currentBorrowText}</span>,
       loading,
       unit: [currentBorrowSymbol, symbol].join(' ')
     },
     {
       title: 'AAVE Collateral',
       tip: 'All Vault AAVE Collateral.',
-      content: totalCollateralTokenAmountTotalText,
+      content: <span title={value5}>{totalCollateralTokenAmountTotalText}</span>,
       loading,
       unit: [totalCollateralTokenAmountTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Uniswap Position Value',
       tip: 'All Vault Uniswap Position Value.',
-      content: depositTo3rdPoolTotalAssetsTotalText,
+      content: <span title={value6}>{depositTo3rdPoolTotalAssetsTotalText}</span>,
       loading,
       unit: [depositTo3rdPoolTotalAssetsTotalSymbol, symbol].join(' ')
     }
