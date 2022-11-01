@@ -23,7 +23,9 @@ const OPERATION = {
   0: 'harvest',
   1: 'lend',
   2: 'withdraw',
-  3: 'redeem'
+  3: 'redeem',
+  4: 'exchange',
+  5: 'rebalance'
 }
 
 const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
@@ -47,7 +49,8 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         chainId: initialState.chain,
         vaultAddress: initialState.vaultAddress,
         limit: pagination.pageSize,
-        offset: (pagination.current - 1) * pagination.pageSize
+        offset: (pagination.current - 1) * pagination.pageSize,
+        sort: 'fetch_index desc'
       }).catch(() => {
         return {
           content: [],
