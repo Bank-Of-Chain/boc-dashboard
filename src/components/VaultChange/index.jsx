@@ -45,6 +45,12 @@ const VaultChange = () => {
       } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
         chain = ETH.id
       }
+    } else {
+      if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
+        chain = MATIC.id
+      } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
+        chain = ETH.id
+      }
     }
     promise.then(() => {
       setInitialState({

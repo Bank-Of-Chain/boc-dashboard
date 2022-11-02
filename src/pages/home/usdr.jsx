@@ -20,7 +20,6 @@ import { MATIC } from '@/constants/chain'
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
 
 // === Hooks === //
-import useWallet from '@/hooks/useWallet'
 import useVaultFactoryAll from '@/hooks/useVaultFactoryAll'
 import { useAsync } from 'react-async-hook'
 
@@ -33,6 +32,8 @@ import size from 'lodash/size'
 import forEach from 'lodash/forEach'
 import find from 'lodash/find'
 import * as ethers from 'ethers'
+import { useModel } from 'umi'
+import { getJsonRpcProvider } from '@/utils/json-provider'
 import { toFixed, numberSplit } from '@/utils/number-format'
 
 // === Styles === //
@@ -51,8 +52,10 @@ const UsdrHome = props => {
   const { ori = false } = props?.location?.query
   const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS[MATIC.id]
 
-  const { userProvider } = useWallet()
-  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
+  const { initialState } = useModel('@@initialState')
+
+  const jsonRpcProvider = getJsonRpcProvider(initialState?.chain)
+  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, jsonRpcProvider)
   const calcArray = _filter(vaults, item => item?.wantInfo?.wantToken === USDC_ADDRESS_MATIC)
   const [filter, setFilter] = useState('All')
 

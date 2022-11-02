@@ -10,7 +10,7 @@ import { UNISWAPV3_RISK_ON_HELPER, UNISWAPV3_RISK_ON_VAULT, IERC20_ABI, VAULT_FA
 
 const { Contract, BigNumber } = ethers
 
-const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
+const useVaultFactoryAll = (vaultFactoryAddress, jsonProvider) => {
   const [loading, setLoading] = useState(false)
   const [vaults, setVaults] = useState([])
   const [holderInfo, setHolderInfo] = useState({
@@ -20,15 +20,15 @@ const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
 
   const getDetails = useCallback(
     (helperAddress, personalVaultAddress) => {
-      const contract = new Contract(personalVaultAddress, UNISWAPV3_RISK_ON_VAULT, userProvider)
-      const helperContract = new Contract(helperAddress, UNISWAPV3_RISK_ON_HELPER, userProvider)
+      const contract = new Contract(personalVaultAddress, UNISWAPV3_RISK_ON_VAULT, jsonProvider)
+      const helperContract = new Contract(helperAddress, UNISWAPV3_RISK_ON_HELPER, jsonProvider)
       return Promise.all([
         contract.borrowToken().then(async i => {
-          const tokenContract = new Contract(i, IERC20_ABI, userProvider)
+          const tokenContract = new Contract(i, IERC20_ABI, jsonProvider)
           return { borrowToken: i, name: await tokenContract.symbol(), borrowTokenDecimals: BigNumber.from(10).pow(await tokenContract.decimals()) }
         }),
         contract.wantToken().then(async i => {
-          const tokenContract = new Contract(i, IERC20_ABI, userProvider)
+          const tokenContract = new Contract(i, IERC20_ABI, jsonProvider)
           return { wantToken: i, name: await tokenContract.symbol(), wantTokenDecimals: BigNumber.from(10).pow(await tokenContract.decimals()) }
         })
       ])
@@ -64,13 +64,13 @@ const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
           }, 300)
         })
     },
-    [userProvider]
+    [jsonProvider]
   )
 
   const getVaultImplList = useCallback(() => {
-    if (isEmpty(vaultFactoryAddress) || isEmpty(userProvider)) return
+    if (isEmpty(vaultFactoryAddress) || isEmpty(jsonProvider)) return
     setLoading(true)
-    const vaultFactoryContract = new Contract(vaultFactoryAddress, VAULT_FACTORY_ABI, userProvider)
+    const vaultFactoryContract = new Contract(vaultFactoryAddress, VAULT_FACTORY_ABI, jsonProvider)
     Promise.all([
       vaultFactoryContract.uniswapV3RiskOnHelper(),
       vaultFactoryContract.getTotalVaultAddrList(),
@@ -90,7 +90,7 @@ const useVaultFactoryAll = (vaultFactoryAddress, userProvider) => {
       .finally(() => {
         setLoading(false)
       })
-  }, [vaultFactoryAddress, userProvider, VAULT_FACTORY_ABI])
+  }, [vaultFactoryAddress, jsonProvider, VAULT_FACTORY_ABI])
 
   useEffect(getVaultImplList, [getVaultImplList])
 
