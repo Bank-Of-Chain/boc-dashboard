@@ -22,6 +22,7 @@ import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfi
 // === Hooks === //
 import useVaultFactoryAll from '@/hooks/useVaultFactoryAll'
 import { useAsync } from 'react-async-hook'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import numeral from 'numeral'
@@ -368,6 +369,34 @@ const UsdrHome = props => {
     }
   ]
 
+  const deviceType = useDeviceType()
+  const chartResponsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {
+      chartWrapperClassName: styles.chartDiv
+    },
+    [DEVICE_TYPE.Tablet]: {
+      cardProps: {
+        size: 'small'
+      },
+      buttonProps: {
+        size: 'small',
+        style: { fontSize: '0.5rem' }
+      },
+      chartWrapperClassName: styles.chartDivMobile
+    },
+    [DEVICE_TYPE.Mobile]: {
+      cardProps: {
+        size: 'small'
+      },
+      buttonProps: {
+        size: 'small',
+        style: { fontSize: '0.5rem' }
+      },
+      chartWrapperClassName: styles.chartDivMobile,
+      tabClassName: styles.tabMobile
+    }
+  }[deviceType]
+
   const FILTER_OPTIONS = { All: 'All', Create: 'Create', Deposit: 'Deposit', Burn: 'Burn' }
   const extra = (
     <Radio.Group value={filter} onChange={e => setFilter(e.target.value)} buttonStyle="solid" className={styles.buttons}>
@@ -395,7 +424,7 @@ const UsdrHome = props => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
+            <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading} {...chartResponsiveConfig.cardProps}>
               {verifiedApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {verifiedApy?.error?.message}</div>
               ) : (
@@ -420,6 +449,7 @@ const UsdrHome = props => {
                 </div>
               }
               loading={sampleApy.loading}
+              {...chartResponsiveConfig.cardProps}
             >
               {sampleApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
@@ -432,7 +462,7 @@ const UsdrHome = props => {
         <Col span={24}>
           <Suspense>
             <OnBuilding>
-              <Card extra={extra} title="Recent Activity">
+              <Card extra={extra} title="Recent Activity" {...chartResponsiveConfig.cardProps}>
                 <Table dataSource={dataSource} columns={columns} />
               </Card>
             </OnBuilding>
