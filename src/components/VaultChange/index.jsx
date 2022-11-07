@@ -36,20 +36,19 @@ const VaultChange = () => {
   const changeChain = vault => {
     let { chain } = location.query
     let promise = Promise.resolve()
-    if (isProEnv(ENV_INDEX)) {
-      if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
-        chain = MATIC.id
-        if (initialState.walletChainId !== MATIC.id) {
-          promise = changeNetwork(chain, userProvider, getWalletName())
-        }
-      } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
-        chain = ETH.id
+    if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
+      chain = MATIC.id
+      if (initialState.walletChainId !== MATIC.id && isProEnv(ENV_INDEX)) {
+        promise = changeNetwork(chain, userProvider, getWalletName())
       }
+    } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
+      chain = ETH.id
     }
     promise.then(() => {
       setInitialState({
         ...initialState,
         vault,
+        chain,
         ...getVaultConfig(chain, vault)
       })
       history.push({

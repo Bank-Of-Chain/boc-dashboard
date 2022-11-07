@@ -38,7 +38,7 @@ import styles from './style.less'
 
 const CHAINS = [
   { label: 'Ethereum', key: '1' },
-  { label: 'Polygon', key: '137' }
+  // { label: 'Polygon', key: '137' }
 ]
 
 const USDiHome = () => {
