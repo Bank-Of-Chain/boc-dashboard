@@ -19,9 +19,9 @@ import { MATIC } from '@/constants/chain'
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
 
 // === Hooks === //
-import useWallet from '@/hooks/useWallet'
 import useVaultFactoryAll from '@/hooks/useVaultFactoryAll'
 import { useAsync } from 'react-async-hook'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import numeral from 'numeral'
@@ -32,6 +32,8 @@ import size from 'lodash/size'
 import forEach from 'lodash/forEach'
 import find from 'lodash/find'
 import * as ethers from 'ethers'
+import { useModel } from 'umi'
+import { getJsonRpcProvider } from '@/utils/json-provider'
 import { toFixed, numberSplit } from '@/utils/number-format'
 
 // === Styles === //
@@ -50,8 +52,10 @@ const EthrHome = props => {
   const { ori = false } = props?.location?.query
   const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS[MATIC.id]
 
-  const { userProvider } = useWallet()
-  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
+  const { initialState } = useModel('@@initialState')
+
+  const jsonRpcProvider = getJsonRpcProvider(initialState?.chain)
+  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, jsonRpcProvider)
   const calcArray = _filter(vaults, item => item?.wantInfo?.wantToken === WETH_ADDRESS_MATIC)
   const [filter, setFilter] = useState('All')
 
@@ -376,6 +380,34 @@ const EthrHome = props => {
     </Radio.Group>
   )
 
+  const deviceType = useDeviceType()
+  const chartResponsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {
+      chartWrapperClassName: styles.chartDiv
+    },
+    [DEVICE_TYPE.Tablet]: {
+      cardProps: {
+        size: 'small'
+      },
+      buttonProps: {
+        size: 'small',
+        style: { fontSize: '0.5rem' }
+      },
+      chartWrapperClassName: styles.chartDivMobile
+    },
+    [DEVICE_TYPE.Mobile]: {
+      cardProps: {
+        size: 'small'
+      },
+      buttonProps: {
+        size: 'small',
+        style: { fontSize: '0.5rem' }
+      },
+      chartWrapperClassName: styles.chartDivMobile,
+      tabClassName: styles.tabMobile
+    }
+  }[deviceType]
+
   return (
     <GridContent>
       <Row gutter={[0, 40]}>
@@ -392,7 +424,7 @@ const EthrHome = props => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
+            <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading} {...chartResponsiveConfig.cardProps}>
               {verifiedApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {verifiedApy?.error?.message}</div>
               ) : (
@@ -417,6 +449,7 @@ const EthrHome = props => {
                 </div>
               }
               loading={sampleApy.loading}
+              {...chartResponsiveConfig.cardProps}
             >
               {sampleApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
@@ -429,7 +462,7 @@ const EthrHome = props => {
         <Col span={24}>
           <Suspense>
             <OnBuilding>
-              <Card extra={extra} title="Recent Activity">
+              <Card extra={extra} title="Recent Activity" {...chartResponsiveConfig.cardProps}>
                 <Table dataSource={dataSource} columns={columns} />
               </Card>
             </OnBuilding>
