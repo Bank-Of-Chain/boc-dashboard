@@ -60,6 +60,9 @@ const VaultChange = () => {
     let promise = Promise.resolve()
     if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
       chain = MATIC.id
+      // if (initialState.walletChainId !== MATIC.id && isProEnv(ENV_INDEX)) {
+      //   promise = changeNetwork(chain, userProvider, getWalletName())
+      // }
     } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
       chain = ETH.id
     }
@@ -67,6 +70,7 @@ const VaultChange = () => {
       setInitialState({
         ...initialState,
         vault,
+        chain,
         ...getVaultConfig(chain, vault)
       })
       history.push({
