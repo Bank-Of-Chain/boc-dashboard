@@ -239,7 +239,7 @@ const ETHiHome = () => {
       tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
-      unit: '%'
+      unit: ['', '%'].join(' ')
     }
   ]
 
