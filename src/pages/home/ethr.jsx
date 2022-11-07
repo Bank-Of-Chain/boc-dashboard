@@ -14,6 +14,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import { WETH_ADDRESS_MATIC } from '@/constants/tokens'
 import { BN_18 } from '@/constants/big-number'
 import { MATIC } from '@/constants/chain'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Services === //
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
@@ -117,7 +118,7 @@ const EthrHome = props => {
 
   const value1 = toFixed(netMarketMakingAmountTotal, BN_18)
   const value2 = toFixed(estimatedTotalAssetsTotal, BN_18)
-  const value3 = toFixed(profits?.result?.result, BN_18)
+  const value3 = toFixed(profits?.result?.result, BN_18, ETHI_DISPLAY_DECIMALS)
   const value4 = toFixed(currentBorrowTotal, BN_18)
   const value5 = toFixed(totalCollateralTokenAmountTotal, BN_18)
   const value6 = toFixed(depositTo3rdPoolTotalAssetsTotal, BN_18)
