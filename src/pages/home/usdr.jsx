@@ -115,7 +115,7 @@ const UsdrHome = props => {
   )
 
   const _stablecoinInvestorSetLen = holderInfo._stablecoinInvestorSetLen.toString()
-  const depositPerUser = netMarketMakingAmountTotal.div(_stablecoinInvestorSetLen !== '0' ? _stablecoinInvestorSetLen : 1)
+  const depositPerUser = estimatedTotalAssetsTotal.div(_stablecoinInvestorSetLen !== '0' ? _stablecoinInvestorSetLen : 1)
 
   const value1 = toFixed(netMarketMakingAmountTotal, BN_6)
   const value2 = toFixed(estimatedTotalAssetsTotal, BN_6)
@@ -315,6 +315,14 @@ const UsdrHome = props => {
       backgroundColor: '#292B2E',
       textStyle: {
         color: '#fff'
+      },
+      formatter: params => {
+        let tooltip = ''
+        for (let i = 0; i < params.length; i++) {
+          const { marker, seriesName, value } = params[i]
+          tooltip += `${marker} ${seriesName}: ${value}%<br>`
+        }
+        return tooltip
       }
     },
     xAxis: {
@@ -340,6 +348,7 @@ const UsdrHome = props => {
     color: ['#A68EFE', '#5470c6', '#91cc75'],
     series: [
       {
+        name: 'apy',
         data: map(sampleApy.result?.data, item => (item.apy * 100).toFixed(2)),
         type: 'line',
         lineStyle: {
@@ -349,6 +358,42 @@ const UsdrHome = props => {
         smooth: false,
         connectNulls: true,
         showSymbol: size(sampleApy.result?.data) === 1
+      },
+      {
+        name: 'daily_loss_apy',
+        data: map(sampleApy.result?.data, item => (item.retLoss * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          opacity: 0
+        },
+        showSymbol: false
+      },
+      {
+        name: 'total_loss_apy',
+        data: map(sampleApy.result?.data, item => (item.lossApy * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          opacity: 0
+        },
+        showSymbol: false
+      },
+      {
+        name: 'daily_market_apy',
+        data: map(sampleApy.result?.data, item => (item.retMarket * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          opacity: 0
+        },
+        showSymbol: false
+      },
+      {
+        name: 'total_market_apy',
+        data: map(sampleApy.result?.data, item => (item.marketApy * 100).toFixed(2)),
+        type: 'line',
+        lineStyle: {
+          opacity: 0
+        },
+        showSymbol: false
       }
     ]
   }
