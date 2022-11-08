@@ -147,7 +147,7 @@ const UsdrHome = props => {
       title: 'Profits',
       tip: 'All Vault Profits.',
       content: <span title={value3}>{profitsText}</span>,
-      loading,
+      loading: profits.loading,
       unit: [profitsSymbol, symbol].join(' ')
     },
     {
