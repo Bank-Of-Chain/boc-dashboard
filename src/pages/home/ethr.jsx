@@ -350,7 +350,7 @@ const EthrHome = props => {
     series: [
       {
         name: 'profit and loss',
-        data: map(sampleApy.result?.data, item => (item.apy * 100).toFixed(2)),
+        data: map(sampleApy.result?.data, item => item.apy),
         type: 'line',
         lineStyle: {
           width: 5,
