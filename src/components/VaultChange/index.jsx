@@ -20,10 +20,10 @@ import { VAULT_TYPE } from '@/constants/vault'
 import styles from './index.less'
 
 const options = [
-  { label: 'USDi', value: 'usdi' },
-  { label: 'ETHi', value: 'ethi' },
-  { label: 'USDr', value: 'usdr' },
-  { label: 'ETHr', value: 'ethr' }
+  { label: 'USD Stable', value: 'usdi' },
+  { label: 'ETH Stable', value: 'ethi' },
+  { label: 'USD Plus', value: 'usdr' },
+  { label: 'ETH Plus', value: 'ethr' }
 ]
 
 const VaultChange = () => {
