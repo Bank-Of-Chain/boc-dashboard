@@ -115,6 +115,7 @@ const UsdrHome = props => {
   )
 
   const _stablecoinInvestorSetLen = holderInfo._stablecoinInvestorSetLen.toString()
+  const depositPerUser = netMarketMakingAmountTotal.div(_stablecoinInvestorSetLen !== '0' ? _stablecoinInvestorSetLen : 1)
 
   const value1 = toFixed(netMarketMakingAmountTotal, BN_6)
   const value2 = toFixed(estimatedTotalAssetsTotal, BN_6)
@@ -122,12 +123,14 @@ const UsdrHome = props => {
   const value4 = toFixed(currentBorrowTotal, BN_6)
   const value5 = toFixed(totalCollateralTokenAmountTotal, BN_6)
   const value6 = toFixed(depositTo3rdPoolTotalAssetsTotal, BN_6)
+  const value7 = toFixed(depositPerUser, BN_6)
   const [netMarketMakingAmountTotalText, netMarketMakingAmountTotalSymbol] = numberSplit(value1, '0.[00]')
   const [estimatedTotalAssetsTotalText, estimatedTotalAssetsTotalSymbol] = numberSplit(value2, '0.[00]')
   const [profitsText, profitsSymbol] = numberSplit(value3, '0.[00]')
   const [currentBorrowText, currentBorrowSymbol] = numberSplit(value4, '0.[00]')
   const [totalCollateralTokenAmountTotalText, totalCollateralTokenAmountTotalSymbol] = numberSplit(value5, '0.[00]')
   const [depositTo3rdPoolTotalAssetsTotalText, depositTo3rdPoolTotalAssetsTotalSymbol] = numberSplit(value6, '0.[00]')
+  const [depositPerUserText, depositPerUserSymbol] = numberSplit(value7, '0.[00]')
   const introduceData = [
     {
       title: 'Deposit',
@@ -177,6 +180,13 @@ const UsdrHome = props => {
       content: <span title={value6}>{depositTo3rdPoolTotalAssetsTotalText}</span>,
       loading,
       unit: [depositTo3rdPoolTotalAssetsTotalSymbol, symbol].join(' ')
+    },
+    {
+      title: 'TVL/User',
+      tip: 'Net deposit per user.',
+      content: <span title={value7}>{depositPerUserText}</span>,
+      loading,
+      unit: [depositPerUserSymbol, symbol].join(' ')
     }
   ]
 

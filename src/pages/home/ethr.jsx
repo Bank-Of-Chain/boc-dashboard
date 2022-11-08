@@ -115,6 +115,7 @@ const EthrHome = props => {
   )
 
   const _wethInvestorSetLen = holderInfo._wethInvestorSetLen.toString()
+  const depositPerUser = netMarketMakingAmountTotal.div(_wethInvestorSetLen !== '0' ? _wethInvestorSetLen : 1)
 
   const value1 = toFixed(netMarketMakingAmountTotal, BN_18)
   const value2 = toFixed(estimatedTotalAssetsTotal, BN_18)
@@ -122,12 +123,14 @@ const EthrHome = props => {
   const value4 = toFixed(currentBorrowTotal, BN_18)
   const value5 = toFixed(totalCollateralTokenAmountTotal, BN_18)
   const value6 = toFixed(depositTo3rdPoolTotalAssetsTotal, BN_18)
+  const value7 = toFixed(depositPerUser, BN_18)
   const [netMarketMakingAmountTotalText, netMarketMakingAmountTotalSymbol] = numberSplit(value1, '0.[0000]')
   const [estimatedTotalAssetsTotalText, estimatedTotalAssetsTotalSymbol] = numberSplit(value2, '0.[0000]')
   const [profitsText, profitsSymbol] = numberSplit(value3, '0.[0000]')
   const [currentBorrowText, currentBorrowSymbol] = numberSplit(value4, '0.[0000]')
   const [totalCollateralTokenAmountTotalText, totalCollateralTokenAmountTotalSymbol] = numberSplit(value5, '0.[0000]')
   const [depositTo3rdPoolTotalAssetsTotalText, depositTo3rdPoolTotalAssetsTotalSymbol] = numberSplit(value6, '0.[0000]')
+  const [depositPerUserText, depositPerUserSymbol] = numberSplit(value7, '0.[0000]')
 
   const introduceData = [
     {
@@ -148,7 +151,7 @@ const EthrHome = props => {
       title: 'Profits',
       tip: 'All Vault Profits.',
       content: <span title={value3}>{profitsText}</span>,
-      loading,
+      loading: profits.loading,
       unit: [profitsSymbol, symbol].join(' ')
     },
     {
@@ -178,6 +181,13 @@ const EthrHome = props => {
       content: <span title={value6}>{depositTo3rdPoolTotalAssetsTotalText}</span>,
       loading,
       unit: [depositTo3rdPoolTotalAssetsTotalSymbol, symbol].join(' ')
+    },
+    {
+      title: 'TVL/User',
+      tip: 'Net deposit per user.',
+      content: <span title={value7}>{depositPerUserText}</span>,
+      loading,
+      unit: [depositPerUserSymbol, symbol].join(' ')
     }
   ]
 
