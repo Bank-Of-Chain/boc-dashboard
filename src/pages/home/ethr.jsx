@@ -349,7 +349,7 @@ const EthrHome = props => {
     color: ['#A68EFE', '#5470c6', '#91cc75'],
     series: [
       {
-        name: 'apy',
+        name: 'profit and loss',
         data: map(sampleApy.result?.data, item => (item.apy * 100).toFixed(2)),
         type: 'line',
         lineStyle: {
