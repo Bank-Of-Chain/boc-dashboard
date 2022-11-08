@@ -5,13 +5,18 @@ import classNames from 'classnames'
 // === Components === //
 import { Card } from 'antd'
 
+// === Utils === //
+import isEmpty from 'lodash/isEmpty'
+
 // === Styles === //
 import styles from './index.less'
 
-const renderTotal = (total, unit) => {
+const renderTotal = (total, unit = '') => {
   if (!total && total !== 0) {
     return null
   }
+
+  const [text, symbol] = unit.split(' ')
 
   let totalDom
 
@@ -24,7 +29,12 @@ const renderTotal = (total, unit) => {
       totalDom = (
         <div className={styles.total}>
           <span>{total()}</span>
-          {unit && <span className={styles.unit}>{unit}</span>}
+          {unit && (
+            <span className={classNames({ [styles.unit]: !isEmpty(text) })}>
+              {text}
+              <span className={styles.symbol}>{symbol}</span>
+            </span>
+          )}
         </div>
       )
       break
@@ -33,7 +43,12 @@ const renderTotal = (total, unit) => {
       totalDom = (
         <div className={styles.total}>
           <span>{total}</span>
-          {unit && <span className={styles.unit}>{unit}</span>}
+          {unit && (
+            <span className={classNames({ [styles.unit]: !isEmpty(text) })}>
+              {text}
+              <span className={styles.symbol}>{symbol}</span>
+            </span>
+          )}
         </div>
       )
   }

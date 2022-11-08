@@ -20,9 +20,9 @@ import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import { getVerifiedApyInRiskOn, getOffcialApyInRiskOn, getApyInRiskOn, getProfitsByType } from '@/services/api-service'
 
 // === Hooks === //
-import useWallet from '@/hooks/useWallet'
 import useVaultFactoryAll from '@/hooks/useVaultFactoryAll'
 import { useAsync } from 'react-async-hook'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import numeral from 'numeral'
@@ -33,7 +33,9 @@ import size from 'lodash/size'
 import forEach from 'lodash/forEach'
 import find from 'lodash/find'
 import * as ethers from 'ethers'
-import { toFixed } from '@/utils/number-format'
+import { useModel } from 'umi'
+import { getJsonRpcProvider } from '@/utils/json-provider'
+import { toFixed, numberSplit } from '@/utils/number-format'
 
 // === Styles === //
 import styles from './style.less'
@@ -51,8 +53,10 @@ const EthrHome = props => {
   const { ori = false } = props?.location?.query
   const VAULT_FACTORY_ADDRESS = USDR.VAULT_FACTORY_ADDRESS[MATIC.id]
 
-  const { userProvider } = useWallet()
-  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, userProvider)
+  const { initialState } = useModel('@@initialState')
+
+  const jsonRpcProvider = getJsonRpcProvider(initialState?.chain)
+  const { vaults, loading, holderInfo } = useVaultFactoryAll(VAULT_FACTORY_ADDRESS, jsonRpcProvider)
   const calcArray = _filter(vaults, item => item?.wantInfo?.wantToken === WETH_ADDRESS_MATIC)
   const [filter, setFilter] = useState('All')
 
@@ -112,27 +116,40 @@ const EthrHome = props => {
 
   const _wethInvestorSetLen = holderInfo._wethInvestorSetLen.toString()
 
+  const value1 = toFixed(netMarketMakingAmountTotal, BN_18)
+  const value2 = toFixed(estimatedTotalAssetsTotal, BN_18)
+  const value3 = toFixed(profits?.result?.result, BN_18, ETHI_DISPLAY_DECIMALS)
+  const value4 = toFixed(currentBorrowTotal, BN_18)
+  const value5 = toFixed(totalCollateralTokenAmountTotal, BN_18)
+  const value6 = toFixed(depositTo3rdPoolTotalAssetsTotal, BN_18)
+  const [netMarketMakingAmountTotalText, netMarketMakingAmountTotalSymbol] = numberSplit(value1, '0.[0000]')
+  const [estimatedTotalAssetsTotalText, estimatedTotalAssetsTotalSymbol] = numberSplit(value2, '0.[0000]')
+  const [profitsText, profitsSymbol] = numberSplit(value3, '0.[0000]')
+  const [currentBorrowText, currentBorrowSymbol] = numberSplit(value4, '0.[0000]')
+  const [totalCollateralTokenAmountTotalText, totalCollateralTokenAmountTotalSymbol] = numberSplit(value5, '0.[0000]')
+  const [depositTo3rdPoolTotalAssetsTotalText, depositTo3rdPoolTotalAssetsTotalSymbol] = numberSplit(value6, '0.[0000]')
+
   const introduceData = [
     {
       title: 'Deposit',
       tip: 'All Vault Net Deposit.',
-      content: numeral(toFixed(netMarketMakingAmountTotal, BN_18)).format('0.[0000]a'),
+      content: <span title={value1}>{netMarketMakingAmountTotalText}</span>,
       loading,
-      unit: symbol
+      unit: [netMarketMakingAmountTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Current Value',
       tip: 'All Vault Current Value.',
-      content: numeral(toFixed(estimatedTotalAssetsTotal, BN_18)).format('0.[0000]a'),
+      content: <span title={value2}>{estimatedTotalAssetsTotalText}</span>,
       loading,
-      unit: symbol
+      unit: [estimatedTotalAssetsTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Profits',
       tip: 'All Vault Profits.',
-      content: numeral(toFixed(profits?.result?.result, BN_18, ETHI_DISPLAY_DECIMALS)).format('0.[0000]a'),
+      content: <span title={value3}>{profitsText}</span>,
       loading,
-      unit: symbol
+      unit: [profitsSymbol, symbol].join(' ')
     },
     {
       title: 'Holders',
@@ -144,23 +161,23 @@ const EthrHome = props => {
     {
       title: 'AAVE Outstanding Loan',
       tip: 'All Vault AAVE Outstanding Loan.',
-      content: numeral(toFixed(currentBorrowTotal, BN_18)).format('0.[0000]a'),
+      content: <span title={value4}>{currentBorrowText}</span>,
       loading,
-      unit: symbol
+      unit: [currentBorrowSymbol, symbol].join(' ')
     },
     {
       title: 'AAVE Collateral',
       tip: 'All Vault AAVE Collateral.',
-      content: numeral(toFixed(totalCollateralTokenAmountTotal, BN_18)).format('0.[0000]a'),
+      content: <span title={value5}>{totalCollateralTokenAmountTotalText}</span>,
       loading,
-      unit: symbol
+      unit: [totalCollateralTokenAmountTotalSymbol, symbol].join(' ')
     },
     {
       title: 'Uniswap Position Value',
       tip: 'All Vault Uniswap Position Value.',
-      content: numeral(toFixed(depositTo3rdPoolTotalAssetsTotal, BN_18)).format('0.[0000]a'),
+      content: <span title={value6}>{depositTo3rdPoolTotalAssetsTotalText}</span>,
       loading,
-      unit: symbol
+      unit: [depositTo3rdPoolTotalAssetsTotalSymbol, symbol].join(' ')
     }
   ]
 
@@ -364,6 +381,34 @@ const EthrHome = props => {
     </Radio.Group>
   )
 
+  const deviceType = useDeviceType()
+  const chartResponsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {
+      chartWrapperClassName: styles.chartDiv
+    },
+    [DEVICE_TYPE.Tablet]: {
+      cardProps: {
+        size: 'small'
+      },
+      buttonProps: {
+        size: 'small',
+        style: { fontSize: '0.5rem' }
+      },
+      chartWrapperClassName: styles.chartDivMobile
+    },
+    [DEVICE_TYPE.Mobile]: {
+      cardProps: {
+        size: 'small'
+      },
+      buttonProps: {
+        size: 'small',
+        style: { fontSize: '0.5rem' }
+      },
+      chartWrapperClassName: styles.chartDivMobile,
+      tabClassName: styles.tabMobile
+    }
+  }[deviceType]
+
   return (
     <GridContent>
       <Row gutter={[0, 40]}>
@@ -380,7 +425,7 @@ const EthrHome = props => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading}>
+            <Card title="Uniswap APY (%)" loading={verifiedApy.loading || officialApy.loading} {...chartResponsiveConfig.cardProps}>
               {verifiedApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {verifiedApy?.error?.message}</div>
               ) : (
@@ -405,6 +450,7 @@ const EthrHome = props => {
                 </div>
               }
               loading={sampleApy.loading}
+              {...chartResponsiveConfig.cardProps}
             >
               {sampleApy.error ? (
                 <div style={{ minHeight: '10rem' }}>Error: {sampleApy.error.message}</div>
@@ -417,7 +463,7 @@ const EthrHome = props => {
         <Col span={24}>
           <Suspense>
             <OnBuilding>
-              <Card extra={extra} title="Recent Activity">
+              <Card extra={extra} title="Recent Activity" {...chartResponsiveConfig.cardProps}>
                 <Table dataSource={dataSource} columns={columns} />
               </Card>
             </OnBuilding>

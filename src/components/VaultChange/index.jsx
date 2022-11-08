@@ -6,13 +6,11 @@ import { useModel, history, useLocation } from 'umi'
 import { Radio, Row, Col } from 'antd'
 
 // === Hooks === //
-import useWallet from '@/hooks/useWallet'
+import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Utils === //
 import map from 'lodash/map'
 import { getVaultConfig } from '@/utils/vault'
-import { changeNetwork } from '@/utils/network'
-import { isProEnv } from '@/services/env-service'
 
 // === Constants === //
 import { ETH, MATIC } from '@/constants/chain'
@@ -29,18 +27,42 @@ const options = [
 ]
 
 const VaultChange = () => {
-  const { userProvider, getWalletName } = useWallet()
   const { initialState, setInitialState } = useModel('@@initialState')
   const location = useLocation()
+
+  const deviceType = useDeviceType()
+  const chartResponsiveConfig = {
+    [DEVICE_TYPE.Desktop]: {
+      text: {
+        height: 'auto',
+        padding: '1rem 5rem',
+        lineHeight: '1'
+      }
+    },
+    [DEVICE_TYPE.Tablet]: {
+      text: {
+        height: 'auto',
+        padding: '0.8rem 4rem',
+        lineHeight: '1'
+      }
+    },
+    [DEVICE_TYPE.Mobile]: {
+      text: {
+        height: 'auto',
+        padding: '0.5rem 1.5rem',
+        lineHeight: '1'
+      }
+    }
+  }[deviceType]
 
   const changeChain = vault => {
     let { chain } = location.query
     let promise = Promise.resolve()
     if (vault === VAULT_TYPE.USDr || vault === VAULT_TYPE.ETHr) {
       chain = MATIC.id
-      if (initialState.walletChainId !== MATIC.id && isProEnv(ENV_INDEX)) {
-        promise = changeNetwork(chain, userProvider, getWalletName())
-      }
+      // if (initialState.walletChainId !== MATIC.id && isProEnv(ENV_INDEX)) {
+      //   promise = changeNetwork(chain, userProvider, getWalletName())
+      // }
     } else if (vault === VAULT_TYPE.ETHi || vault === VAULT_TYPE.USDi) {
       chain = ETH.id
     }
@@ -65,7 +87,7 @@ const VaultChange = () => {
       <Col span={24} className={styles.container}>
         <Radio.Group size="large" onChange={v => changeChain(v.target.value)} value={initialState.vault} buttonStyle="solid">
           {map(options, (item, key) => (
-            <Radio.Button value={item.value} key={key}>
+            <Radio.Button style={chartResponsiveConfig.text} value={item.value} key={key}>
               {item.label}
             </Radio.Button>
           ))}
