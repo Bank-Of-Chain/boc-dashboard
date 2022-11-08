@@ -184,7 +184,7 @@ const EthrHome = props => {
     },
     {
       title: 'TVL/User',
-      tip: 'Net deposit per user.',
+      tip: 'Current Value per user.',
       content: <span title={value7}>{depositPerUserText}</span>,
       loading,
       unit: [depositPerUserSymbol, symbol].join(' ')
