@@ -316,14 +316,14 @@ const UsdrHome = props => {
       textStyle: {
         color: '#fff'
       },
-      formatter: params => {
-        let tooltip = ''
-        for (let i = 0; i < params.length; i++) {
-          const { marker, seriesName, value } = params[i]
-          tooltip += `${marker} ${seriesName}: ${value}%<br>`
-        }
-        return tooltip
-      }
+      // formatter: params => {
+      //   let tooltip = ''
+      //   for (let i = 0; i < params.length; i++) {
+      //     const { marker, seriesName, value } = params[i]
+      //     tooltip += `${marker} ${seriesName}: ${value}%<br>`
+      //   }
+      //   return tooltip
+      // }
     },
     xAxis: {
       axisLabel: {},
@@ -359,42 +359,42 @@ const UsdrHome = props => {
         connectNulls: true,
         showSymbol: size(sampleApy.result?.data) === 1
       },
-      {
-        name: 'daily_loss_apy',
-        data: map(sampleApy.result?.data, item => (item.retLoss * 100).toFixed(2)),
-        type: 'line',
-        lineStyle: {
-          opacity: 0
-        },
-        showSymbol: false
-      },
-      {
-        name: 'total_loss_apy',
-        data: map(sampleApy.result?.data, item => (item.lossApy * 100).toFixed(2)),
-        type: 'line',
-        lineStyle: {
-          opacity: 0
-        },
-        showSymbol: false
-      },
-      {
-        name: 'daily_market_apy',
-        data: map(sampleApy.result?.data, item => (item.retMarket * 100).toFixed(2)),
-        type: 'line',
-        lineStyle: {
-          opacity: 0
-        },
-        showSymbol: false
-      },
-      {
-        name: 'total_market_apy',
-        data: map(sampleApy.result?.data, item => (item.marketApy * 100).toFixed(2)),
-        type: 'line',
-        lineStyle: {
-          opacity: 0
-        },
-        showSymbol: false
-      }
+      // {
+      //   name: 'daily_loss_apy',
+      //   data: map(sampleApy.result?.data, item => (item.retLoss * 100).toFixed(2)),
+      //   type: 'line',
+      //   lineStyle: {
+      //     opacity: 0
+      //   },
+      //   showSymbol: false
+      // },
+      // {
+      //   name: 'total_loss_apy',
+      //   data: map(sampleApy.result?.data, item => (item.lossApy * 100).toFixed(2)),
+      //   type: 'line',
+      //   lineStyle: {
+      //     opacity: 0
+      //   },
+      //   showSymbol: false
+      // },
+      // {
+      //   name: 'daily_market_apy',
+      //   data: map(sampleApy.result?.data, item => (item.retMarket * 100).toFixed(2)),
+      //   type: 'line',
+      //   lineStyle: {
+      //     opacity: 0
+      //   },
+      //   showSymbol: false
+      // },
+      // {
+      //   name: 'total_market_apy',
+      //   data: map(sampleApy.result?.data, item => (item.marketApy * 100).toFixed(2)),
+      //   type: 'line',
+      //   lineStyle: {
+      //     opacity: 0
+      //   },
+      //   showSymbol: false
+      // }
     ]
   }
 
