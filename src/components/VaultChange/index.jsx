@@ -34,22 +34,25 @@ const VaultChange = () => {
   const chartResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
       text: {
+        width: '14rem',
         height: 'auto',
-        padding: '1rem 5rem',
+        padding: '1rem 0',
         lineHeight: '1'
       }
     },
     [DEVICE_TYPE.Tablet]: {
       text: {
+        width: '11rem',
         height: 'auto',
-        padding: '0.8rem 4rem',
+        padding: '0.8rem 0',
         lineHeight: '1'
       }
     },
     [DEVICE_TYPE.Mobile]: {
       text: {
+        width: '10rem',
         height: 'auto',
-        padding: '0.5rem 1.5rem',
+        padding: '0.5rem 0',
         lineHeight: '1'
       }
     }
