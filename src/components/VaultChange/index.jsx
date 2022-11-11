@@ -20,10 +20,10 @@ import { VAULT_TYPE } from '@/constants/vault'
 import styles from './index.less'
 
 const options = [
-  { label: 'USDi', value: 'usdi' },
-  { label: 'ETHi', value: 'ethi' },
-  { label: 'USDr', value: 'usdr' },
-  { label: 'ETHr', value: 'ethr' }
+  { label: 'USD Stable', value: 'usdi' },
+  { label: 'ETH Stable', value: 'ethi' },
+  { label: 'USD Plus', value: 'usdr' },
+  { label: 'ETH Plus', value: 'ethr' }
 ]
 
 const VaultChange = () => {
@@ -34,22 +34,25 @@ const VaultChange = () => {
   const chartResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
       text: {
+        width: '14rem',
         height: 'auto',
-        padding: '1rem 5rem',
+        padding: '1rem 0',
         lineHeight: '1'
       }
     },
     [DEVICE_TYPE.Tablet]: {
       text: {
+        width: '11rem',
         height: 'auto',
-        padding: '0.8rem 4rem',
+        padding: '0.8rem 0',
         lineHeight: '1'
       }
     },
     [DEVICE_TYPE.Mobile]: {
       text: {
+        width: '10rem',
         height: 'auto',
-        padding: '0.5rem 1.5rem',
+        padding: '0.5rem 0',
         lineHeight: '1'
       }
     }
