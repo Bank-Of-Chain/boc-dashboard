@@ -8,10 +8,12 @@ import { Result } from 'antd'
 import ETHi from './ethi'
 import USDi from './usdi'
 import { GridContent } from '@ant-design/pro-layout'
+import NoFoundPage from './../404'
 
 // === Utils === //
 import { useModel } from 'umi'
 import isEmpty from 'lodash/isEmpty'
+import isUndefined from 'lodash/isUndefined'
 import useWallet from '@/hooks/useWallet'
 
 export default function Mine() {
@@ -26,6 +28,8 @@ export default function Mine() {
     [VAULT_TYPE.USDi]: USDi,
     [VAULT_TYPE.ETHi]: ETHi
   }[initialState.vault]
+
+  if (isUndefined(Comp)) return <NoFoundPage />
 
   return (
     <GridContent>

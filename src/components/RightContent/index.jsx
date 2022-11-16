@@ -1,4 +1,4 @@
-import { Space, Button, Menu, message } from 'antd'
+import { Button,  message } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
@@ -11,14 +11,11 @@ import Icon, { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
-import { getVaultConfig } from '@/utils/vault'
 import { isInMobileWalletApp, isInMobileH5 } from '@/utils/device'
 import { changeNetwork } from '@/utils/network'
 import { isMarketingHost } from '@/utils/location'
 
 // === Contansts === //
-import { ETH } from '@/constants/chain'
-import { VAULT_TYPE } from '@/constants/vault'
 import { WALLET_OPTIONS } from '@/constants/wallet'
 
 // === Hooks === //
@@ -29,7 +26,7 @@ import useWallet from '@/hooks/useWallet'
 import styles from './index.less'
 
 // routes which do not show the vault select
-const disabledChangeVaultRoute = ['/strategy']
+// const disabledChangeVaultRoute = ['/strategy']
 
 const ICON = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -43,7 +40,7 @@ const ICON = () => (
 const GlobalHeaderRight = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
-  const [current, setCurrent] = useState(initialState.vault)
+  const [, setCurrent] = useState(initialState.vault)
   const [walletModalVisible, setWalletModalVisible] = useState(false)
   const connectTimer = useRef(null)
 
@@ -147,25 +144,11 @@ const GlobalHeaderRight = () => {
 
   return (
     <div className={styles.header}>
-      {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
-        <Menu
-          className={styles.headerMenu}
-          onClick={handleMenuClick}
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={[
-            { label: 'ETHi', key: 'ethi' },
-            { label: 'USDi', key: 'usdi' }
-          ]}
-        />
-      ) : (
-        <span />
-      )}
-      <Space
-        size={20}
+      <div
         className={classNames(styles.right, styles.dark, {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
+        style={{ width: 160 }}
       >
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
@@ -189,7 +172,7 @@ const GlobalHeaderRight = () => {
             />
           ]
         )}
-      </Space>
+      </div>
       <WalletModal
         visible={walletModalVisible}
         onCancel={handleCancel}

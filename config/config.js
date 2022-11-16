@@ -134,6 +134,16 @@ export default defineConfig({
       VAULT_BUFFER_ADDRESS: {
         1: '0xC8915157b36ed6D0F36827a1Bb5E9b0cDd1e87Cd'
       }
+    },
+    USDR: {
+      VAULT_FACTORY_ADDRESS: {
+        137: '0xA92C91Fe965D7497A423d951fCDFA221fC354B5a'
+      }
+    },
+    ETHR: {
+      VAULT_FACTORY_ADDRESS: {
+        137: '0xA92C91Fe965D7497A423d951fCDFA221fC354B5a'
+      }
     }
   }
 })

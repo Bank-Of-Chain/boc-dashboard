@@ -2,6 +2,7 @@ import React from 'react'
 import { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
+import { Row, Col } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
 import LineChartContent from './components/LineChartContent'
@@ -11,6 +12,7 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import ChainChange from '@/components/ChainChange'
+import VaultChange from '@/components/VaultChange'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -33,6 +35,11 @@ import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN } fr
 
 // === Styles === //
 import styles from './style.less'
+
+const CHAINS = [
+  { label: 'Ethereum', key: '1' },
+  // { label: 'Polygon', key: '137' }
+]
 
 const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -241,37 +248,50 @@ const USDiHome = () => {
       tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
-      unit: '%'
+      unit: ['', '%'].join(' ')
     }
   ]
+  console.log('tvlEchartOpt=', tvlEchartOpt)
   return (
     <GridContent>
-      <Suspense fallback={null}>
-        <ChainChange />
-      </Suspense>
-      <Suspense fallback={null}>
-        <IntroduceRow data={introduceData} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LineChartContent
-          isUsdi
-          loading={loading}
-          calDateRange={calDateRange}
-          onCalDateRangeClick={setCalDateRange}
-          apyEchartOpt={apyEchartOpt}
-          tvlEchartOpt={tvlEchartOpt}
-        />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <TransationsTable loading={loading} />
-      </Suspense>
+      <Row gutter={[0, 40]}>
+        <Col span={24}>
+          <VaultChange />
+          <ChainChange chains={CHAINS} />
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <IntroduceRow data={introduceData} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <LineChartContent
+              isUsdi
+              loading={loading}
+              calDateRange={calDateRange}
+              onCalDateRangeClick={setCalDateRange}
+              apyEchartOpt={apyEchartOpt}
+              tvlEchartOpt={tvlEchartOpt}
+            />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <TransationsTable loading={loading} />
+          </Suspense>
+        </Col>
+      </Row>
     </GridContent>
   )
 }

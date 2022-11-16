@@ -210,3 +210,79 @@ export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, of
     params: nextParams
   })
 }
+
+/**
+ * fetch mystatement data by type
+ * @param {*} chainId
+ * @param {*} vaultAddress
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getDataByType = (chainId, vaultAddress, type, params = { limit: 30 }) => {
+  const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/data_collects/types/${type}`
+  return request(url, {
+    params
+  })
+}
+
+/**
+ *
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getVerifiedApyInRiskOn = params => {
+  return request(`${API_SERVER}/verifiedApy/riskon`, {
+    params: {
+      offset: 0,
+      limit: 30,
+      sort: 'schedule_timestamp asc',
+      ...params
+    }
+  })
+}
+
+/**
+ *
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getOffcialApyInRiskOn = params => {
+  return request(`${API_SERVER}/officialApy/riskon`, {
+    params: {
+      offset: 0,
+      limit: 30,
+      sort: 'fetch_time asc',
+      ...params
+    }
+  })
+}
+
+/**
+ *
+ * @param {*} type
+ * @param {*} params
+ * @returns
+ */
+export const getApyInRiskOn = params => {
+  return request(`${API_SERVER}/riskon/getSampleApy`, {
+    params
+  })
+}
+
+/**
+ *
+ * @param {*} chain
+ * @param {*} type
+ * @returns
+ */
+export const getProfitsByType = (chain, type) => {
+  const params = {
+    type
+  }
+  return request(`${API_SERVER}/chains/${chain}/data_collects/profit`, {
+    params
+  })
+}

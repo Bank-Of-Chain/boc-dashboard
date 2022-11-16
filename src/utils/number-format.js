@@ -2,6 +2,7 @@
 import BN from 'bignumber.js'
 import { isNil, isNull } from 'lodash'
 import isEmpty from 'lodash/isEmpty'
+import numeral from 'numeral'
 
 export const toFixed = (value, precision = 1, ...args) => {
   if (isNil(value)) return undefined
@@ -53,4 +54,15 @@ export const formatApyValue = value => {
     return result
   }
   return 1000
+}
+
+/**
+ *
+ * @param {*} value
+ * @param {*} format
+ * @returns
+ */
+export const numberSplit = (value, format = '0.00') => {
+  const totalSupplyTextWithSymbol = numeral(value).format(`${format} a`)
+  return totalSupplyTextWithSymbol.split(' ')
 }

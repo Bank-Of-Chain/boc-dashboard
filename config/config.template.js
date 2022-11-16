@@ -134,6 +134,16 @@ export default defineConfig({
       VAULT_BUFFER_ADDRESS: {
         1: '{{VAULT_BUFFER_FOR_ETHI_ETH}}'
       }
+    },
+    USDR: {
+      VAULT_FACTORY_ADDRESS: {
+        137: '{{VAULT_FACTORY_FOR_USDR_MATIC}}'
+      }
+    },
+    ETHR: {
+      VAULT_FACTORY_ADDRESS: {
+        137: '{{VAULT_FACTORY_FOR_ETHR_MATIC}}'
+      }
     }
   }
 })
