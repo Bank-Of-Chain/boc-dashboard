@@ -89,10 +89,24 @@ div.ant-pro-top-nav-header {
 
 div.ant-card {
   padding: 0.5rem;
-  background: #323338;
+  background: linear-gradient(111.68deg, rgba(87, 97, 125, 0.2) 7.59%, rgba(255, 255, 255, 0.078) 102.04%);
   border-radius: 20px;
   .ant-card-head {
     font-weight: normal;
+  }
+}
+ul.ant-pagination{
+  .ant-pagination-item a,
+  .ant-pagination-prev .ant-pagination-item-link,
+  .ant-pagination-next .ant-pagination-item-link {
+    color: #BEBEBE;
+  }
+  .ant-pagination-item-active {
+    background: @primary-color;
+    border-color: @primary-color;
+    a {
+      color: #fff;
+    }
   }
 }
 div.ant-card-body {
@@ -136,8 +150,11 @@ div.ant-table {
   background: none !important;
   border: 1px solid #a0a0a0;
   border-radius: 16px;
+  table{
+    color:#BEBEBE; 
+  }
   .ant-table-thead > tr > th {
-    background: #292b2e;
+    background: #1F2023;
   }
   .ant-table-tbody > tr.ant-table-row:hover > td,
   .ant-table-cell-fix-left,
@@ -153,7 +170,7 @@ div.ant-table {
     border-top-right-radius: 16px;
   }
   .ant-table-tbody > tr > td {
-    border-bottom: 1px solid #a0a0a0;
+    border-bottom: 1px solid #BEBEBE;
   }
   .ant-table-tbody > tr:last-child > td {
     border: none;
