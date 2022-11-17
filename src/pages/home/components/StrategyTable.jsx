@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 
 // === Components === //
-import { Card, Table, Image, Switch, Tooltip, Badge } from 'antd'
+import { Card, Table, Image, Switch, Tooltip, Badge, Space } from 'antd'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import { InfoCircleOutlined } from '@ant-design/icons'
+import Icon, { InfoCircleOutlined } from '@ant-design/icons'
+import { GoIcon } from '@/components/SvgIcons'
 
 // === Utils === //
 import { useModel, useRequest } from 'umi'
@@ -16,9 +17,6 @@ import { isMarketingHost } from '@/utils/location'
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-
-// === Styles === //
-import styles from '../style.less'
 
 const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
@@ -34,8 +32,8 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   const columns = [
     {
       title: (
-        <div>
-          Name&nbsp;&nbsp;
+        <Space>
+          Name
           <Tooltip
             placement="topLeft"
             arrowPointAtCenter
@@ -44,13 +42,12 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           >
             <InfoCircleOutlined />
           </Tooltip>
-        </div>
+        </Space>
       ),
       dataIndex: 'strategyName',
       key: 'strategyName',
-      width: 320,
       render: (text, item) => (
-        <div className={styles.tableCell}>
+        <Space>
           <Image
             preview={false}
             width={30}
@@ -61,23 +58,23 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
             fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a
+            title={text}
             target={'_blank'}
             rel="noreferrer"
             href={`${isMarketingHost() ? 'https://dashboard.bankofchain.io' : DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${
               initialState.chain
             }&vault=${initialState.vault}`}
-            className={styles.text}
           >
             {text}
           </a>
-        </div>
+        </Space>
       )
     },
     {
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      width: 130,
+      width: 100,
       render: text => !isEmpty(text) && <CoinSuperPosition array={text.split(',')} />
     },
     {
@@ -92,7 +89,14 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: text => <span>{toFixed(text || '0', decimals, displayDecimals)}</span>
     },
     {
-      title: 'Weekly Official APY',
+      title: (
+        <Space>
+          Official APY
+          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </Space>
+      ),
       dataIndex: 'officialWeeklyApy',
       key: 'officialWeeklyApy',
       showSorterTooltip: false,
@@ -102,7 +106,14 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       render: text => <span>{formatApyLabel((100 * text).toFixed(2))}%</span>
     },
     {
-      title: 'Weekly Realized APY',
+      title: (
+        <Space>
+          Realized APY
+          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </Space>
+      ),
       dataIndex: 'realizedApy',
       key: 'realizedApy',
       showSorterTooltip: false,
@@ -136,7 +147,14 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
-      title: 'Weekly Unrealized APY',
+      title: (
+        <Space>
+          Unrealized APY
+          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </Space>
+      ),
       dataIndex: 'unrealizedApy',
       key: 'unrealizedApy',
       showSorterTooltip: false,
@@ -171,7 +189,14 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
-      title: 'Weekly Realized Profit',
+      title: (
+        <Space>
+          Realized Profit
+          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </Space>
+      ),
       dataIndex: 'weekProfit',
       key: 'weekProfit',
       render: (text = 0, item) => {
@@ -179,7 +204,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
         const withoutEstimate = isNil(estimateProfit)
         const jsxElement = (
           <Badge dot={!withoutEstimate} color="gold">
-            <span>
+            <span style={{ color: '#BEBEBE' }}>
               {toFixed(text || '0', decimals, displayDecimals)} {tokenUnit || ''}
             </span>
           </Badge>
@@ -202,7 +227,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       align: 'center',
       render: (text, item) => (
         <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}>
-          <img width={21} src={`${IMAGE_ROOT}/link.png`} alt="link" />
+          <Icon component={GoIcon} />
         </a>
       )
     }
@@ -245,10 +270,10 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
         title={title}
         extra={
           <div>
-            <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
             <Tooltip title="show all strategies added in vault">
               <span style={{ padding: 10 }}>Show All</span>
             </Tooltip>
+            <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
           </div>
         }
         style={{
