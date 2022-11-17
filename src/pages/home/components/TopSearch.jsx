@@ -1,7 +1,7 @@
 import React from 'react'
 
 // === Components === //
-import { Table, Image } from 'antd'
+import { Table, Image, Space } from 'antd'
 
 // === Utils === //
 import BN from 'bignumber.js'
@@ -9,9 +9,6 @@ import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { mapValues, values, groupBy, reduce, filter } from 'lodash'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-
-// === Styles === //
-import styles from '../style.less'
 
 const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}, unit }) => {
   const { initialState } = useModel('@@initialState')
@@ -64,7 +61,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
       dataIndex: 'name',
       key: 'name',
       render: text => (
-        <div className={styles.tableCell}>
+        <Space>
           <Image
             width={30}
             preview={false}
@@ -74,8 +71,8 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
             style={{ borderRadius: '50%' }}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
-          <span className={styles.text}>{text}</span>
-        </div>
+          <span>{text}</span>
+        </Space>
       )
     },
     {

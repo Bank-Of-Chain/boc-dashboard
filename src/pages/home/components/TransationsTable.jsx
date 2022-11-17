@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react'
 // === Components === //
 import { Card, Table, Tooltip, Radio, Select } from 'antd'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import Icon from '@ant-design/icons'
+import { GoIcon } from '@/components/SvgIcons'
 
 // === Utils === //
 import moment from 'moment'
@@ -164,7 +166,7 @@ const TransationsTable = ({
       align: 'center',
       render: (text, item) => (
         <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${item.transaction.id}`}>
-          <img width={21} src={`${IMAGE_ROOT}/link.png`} alt="link" />
+          <Icon component={GoIcon} />
         </a>
       )
     }
