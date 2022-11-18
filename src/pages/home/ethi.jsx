@@ -9,6 +9,7 @@ import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
+import VaultChange from '@/components/VaultChange'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -256,6 +257,9 @@ const ETHiHome = () => {
 
   return (
     <GridContent>
+      <Suspense fallback={null}>
+        <VaultChange />
+      </Suspense>
       <Suspense fallback={null}>
         <IntroduceRow data={introduceData} />
       </Suspense>

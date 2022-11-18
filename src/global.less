@@ -82,6 +82,11 @@ div.ant-pro-top-nav-header {
   }
 }
 .ant-pro-top-nav-header-logo {
+  display: flex;
+  align-items: center;
+  img {
+    height: 2.5rem;
+  }
   h1 {
     color: @text-color;
   }
@@ -192,15 +197,13 @@ div.ant-table-ping-right:not(.ant-table-has-fix-right) > .ant-table-container::a
 
 .ant-radio-group {
   .ant-radio-button-wrapper {
-    // width: 7.5rem;
-    // height: 2.25rem;
-    // line-height: 2rem;
     text-align: center;
-    border: 2px solid #a0a0a0;
+    border: 2px solid @primary-color;
     border-top-width: 2px;
     border-left-width: 0;
+    color: @primary-color;
     &:first-child {
-      border-left: 2px solid #a0a0a0;
+      border-left: 2px solid @primary-color;
     }
   }
   .ant-radio-button-wrapper-checked:not([class*=" ant-radio-button-wrapper-disabled"]).ant-radio-button-wrapper:first-child {
@@ -240,6 +243,13 @@ div.ant-select:not(.ant-select-customize-input) .ant-select-selector {
   border-color: #a0a0a0;
 }
 
+.ant-btn {
+  font-size: 1rem;
+}
+button.ant-btn > .anticon + span {
+  margin-left: 1rem;
+}
+
 /*---scrollbar style--*/
 
 ::-webkit-scrollbar-thumb {
@@ -276,6 +286,7 @@ div.ant-select:not(.ant-select-customize-input) .ant-select-selector {
 
 .ant-layout-header {
   line-height: 4rem;
+  background-color: #1E1E1F;
 }
 
 @media screen and (max-width: 554px) {

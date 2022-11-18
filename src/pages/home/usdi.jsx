@@ -10,7 +10,7 @@ import StrategyTable from './components/StrategyTable'
 import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
-import ChainChange from '@/components/ChainChange'
+import VaultChange from '@/components/VaultChange'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -247,7 +247,7 @@ const USDiHome = () => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <ChainChange />
+        <VaultChange />
       </Suspense>
       <Suspense fallback={null}>
         <IntroduceRow data={introduceData} />

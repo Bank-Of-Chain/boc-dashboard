@@ -7,7 +7,7 @@ const Settings = {
   fixSiderbar: true,
   splitMenus: false,
   colorWeak: false,
-  title: 'BoC DashBoard',
+  title: '',
   pwa: false,
   iconfontUrl: '',
   textColor: '#fff'
