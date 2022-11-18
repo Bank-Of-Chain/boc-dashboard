@@ -46,7 +46,7 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
     </Menu>
   )
   return (
-    <HeaderDropdown overlay={menuHeaderDropdown}>
+    <HeaderDropdown overlay={menuHeaderDropdown} trigger="click">
       <span className={`${styles.action} ${styles.account}`}>
         <div className={styles.dot}></div>
         <Address size="short" wrapClassName={`${styles.name} anticon`} address={address} />

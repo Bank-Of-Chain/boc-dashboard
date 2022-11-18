@@ -1,4 +1,4 @@
-import { Space, Button, Menu, message } from 'antd'
+import { Space, Button, Menu, Dropdown, message } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
@@ -7,7 +7,7 @@ import copy from 'copy-to-clipboard'
 // === Components === //
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
-import Icon, { LoadingOutlined } from '@ant-design/icons'
+import Icon, { LoadingOutlined, DownOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
@@ -38,6 +38,13 @@ const ICON = () => (
     <rect x="9.32754" y="0.6" width="6.07273" height="6.07273" rx="1.4" stroke="white" strokeWidth="1.2" />
     <rect x="9.32754" y="9.32656" width="6.07273" height="6.07273" rx="1.4" stroke="white" strokeWidth="1.2" />
   </svg>
+)
+
+const menu = (
+  <Menu>
+    <Menu.Item>Ethereum</Menu.Item>
+    {/* <Menu.Item>Polygon</Menu.Item> */}
+  </Menu>
 )
 
 const GlobalHeaderRight = () => {
@@ -167,6 +174,15 @@ const GlobalHeaderRight = () => {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
       >
+        <Dropdown overlay={menu}>
+          <Space>
+            <a className={styles.chain}>Ethereum</a>
+            <DownOutlined style={{ fontSize: 10 }} />
+          </Space>
+        </Dropdown>
+        <Button type="text" href="https://docs.bankofchain.io/" target="_blank">
+          Docs
+        </Button>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
         ) : isEmpty(address) ? (
