@@ -28,6 +28,7 @@ const VaultChange = () => {
     let chain = query.chain || ETH.id
     if (vault === VAULT_TYPE.ETHi) {
       chain = ETH.id
+      // TODO: After open Polygon network, we need change network here if current network is not Ethereum
     }
     setInitialState({
       ...initialState,
