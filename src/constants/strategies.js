@@ -33,7 +33,7 @@ const USDI_MATIC_STRATEGIES_MAP = [
   'UniswapV3'
 ]
 
-const ETHI_ETH_STRATEGIES_MAP = ['Balancer', 'UniswapV2', 'Convex', 'Aura', 'UniswapV3', 'StakeWise', 'YearnV2', 'Aave']
+const ETHI_ETH_STRATEGIES_MAP = ['Balancer', 'UniswapV2', 'Convex', 'Aura', 'UniswapV3', 'StakeWise', 'YearnV2', 'Aave', 'DForce']
 
 export const USDI_STRATEGIES_MAP = {
   1: USDI_ETH_STRATEGIES_MAP,
