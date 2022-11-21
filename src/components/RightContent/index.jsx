@@ -122,14 +122,14 @@ const GlobalHeaderRight = () => {
             <DownOutlined style={{ fontSize: 10 }} />
           </Space>
         </Dropdown>
-        <Button type="text" href="https://docs.bankofchain.io/" target="_blank">
+        <Button type="text" href="https://docs.bankofchain.io/" target="_blank" className={styles.colorful}>
           Docs
         </Button>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
         ) : isEmpty(address) ? (
-          <Button type="primary" onClick={handleClickConnect}>
-            Connect
+          <Button className={styles.connectBtn} onClick={handleClickConnect}>
+            Connect Wallet
           </Button>
         ) : (
           [
