@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
+import { Row, Col } from 'antd'
 import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
 import LineChartContent from './components/LineChartContent'
@@ -218,13 +219,13 @@ const ETHiHome = () => {
       content: !isEmpty(pegToken) ? `${totalSupplyText}${isNotNumber ? '' : symbol}` : 0,
       loading,
       unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} ETHi`,
-      subTitle: (
-        <p>
+      footer: (
+        <span>
           1ETHi ≈ {price()}ETH{' '}
           <span className={styles.history} onClick={handleHistoryClick}>
             History
           </span>
-        </p>
+        </span>
       )
     },
     {
@@ -257,44 +258,53 @@ const ETHiHome = () => {
 
   return (
     <GridContent>
-      <Suspense fallback={null}>
-        <VaultChange />
-      </Suspense>
-      <Suspense fallback={null}>
-        <IntroduceRow data={introduceData} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LineChartContent
-          loading={loading}
-          calDateRange={calDateRange}
-          onCalDateRangeClick={setCalDateRange}
-          apyEchartOpt={apyEchartOpt}
-          tvlEchartOpt={tvlEchartOpt}
-        />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ProtocolAllocation
-          loading={loading}
-          strategyMap={ETHI_STRATEGIES_MAP}
-          tokenDecimals={ETHI_BN_DECIMALS}
-          displayDecimals={ETHI_DISPLAY_DECIMALS}
-          vaultData={vaultData}
-          unit="ETH"
-        />
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <StrategyTable unit="ETH" loading={loading} strategyMap={ETHI_STRATEGIES_MAP} displayDecimals={ETHI_DISPLAY_DECIMALS} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <TransationsTable
-          token="ETHi"
-          decimals={ETHI_DECIMALS}
-          dispalyDecimal={ETHI_DISPLAY_DECIMALS}
-          filterOptions={RECENT_ACTIVITY_TYPE}
-          loading={loading}
-        />
-      </Suspense>
+      <VaultChange />
+      <Row gutter={[0, 30]}>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <IntroduceRow data={introduceData} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <LineChartContent
+              loading={loading}
+              calDateRange={calDateRange}
+              onCalDateRangeClick={setCalDateRange}
+              apyEchartOpt={apyEchartOpt}
+              tvlEchartOpt={tvlEchartOpt}
+            />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <ProtocolAllocation
+              loading={loading}
+              strategyMap={ETHI_STRATEGIES_MAP}
+              tokenDecimals={ETHI_BN_DECIMALS}
+              displayDecimals={ETHI_DISPLAY_DECIMALS}
+              vaultData={vaultData}
+              unit="ETH"
+            />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <StrategyTable unit="ETH" loading={loading} strategyMap={ETHI_STRATEGIES_MAP} displayDecimals={ETHI_DISPLAY_DECIMALS} />
+          </Suspense>
+        </Col>
+        <Col span={24}>
+          <Suspense fallback={null}>
+            <TransationsTable
+              token="ETHi"
+              decimals={ETHI_DECIMALS}
+              dispalyDecimal={ETHI_DISPLAY_DECIMALS}
+              filterOptions={RECENT_ACTIVITY_TYPE}
+              loading={loading}
+            />
+          </Suspense>
+        </Col>
+      </Row>
     </GridContent>
   )
 }

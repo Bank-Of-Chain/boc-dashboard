@@ -277,8 +277,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           </div>
         }
         style={{
-          height: '100%',
-          marginTop: 40
+          height: '100%'
         }}
         {...responsiveConfig.cardProps}
       >

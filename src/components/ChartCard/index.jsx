@@ -43,7 +43,7 @@ const renderTotal = (total, unit) => {
 
 const ChartCard = props => {
   const { loading = false, ...rest } = props
-  const { contentHeight, title, avatar, action, total, footer, children, ...rrest } = rest
+  const { contentHeight, title, action, total, footer, children, ...rrest } = rest
   const renderContent = () => {
     if (loading) {
       return false
@@ -52,7 +52,6 @@ const ChartCard = props => {
     return (
       <div className={styles.chartCard}>
         <div className={classNames(styles.chartTop)}>
-          <div className={styles.avatar}>{avatar}</div>
           <div className={styles.metaWrap}>
             <div className={styles.meta}>
               <span className={styles.title}>{title}</span>
@@ -71,15 +70,7 @@ const ChartCard = props => {
             <div className={contentHeight && styles.contentFixed}>{children}</div>
           </div>
         )}
-        {footer && (
-          <div
-            className={classNames(styles.footer, {
-              [styles.footerMargin]: !children
-            })}
-          >
-            {footer}
-          </div>
-        )}
+        <div className={styles.footer}>{footer}</div>
       </div>
     )
   }
