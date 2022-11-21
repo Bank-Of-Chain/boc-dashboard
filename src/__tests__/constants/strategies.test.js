@@ -8,6 +8,6 @@ test('matic usdi has 12 platform', () => {
   expect(USDI_MATIC_STRATEGIES_MAP.length).toBe(12)
 })
 
-test('eth ethi has 8 platform', () => {
-  expect(ETHI_ETH_STRATEGIES_MAP.length).toBe(8)
+test('eth ethi has 9 platform', () => {
+  expect(ETHI_ETH_STRATEGIES_MAP.length).toBe(9)
 })
