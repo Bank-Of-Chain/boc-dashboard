@@ -12,7 +12,6 @@ exports[`ChartCard Component Render 1`] = `
         <div
           class=""
         >
-          <div />
           <div>
             <div>
               <span>
@@ -22,6 +21,7 @@ exports[`ChartCard Component Render 1`] = `
             </div>
           </div>
         </div>
+        <div />
       </div>
     </div>
   </div>
