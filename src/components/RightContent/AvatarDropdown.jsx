@@ -2,6 +2,7 @@ import React from 'react'
 import Icon from '@ant-design/icons'
 import { Menu, Spin, Space } from 'antd'
 import { useModel } from 'umi'
+import { DownOutlined } from '@ant-design/icons'
 
 // === Components === //
 import HeaderDropdown from '../HeaderDropdown'
@@ -58,6 +59,7 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
       <span className={`${styles.action} ${styles.account}`}>
         <div className={styles.dot}></div>
         <Address size="short" wrapClassName={`${styles.name} anticon`} address={address} />
+        <DownOutlined style={{ marginLeft: 10, fontSize: 10 }} />
       </span>
     </HeaderDropdown>
   )
