@@ -41,9 +41,6 @@ export default function ProtocolAllocation({
       loading={loading}
       className={styles.salesCard}
       bordered={false}
-      style={{
-        height: '100%'
-      }}
       {...protocolResponsiveConfig.cardProps}
     >
       <div className={styles.title}>Vault Protocol Allocations</div>

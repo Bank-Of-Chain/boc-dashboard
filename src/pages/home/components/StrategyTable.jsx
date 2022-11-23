@@ -17,6 +17,7 @@ import { isMarketingHost } from '@/utils/location'
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import styles from '../style.less'
 
 const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
@@ -263,40 +264,31 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   }
 
   return (
-    <div>
-      <Card
-        loading={loading}
-        bordered={false}
-        title={title}
-        extra={
-          <div>
-            <Tooltip title="show all strategies added in vault">
-              <span style={{ padding: 10 }}>Show All</span>
-            </Tooltip>
-            <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
-          </div>
-        }
-        style={{
-          height: '100%'
-        }}
-        {...responsiveConfig.cardProps}
-      >
-        <Table
-          rowKey={record => record.strategyAddress}
-          columns={columns}
-          dataSource={data}
-          pagination={
-            data?.length > 10 && {
-              style: {
-                marginBottom: 0
-              },
-              pageSize: 10
-            }
+    <Card loading={loading} className={styles.strategiesCard} bordered={false} {...responsiveConfig.cardProps}>
+      <div className={styles.title}>
+        <span>{title}</span>
+        <div>
+          <Tooltip title="show all strategies added in vault">
+            <span style={{ padding: 10 }}>Show All</span>
+          </Tooltip>
+          <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
+        </div>
+      </div>
+      <Table
+        rowKey={record => record.strategyAddress}
+        columns={columns}
+        dataSource={data}
+        pagination={
+          data?.length > 10 && {
+            style: {
+              marginBottom: 0
+            },
+            pageSize: 10
           }
-          {...responsiveConfig.tableProps}
-        />
-      </Card>
-    </div>
+        }
+        {...responsiveConfig.tableProps}
+      />
+    </Card>
   )
 }
 

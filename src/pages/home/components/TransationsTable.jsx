@@ -187,7 +187,7 @@ const TransationsTable = ({
   const responsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
       radioGroupProps: {
-        size: 'large'
+        size: 'middle'
       }
     },
     [DEVICE_TYPE.Tablet]: {
@@ -239,39 +239,32 @@ const TransationsTable = ({
   }
 
   return (
-    <div>
-      <Card
-        loading={loading}
-        bordered={false}
-        title="Recent Activity"
-        extra={extra}
-        style={{
-          height: '100%'
-        }}
-        {...responsiveConfig.cardProps}
-      >
-        <Table
-          rowKey={record => record.id}
-          columns={columns}
-          dataSource={data}
-          loading={tableLoading}
-          pagination={
-            data?.length > 10 && {
-              showSizeChanger: false,
-              style: {
-                marginBottom: 0
-              },
-              current: currentPage,
-              pageSize: 10,
-              onChange: page => {
-                setCurrentPage(page)
-              }
+    <Card loading={loading} className={styles.strategiesCard} bordered={false} {...responsiveConfig.cardProps}>
+      <div className={styles.title}>
+        <span>Recent Activity</span>
+        {extra}
+      </div>
+      <Table
+        rowKey={record => record.id}
+        columns={columns}
+        dataSource={data}
+        loading={tableLoading}
+        pagination={
+          data?.length > 10 && {
+            showSizeChanger: false,
+            style: {
+              marginBottom: 0
+            },
+            current: currentPage,
+            pageSize: 10,
+            onChange: page => {
+              setCurrentPage(page)
             }
           }
-          {...responsiveConfig.tableProps}
-        />
-      </Card>
-    </div>
+        }
+        {...responsiveConfig.tableProps}
+      />
+    </Card>
   )
 }
 
