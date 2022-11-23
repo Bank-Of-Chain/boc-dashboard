@@ -7,10 +7,6 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { map } from 'lodash'
-import { isMobile } from '@/utils/device'
-
-// === Styles === //
-import styles from '../style.less'
 
 const topColResponsiveProps = {
   xs: 24,
@@ -20,22 +16,10 @@ const topColResponsiveProps = {
   xl: 8
 }
 
-const Field = ({ label, value, ...rest }) => (
-  <div className={styles.field} {...rest}>
-    <span className={styles.label}>{label}</span>
-    <span className={styles.number}>{value}</span>
-  </div>
-)
-
 const IntroduceRow = ({ data = [] }) => {
   return (
-    <Row gutter={[24, 24]}>
-      {map(data, ({ title, tip, loading, content, unit, subTitle }) => {
-        let footer = <Field style={{ height: '1.5rem' }} value={subTitle} />
-        if (!subTitle && isMobile()) {
-          footer = null
-        }
-
+    <Row gutter={[30, 30]}>
+      {map(data, ({ title, tip, loading, content, unit, footer }) => {
         return (
           <Col key={title} {...topColResponsiveProps}>
             <ChartCard
@@ -43,7 +27,7 @@ const IntroduceRow = ({ data = [] }) => {
               title={title}
               action={
                 <Tooltip title={tip}>
-                  <InfoCircleOutlined style={{ fontSize: 22 }} />
+                  <InfoCircleOutlined style={{ fontSize: 16 }} />
                 </Tooltip>
               }
               loading={loading}
