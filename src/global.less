@@ -198,7 +198,6 @@ div.ant-table-ping-right:not(.ant-table-has-fix-right) > .ant-table-container::a
   .ant-radio-button-wrapper {
     text-align: center;
     border: 2px solid @primary-color;
-    border-top-width: 2px;
     border-left-width: 0;
     color: @primary-color;
     &:first-child {
@@ -211,7 +210,7 @@ div.ant-table-ping-right:not(.ant-table-has-fix-right) > .ant-table-container::a
   .ant-radio-button-wrapper:not(:first-child)::before {
     left: -2px;
     width: 2px;
-    background-color: #a0a0a0;
+    background-color: @primary-color;
   }
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before,
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover::before {
