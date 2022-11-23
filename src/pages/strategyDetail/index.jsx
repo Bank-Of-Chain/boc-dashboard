@@ -414,9 +414,9 @@ const Strategy = props => {
   const titleRender = () => {
     return (
       <Space>
-        <span>Offical APY</span>
+        <span style={{ verticalAlign: 'sub' }}>Offical APY</span>
         <Switch className={styles.officalSwitch} size="small" checked={isOfficalApyEnable} onChange={setIsOfficalApyEnable} />
-        <span>Verified APY</span>
+        <span style={{ verticalAlign: 'sub' }}>Verified APY</span>
         <Switch className={styles.verifiedSwitch} size="small" checked={isVerifiedApyEnable} onChange={setIsVerifiedApyEnable} />
       </Space>
     )
@@ -444,7 +444,7 @@ const Strategy = props => {
                 <Image
                   preview={false}
                   width="100%"
-                  style={{ maxWidth: '200px', borderRadius: '50%', textAlign: 'center' }}
+                  style={{ maxWidth: '200px', borderRadius: '50%' }}
                   src={`${IMAGE_ROOT}/images/amms/${strategiesMap[initialState.chain][strategy?.protocol]}.png`}
                   fallback={`${IMAGE_ROOT}/default.png`}
                 />

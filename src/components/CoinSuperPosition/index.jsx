@@ -18,7 +18,7 @@ const CoinSuperPosition = ({ array = [], size = 24 }) => {
       preview={false}
       key={`${address + i}`}
       width={size}
-      style={{ borderRadius: '50%' }}
+      style={{ borderRadius: '50%', verticalAlign: 'sub' }}
       wrapperStyle={{
         marginLeft: i === 0 ? 0 : -10,
         zIndex: array.length - i
