@@ -411,25 +411,6 @@ const Strategy = props => {
     }
   }[deviceType]
 
-  let iconProps = {
-    push: 2,
-    xl: 12,
-    lg: 12,
-    md: 12,
-    sm: 24,
-    xs: 24,
-    style: {
-      margin: '0 auto 16px'
-    }
-  }
-  if (deviceType === DEVICE_TYPE.Mobile) {
-    iconProps.style = {
-      margin: '0 auto 16px',
-      textAlign: 'center'
-    }
-    delete iconProps.push
-  }
-
   const titleRender = () => {
     return (
       <Space>
@@ -441,30 +422,49 @@ const Strategy = props => {
     )
   }
 
+  const titleFontSize = {
+    [DEVICE_TYPE.Desktop]: 30,
+    [DEVICE_TYPE.Tablet]: 26,
+    [DEVICE_TYPE.Mobile]: 18
+  }[deviceType]
+
+  const infoFontSize = {
+    [DEVICE_TYPE.Desktop]: 20,
+    [DEVICE_TYPE.Tablet]: 20,
+    [DEVICE_TYPE.Mobile]: 12
+  }[deviceType]
+
   return (
     <GridContent>
       <Suspense fallback={null}>
         <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false} {...infoResponsiveConfig.cardProps}>
           <Row justify="space-around">
-            <Col {...iconProps}>
-              <Image
-                preview={false}
-                width={200}
-                style={{ borderRadius: '50%' }}
-                src={`${IMAGE_ROOT}/images/amms/${strategiesMap[initialState.chain][strategy?.protocol]}.png`}
-                fallback={`${IMAGE_ROOT}/default.png`}
-              />
+            <Col xl={10} lg={10} md={10} sm={8} xs={6}>
+              <div className={styles.imgWrapper}>
+                <Image
+                  preview={false}
+                  width="100%"
+                  style={{ maxWidth: '200px', borderRadius: '50%' }}
+                  src={`${IMAGE_ROOT}/images/amms/${strategiesMap[initialState.chain][strategy?.protocol]}.png`}
+                  fallback={`${IMAGE_ROOT}/default.png`}
+                />
+              </div>
             </Col>
-            <Col push={2} xl={12} lg={12} md={12} sm={24} xs={24}>
+            <Col xl={14} lg={14} md={14} sm={16} xs={18}>
               <Descriptions
                 column={1}
-                title={<span style={{ color: '#fff' }}>Base Info</span>}
-                labelStyle={{ color: '#fff' }}
-                contentStyle={{ color: '#fff' }}
+                title={<span style={{ color: '#fff', fontSize: titleFontSize, fontWeight: 'normal' }}>Base Info</span>}
+                labelStyle={{ color: '#fff', fontSize: infoFontSize }}
+                contentStyle={{ color: '#fff', fontSize: infoFontSize }}
                 {...infoResponsiveConfig.descriptionProps}
               >
                 <Descriptions.Item label="Name">
-                  <a target={'_blank'} rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}>
+                  <a
+                    target={'_blank'}
+                    rel="noreferrer"
+                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
+                    className={styles.strategyName}
+                  >
                     {strategy.strategyName}
                   </a>
                 </Descriptions.Item>
