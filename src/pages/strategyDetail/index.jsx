@@ -444,7 +444,7 @@ const Strategy = props => {
                 <Image
                   preview={false}
                   width="100%"
-                  style={{ maxWidth: '200px', borderRadius: '50%' }}
+                  style={{ maxWidth: '200px', borderRadius: '50%', textAlign: 'center' }}
                   src={`${IMAGE_ROOT}/images/amms/${strategiesMap[initialState.chain][strategy?.protocol]}.png`}
                   fallback={`${IMAGE_ROOT}/default.png`}
                 />
