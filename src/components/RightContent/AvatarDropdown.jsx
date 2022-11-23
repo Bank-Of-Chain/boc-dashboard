@@ -1,12 +1,14 @@
 import React from 'react'
-import { LogoutOutlined, WalletOutlined, CopyOutlined } from '@ant-design/icons'
-import { Menu, Spin } from 'antd'
+import Icon from '@ant-design/icons'
+import { Menu, Spin, Space } from 'antd'
 import { useModel } from 'umi'
 
 // === Components === //
 import HeaderDropdown from '../HeaderDropdown'
 import Address from '../Address'
+import { CopyIcon, ChangeIcon, ExitIcon } from '@/components/SvgIcons'
 
+// === Styles === //
 import styles from './index.less'
 
 const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet, onCopy }) => {
@@ -29,19 +31,25 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
 
   const menuHeaderDropdown = (
     <Menu className={styles.avatarMenu}>
+      <Menu.Item key="copy" onClick={onCopy}>
+        <Space>
+          <Icon component={CopyIcon} />
+          Copy Address
+        </Space>
+      </Menu.Item>
       {showChangeWallet && (
         <Menu.Item key="change" onClick={onChangeWallet}>
-          <WalletOutlined />
-          Change Wallet
+          <Space>
+            <Icon component={ChangeIcon} />
+            Change Wallet
+          </Space>
         </Menu.Item>
       )}
-      <Menu.Item key="copy" onClick={onCopy}>
-        <CopyOutlined />
-        Copy Address
-      </Menu.Item>
       <Menu.Item key="logout" onClick={logoutOfWeb3Modal}>
-        <LogoutOutlined />
-        Disconnect
+        <Space>
+          <Icon component={ExitIcon} />
+          Disconnect
+        </Space>
       </Menu.Item>
     </Menu>
   )

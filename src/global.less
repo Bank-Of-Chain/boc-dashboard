@@ -198,7 +198,6 @@ div.ant-table-ping-right:not(.ant-table-has-fix-right) > .ant-table-container::a
   .ant-radio-button-wrapper {
     text-align: center;
     border: 2px solid @primary-color;
-    border-top-width: 2px;
     border-left-width: 0;
     color: @primary-color;
     &:first-child {
@@ -211,7 +210,7 @@ div.ant-table-ping-right:not(.ant-table-has-fix-right) > .ant-table-container::a
   .ant-radio-button-wrapper:not(:first-child)::before {
     left: -2px;
     width: 2px;
-    background-color: #a0a0a0;
+    background-color: @primary-color;
   }
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before,
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover::before {
@@ -227,10 +226,10 @@ div.ant-table-ping-right:not(.ant-table-has-fix-right) > .ant-table-container::a
 }
 
 ul.ant-dropdown-menu {
-  background-color: #292b2e;
+  background-color: rgba(87, 97, 125, 0.2);
   .ant-dropdown-menu-item {
     padding: 0.5rem 1rem;
-    color: #a0a0a0;
+    color: #fff;
   }
 }
 
