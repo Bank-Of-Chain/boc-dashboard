@@ -84,12 +84,30 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
 
   const columns = [
     {
+      title: 'Date',
+      dataIndex: 'fetchTimestamp',
+      key: 'fetchTimestamp',
+      render: text => (
+        <Tooltip
+          title={`${moment(1000 * text)
+            .utcOffset(0)
+            .format('yyyy-MM-DD HH:mm:ss')} (UTC)`}
+        >
+          {moment(1000 * text)
+            .utcOffset(0)
+            .locale('en')
+            .fromNow()}
+        </Tooltip>
+      )
+    },
+    {
       title: 'Txn Hash',
       dataIndex: 'txnHash',
       key: 'txnHash',
       ellipsis: {
         showTitle: false
       },
+      width: 400,
       render: text => (
         <a target={'_blank'} rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`} title={text}>
           {text}
@@ -116,29 +134,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         )
       }
     },
-    {
-      title: 'Date',
-      dataIndex: 'fetchTimestamp',
-      key: 'fetchTimestamp',
-      render: text => (
-        <Tooltip
-          title={`${moment(1000 * text)
-            .utcOffset(0)
-            .format('yyyy-MM-DD HH:mm:ss')} (UTC)`}
-        >
-          {moment(1000 * text)
-            .utcOffset(0)
-            .locale('en')
-            .fromNow()}
-        </Tooltip>
-      )
-    },
+
     {
       title: 'Position Details',
       align: 'center',
       render: (text, item) => {
         const { tokens } = item
-        if (isEmpty(tokens)) return <SlidersOutlined style={{ color: 'gray' }} />
+        if (isEmpty(tokens)) return <SlidersOutlined style={{ color: 'gray', fontSize: '1.5rem' }} />
         const nextTitle = map(tokens, ({ address, amount, asset }) => {
           return (
             <span key={address} style={{ display: 'flex' }}>
@@ -152,7 +154,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         })
         return (
           <Tooltip placement="top" title={nextTitle}>
-            <SlidersOutlined />
+            <SlidersOutlined style={{ fontSize: '1.5rem' }} />
           </Tooltip>
         )
       }
