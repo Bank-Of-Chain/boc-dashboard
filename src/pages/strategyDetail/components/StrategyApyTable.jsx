@@ -256,35 +256,33 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
   }[deviceType]
 
   return (
-    <div>
-      <Card
+    <Card
+      loading={loading}
+      bordered={false}
+      extra={dropdownGroup}
+      style={{
+        height: '100%',
+        marginTop: 32
+      }}
+      {...responsiveConfig.cardProps}
+    >
+      <div className={styles.cardTitle}>{strategyName} APY Details</div>
+      <Table
+        rowKey={record => record.id}
+        columns={columns1}
+        dataSource={dataSource1}
         loading={loading}
-        bordered={false}
-        title={`${strategyName} APY Details`}
-        extra={dropdownGroup}
-        style={{
-          height: '100%',
-          marginTop: 32
-        }}
-        {...responsiveConfig.cardProps}
-      >
-        <Table
-          rowKey={record => record.id}
-          columns={columns1}
-          dataSource={dataSource1}
-          loading={loading}
-          pagination={false}
-          {...responsiveConfig.tableProps}
-        />
-        <div className={styles.tip}>
-          <div>Warning:</div>
-          <div className={styles.right}>
-            Official APY calculation is also affected by the price of reward token, reward rate and any changes in principal within{' '}
-            <span style={{ color: '#a68efe', fontWeight: 'bold' }}>24</span> hours, therefore statistical data could be inaccurate at times.
-          </div>
+        pagination={false}
+        {...responsiveConfig.tableProps}
+      />
+      <div className={styles.tip}>
+        <div>Warning:</div>
+        <div className={styles.right}>
+          Official APY calculation is also affected by the price of reward token, reward rate and any changes in principal within{' '}
+          <span style={{ color: '#a68efe', fontWeight: 'bold' }}>24</span> hours, therefore statistical data could be inaccurate at times.
         </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   )
 }
 
