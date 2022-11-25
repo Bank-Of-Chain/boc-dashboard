@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react'
 // === Components === //
 import { Card, Table, Tooltip, Radio, Select } from 'antd'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import Icon from '@ant-design/icons'
+import { GoIcon } from '@/components/SvgIcons'
 
 // === Utils === //
 import moment from 'moment'
@@ -164,7 +166,7 @@ const TransationsTable = ({
       align: 'center',
       render: (text, item) => (
         <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${item.transaction.id}`}>
-          <img width={21} src={`${IMAGE_ROOT}/link.png`} alt="link" />
+          <Icon component={GoIcon} />
         </a>
       )
     }
@@ -185,7 +187,7 @@ const TransationsTable = ({
   const responsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
       radioGroupProps: {
-        size: 'large'
+        size: 'middle'
       }
     },
     [DEVICE_TYPE.Tablet]: {
@@ -216,7 +218,7 @@ const TransationsTable = ({
   }[deviceType]
 
   let extra = (
-    <Radio.Group value={filter} onChange={handleChange} buttonStyle="outline" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
+    <Radio.Group value={filter} onChange={handleChange} buttonStyle="solid" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
       {map(FILTER_OPTIONS, (value, key) => (
         <Radio.Button value={value} key={key}>
           {key}
@@ -237,40 +239,32 @@ const TransationsTable = ({
   }
 
   return (
-    <div>
-      <Card
-        loading={loading}
-        bordered={false}
-        title="Recent Activity"
-        extra={extra}
-        style={{
-          height: '100%',
-          marginTop: 40
-        }}
-        {...responsiveConfig.cardProps}
-      >
-        <Table
-          rowKey={record => record.id}
-          columns={columns}
-          dataSource={data}
-          loading={tableLoading}
-          pagination={
-            data?.length > 10 && {
-              showSizeChanger: false,
-              style: {
-                marginBottom: 0
-              },
-              current: currentPage,
-              pageSize: 10,
-              onChange: page => {
-                setCurrentPage(page)
-              }
+    <Card loading={loading} className={styles.strategiesCard} bordered={false} {...responsiveConfig.cardProps}>
+      <div className={styles.title}>
+        <span>Recent Activity</span>
+        {extra}
+      </div>
+      <Table
+        rowKey={record => record.id}
+        columns={columns}
+        dataSource={data}
+        loading={tableLoading}
+        pagination={
+          data?.length > 10 && {
+            showSizeChanger: false,
+            style: {
+              marginBottom: 0
+            },
+            current: currentPage,
+            pageSize: 10,
+            onChange: page => {
+              setCurrentPage(page)
             }
           }
-          {...responsiveConfig.tableProps}
-        />
-      </Card>
-    </div>
+        }
+        {...responsiveConfig.tableProps}
+      />
+    </Card>
   )
 }
 

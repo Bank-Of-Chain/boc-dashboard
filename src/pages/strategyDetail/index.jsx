@@ -12,7 +12,7 @@ import ReportTable from './components/ReportTable'
 import { GridContent } from '@ant-design/pro-layout'
 import StrategyApyTable from './components/StrategyApyTable'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
-import { Col, Row, Card, Image, Descriptions, Spin } from 'antd'
+import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space } from 'antd'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
@@ -62,6 +62,9 @@ const Strategy = props => {
     [VAULT_TYPE.USDi]: 'USD',
     [VAULT_TYPE.ETHi]: 'ETH'
   }[initialState.vault]
+
+  const [isOfficalApyEnable, setIsOfficalApyEnable] = useState(true)
+  const [isVerifiedApyEnable, setIsVerifiedApyEnable] = useState(true)
 
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
@@ -194,7 +197,6 @@ const Strategy = props => {
   }, [strategy, strategy?.strategyName])
 
   const intervalArray = []
-  const lengndData = [OFFICIAL_APY, VERIFIED_APY]
   const data1 = map(apyArray, i => {
     return {
       value: formatApyValue(i.officialApy),
@@ -203,13 +205,23 @@ const Strategy = props => {
     }
   })
   const data2 = map(apyArray, 'value')
-  const data = [
-    {
+  const data = []
+
+  if (isOfficalApyEnable) {
+    data.push({
       seriesName: OFFICIAL_APY,
       seriesData: data1,
       showSymbol: size(filter(data1, i => !isNil(i.value))) === 1
-    },
-    {
+    })
+  } else {
+    data.push({
+      seriesName: OFFICIAL_APY,
+      seriesData: [],
+      showSymbol: false
+    })
+  }
+  if (isVerifiedApyEnable) {
+    data.push({
       seriesName: VERIFIED_APY,
       seriesData: apyArray.map(i => ({
         ...i,
@@ -217,8 +229,15 @@ const Strategy = props => {
         label: `${formatApyLabel(i.value)}%`
       })),
       showSymbol: size(filter(data2, i => !isNil(i))) === 1
-    }
-  ]
+    })
+  } else {
+    data.push({
+      seriesName: VERIFIED_APY,
+      seriesData: [],
+      showSymbol: false
+    })
+  }
+
   intervalArray.push(map(apyArray, 'officialApy'), data2)
   if (ori) {
     const data3 = map(apyArray, i => {
@@ -229,7 +248,6 @@ const Strategy = props => {
         unit: '%'
       }
     })
-    lengndData.push(OFFICIAL_DAILY_APY)
     data.push({
       seriesName: OFFICIAL_DAILY_APY,
       seriesData: data3,
@@ -245,7 +263,6 @@ const Strategy = props => {
         unit: '%'
       }
     })
-    lengndData.push(VERIFIED_DAILY_APY)
     data.push({
       seriesName: VERIFIED_DAILY_APY,
       seriesData: data4,
@@ -256,14 +273,14 @@ const Strategy = props => {
   }
   let obj = {
     legend: {
-      data: lengndData,
+      data: [],
       textStyle: { color: '#fff' }
     },
     xAxisData: map(apyArray, 'date'),
     data
   }
   const option = multipleLine(obj)
-  option.color = ['#A68EFE', '#2ec7c9', '#ffb980', '#d87a80', '#e5cf0d', '#97b552', '#8d98b3', '#07a2a4', '#95706d', '#dc69aa']
+  option.color = ['#CABBFF', '#7E6DD2', '#ffb980', '#d87a80', '#e5cf0d', '#97b552', '#8d98b3', '#07a2a4', '#95706d', '#dc69aa']
   option.series.forEach((serie, index) => {
     serie.connectNulls = false
     serie.z = option.series.length - index
@@ -394,49 +411,60 @@ const Strategy = props => {
     }
   }[deviceType]
 
-  let iconProps = {
-    push: 2,
-    xl: 12,
-    lg: 12,
-    md: 12,
-    sm: 24,
-    xs: 24,
-    style: {
-      margin: '0 auto 16px'
-    }
+  const titleRender = () => {
+    return (
+      <Space>
+        <span style={{ verticalAlign: 'sub' }}>Offical APY</span>
+        <Switch className={styles.officalSwitch} size="small" checked={isOfficalApyEnable} onChange={setIsOfficalApyEnable} />
+        <span style={{ verticalAlign: 'sub' }}>Verified APY</span>
+        <Switch className={styles.verifiedSwitch} size="small" checked={isVerifiedApyEnable} onChange={setIsVerifiedApyEnable} />
+      </Space>
+    )
   }
-  if (deviceType === DEVICE_TYPE.Mobile) {
-    iconProps.style = {
-      margin: '0 auto 16px',
-      textAlign: 'center'
-    }
-    delete iconProps.push
-  }
+
+  const titleFontSize = {
+    [DEVICE_TYPE.Desktop]: 30,
+    [DEVICE_TYPE.Tablet]: 26,
+    [DEVICE_TYPE.Mobile]: 18
+  }[deviceType]
+
+  const infoFontSize = {
+    [DEVICE_TYPE.Desktop]: 20,
+    [DEVICE_TYPE.Tablet]: 20,
+    [DEVICE_TYPE.Mobile]: 12
+  }[deviceType]
 
   return (
     <GridContent>
       <Suspense fallback={null}>
         <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false} {...infoResponsiveConfig.cardProps}>
           <Row justify="space-around">
-            <Col {...iconProps}>
-              <Image
-                preview={false}
-                width={200}
-                style={{ borderRadius: '50%' }}
-                src={`${IMAGE_ROOT}/images/amms/${strategiesMap[initialState.chain][strategy?.protocol]}.png`}
-                fallback={`${IMAGE_ROOT}/default.png`}
-              />
+            <Col xl={10} lg={10} md={10} sm={8} xs={6}>
+              <div className={styles.imgWrapper}>
+                <Image
+                  preview={false}
+                  width="100%"
+                  style={{ maxWidth: '200px', borderRadius: '50%' }}
+                  src={`${IMAGE_ROOT}/images/amms/${strategiesMap[initialState.chain][strategy?.protocol]}.png`}
+                  fallback={`${IMAGE_ROOT}/default.png`}
+                />
+              </div>
             </Col>
-            <Col push={2} xl={12} lg={12} md={12} sm={24} xs={24}>
+            <Col xl={14} lg={14} md={14} sm={16} xs={18}>
               <Descriptions
                 column={1}
-                title={<span style={{ color: '#fff' }}>Base Info</span>}
-                labelStyle={{ color: '#fff' }}
-                contentStyle={{ color: '#fff' }}
+                title={<span style={{ color: '#fff', fontSize: titleFontSize, fontWeight: 'normal' }}>Base Info</span>}
+                labelStyle={{ color: '#fff', fontSize: infoFontSize }}
+                contentStyle={{ color: '#fff', fontSize: infoFontSize }}
                 {...infoResponsiveConfig.descriptionProps}
               >
                 <Descriptions.Item label="Name">
-                  <a target={'_blank'} rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}>
+                  <a
+                    target={'_blank'}
+                    rel="noreferrer"
+                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
+                    className={styles.strategyName}
+                  >
                     {strategy.strategyName}
                   </a>
                 </Descriptions.Item>
@@ -452,7 +480,7 @@ const Strategy = props => {
       </Suspense>
       <Suspense fallback={null}>
         <Card
-          title="APY (%)"
+          title={titleRender()}
           className={styles.offlineCard}
           bordered={false}
           style={{
