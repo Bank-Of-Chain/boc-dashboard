@@ -1,8 +1,12 @@
 import React from 'react'
 import { DefaultFooter } from '@ant-design/pro-layout'
 
+// === Services === //
+import { isProEnv } from '@/services/env-service'
+
 // === Hooks === //
 import useABTest from '@/hooks/useABTest'
+
 
 // === Utils === //
 import { isMarketingHost } from '@/utils/location'
@@ -14,9 +18,13 @@ const Footer = () => {
   const currentYear = new Date().getFullYear()
   const isMarketing = isMarketingHost()
   const { [MAIL_HIDDEN]: mailHidden } = useABTest()
+  const publishDetails = isProEnv(ENV_INDEX) ? '' : `Branch: ${PUBLISH_BRANCH} Date: ${PUBLISH_TIME} Env: ${ENV_INDEX}`
   return (
     <DefaultFooter
-      copyright={`Produced by Bank Of Chain ${currentYear}`}
+      copyright={<React.Fragment>
+          <span>Produced by Bank Of Chain {currentYear}</span>
+          <p style={{ marginTop: '8px' }}>{publishDetails}</p>
+        </React.Fragment>}
       links={
         !mailHidden && [
           {

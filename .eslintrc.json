@@ -33,6 +33,8 @@
     "ENV_INDEX": true,
     "USDI": true,
     "ETHI": true,
-    "RPC_URL": true
+    "RPC_URL": true,
+    "PUBLISH_BRANCH": true,
+    "PUBLISH_TIME": true
   }
 }

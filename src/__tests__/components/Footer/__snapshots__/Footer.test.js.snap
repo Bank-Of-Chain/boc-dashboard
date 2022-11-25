@@ -51,7 +51,13 @@ exports[`Footer Component Render 1`] = `
             />
           </svg>
         </span>
-         Produced by Bank Of Chain 2022
+         
+        <span>
+          Produced by Bank Of Chain 2022
+        </span>
+        <p
+          style="margin-top: 8px;"
+        />
       </div>
     </div>
   </footer>
