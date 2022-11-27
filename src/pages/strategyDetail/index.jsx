@@ -368,6 +368,10 @@ const Strategy = props => {
       start: minPercent
     }
   ]
+  option.grid = {
+    left: 30,
+    right: 10
+  }
 
   if (!initialState.chain || isEmpty(strategy)) return null
 
