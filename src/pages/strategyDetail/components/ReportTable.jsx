@@ -18,6 +18,7 @@ import BN from 'bignumber.js'
 import isEmpty from 'lodash/isEmpty'
 import { toFixed } from '@/utils/number-format'
 import { useModel, useRequest } from 'umi'
+import styles from './style.less'
 
 const OPERATION = {
   0: 'harvest',
@@ -192,28 +193,26 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   }[deviceType]
 
   return (
-    <div>
-      <Card
-        loading={loading}
-        bordered={false}
-        title="Reports"
-        extra={dropdownGroup}
-        style={{
-          height: '100%',
-          marginTop: 32
-        }}
-        {...responsiveConfig.cardProps}
-      >
-        <Table
-          rowKey={record => record.id}
-          columns={columns}
-          dataSource={dataSource}
-          loading={tableLoading}
-          pagination={pagination}
-          {...responsiveConfig.tableProps}
-        />
-      </Card>
-    </div>
+    <Card
+      loading={loading}
+      bordered={false}
+      extra={dropdownGroup}
+      style={{
+        height: '100%',
+        marginTop: 32
+      }}
+      {...responsiveConfig.cardProps}
+    >
+      <div className={styles.cardTitle}>Reports</div>
+      <Table
+        rowKey={record => record.id}
+        columns={columns}
+        dataSource={dataSource}
+        loading={tableLoading}
+        pagination={pagination}
+        {...responsiveConfig.tableProps}
+      />
+    </Card>
   )
 }
 

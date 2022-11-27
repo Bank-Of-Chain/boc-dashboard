@@ -437,7 +437,10 @@ const Strategy = props => {
   return (
     <GridContent>
       <Suspense fallback={null}>
-        <Card title={<LeftOutlined onClick={() => history.push('/')} />} bordered={false} {...infoResponsiveConfig.cardProps}>
+        <Card bordered={false} {...infoResponsiveConfig.cardProps}>
+          <div className={styles.cardTitle}>
+            <LeftOutlined onClick={() => history.push('/')} />
+          </div>
           <Row justify="space-around">
             <Col xl={10} lg={10} md={10} sm={8} xs={6}>
               <div className={styles.imgWrapper}>
@@ -480,7 +483,6 @@ const Strategy = props => {
       </Suspense>
       <Suspense fallback={null}>
         <Card
-          title={titleRender()}
           className={styles.offlineCard}
           bordered={false}
           style={{
@@ -488,6 +490,7 @@ const Strategy = props => {
           }}
           {...chartResponsiveConfig.cardProps}
         >
+          {titleRender()}
           <div style={chartResponsiveConfig.chartStyle}>
             {apyLoading ? (
               <div className={styles.loadingContainer}>
