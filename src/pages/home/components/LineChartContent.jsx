@@ -85,16 +85,12 @@ export default function LineChartContent({
   return (
     <Card loading={loading} bordered={false} {...chartResponsiveConfig.cardProps}>
       <div className={styles.vaultKeyCard}>
-        <Tabs animated className={classNames(chartResponsiveConfig.tabClassName)} tabBarExtraContent={extra}>
+        <Tabs className={classNames(chartResponsiveConfig.tabClassName)} tabBarExtraContent={extra}>
           <TabPane tab="APY (%)" key="apy">
-            <div className={chartResponsiveConfig.chartWrapperClassName}>
-              <LineEchart option={apyEchartOpt} style={{ height: '100%', width: '100%' }} />
-            </div>
+            <LineEchart option={apyEchartOpt} className={chartResponsiveConfig.chartWrapperClassName} />
           </TabPane>
           <TabPane tab={isUsdi ? 'Total Supply' : 'Total Supply'} key="totalSupply">
-            <div className={chartResponsiveConfig.chartWrapperClassName}>
-              <LineEchart option={tvlEchartOpt} style={{ height: '100%', width: '100%' }} />
-            </div>
+            <LineEchart option={tvlEchartOpt} className={chartResponsiveConfig.chartWrapperClassName} />
           </TabPane>
         </Tabs>
       </div>
