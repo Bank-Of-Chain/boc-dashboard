@@ -31,7 +31,7 @@ export const layout = ({ initialState, setInitialState }) => {
     logo: (
       <HoverIcon
         href="/"
-        defaultIcon={<img src={`${IMAGE_ROOT}/logo.svg`} alt="logo" />}
+        defaultIcon={<img src={`${IMAGE_ROOT}/logo-v2.svg`} alt="logo" />}
         activeIcon={<img src={`${IMAGE_ROOT}/logo-active.svg`} alt="logo" />}
       />
     ),
