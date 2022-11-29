@@ -109,7 +109,7 @@ const GlobalHeaderRight = () => {
         })}
       >
         <Dropdown overlay={menu}>
-          <Space>
+          <Space style={{ lineHeight: 2 }}>
             <a className={styles.chain}>Ethereum</a>
             <DownOutlined style={{ fontSize: 10 }} />
           </Space>
