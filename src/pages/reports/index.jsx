@@ -2,7 +2,7 @@ import React, { useState, Suspense, useEffect } from 'react'
 
 // === Components === //
 import Address from '@/components/Address'
-import ChainChange from '@/components/ChainChange'
+import VaultChange from '@/components/VaultChange'
 import { GridContent } from '@ant-design/pro-layout'
 import { FallOutlined, RiseOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
@@ -482,9 +482,10 @@ const Reports = () => {
 
   return (
     <GridContent>
-      {initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}
+      <VaultChange />
       <Suspense fallback={null}>
-        <Card bordered={false} title="Allocation Reports" {...listResponsiveConfig.cardProps}>
+        <Card bordered={false} {...listResponsiveConfig.cardProps}>
+          <div className={styles.title}>Allocation Reports</div>
           <Table
             rowKey={record => record.id}
             columns={columns}

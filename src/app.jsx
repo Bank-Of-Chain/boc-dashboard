@@ -3,6 +3,7 @@ import { PageLoading } from '@ant-design/pro-layout'
 import { history } from 'umi'
 import RightContent from '@/components/RightContent'
 import Footer from '@/components/Footer'
+import HoverIcon from '@/components/HoverIcon'
 
 // === Constants === //
 import { ETH } from './constants/chain'
@@ -27,13 +28,19 @@ export async function getInitialState() {
 // ProLayout https://procomponents.ant.design/components/layout
 export const layout = ({ initialState, setInitialState }) => {
   return {
-    logo: <img src={`${IMAGE_ROOT}/logo256.png`} alt="logo" onClick={() => history.push('/')} />,
+    logo: (
+      <HoverIcon
+        href="/"
+        defaultIcon={<img src={`${IMAGE_ROOT}/logo-v2.svg`} alt="logo" />}
+        activeIcon={<img src={`${IMAGE_ROOT}/logo-active.svg`} alt="logo" />}
+      />
+    ),
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
       content: initialState?.chain
     },
-    headerHeight: '4rem',
+    headerHeight: '5rem',
     footerRender: () => <Footer />,
     onPageChange: () => {
       const {

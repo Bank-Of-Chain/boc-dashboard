@@ -23,6 +23,8 @@
 
 .header {
   display: flex;
+  height: 5rem;
+  align-items: center;
   justify-content: flex-end;
 }
 
@@ -72,9 +74,6 @@
   :global(.anticon) {
     margin-right: 8px;
   }
-  :global(.ant-dropdown-menu-item) {
-    min-width: 160px;
-  }
 }
 
 .right {
@@ -83,24 +82,30 @@
   .action {
     display: flex;
     align-items: center;
-    height: 32px;
-    padding: 0 1rem;
-    background: #313036;
-    border: 2px solid #d7a1f6;
-    border-radius: 4px;
+    height: 42px;
+    padding: 0 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    background-clip: padding-box, border-box;
+    background-image: linear-gradient(to right, #1E1E1F, #1E1E1F), linear-gradient(219.17deg, #94E3FF 24.63%, #FE3DCE 104.13%);
+    background-origin: padding-box, border-box;
     cursor: pointer;
     transition: all 0.3s;
     > span {
       vertical-align: middle;
       &.name {
         margin-left: 0.625rem;
+        font-size: 1rem;
       }
     }
     &:hover {
-      background: @pro-header-hover-bg;
+      background-image: linear-gradient(to right, #1E1E1F, #1E1E1F), linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
+      box-shadow: 0px 0px 5px #a68efe;
     }
-    &:global(.opened) {
-      background: @pro-header-hover-bg;
+    &:global(.ant-dropdown-open) {
+      background-clip: border-box;
+      background-image: linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
+      background-origin: border-box;
     }
   }
   .search {
@@ -126,29 +131,87 @@
 }
 
 .dark {
-  .action {
-    &:hover {
-      background: #252a3d;
-    }
-    &:global(.opened) {
-      background: #252a3d;
-    }
-  }
   &.hidden {
     display: none;
   }
 }
 
-.chainSelect {
-  width: 6.5rem;
+.chain {
+  font-size: 1rem;
+  color: @text-color;
+  user-select: none;
+
+  &:hover {
+    color: #FE3DCE;
+    background-image: linear-gradient(75.96deg, #FE3DCE 0%, #94E3FF 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .myDasboardBtn {
-  padding: 0;
+  height: 2.625rem;
+  padding: 0 1rem 0 1.25rem;
   background: linear-gradient(223.3deg, #a68efd 20.71%, #f4acf3 103.56%);
   border: none;
+  border-radius: 5px;
   &:hover {
     background: linear-gradient(223.3deg, #a68efd 20.71%, #f4acf3 103.56%);
+    box-shadow: 0px 0px 10px #a68efe;
+  }
+  &:focus {
+    background: linear-gradient(223.3deg, #a68efd 20.71%, #f4acf3 103.56%);
+  }
+  &:active {
+    background-image: linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
+  }
+}
+
+.colorful {
+  &:hover {
+    color: #FE3DCE;
+    background-image: linear-gradient(75.96deg, #FE3DCE 0%, #94E3FF 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  &:focus > span,
+  &:active > span {
+    position: static;
+  }
+}
+
+.connectBtn {
+  height: 2.625rem;
+  padding: 0 1rem;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  background-image: linear-gradient(to right, #1F2023, #1F2023), linear-gradient(219.17deg, #94E3FF 24.63%, #FE3DCE 104.13%);
+
+  &:hover {
+    border-color: transparent;
+    color: #fff;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #1F2023, #1F2023), linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
+    box-shadow: 0px 0px 5px #a68efe;
+  }
+
+  &:focus {
+    border-color: transparent;
+    color: #fff;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #1F2023, #1F2023), linear-gradient(219.17deg, #94E3FF 24.63%, #FE3DCE 104.13%);
+  }
+
+  &:active {
+    border-color: transparent;
+    color: #fff;
+    background-clip: border-box;
+    background-image: linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
+    background-origin: border-box;
   }
 }
 
@@ -194,9 +257,5 @@
       right: 6px;
       left: 6px;
     }
-  }
-
-  .chainSelect {
-    width: 5rem;
   }
 }

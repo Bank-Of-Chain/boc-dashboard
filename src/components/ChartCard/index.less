@@ -21,15 +21,6 @@
   .metaWrap {
     float: left;
   }
-  .avatar {
-    position: relative;
-    top: 4px;
-    float: left;
-    margin-right: 20px;
-    img {
-      border-radius: 100%;
-    }
-  }
   .meta {
     color: @text-color-secondary;
     font-size: @font-size-base;
@@ -42,8 +33,8 @@
     cursor: pointer;
   }
   .total {
+    height: 3.25rem;
     margin-top: 0.625rem;
-    margin-bottom: 0;
     overflow: hidden;
     color: @text-color;
     font-weight: bold;
@@ -75,21 +66,16 @@
     width: 100%;
   }
   .footer {
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid @border-color-split;
-    & > * {
-      position: relative;
-    }
-  }
-  .footerMargin {
+    height: 1rem;
+    line-height: 1rem;
+    font-size: 0.75rem;
   }
 }
 
 .card {
   :global {
     .ant-card-body {
-      padding: 2.375rem 2.125rem 1.875rem 2.75rem;
+      padding: 2.5rem 2.5rem 1.5rem 2.5rem;
     }
   }
 }
@@ -98,7 +84,7 @@
   .card {
     :global {
       .ant-card-body {
-        padding: 1rem;
+        padding: 1.25rem 1.875rem;
       }
     }
   }

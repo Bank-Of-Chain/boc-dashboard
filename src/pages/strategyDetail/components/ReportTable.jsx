@@ -18,6 +18,7 @@ import BN from 'bignumber.js'
 import isEmpty from 'lodash/isEmpty'
 import { toFixed } from '@/utils/number-format'
 import { useModel, useRequest } from 'umi'
+import styles from './style.less'
 
 const OPERATION = {
   0: 'harvest',
@@ -84,12 +85,30 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
 
   const columns = [
     {
+      title: 'Date',
+      dataIndex: 'fetchTimestamp',
+      key: 'fetchTimestamp',
+      render: text => (
+        <Tooltip
+          title={`${moment(1000 * text)
+            .utcOffset(0)
+            .format('yyyy-MM-DD HH:mm:ss')} (UTC)`}
+        >
+          {moment(1000 * text)
+            .utcOffset(0)
+            .locale('en')
+            .fromNow()}
+        </Tooltip>
+      )
+    },
+    {
       title: 'Txn Hash',
       dataIndex: 'txnHash',
       key: 'txnHash',
       ellipsis: {
         showTitle: false
       },
+      width: 400,
       render: text => (
         <a target={'_blank'} rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`} title={text}>
           {text}
@@ -116,29 +135,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         )
       }
     },
-    {
-      title: 'Date',
-      dataIndex: 'fetchTimestamp',
-      key: 'fetchTimestamp',
-      render: text => (
-        <Tooltip
-          title={`${moment(1000 * text)
-            .utcOffset(0)
-            .format('yyyy-MM-DD HH:mm:ss')} (UTC)`}
-        >
-          {moment(1000 * text)
-            .utcOffset(0)
-            .locale('en')
-            .fromNow()}
-        </Tooltip>
-      )
-    },
+
     {
       title: 'Position Details',
       align: 'center',
       render: (text, item) => {
         const { tokens } = item
-        if (isEmpty(tokens)) return <SlidersOutlined style={{ color: 'gray' }} />
+        if (isEmpty(tokens)) return <SlidersOutlined style={{ color: 'gray', fontSize: '1.5rem' }} />
         const nextTitle = map(tokens, ({ address, amount, asset }) => {
           return (
             <span key={address} style={{ display: 'flex' }}>
@@ -152,7 +155,7 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
         })
         return (
           <Tooltip placement="top" title={nextTitle}>
-            <SlidersOutlined />
+            <SlidersOutlined style={{ fontSize: '1.5rem' }} />
           </Tooltip>
         )
       }
@@ -190,28 +193,26 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   }[deviceType]
 
   return (
-    <div>
-      <Card
-        loading={loading}
-        bordered={false}
-        title="Reports"
-        extra={dropdownGroup}
-        style={{
-          height: '100%',
-          marginTop: 32
-        }}
-        {...responsiveConfig.cardProps}
-      >
-        <Table
-          rowKey={record => record.id}
-          columns={columns}
-          dataSource={dataSource}
-          loading={tableLoading}
-          pagination={pagination}
-          {...responsiveConfig.tableProps}
-        />
-      </Card>
-    </div>
+    <Card
+      loading={loading}
+      bordered={false}
+      extra={dropdownGroup}
+      style={{
+        height: '100%',
+        marginTop: 32
+      }}
+      {...responsiveConfig.cardProps}
+    >
+      <div className={styles.cardTitle}>Reports</div>
+      <Table
+        rowKey={record => record.id}
+        columns={columns}
+        dataSource={dataSource}
+        loading={tableLoading}
+        pagination={pagination}
+        {...responsiveConfig.tableProps}
+      />
+    </Card>
   )
 }
 

@@ -1,4 +1,4 @@
-import { Space, Button, Menu, message } from 'antd'
+import { Space, Button, message } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
@@ -7,17 +7,15 @@ import copy from 'copy-to-clipboard'
 // === Components === //
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
-import { LoadingOutlined } from '@ant-design/icons'
+import { MyAccountIcon } from '@/components/SvgIcons'
+import Icon, { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
-import { getVaultConfig } from '@/utils/vault'
 import { isInMobileWalletApp, isInMobileH5 } from '@/utils/device'
-import { changeNetwork } from '@/utils/network'
+import { isMarketingHost } from '@/utils/location'
 
 // === Contansts === //
-import { ETH } from '@/constants/chain'
-import { VAULT_TYPE } from '@/constants/vault'
 import { WALLET_OPTIONS } from '@/constants/wallet'
 
 // === Hooks === //
@@ -27,13 +25,16 @@ import useWallet from '@/hooks/useWallet'
 // === Styles === //
 import styles from './index.less'
 
-// routes which do not show the vault select
-const disabledChangeVaultRoute = ['/strategy']
+// const menu = (
+//   <Menu>
+//     <Menu.Item>Ethereum</Menu.Item>
+//     {/* <Menu.Item>Polygon</Menu.Item> */}
+//   </Menu>
+// )
 
 const GlobalHeaderRight = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { initialState, setInitialState } = useModel('@@initialState')
-  const [current, setCurrent] = useState(initialState.vault)
   const [walletModalVisible, setWalletModalVisible] = useState(false)
   const connectTimer = useRef(null)
 
@@ -73,41 +74,11 @@ const GlobalHeaderRight = () => {
     }
   }
 
-  const handleMenuClick = e => {
-    const vault = e.key
-    let promise = Promise.resolve()
-    if (history.location.pathname === '/reports' && vault === 'ethi') {
-      promise = changeNetwork('1', userProvider, getWalletName(), {
-        resolveWhenUnsupport: true
-      })
-    }
-    promise.then(() => {
-      setCurrent(vault)
-      const pathname = history.location.pathname
-      const query = history.location.query
-      query.chain = query.chain || ETH.id
-      if (vault === VAULT_TYPE.ETHi) {
-        query.chain = ETH.id
-      }
-      setInitialState({
-        ...initialState,
-        chain: query.chain,
-        vault,
-        ...getVaultConfig(query.chain, vault)
-      })
-      history.push({
-        pathname: pathname,
-        query: {
-          ...query,
-          vault
-        }
-      })
-    })
+  const goToMyAccount = () => {
+    const isMarketing = isMarketingHost()
+    const url = `${isMarketing ? 'https://bankofchain.io' : IMAGE_ROOT}/#/${initialState.vault}`
+    window.open(url)
   }
-
-  // const goToMine = () => {
-  //   history.push(`/mine?chain=${initialState.chain}&vault=${initialState.vault}`)
-  // }
 
   const copyAddress = () => {
     copy(address)
@@ -129,40 +100,34 @@ const GlobalHeaderRight = () => {
     })
   }, [userProvider, address, history.location.pathname])
 
-  useEffect(() => {
-    setCurrent(initialState.vault)
-  }, [initialState.vault])
-
   return (
     <div className={styles.header}>
-      {!disabledChangeVaultRoute.includes(history.location.pathname) ? (
-        <Menu
-          className={styles.headerMenu}
-          onClick={handleMenuClick}
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={[
-            { label: 'ETHi', key: 'ethi' },
-            { label: 'USDi', key: 'usdi' }
-          ]}
-        />
-      ) : (
-        <span />
-      )}
       <Space
         size={20}
         className={classNames(styles.right, styles.dark, {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
       >
+        {/* <Dropdown overlay={menu}>
+          <Space style={{ lineHeight: 2 }}>
+            <a className={styles.chain}>Ethereum</a>
+            <DownOutlined style={{ fontSize: 10 }} />
+          </Space>
+        </Dropdown> */}
+        <Button type="text" href="https://docs.bankofchain.io/" target="_blank" className={styles.colorful}>
+          Docs
+        </Button>
         {isLoading ? (
           <LoadingOutlined style={{ fontSize: 24 }} spin />
         ) : isEmpty(address) ? (
-          <Button type="primary" onClick={handleClickConnect}>
-            Connect
+          <Button className={styles.connectBtn} onClick={handleClickConnect}>
+            Connect Wallet
           </Button>
         ) : (
           [
+            <Button className={styles.myDasboardBtn} key="mine" icon={<Icon component={MyAccountIcon} />} type="primary" onClick={goToMyAccount}>
+              My Account
+            </Button>,
             <Avatar
               key="avatar"
               menu
@@ -171,8 +136,7 @@ const GlobalHeaderRight = () => {
               address={address}
               logoutOfWeb3Modal={disconnect}
               onCopy={copyAddress}
-            />,
-            <Button className={styles.myDasboardBtn} key="mine" type="primary" disabled />
+            />
           ]
         )}
       </Space>
