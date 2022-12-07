@@ -7,6 +7,7 @@ import { GridContent } from '@ant-design/pro-layout'
 import { FallOutlined, RiseOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message, Divider, Switch } from 'antd'
+import VaultChange from '@/components/VaultChange'
 
 // === Services === //
 import { getReports, updateReportStatus } from '@/services/api-service'
@@ -767,7 +768,10 @@ const Reports = () => {
 
   return (
     <GridContent>
-      {initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}
+      <Suspense fallback={null}>
+        <VaultChange />
+      </Suspense>
+      <Suspense fallback={null}>{initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}</Suspense>
       <Suspense fallback={null}>
         <Card bordered={false} title="Allocation Reports" {...listResponsiveConfig.cardProps}>
           <Table
