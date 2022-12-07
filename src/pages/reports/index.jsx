@@ -2,7 +2,6 @@ import React, { useState, Suspense, useEffect } from 'react'
 
 // === Components === //
 import Address from '@/components/Address'
-import ChainChange from '@/components/ChainChange'
 import { GridContent } from '@ant-design/pro-layout'
 import { FallOutlined, RiseOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
@@ -377,6 +376,7 @@ const Reports = () => {
     }
   ]
   const currentReport = get(data.list, showIndex, {})
+  console.log('currentReport=', currentReport)
   const { optimizeResult = {}, investStrategies = {}, loss = {}, isExec, forcedExecuted } = currentReport
   const {
     address,
@@ -466,7 +466,7 @@ const Reports = () => {
       dataIndex: 'totalGasFee',
       key: 'totalGasFee',
       render: value => {
-        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
       }
     }
   ]
@@ -586,7 +586,10 @@ const Reports = () => {
     {
       title: `From Token Price（${loss?.currency}）`,
       dataIndex: 'fromTokenPriceRate',
-      key: 'fromTokenPriceRate'
+      key: 'fromTokenPriceRate',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+      }
     },
     {
       title: 'To',
@@ -612,7 +615,10 @@ const Reports = () => {
     {
       title: `To Token Price（${loss?.currency}）`,
       dataIndex: 'toTokenPriceRate',
-      key: 'toTokenPriceRate'
+      key: 'toTokenPriceRate',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+      }
     },
     {
       title: `Loss（${loss?.currency}）`,
@@ -635,9 +641,12 @@ const Reports = () => {
       )
     },
     {
-      title: 'Gas Fees(Gwei)',
+      title: 'Gas Fees(ETH)',
       dataIndex: 'gasFees',
-      key: 'gasFees'
+      key: 'gasFees',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+      }
     },
     {
       title: 'Exchange',
@@ -712,7 +721,7 @@ const Reports = () => {
       dataIndex: 'gasFees',
       key: 'gasFees',
       render: value => {
-        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
       }
     }
   ]
@@ -771,7 +780,7 @@ const Reports = () => {
       <Suspense fallback={null}>
         <VaultChange />
       </Suspense>
-      <Suspense fallback={null}>{initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}</Suspense>
+      {/* <Suspense fallback={null}>{initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}</Suspense> */}
       <Suspense fallback={null}>
         <Card bordered={false} title="Allocation Reports" {...listResponsiveConfig.cardProps}>
           <Table
