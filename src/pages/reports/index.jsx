@@ -39,6 +39,7 @@ import { getSignatureHeader } from '@/services/signer-service'
 
 // === Styles === //
 import styles from './style.less'
+import { BigNumber } from 'ethers'
 
 const fixedDecimals = BN(1e18)
 
@@ -83,7 +84,8 @@ const Reports = () => {
             return {
               ...i,
               investStrategies: JSON.parse(i.investStrategies),
-              optimizeResult: JSON.parse(i.optimizeResult)
+              optimizeResult: JSON.parse(i.optimizeResult),
+              loss: JSON.parse(i.loss)
             }
           })
         }
@@ -374,7 +376,7 @@ const Reports = () => {
     }
   ]
   const currentReport = get(data.list, showIndex, {})
-  const { optimizeResult = {}, investStrategies = {}, isExec, forcedExecuted } = currentReport
+  const { optimizeResult = {}, investStrategies = {}, loss = {}, isExec, forcedExecuted } = currentReport
   const {
     address,
     name,
@@ -432,6 +434,289 @@ const Reports = () => {
   const sumOriginalGain = sum(originalGain)
   const sumNewGain = sum(newGain)
   const sumGainVariation = sumNewGain - sumOriginalGain
+
+  const tvlChangeColumns = [
+    {
+      title: 'Vaule Assets Before',
+      dataIndex: 'assetsBefore',
+      key: 'assetsBefore',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: 'Vaule Assets After',
+      dataIndex: 'assetsAfter',
+      key: 'assetsAfter',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: 'Total Loss',
+      dataIndex: 'totalLoss',
+      key: 'totalLoss',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: 'Total Gas Fees',
+      dataIndex: 'totalGasFee',
+      key: 'totalGasFee',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    }
+  ]
+
+  const tvlChangeData = [
+    {
+      assetsBefore: get(loss, 'vaultAssetsBefore', '0'),
+      assetsAfter: get(loss, 'vaultAssetsAfter', '0'),
+      totalLoss: get(loss, 'totalLoss', '0'),
+      totalGasFee: get(loss, 'totalGasFees', '0')
+    }
+  ]
+
+  const redeemChangeColumns = [
+    {
+      title: 'Redeem Strategy',
+      dataIndex: 'name',
+      key: 'name',
+      width: '14rem',
+      ellipsis: true,
+      render: (text, item, index) => {
+        return (
+          <a title={text} key={index}>
+            {text}
+          </a>
+        )
+      }
+    },
+    {
+      title: `Before（${loss?.currency}）`,
+      dataIndex: 'before',
+      key: 'before',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `After（${loss?.currency}）`,
+      dataIndex: 'after',
+      key: 'after',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `Redeem Assets Value(Delta of Vault.xxx)（${loss?.currency}）`,
+      dataIndex: 'redeemValue',
+      key: 'redeemValue',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `Loss(Before - After - Redeem Assets Value)（${loss?.currency}）`,
+      dataIndex: 'loss',
+      key: 'loss',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: 'Txn Hash',
+      dataIndex: 'txnHash',
+      key: 'txnHash',
+      width: '14rem',
+      ellipsis: true,
+      render: text => (
+        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          {text}
+        </a>
+      )
+    },
+    {
+      title: 'Gas Fees(ETH)',
+      dataIndex: 'gasFees',
+      key: 'gasFees',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: 'gasUsed',
+      dataIndex: 'gasUsed',
+      key: 'gasUsed'
+    },
+    {
+      title: 'gasPrice',
+      dataIndex: 'gasPrice',
+      key: 'gasPrice'
+    }
+  ]
+
+  const redeemChangeData = get(loss, 'redeem.info', [])
+
+  const swapChangeColumns = [
+    {
+      title: 'From Token',
+      dataIndex: 'fromTokenName',
+      key: 'fromTokenName',
+      render: (text, item) => {
+        return (
+          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.fromToken}`}>
+            {text}
+          </a>
+        )
+      }
+    },
+    {
+      title: 'From Amount',
+      dataIndex: 'fromAmount',
+      key: 'fromAmount',
+      render: (value, item) => {
+        const decimals = BigNumber.from(10).pow(item.fromTokenDecimal)
+        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `From Token Price（${loss?.currency}）`,
+      dataIndex: 'fromTokenPriceRate',
+      key: 'fromTokenPriceRate'
+    },
+    {
+      title: 'To',
+      dataIndex: 'toTokenName',
+      key: 'toTokenName',
+      render: (text, item) => {
+        return (
+          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.toToken}`}>
+            {text}
+          </a>
+        )
+      }
+    },
+    {
+      title: 'To Amount',
+      dataIndex: 'toAmount',
+      key: 'toAmount',
+      render: (value, item) => {
+        const decimals = BigNumber.from(10).pow(item.toTokenDecimal)
+        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `To Token Price（${loss?.currency}）`,
+      dataIndex: 'toTokenPriceRate',
+      key: 'toTokenPriceRate'
+    },
+    {
+      title: `Loss（${loss?.currency}）`,
+      dataIndex: 'loss',
+      key: 'loss',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: 'Transaction Hash',
+      dataIndex: 'txnHash',
+      key: 'txnHash',
+      width: '14rem',
+      ellipsis: true,
+      render: text => (
+        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          {text}
+        </a>
+      )
+    },
+    {
+      title: 'Gas Fees(Gwei)',
+      dataIndex: 'gasFees',
+      key: 'gasFees'
+    },
+    {
+      title: 'Exchange',
+      dataIndex: 'exchangeName',
+      key: 'exchangeName'
+    }
+  ]
+
+  const swapChangeData = get(loss, 'exchange.info', [])
+
+  const lendChangeColumns = [
+    {
+      title: 'Lend Strategy',
+      dataIndex: 'name',
+      key: 'name',
+      width: '14rem',
+      ellipsis: true,
+      render: (text, item, index) => {
+        return (
+          <a title={text} key={index}>
+            {text}
+          </a>
+        )
+      }
+    },
+    {
+      title: `Before（${loss?.currency}）`,
+      dataIndex: 'before',
+      key: 'before',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `After（${loss?.currency}）`,
+      dataIndex: 'after',
+      key: 'after',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `Lend Assets Value（${loss?.currency}）`,
+      dataIndex: 'lendValue',
+      key: 'lendValue',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: `Loss（${loss?.currency}）`,
+      dataIndex: 'loss',
+      key: 'loss',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    },
+    {
+      title: 'Transaction Hash',
+      dataIndex: 'txnHash',
+      key: 'txnHash',
+      width: '14rem',
+      ellipsis: true,
+      render: text => (
+        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          {text}
+        </a>
+      )
+    },
+    {
+      title: 'Gas Fees（ETH）',
+      dataIndex: 'gasFees',
+      key: 'gasFees',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+      }
+    }
+  ]
+
+  const lendChangeData = get(loss, 'lend.info', [])
 
   const smallConfig = {
     cardProps: {
@@ -600,11 +885,63 @@ const Reports = () => {
             <Table
               columns={detailsColumns}
               dataSource={displayData}
-              scroll={{ x: 1400, y: 400 }}
+              scroll={{ x: 1600, y: 400 }}
               pagination={false}
               {...detailTableResponsiveConfig.tableProps}
             />
           </Col>
+          {!isEmpty(loss) && (
+            <>
+              <Col span={24}>
+                <Divider orientation="left" plain>
+                  Total loss
+                </Divider>
+                <Table
+                  columns={tvlChangeColumns}
+                  dataSource={tvlChangeData}
+                  // scroll={{ x: 1400, y: 400 }}
+                  pagination={false}
+                  {...detailTableResponsiveConfig.tableProps}
+                />
+              </Col>
+              <Col span={24}>
+                <Divider orientation="left" plain>
+                  Redeem loss
+                </Divider>
+                <Table
+                  columns={redeemChangeColumns}
+                  dataSource={redeemChangeData}
+                  scroll={{ x: 1400, y: 400 }}
+                  pagination={false}
+                  {...detailTableResponsiveConfig.tableProps}
+                />
+              </Col>
+              <Col span={24}>
+                <Divider orientation="left" plain>
+                  Swap loss
+                </Divider>
+                <Table
+                  columns={swapChangeColumns}
+                  dataSource={swapChangeData}
+                  scroll={{ x: 1400, y: 400 }}
+                  pagination={false}
+                  {...detailTableResponsiveConfig.tableProps}
+                />
+              </Col>
+              <Col span={24}>
+                <Divider orientation="left" plain>
+                  Lend loss
+                </Divider>
+                <Table
+                  columns={lendChangeColumns}
+                  dataSource={lendChangeData}
+                  scroll={{ x: 1400, y: 400 }}
+                  pagination={false}
+                  {...detailTableResponsiveConfig.tableProps}
+                />
+              </Col>
+            </>
+          )}
         </Row>
       </Modal>
       <Modal
