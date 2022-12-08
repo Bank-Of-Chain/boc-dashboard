@@ -45,7 +45,7 @@ const fixedDecimals = BN(1e18)
 
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
-  const [showIndex, setShowIndex] = useState(-1)
+  const [showIndex, setShowIndex] = useState(3)
   const { userProvider, getWalletName } = useWallet()
   const [isRedUp, setIsRedUp] = useState(true)
   const deviceType = useDeviceType()
@@ -528,18 +528,6 @@ const Reports = () => {
       }
     },
     {
-      title: 'Txn Hash',
-      dataIndex: 'txnHash',
-      key: 'txnHash',
-      width: '14rem',
-      ellipsis: true,
-      render: text => (
-        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
-          {text}
-        </a>
-      )
-    },
-    {
       title: 'Gas Fees(ETH)',
       dataIndex: 'gasFees',
       key: 'gasFees',
@@ -553,9 +541,25 @@ const Reports = () => {
       key: 'gasUsed'
     },
     {
-      title: 'gasPrice',
+      title: 'gasPrice(Gwei)',
       dataIndex: 'gasPrice',
-      key: 'gasPrice'
+      key: 'gasPrice',
+      render: value => {
+        const decimals = BigNumber.from(10).pow(9)
+        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
+      }
+    },
+    {
+      title: 'Txn Hash',
+      dataIndex: 'txnHash',
+      key: 'txnHash',
+      width: '14rem',
+      ellipsis: true,
+      render: text => (
+        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          {text}
+        </a>
+      )
     }
   ]
 
@@ -628,18 +632,7 @@ const Reports = () => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
       }
     },
-    {
-      title: 'Transaction Hash',
-      dataIndex: 'txnHash',
-      key: 'txnHash',
-      width: '14rem',
-      ellipsis: true,
-      render: text => (
-        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
-          {text}
-        </a>
-      )
-    },
+
     {
       title: 'Gas Fees(ETH)',
       dataIndex: 'gasFees',
@@ -652,6 +645,18 @@ const Reports = () => {
       title: 'Exchange',
       dataIndex: 'exchangeName',
       key: 'exchangeName'
+    },
+    {
+      title: 'Transaction Hash',
+      dataIndex: 'txnHash',
+      key: 'txnHash',
+      width: '14rem',
+      ellipsis: true,
+      render: text => (
+        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          {text}
+        </a>
+      )
     }
   ]
 
@@ -704,6 +709,15 @@ const Reports = () => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
       }
     },
+
+    {
+      title: 'Gas Fees（ETH）',
+      dataIndex: 'gasFees',
+      key: 'gasFees',
+      render: value => {
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+      }
+    },
     {
       title: 'Transaction Hash',
       dataIndex: 'txnHash',
@@ -715,14 +729,6 @@ const Reports = () => {
           {text}
         </a>
       )
-    },
-    {
-      title: 'Gas Fees（ETH）',
-      dataIndex: 'gasFees',
-      key: 'gasFees',
-      render: value => {
-        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
-      }
     }
   ]
 
