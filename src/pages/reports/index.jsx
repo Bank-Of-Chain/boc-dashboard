@@ -3,9 +3,9 @@ import React, { useState, Suspense, useEffect } from 'react'
 // === Components === //
 import Address from '@/components/Address'
 import { GridContent } from '@ant-design/pro-layout'
-import { FallOutlined, RiseOutlined } from '@ant-design/icons'
+import { FallOutlined, RiseOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message, Divider, Switch } from 'antd'
+import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message, Divider, Switch, Space } from 'antd'
 import VaultChange from '@/components/VaultChange'
 
 // === Services === //
@@ -23,6 +23,8 @@ import isEqual from 'lodash/isEqual'
 import { useRequest, useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { changeNetwork } from '@/utils/network'
+import { BigNumber } from 'ethers'
+import { isArray } from 'lodash'
 
 // === Hooks === //
 import useAdminRole from '@/hooks/useAdminRole'
@@ -39,7 +41,6 @@ import { getSignatureHeader } from '@/services/signer-service'
 
 // === Styles === //
 import styles from './style.less'
-import { BigNumber } from 'ethers'
 
 const fixedDecimals = BN(1e18)
 
@@ -191,7 +192,8 @@ const Reports = () => {
       key: 'type',
       render: text => {
         if (text === 0) return <span key={text}>estimation</span>
-        if (text === 1) return <span key={text}>executed</span>
+        if (text === 1) return <span key={text}>pre-execution estimation</span>
+        if (text === 2) return <span key={text}>executed</span>
       }
     },
     {
@@ -512,7 +514,7 @@ const Reports = () => {
       }
     },
     {
-      title: `Redeem Assets Value(Delta of Vault.xxx)（${loss?.currency}）`,
+      title: `Redeem Assets Value（${loss?.currency}）`,
       dataIndex: 'redeemValue',
       key: 'redeemValue',
       render: value => {
@@ -520,7 +522,7 @@ const Reports = () => {
       }
     },
     {
-      title: `Loss(Before - After - Redeem Assets Value)（${loss?.currency}）`,
+      title: `Loss（${loss?.currency}）`,
       dataIndex: 'loss',
       key: 'loss',
       render: value => {
@@ -536,12 +538,12 @@ const Reports = () => {
       }
     },
     {
-      title: 'gasUsed',
+      title: 'Gas Used',
       dataIndex: 'gasUsed',
       key: 'gasUsed'
     },
     {
-      title: 'gasPrice(Gwei)',
+      title: 'Gas Price(Gwei)',
       dataIndex: 'gasPrice',
       key: 'gasPrice',
       render: value => {
@@ -567,14 +569,20 @@ const Reports = () => {
 
   const swapChangeColumns = [
     {
-      title: 'From Token',
+      title: 'Path',
       dataIndex: 'fromTokenName',
       key: 'fromTokenName',
       render: (text, item) => {
         return (
-          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.fromToken}`}>
-            {text}
-          </a>
+          <Space>
+            <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.fromToken}`}>
+              {item.fromTokenName}
+            </a>
+            <ArrowRightOutlined />
+            <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.toToken}`}>
+              {item.toTokenName}
+            </a>
+          </Space>
         )
       }
     },
@@ -593,18 +601,6 @@ const Reports = () => {
       key: 'fromTokenPriceRate',
       render: value => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
-      }
-    },
-    {
-      title: 'To',
-      dataIndex: 'toTokenName',
-      key: 'toTokenName',
-      render: (text, item) => {
-        return (
-          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.toToken}`}>
-            {text}
-          </a>
-        )
       }
     },
     {
@@ -632,7 +628,6 @@ const Reports = () => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
       }
     },
-
     {
       title: 'Gas Fees(ETH)',
       dataIndex: 'gasFees',
@@ -642,12 +637,30 @@ const Reports = () => {
       }
     },
     {
-      title: 'Exchange',
-      dataIndex: 'exchangeName',
-      key: 'exchangeName'
+      title: 'Gas Used',
+      dataIndex: 'gasUsed',
+      key: 'gasUsed'
     },
     {
-      title: 'Transaction Hash',
+      title: 'Gas Price(Gwei)',
+      dataIndex: 'gasPrice',
+      key: 'gasPrice',
+      render: value => {
+        const decimals = BigNumber.from(10).pow(9)
+        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
+      }
+    },
+    {
+      title: 'Path',
+      dataIndex: 'exchangeName',
+      key: 'exchangeName',
+      render: value => {
+        if (isArray(value)) return value.join(' ')
+        return value
+      }
+    },
+    {
+      title: 'Txn Hash',
       dataIndex: 'txnHash',
       key: 'txnHash',
       width: '14rem',
@@ -709,7 +722,6 @@ const Reports = () => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
       }
     },
-
     {
       title: 'Gas Fees（ETH）',
       dataIndex: 'gasFees',
@@ -719,7 +731,21 @@ const Reports = () => {
       }
     },
     {
-      title: 'Transaction Hash',
+      title: 'Gas Used',
+      dataIndex: 'gasUsed',
+      key: 'gasUsed'
+    },
+    {
+      title: 'Gas Price(Gwei)',
+      dataIndex: 'gasPrice',
+      key: 'gasPrice',
+      render: value => {
+        const decimals = BigNumber.from(10).pow(9)
+        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
+      }
+    },
+    {
+      title: 'Txn Hash',
       dataIndex: 'txnHash',
       key: 'txnHash',
       width: '14rem',
@@ -927,10 +953,22 @@ const Reports = () => {
                 <Divider orientation="left" plain>
                   Redeem loss
                 </Divider>
+                <Descriptions {...detailHeaderResponsiveConfig.lastDescProps}>
+                  <Descriptions.Item label="Total loss">
+                    <span title={toFixed(get(loss, 'redeem.loss', '0'), fixedDecimals)}>
+                      {toFixed(get(loss, 'redeem.loss', '0'), fixedDecimals, displayDecimals)}
+                    </span>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Gas Fee">
+                    <span title={toFixed(get(loss, 'redeem.gasFees', '0'), fixedDecimals)}>
+                      {toFixed(get(loss, 'redeem.gasFees', '0'), fixedDecimals, displayDecimals)} ETH
+                    </span>
+                  </Descriptions.Item>
+                </Descriptions>
                 <Table
                   columns={redeemChangeColumns}
                   dataSource={redeemChangeData}
-                  scroll={{ x: 1400, y: 400 }}
+                  scroll={{ x: 1600, y: 400 }}
                   pagination={false}
                   {...detailTableResponsiveConfig.tableProps}
                 />
@@ -939,10 +977,22 @@ const Reports = () => {
                 <Divider orientation="left" plain>
                   Swap loss
                 </Divider>
+                <Descriptions {...detailHeaderResponsiveConfig.lastDescProps}>
+                  <Descriptions.Item label="Total loss">
+                    <span title={toFixed(get(loss, 'exchange.loss', '0'), fixedDecimals)}>
+                      {toFixed(get(loss, 'exchange.loss', '0'), fixedDecimals, displayDecimals)}
+                    </span>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Gas Fee">
+                    <span title={toFixed(get(loss, 'exchange.gasFees', '0'), fixedDecimals)}>
+                      {toFixed(get(loss, 'exchange.gasFees', '0'), fixedDecimals, displayDecimals)} ETH
+                    </span>
+                  </Descriptions.Item>
+                </Descriptions>
                 <Table
                   columns={swapChangeColumns}
                   dataSource={swapChangeData}
-                  scroll={{ x: 1400, y: 400 }}
+                  scroll={{ x: 1600, y: 400 }}
                   pagination={false}
                   {...detailTableResponsiveConfig.tableProps}
                 />
@@ -951,10 +1001,22 @@ const Reports = () => {
                 <Divider orientation="left" plain>
                   Lend loss
                 </Divider>
+                <Descriptions {...detailHeaderResponsiveConfig.lastDescProps}>
+                  <Descriptions.Item label="Total loss">
+                    <span title={toFixed(get(loss, 'lend.loss', '0'), fixedDecimals)}>
+                      {toFixed(get(loss, 'lend.loss', '0'), fixedDecimals, displayDecimals)}
+                    </span>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Gas Fee">
+                    <span title={toFixed(get(loss, 'lend.gasFees', '0'), fixedDecimals)}>
+                      {toFixed(get(loss, 'lend.gasFees', '0'), fixedDecimals, displayDecimals)} ETH
+                    </span>
+                  </Descriptions.Item>
+                </Descriptions>
                 <Table
                   columns={lendChangeColumns}
                   dataSource={lendChangeData}
-                  scroll={{ x: 1400, y: 400 }}
+                  scroll={{ x: 1600, y: 400 }}
                   pagination={false}
                   {...detailTableResponsiveConfig.tableProps}
                 />
