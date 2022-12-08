@@ -45,7 +45,7 @@ const fixedDecimals = BN(1e18)
 
 const Reports = () => {
   const { initialState } = useModel('@@initialState')
-  const [showIndex, setShowIndex] = useState(3)
+  const [showIndex, setShowIndex] = useState(-1)
   const { userProvider, getWalletName } = useWallet()
   const [isRedUp, setIsRedUp] = useState(true)
   const deviceType = useDeviceType()
