@@ -29,6 +29,9 @@ import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find } fro
 // === Services === //
 import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails } from '@/services/api-service'
 
+// === Hooks === //
+import useStrategyDetails from '@/hooks/useStrategyDetails'
+
 // === Styles === //
 import styles from './style.less'
 
@@ -65,6 +68,8 @@ const Strategy = props => {
 
   const [isOfficalApyEnable, setIsOfficalApyEnable] = useState(true)
   const [isVerifiedApyEnable, setIsVerifiedApyEnable] = useState(true)
+
+  const details = useStrategyDetails()
 
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
@@ -459,27 +464,49 @@ const Strategy = props => {
             </Col>
             <Col xl={14} lg={14} md={14} sm={16} xs={18}>
               <Descriptions
-                column={1}
-                title={<span style={{ color: '#fff', fontSize: titleFontSize, fontWeight: 'normal' }}>Base Info</span>}
+                column={2}
+                title={
+                  <span style={{ color: '#fff', fontSize: titleFontSize, fontWeight: 'normal' }}>
+                    <a
+                      target={'_blank'}
+                      rel="noreferrer"
+                      href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
+                      className={styles.strategyName}
+                    >
+                      {strategy.strategyName}
+                    </a>
+                  </span>
+                }
                 labelStyle={{ color: '#fff', fontSize: infoFontSize }}
                 contentStyle={{ color: '#fff', fontSize: infoFontSize }}
                 {...infoResponsiveConfig.descriptionProps}
               >
-                <Descriptions.Item label="Name">
-                  <a
-                    target={'_blank'}
-                    rel="noreferrer"
-                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
-                    className={styles.strategyName}
-                  >
-                    {strategy.strategyName}
-                  </a>
-                </Descriptions.Item>
                 <Descriptions.Item label="Underlying Token(s)">
                   {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
                 </Descriptions.Item>
                 <Descriptions.Item label="Asset Value">{toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
                 <Descriptions.Item label="Status">Active</Descriptions.Item>
+                {!isEmpty(details.POOL_ASSETS) && <Descriptions.Item label="Pool Assets">{details.POOL_ASSETS}</Descriptions.Item>}
+                {!isEmpty(details.IMPERMANENT_LOSS) && (
+                  <Descriptions.Item label="Impermanent Loss">
+                    {details.IMPERMANENT_LOSS}
+                    {unit}
+                  </Descriptions.Item>
+                )}
+                {!isEmpty(details.UNDERLYING_LIQUIDITY) && (
+                  <Descriptions.Item label="Underlying Liquidity">{details.UNDERLYING_LIQUIDITY}</Descriptions.Item>
+                )}
+                {!isEmpty(details.UNDERLYING_BORROW) && <Descriptions.Item label="Underlying Borrow">{details.UNDERLYING_BORROW}</Descriptions.Item>}
+                {!isEmpty(details.INTEREST_SUPPLY_APY) && (
+                  <Descriptions.Item label="Interest Supply Apy">{details.INTEREST_SUPPLY_APY}</Descriptions.Item>
+                )}
+                {!isEmpty(details.INTEREST_BORROW_APY) && (
+                  <Descriptions.Item label="Interest Borrow Apy">{details.INTEREST_BORROW_APY}</Descriptions.Item>
+                )}
+                {!isEmpty(details.STRATEGY_LEVERAGE) && <Descriptions.Item label="Strategy Leverage">{details.STRATEGY_LEVERAGE}</Descriptions.Item>}
+                {!isEmpty(details.ETH_POS) && <Descriptions.Item label="ETH Pos">{details.ETH_POS}</Descriptions.Item>}
+                {!isEmpty(details.BASE_ORDER) && <Descriptions.Item label="Base Order">{details.BASE_ORDER}</Descriptions.Item>}
+                {!isEmpty(details.LIMIT_ORDER) && <Descriptions.Item label="Limit Order">{details.LIMIT_ORDER}</Descriptions.Item>}
               </Descriptions>
             </Col>
           </Row>
@@ -505,6 +532,22 @@ const Strategy = props => {
             )}
           </div>
         </Card>
+      </Suspense>
+      <Suspense fallback={null}>
+        <iframe
+          className={styles.iframe}
+          // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
+          src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
+          frameBorder="0"
+        ></iframe>
+      </Suspense>
+      <Suspense fallback={null}>
+        <iframe
+          className={styles.iframe}
+          // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
+          src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
+          frameBorder="0"
+        ></iframe>
       </Suspense>
       <Suspense fallback={null}>
         <StrategyApyTable
