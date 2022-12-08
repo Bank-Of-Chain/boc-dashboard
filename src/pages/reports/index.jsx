@@ -191,7 +191,7 @@ const Reports = () => {
       key: 'type',
       render: text => {
         if (text === 0) return <span key={text}>estimation</span>
-        if (text === 1) return <span key={text}>pre-execution estimation</span>
+        if (text === 1) return <span key={text}>executed</span>
       }
     },
     {
