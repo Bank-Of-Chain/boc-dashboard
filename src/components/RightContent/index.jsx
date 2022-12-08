@@ -1,4 +1,4 @@
-import { Space, Button, Menu, Dropdown, message } from 'antd'
+import { Space, Button, message } from 'antd'
 import { useModel, history } from 'umi'
 import React, { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
@@ -8,7 +8,7 @@ import copy from 'copy-to-clipboard'
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
 import { MyAccountIcon } from '@/components/SvgIcons'
-import Icon, { LoadingOutlined, DownOutlined } from '@ant-design/icons'
+import Icon, { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
@@ -25,12 +25,12 @@ import useWallet from '@/hooks/useWallet'
 // === Styles === //
 import styles from './index.less'
 
-const menu = (
-  <Menu>
-    <Menu.Item>Ethereum</Menu.Item>
-    {/* <Menu.Item>Polygon</Menu.Item> */}
-  </Menu>
-)
+// const menu = (
+//   <Menu>
+//     <Menu.Item>Ethereum</Menu.Item>
+//     {/* <Menu.Item>Polygon</Menu.Item> */}
+//   </Menu>
+// )
 
 const GlobalHeaderRight = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -108,12 +108,12 @@ const GlobalHeaderRight = () => {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
       >
-        <Dropdown overlay={menu}>
-          <Space>
+        {/* <Dropdown overlay={menu}>
+          <Space style={{ lineHeight: 2 }}>
             <a className={styles.chain}>Ethereum</a>
             <DownOutlined style={{ fontSize: 10 }} />
           </Space>
-        </Dropdown>
+        </Dropdown> */}
         <Button type="text" href="https://docs.bankofchain.io/" target="_blank" className={styles.colorful}>
           Docs
         </Button>
