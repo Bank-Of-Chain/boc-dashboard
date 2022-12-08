@@ -11,6 +11,7 @@ import { toFixed } from '@/utils/number-format'
 import { GridContent } from '@ant-design/pro-layout'
 import ChainChange from '@/components/ChainChange'
 import { LineEchart } from '@/components/echarts'
+import VaultChange from '@/components/VaultChange'
 
 // === Services === //
 import { getPrices } from '@/services/price-service'
@@ -66,6 +67,9 @@ const USDIPrice = () => {
   })
   return (
     <GridContent>
+      <Suspense fallback={null}>
+        <VaultChange />
+      </Suspense>
       <Suspense fallback={null}>
         <ChainChange />
       </Suspense>

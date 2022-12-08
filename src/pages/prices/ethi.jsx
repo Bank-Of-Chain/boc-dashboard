@@ -10,6 +10,7 @@ import { toFixed } from '@/utils/number-format'
 // === Components === //
 import { GridContent } from '@ant-design/pro-layout'
 import { LineEchart } from '@/components/echarts'
+import VaultChange from '@/components/VaultChange'
 
 // === Services === //
 import { getPrices } from '@/services/price-service'
@@ -64,6 +65,9 @@ const ETHIPrice = () => {
   })
   return (
     <GridContent>
+      <Suspense fallback={null}>
+        <VaultChange />
+      </Suspense>
       <Suspense fallback={null}>{!loading && <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />}</Suspense>
     </GridContent>
   )
