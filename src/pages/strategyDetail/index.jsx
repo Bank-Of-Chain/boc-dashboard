@@ -24,7 +24,7 @@ import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
-import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find } from 'lodash'
+import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, isUndefined } from 'lodash'
 
 // === Services === //
 import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails } from '@/services/api-service'
@@ -486,27 +486,31 @@ const Strategy = props => {
                 </Descriptions.Item>
                 <Descriptions.Item label="Asset Value">{toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
                 <Descriptions.Item label="Status">Active</Descriptions.Item>
-                {!isEmpty(details.POOL_ASSETS) && <Descriptions.Item label="Pool Assets">{details.POOL_ASSETS}</Descriptions.Item>}
-                {!isEmpty(details.IMPERMANENT_LOSS) && (
+                {!isUndefined(details.POOL_ASSETS) && <Descriptions.Item label="Pool Assets">{details.POOL_ASSETS}</Descriptions.Item>}
+                {!isUndefined(details.IMPERMANENT_LOSS) && (
                   <Descriptions.Item label="Impermanent Loss">
                     {details.IMPERMANENT_LOSS}
                     {unit}
                   </Descriptions.Item>
                 )}
-                {!isEmpty(details.UNDERLYING_LIQUIDITY) && (
+                {!isUndefined(details.UNDERLYING_LIQUIDITY) && (
                   <Descriptions.Item label="Underlying Liquidity">{details.UNDERLYING_LIQUIDITY}</Descriptions.Item>
                 )}
-                {!isEmpty(details.UNDERLYING_BORROW) && <Descriptions.Item label="Underlying Borrow">{details.UNDERLYING_BORROW}</Descriptions.Item>}
-                {!isEmpty(details.INTEREST_SUPPLY_APY) && (
+                {!isUndefined(details.UNDERLYING_BORROW) && (
+                  <Descriptions.Item label="Underlying Borrow">{details.UNDERLYING_BORROW}</Descriptions.Item>
+                )}
+                {!isUndefined(details.INTEREST_SUPPLY_APY) && (
                   <Descriptions.Item label="Interest Supply Apy">{details.INTEREST_SUPPLY_APY}</Descriptions.Item>
                 )}
-                {!isEmpty(details.INTEREST_BORROW_APY) && (
+                {!isUndefined(details.INTEREST_BORROW_APY) && (
                   <Descriptions.Item label="Interest Borrow Apy">{details.INTEREST_BORROW_APY}</Descriptions.Item>
                 )}
-                {!isEmpty(details.STRATEGY_LEVERAGE) && <Descriptions.Item label="Strategy Leverage">{details.STRATEGY_LEVERAGE}</Descriptions.Item>}
-                {!isEmpty(details.ETH_POS) && <Descriptions.Item label="ETH Pos">{details.ETH_POS}</Descriptions.Item>}
-                {!isEmpty(details.BASE_ORDER) && <Descriptions.Item label="Base Order">{details.BASE_ORDER}</Descriptions.Item>}
-                {!isEmpty(details.LIMIT_ORDER) && <Descriptions.Item label="Limit Order">{details.LIMIT_ORDER}</Descriptions.Item>}
+                {!isUndefined(details.STRATEGY_LEVERAGE) && (
+                  <Descriptions.Item label="Strategy Leverage">{details.STRATEGY_LEVERAGE}</Descriptions.Item>
+                )}
+                {!isUndefined(details.ETH_POS) && <Descriptions.Item label="ETH Pos">{details.ETH_POS}</Descriptions.Item>}
+                {!isUndefined(details.BASE_ORDER) && <Descriptions.Item label="Base Order">{details.BASE_ORDER}</Descriptions.Item>}
+                {!isUndefined(details.LIMIT_ORDER) && <Descriptions.Item label="Limit Order">{details.LIMIT_ORDER}</Descriptions.Item>}
               </Descriptions>
             </Col>
           </Row>
