@@ -962,7 +962,7 @@ const Reports = () => {
                   </Descriptions.Item>
                   <Descriptions.Item label="Total Gas Fee">
                     <span title={toFixed(get(loss, 'redeem.gasFees', '0'), fixedDecimals)}>
-                      {toFixed(get(loss, 'redeem.gasFees', '0'), fixedDecimals, displayDecimals)} ETH
+                      {toFixed(get(loss, 'redeem.gasFees', '0'), fixedDecimals, 6)} ETH
                     </span>
                   </Descriptions.Item>
                 </Descriptions>
@@ -986,7 +986,7 @@ const Reports = () => {
                   </Descriptions.Item>
                   <Descriptions.Item label="Total Gas Fee">
                     <span title={toFixed(get(loss, 'exchange.gasFees', '0'), fixedDecimals)}>
-                      {toFixed(get(loss, 'exchange.gasFees', '0'), fixedDecimals, displayDecimals)} ETH
+                      {toFixed(get(loss, 'exchange.gasFees', '0'), fixedDecimals, 6)} ETH
                     </span>
                   </Descriptions.Item>
                 </Descriptions>
@@ -1010,7 +1010,7 @@ const Reports = () => {
                   </Descriptions.Item>
                   <Descriptions.Item label="Total Gas Fee">
                     <span title={toFixed(get(loss, 'lend.gasFees', '0'), fixedDecimals)}>
-                      {toFixed(get(loss, 'lend.gasFees', '0'), fixedDecimals, displayDecimals)} ETH
+                      {toFixed(get(loss, 'lend.gasFees', '0'), fixedDecimals, 6)} ETH
                     </span>
                   </Descriptions.Item>
                 </Descriptions>
