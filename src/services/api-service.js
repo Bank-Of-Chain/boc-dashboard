@@ -210,3 +210,29 @@ export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, of
     params: nextParams
   })
 }
+
+/**
+ * get strategy extends details by strategy id
+ * @param {*} vaultAddress
+ * @param {*} strategyAddress
+ * @param {*} columes
+ * @returns
+ */
+export const getStrategyExtends = (vaultAddress, strategyAddress, columes = []) => {
+  // TODO:
+  console.log(vaultAddress, strategyAddress, columes)
+  // const nextParams = {
+  //   strategyAddress,
+  //   columes,
+  //   limit
+  // }
+  // const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy/daily`
+  return request(`${API_SERVER}/chains/1/vaults/0x8f0Cb368C63fbEDF7a90E43fE50F7eb8B9411746/strategy/assets`, {
+    params: {
+      strategyName: 'StakeWiseEthSeth23000Strategy',
+      limit: 10,
+      offset: 0,
+      sort: 'fetch_timestamp desc'
+    }
+  })
+}
