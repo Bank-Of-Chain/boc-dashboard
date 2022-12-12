@@ -33,7 +33,7 @@ const MIX_ABI = [
         type: 'address'
       }
     ],
-    name: 'isVaultOrGov',
+    name: 'isVaultOrGovOrDelegate',
     outputs: [
       {
         internalType: 'bool',
@@ -63,7 +63,7 @@ const useAdminRole = address => {
       .then(accessControlProxy => {
         const accessControlProxyContract = new ethers.Contract(accessControlProxy, MIX_ABI, userProvider)
         return accessControlProxyContract
-          .isVaultOrGov(userAddress)
+          .isVaultOrGovOrDelegate(userAddress)
           .then(setIsAdmin)
           .catch(error => {
             setError(error)
