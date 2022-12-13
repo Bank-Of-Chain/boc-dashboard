@@ -37,14 +37,9 @@ export default function ProtocolAllocation({
   }[deviceType]
 
   return (
-    <Card
-      loading={loading}
-      className={styles.salesCard}
-      bordered={false}
-      {...protocolResponsiveConfig.cardProps}
-    >
+    <Card loading={loading} className={styles.salesCard} bordered={false} {...protocolResponsiveConfig.cardProps}>
       <div className={styles.title}>Vault Protocol Allocations</div>
-      <Row>
+      <Row gutter={[12, 12]}>
         <Col xl={12} lg={24} md={24} sm={24} xs={24}>
           <Suspense fallback={null}>
             <ProportionSales

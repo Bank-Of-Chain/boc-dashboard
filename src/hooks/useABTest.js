@@ -3,7 +3,7 @@ import { useAsync } from 'react-async-hook'
 import { request } from 'umi'
 
 const useABTest = () => {
-  const data = useAsync(() => request(`${IMAGE_ROOT}/index.json`))
+  const data = useAsync(() => request(`${IMAGE_ROOT}/index.json`, { skipErrorHandler: true }))
   if (data.loading || data.status === 'error') return {}
   return data?.result?.data
 }

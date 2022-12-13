@@ -2,15 +2,14 @@ import React from 'react'
 
 // === Components === //
 import { Empty } from 'antd'
-import { Donut } from '@ant-design/charts'
+import { PieEchart } from '@/components/echarts'
 
 // === Utils === //
 import numeral from 'numeral'
 import BN from 'bignumber.js'
 import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
-import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import { reduce, mapValues, groupBy, values, filter, isEmpty } from 'lodash'
+import { reduce, mapValues, groupBy, values, filter, isEmpty, map } from 'lodash'
 
 // === Styles === //
 import styles from '../style.less'
@@ -18,7 +17,6 @@ import styles from '../style.less'
 const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {
   const { strategies = [], totalValueInVault = '0' } = visitData
   const { initialState } = useModel('@@initialState')
-  const deviceType = useDeviceType()
   const suffix = ` (${unit})`
 
   if (!initialState.chain) return null
@@ -60,62 +58,101 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
     }
   ]
 
-  const responsiveConfig = {
-    [DEVICE_TYPE.Desktop]: {
-      legendProps: {
-        position: 'bottom-center'
+  var option = {
+    tooltip: {
+      trigger: 'item'
+    },
+    grid: {
+      top: 'top'
+    },
+    legend: {
+      bottom: '0%',
+      left: 'center',
+      icon: 'circle',
+      itemWidth: 10,
+      textStyle: {
+        rich: {
+          a: {
+            fontSize: 12,
+            verticalAlign: 'top',
+            align: 'center',
+            color: '#F2F3F4',
+            padding: [10, 0, 0, 0],
+            lineHeight: 16
+          },
+          b: {
+            fontSize: 10,
+            align: 'left',
+            color: '#FFF',
+            padding: [16, 0, 0, 0],
+            lineHeight: 12
+          }
+        }
+      },
+      formatter: name => {
+        let data = tableData
+        let total = 0
+        let target
+        for (let i = 0, l = data.length; i < l; i++) {
+          total += 1 * data[i].amount
+          if (data[i].Protocol == name) {
+            target = 1 * data[i].amount
+          }
+        }
+        let arr = ['{a|' + name + '}', '{b|' + ((target / total) * 100).toFixed(2) + '%}']
+        return arr.join('\n')
       }
     },
-    [DEVICE_TYPE.Tablet]: {
-      legendProps: {
-        position: 'bottom-center'
+    color: ['#A68EFE', '#2ec7c9', '#5ab1ef', '#ffb980', '#d87a80', '#8d98b3', '#e5cf0d', '#97b552', '#95706d', '#dc69aa', '#07a2a4'],
+    title: {
+      text: numeral(toFixed(tvl, tokenDecimals, displayDecimals)).format('0.[0000]a'),
+      left: 'center',
+      top: '40%',
+      textStyle: {
+        color: '#FFF',
+        fontSize: 18,
+        fontWeight: 700,
+        align: 'center'
       }
     },
-    [DEVICE_TYPE.Mobile]: {
-      legendProps: {
-        position: 'bottom-center'
+    graphic: {
+      type: 'text',
+      left: 'center',
+      top: '35%',
+      style: {
+        text: `TVL${suffix}`,
+        textAlign: 'center',
+        fill: '#A0A0A0',
+        fontSize: 12,
+        fontWeight: 400
       }
-    }
-  }[deviceType]
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['35%', '60%'],
+        center: ['50%', '40%'],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: 'center'
+        },
+        labelLine: {
+          show: false
+        },
+        data: map(tableData, item => {
+          return {
+            name: item.Protocol,
+            value: item.amount
+          }
+        })
+      }
+    ]
+  }
 
   return (
     <div className={styles.chartWrapper}>
-      <Donut
-        forceFit
-        padding="auto"
-        angleField="amount"
-        color={['#A68EFE', '#2ec7c9', '#5ab1ef', '#ffb980', '#d87a80', '#8d98b3', '#e5cf0d', '#97b552', '#95706d', '#dc69aa', '#07a2a4']}
-        colorField="Protocol"
-        data={tableData}
-        legend={{
-          visible: true,
-          text: {
-            style: {
-              fill: '#fff'
-            },
-            formatter: value => {
-              return value.replace(suffix, '')
-            }
-          },
-          ...responsiveConfig.legendProps
-        }}
-        label={{
-          visible: false,
-          type: 'spider',
-          offset: 20,
-          formatter: (text, item) => {
-            return `${item._origin.Protocol}: ${item._origin.amount}`
-          }
-        }}
-        interactions={[{ type: 'element-selected' }, { type: 'element-active' }]}
-        statistic={{
-          visible: true,
-          content: {
-            value: numeral(toFixed(tvl, tokenDecimals, displayDecimals)).format('0.[0000]a'),
-            name: `TVL${suffix}`
-          }
-        }}
-      />
+      <PieEchart option={option} style={{ height: '100%', width: '100%' }} />
     </div>
   )
 }
