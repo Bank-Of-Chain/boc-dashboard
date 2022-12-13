@@ -7,10 +7,10 @@ export default [
     path: '/strategy',
     component: './strategyDetail'
   },
-  // {
-  //   path: '/mine',
-  //   component: './mine'
-  // },
+  {
+    path: '/mine',
+    component: './mine'
+  },
   {
     path: '/reports',
     component: './reports'
