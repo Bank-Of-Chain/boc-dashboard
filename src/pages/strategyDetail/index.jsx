@@ -15,6 +15,7 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space } from 'antd'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import IFrameLoader from '@/components/IFrameLoader'
 
 // === Utils === //
 import moment from 'moment'
@@ -431,6 +432,17 @@ const Strategy = props => {
     )
   }
 
+  const iframeStyleUpdate = dom => {
+    //TODO:
+    console.log('dom=', dom)
+    // if (isUndefined(dom)) return
+    // const htmlDom = dom.querySelector('html')
+    // if (isUndefined(htmlDom)) return
+    // var style = dom.createElement('style')
+    // style.innerHTML = `.header_owner__vd8ip,.status_icon__mGOok{display: none;}`
+    // htmlDom.append(style)
+  }
+
   const titleFontSize = {
     [DEVICE_TYPE.Desktop]: 30,
     [DEVICE_TYPE.Tablet]: 26,
@@ -486,21 +498,22 @@ const Strategy = props => {
                 </Descriptions.Item>
                 <Descriptions.Item label="Asset Value">{toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
                 <Descriptions.Item label="Status">Active</Descriptions.Item>
-                {!isUndefined(details.POOL_ASSETS) && <Descriptions.Item label="Pool Assets">{details.POOL_ASSETS}</Descriptions.Item>}
-                {!isUndefined(details.IMPERMANENT_LOSS) && (
-                  <Descriptions.Item label="Impermanent Loss">
-                    {details.IMPERMANENT_LOSS}
-                    {unit}
+                {!isUndefined(details['base-order-lower']) && (
+                  <Descriptions.Item label="Pool Assets">{toFixed(details['base-order-lower'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isUndefined(details['base-order-upper']) && (
+                  <Descriptions.Item label="Impermanent Loss">{toFixed(details['base-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isUndefined(details['limit-order-lower']) && (
+                  <Descriptions.Item label="Underlying Liquidity">
+                    {toFixed(details['limit-order-lower'], decimals, displayDecimals)}
                   </Descriptions.Item>
                 )}
-                {!isUndefined(details.UNDERLYING_LIQUIDITY) && (
-                  <Descriptions.Item label="Underlying Liquidity">{details.UNDERLYING_LIQUIDITY}</Descriptions.Item>
+                {!isUndefined(details['limit-order-upper']) && (
+                  <Descriptions.Item label="Underlying Borrow">{toFixed(details['limit-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
                 )}
-                {!isUndefined(details.UNDERLYING_BORROW) && (
-                  <Descriptions.Item label="Underlying Borrow">{details.UNDERLYING_BORROW}</Descriptions.Item>
-                )}
-                {!isUndefined(details.INTEREST_SUPPLY_APY) && (
-                  <Descriptions.Item label="Interest Supply Apy">{details.INTEREST_SUPPLY_APY}</Descriptions.Item>
+                {!isUndefined(details['pool-assets']) && (
+                  <Descriptions.Item label="Interest Supply Apy">{toFixed(details['pool-assets'], decimals, displayDecimals)}</Descriptions.Item>
                 )}
                 {!isUndefined(details.INTEREST_BORROW_APY) && (
                   <Descriptions.Item label="Interest Borrow Apy">{details.INTEREST_BORROW_APY}</Descriptions.Item>
@@ -538,20 +551,22 @@ const Strategy = props => {
         </Card>
       </Suspense>
       <Suspense fallback={null}>
-        <iframe
+        <IFrameLoader
           className={styles.iframe}
           // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
           src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
           frameBorder="0"
-        ></iframe>
+          onload={iframeStyleUpdate}
+        />
       </Suspense>
       <Suspense fallback={null}>
-        <iframe
+        <IFrameLoader
           className={styles.iframe}
           // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
           src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
           frameBorder="0"
-        ></iframe>
+          onload={iframeStyleUpdate}
+        />
       </Suspense>
       <Suspense fallback={null}>
         <StrategyApyTable
