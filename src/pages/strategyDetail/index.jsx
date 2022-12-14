@@ -25,7 +25,7 @@ import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
-import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, isUndefined } from 'lodash'
+import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, keys } from 'lodash'
 
 // === Services === //
 import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails } from '@/services/api-service'
@@ -464,7 +464,7 @@ const Strategy = props => {
             <LeftOutlined onClick={() => history.push('/')} />
           </div>
           <Row justify="space-around">
-            <Col xl={10} lg={10} md={10} sm={8} xs={6}>
+            <Col xl={8} lg={8} md={8} sm={6} xs={4}>
               <div className={styles.imgWrapper}>
                 <Image
                   preview={false}
@@ -475,7 +475,7 @@ const Strategy = props => {
                 />
               </div>
             </Col>
-            <Col xl={14} lg={14} md={14} sm={16} xs={18}>
+            <Col xl={16} lg={16} md={16} sm={18} xs={20}>
               <Descriptions
                 column={2}
                 title={
@@ -497,68 +497,86 @@ const Strategy = props => {
                 <Descriptions.Item label="Underlying Token(s)">
                   {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
                 </Descriptions.Item>
-                <Descriptions.Item label="Asset Value">{toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
-                <Descriptions.Item label="Status">Active</Descriptions.Item>
+                <Descriptions.Item label="Strategy Net Asset">
+                  {toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}
+                </Descriptions.Item>
 
-                {/* // type1 */}
-                {!isUndefined(details['borrow-amounts']) && (
-                  <Descriptions.Item label="Borrow Amounts">{toFixed(details['borrow-amounts'], decimals, displayDecimals)}</Descriptions.Item>
+                {/* // type 2 */}
+                {!isNil(details['pool-assets']) && (
+                  <Descriptions.Item label="3rd Pool Assets">
+                    {toFixed(details['pool-assets'], decimals, displayDecimals) + ` ${unit}`}
+                  </Descriptions.Item>
                 )}
-                {!isUndefined(details['borrow-to-supply-ratio']) && (
-                  <Descriptions.Item label="Borrow Ratio">{toFixed(details['borrow-to-supply-ratio'], 1e-2, 2)}%</Descriptions.Item>
-                )}
-                {!isUndefined(details['interest-borrow-apy']) && (
-                  <Descriptions.Item label="Interest Borrow Apy">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
-                )}
-                {!isUndefined(details['interest-supply-apy']) && (
-                  <Descriptions.Item label="Interest Supply Apy">{toFixed(details['interest-supply-apy'], 1e-2, 2)}%</Descriptions.Item>
-                )}
-                {!isUndefined(details['liquidation-threshold']) && (
-                  <Descriptions.Item label="Liquidation Threshold">{toFixed(details['liquidation-threshold'], 1e-2, 2)}%</Descriptions.Item>
-                )}
-                {!isUndefined(details['strategy-leverage']) && (
-                  <Descriptions.Item label="Strategy Leverage">{toFixed(details['strategy-leverage'], 1e-2, 2)}%</Descriptions.Item>
-                )}
-                {!isUndefined(details['supply-amounts']) && (
-                  <Descriptions.Item label="Supply Amounts">{toFixed(details['supply-amounts'], decimals, displayDecimals)}</Descriptions.Item>
-                )}
-                {!isUndefined(details['underlying-borrow']) && (
-                  <Descriptions.Item label="Underlying Borrow">{toFixed(details['underlying-borrow'], decimals, displayDecimals)}</Descriptions.Item>
-                )}
-                {!isUndefined(details['underlying-liquidity']) && (
-                  <Descriptions.Item label="Underlying Liquidity">
-                    {toFixed(details['underlying-liquidity'], decimals, displayDecimals)}
+                {!isNil(details['token-ratio']) && (
+                  <Descriptions.Item label="Token Ratio">
+                    {map(keys(details['token-ratio']), (key, index) => {
+                      console.log('key=', details['token-ratio'], key)
+                      return [
+                        index === 0 ? '' : <span style={{ margin: '0 5px' }}>:</span>,
+                        <CoinSuperPosition key={key} array={key} />,
+                        toFixed(details['token-ratio'][key], decimals, displayDecimals)
+                      ]
+                    })}
                   </Descriptions.Item>
                 )}
 
-                {/* // type 2 */}
-                {!isUndefined(details['pool-assets']) && (
-                  <Descriptions.Item label="Pool Assets">{toFixed(details['pool-assets'], decimals, displayDecimals)}</Descriptions.Item>
+                {/* // type1 */}
+                {!isNil(details['borrow-amounts']) && (
+                  <Descriptions.Item label="Debts">{toFixed(details['borrow-amounts'], decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
                 )}
-                {!isUndefined(details['token-ratio']) && <Descriptions.Item label="Token Ratio">token-ratio</Descriptions.Item>}
+                {!isNil(details['borrow-to-supply-ratio']) && (
+                  <Descriptions.Item label="Debts Ratio">{toFixed(details['borrow-to-supply-ratio'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['interest-borrow-apy']) && (
+                  <Descriptions.Item label="Borrow Interest">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['interest-supply-apy']) && (
+                  <Descriptions.Item label="Supply Interest">{toFixed(details['interest-supply-apy'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['strategy-leverage']) && (
+                  <Descriptions.Item label="Strategy Leverage">{toFixed(details['strategy-leverage'], 1, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isNil(details['liquidation-threshold']) && (
+                  <Descriptions.Item label="LTV">{toFixed(details['liquidation-threshold'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['underlying-borrow']) && (
+                  <Descriptions.Item label="Underlying Borrow">
+                    {toFixed(details['underlying-borrow'], decimals, displayDecimals) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['underlying-liquidity']) && (
+                  <Descriptions.Item label="Underlying Liquidity">
+                    {toFixed(details['underlying-liquidity'], decimals, displayDecimals) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['supply-amounts']) && (
+                  <Descriptions.Item label="Supply Amounts">
+                    {toFixed(details['supply-amounts'], decimals, displayDecimals) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
 
                 {/* // type 3 */}
-                {!isUndefined(details['foreign-currency-lending-rate']) && (
-                  <Descriptions.Item label="Lending Rate">{toFixed(details['foreign-currency-lending-rate'], 1e-2, 2)}%</Descriptions.Item>
+                {!isNil(details['foreign-currency-lending-rate']) && (
+                  <Descriptions.Item label="Borrow Interest">{toFixed(details['foreign-currency-lending-rate'], 1e-2, 2)}%</Descriptions.Item>
                 )}
-                {!isUndefined(details['lend-to-curve-total-assets']) && (
-                  <Descriptions.Item label="Lend To Curve">
-                    {toFixed(details['lend-to-curve-total-assets'], decimals, displayDecimals)}
+                {!isNil(details['lend-to-curve-total-assets']) && (
+                  <Descriptions.Item label="Liquidity Assets">
+                    {toFixed(details['lend-to-curve-total-assets'], decimals, displayDecimals) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
 
                 {/* // type 4 */}
-                {!isUndefined(details['base-order-lower']) && (
-                  <Descriptions.Item label="Base Order Lower">{toFixed(details['base-order-lower'], decimals, displayDecimals)}</Descriptions.Item>
+                {!isNil(details['base-order-lower']) && !isNil(details['base-order-upper']) && (
+                  <Descriptions.Item label="Base Order">
+                    [<span style={{ margin: '0 5px' }}>{toFixed(details['base-order-lower'], decimals, displayDecimals)}</span>,
+                    <span style={{ margin: '0 5px' }}>{toFixed(details['base-order-upper'], decimals, displayDecimals)}</span>]
+                  </Descriptions.Item>
                 )}
-                {!isUndefined(details['base-order-upper']) && (
-                  <Descriptions.Item label="Base Order Upper">{toFixed(details['base-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
-                )}
-                {!isUndefined(details['limit-order-lower']) && (
-                  <Descriptions.Item label="Limit Order Lower">{toFixed(details['limit-order-lower'], decimals, displayDecimals)}</Descriptions.Item>
-                )}
-                {!isUndefined(details['limit-order-upper']) && (
-                  <Descriptions.Item label="Limit Order Upper">{toFixed(details['limit-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
+                {!isNil(details['limit-order-lower']) && !isNil(details['limit-order-upper']) && (
+                  <Descriptions.Item label="Limit Order">
+                    [<span style={{ margin: '0 5px' }}>{toFixed(details['limit-order-lower'], decimals, displayDecimals)}</span>,
+                    <span style={{ margin: '0 5px' }}>{toFixed(details['limit-order-upper'], decimals, displayDecimals)}</span> ]
+                  </Descriptions.Item>
                 )}
               </Descriptions>
             </Col>
@@ -586,33 +604,16 @@ const Strategy = props => {
           </div>
         </Card>
       </Suspense>
-      <Suspense fallback={null}>
-        <IFrameLoader
-          className={styles.iframe}
-          // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
-          src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
-          frameBorder="0"
-          onload={iframeStyleUpdate}
-        />
-      </Suspense>
-      <Suspense fallback={null}>
-        <Card
-          className={styles.offlineCard}
-          bordered={false}
-          style={{
-            marginTop: 32
-          }}
-          {...chartResponsiveConfig.cardProps}
-        >
+      {ori && (
+        <Suspense fallback={null}>
           <IFrameLoader
-            className={styles.iframeA}
-            // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
+            className={styles.iframe}
             src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
             frameBorder="0"
             onload={iframeStyleUpdate}
           />
-        </Card>
-      </Suspense>
+        </Suspense>
+      )}
       <Suspense fallback={null}>
         <StrategyApyTable
           vault={vault}
