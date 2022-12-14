@@ -7,7 +7,11 @@ const useStrategyDetails = (chainId, vaultAddress, strategyId) => {
   const [data, setData] = useState({})
 
   useEffect(() => {
-    getStrategyExtends(chainId, vaultAddress, strategyId).then(v => setData(v.result))
+    getStrategyExtends(chainId, vaultAddress, strategyId)
+      .then(v => setData(v.result))
+      .catch(() => {
+        setData({})
+      })
   }, [chainId, vaultAddress, strategyId])
 
   return data

@@ -70,7 +70,8 @@ const Strategy = props => {
   const [isOfficalApyEnable, setIsOfficalApyEnable] = useState(true)
   const [isVerifiedApyEnable, setIsVerifiedApyEnable] = useState(true)
 
-  const details = useStrategyDetails()
+  const details = useStrategyDetails(initialState.chain, initialState.vaultAddress, id)
+  console.log('initialState', details)
 
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
@@ -498,32 +499,67 @@ const Strategy = props => {
                 </Descriptions.Item>
                 <Descriptions.Item label="Asset Value">{toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
                 <Descriptions.Item label="Status">Active</Descriptions.Item>
-                {!isUndefined(details['base-order-lower']) && (
-                  <Descriptions.Item label="Pool Assets">{toFixed(details['base-order-lower'], decimals, displayDecimals)}</Descriptions.Item>
+
+                {/* // type1 */}
+                {!isUndefined(details['borrow-amounts']) && (
+                  <Descriptions.Item label="Borrow Amounts">{toFixed(details['borrow-amounts'], decimals, displayDecimals)}</Descriptions.Item>
                 )}
-                {!isUndefined(details['base-order-upper']) && (
-                  <Descriptions.Item label="Impermanent Loss">{toFixed(details['base-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
+                {!isUndefined(details['borrow-to-supply-ratio']) && (
+                  <Descriptions.Item label="Borrow Ratio">{toFixed(details['borrow-to-supply-ratio'], 1e-2, 2)}%</Descriptions.Item>
                 )}
-                {!isUndefined(details['limit-order-lower']) && (
+                {!isUndefined(details['interest-borrow-apy']) && (
+                  <Descriptions.Item label="Interest Borrow Apy">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isUndefined(details['interest-supply-apy']) && (
+                  <Descriptions.Item label="Interest Supply Apy">{toFixed(details['interest-supply-apy'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isUndefined(details['liquidation-threshold']) && (
+                  <Descriptions.Item label="Liquidation Threshold">{toFixed(details['liquidation-threshold'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isUndefined(details['strategy-leverage']) && (
+                  <Descriptions.Item label="Strategy Leverage">{toFixed(details['strategy-leverage'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isUndefined(details['supply-amounts']) && (
+                  <Descriptions.Item label="Supply Amounts">{toFixed(details['supply-amounts'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isUndefined(details['underlying-borrow']) && (
+                  <Descriptions.Item label="Underlying Borrow">{toFixed(details['underlying-borrow'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isUndefined(details['underlying-liquidity']) && (
                   <Descriptions.Item label="Underlying Liquidity">
-                    {toFixed(details['limit-order-lower'], decimals, displayDecimals)}
+                    {toFixed(details['underlying-liquidity'], decimals, displayDecimals)}
                   </Descriptions.Item>
                 )}
-                {!isUndefined(details['limit-order-upper']) && (
-                  <Descriptions.Item label="Underlying Borrow">{toFixed(details['limit-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
-                )}
+
+                {/* // type 2 */}
                 {!isUndefined(details['pool-assets']) && (
-                  <Descriptions.Item label="Interest Supply Apy">{toFixed(details['pool-assets'], decimals, displayDecimals)}</Descriptions.Item>
+                  <Descriptions.Item label="Pool Assets">{toFixed(details['pool-assets'], decimals, displayDecimals)}</Descriptions.Item>
                 )}
-                {!isUndefined(details.INTEREST_BORROW_APY) && (
-                  <Descriptions.Item label="Interest Borrow Apy">{details.INTEREST_BORROW_APY}</Descriptions.Item>
+                {!isUndefined(details['token-ratio']) && <Descriptions.Item label="Token Ratio">token-ratio</Descriptions.Item>}
+
+                {/* // type 3 */}
+                {!isUndefined(details['foreign-currency-lending-rate']) && (
+                  <Descriptions.Item label="Lending Rate">{toFixed(details['foreign-currency-lending-rate'], 1e-2, 2)}%</Descriptions.Item>
                 )}
-                {!isUndefined(details.STRATEGY_LEVERAGE) && (
-                  <Descriptions.Item label="Strategy Leverage">{details.STRATEGY_LEVERAGE}</Descriptions.Item>
+                {!isUndefined(details['lend-to-curve-total-assets']) && (
+                  <Descriptions.Item label="Lend To Curve">
+                    {toFixed(details['lend-to-curve-total-assets'], decimals, displayDecimals)}
+                  </Descriptions.Item>
                 )}
-                {!isUndefined(details.ETH_POS) && <Descriptions.Item label="ETH Pos">{details.ETH_POS}</Descriptions.Item>}
-                {!isUndefined(details.BASE_ORDER) && <Descriptions.Item label="Base Order">{details.BASE_ORDER}</Descriptions.Item>}
-                {!isUndefined(details.LIMIT_ORDER) && <Descriptions.Item label="Limit Order">{details.LIMIT_ORDER}</Descriptions.Item>}
+
+                {/* // type 4 */}
+                {!isUndefined(details['base-order-lower']) && (
+                  <Descriptions.Item label="Base Order Lower">{toFixed(details['base-order-lower'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isUndefined(details['base-order-upper']) && (
+                  <Descriptions.Item label="Base Order Upper">{toFixed(details['base-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isUndefined(details['limit-order-lower']) && (
+                  <Descriptions.Item label="Limit Order Lower">{toFixed(details['limit-order-lower'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
+                {!isUndefined(details['limit-order-upper']) && (
+                  <Descriptions.Item label="Limit Order Upper">{toFixed(details['limit-order-upper'], decimals, displayDecimals)}</Descriptions.Item>
+                )}
               </Descriptions>
             </Col>
           </Row>
@@ -560,13 +596,22 @@ const Strategy = props => {
         />
       </Suspense>
       <Suspense fallback={null}>
-        <IFrameLoader
-          className={styles.iframe}
-          // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
-          src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
-          frameBorder="0"
-          onload={iframeStyleUpdate}
-        />
+        <Card
+          className={styles.offlineCard}
+          bordered={false}
+          style={{
+            marginTop: 32
+          }}
+          {...chartResponsiveConfig.cardProps}
+        >
+          <IFrameLoader
+            className={styles.iframeA}
+            // style={{ height: 500, width: '100%', background: '#ddd', borderRadius: '1rem', marginTop: 32, padding: '1rem' }}
+            src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
+            frameBorder="0"
+            onload={iframeStyleUpdate}
+          />
+        </Card>
       </Suspense>
       <Suspense fallback={null}>
         <StrategyApyTable

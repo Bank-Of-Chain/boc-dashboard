@@ -219,8 +219,5 @@ export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, of
  * @returns
  */
 export const getStrategyExtends = (chainId, vaultAddress, strategyId) => {
-  console.log('chainId, vaultAddress, strategyId=', chainId, vaultAddress, strategyId)
-  return request(
-    `${API_SERVER}/chains/1/vaults/0x30D120f80D60E7b58CA9fFaf1aaB1815f000B7c3/strategies/0x10225a8e2d89841ff0b65c295d5a6627bb736a05/data_collect`
-  )
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategies/${strategyId}/data_collect`)
 }
