@@ -6,13 +6,13 @@ import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Components === //
-import { LeftOutlined } from '@ant-design/icons'
+import { LeftOutlined, PieChartOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { LineEchart } from '@/components/echarts'
 import ReportTable from './components/ReportTable'
 import { GridContent } from '@ant-design/pro-layout'
 import StrategyApyTable from './components/StrategyApyTable'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
-import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space } from 'antd'
+import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space, Tooltip } from 'antd'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import IFrameLoader from '@/components/IFrameLoader'
@@ -456,6 +456,13 @@ const Strategy = props => {
     [DEVICE_TYPE.Mobile]: 12
   }[deviceType]
 
+  const columnSize = {
+    [DEVICE_TYPE.Desktop]: 2,
+    [DEVICE_TYPE.Tablet]: 1,
+    [DEVICE_TYPE.Mobile]: 1
+  }[deviceType]
+
+  const icon = <ExclamationCircleOutlined style={{ fontSize: '1rem' }} />
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -464,7 +471,7 @@ const Strategy = props => {
             <LeftOutlined onClick={() => history.push('/')} />
           </div>
           <Row justify="space-around">
-            <Col xl={8} lg={8} md={8} sm={6} xs={4}>
+            <Col xl={8} lg={8} md={8} sm={24} xs={24}>
               <div className={styles.imgWrapper}>
                 <Image
                   preview={false}
@@ -475,9 +482,9 @@ const Strategy = props => {
                 />
               </div>
             </Col>
-            <Col xl={16} lg={16} md={16} sm={18} xs={20}>
+            <Col xl={16} lg={16} md={16} sm={24} xs={20}>
               <Descriptions
-                column={2}
+                column={columnSize}
                 title={
                   <span style={{ color: '#fff', fontSize: titleFontSize, fontWeight: 'normal' }}>
                     <a
@@ -497,32 +504,36 @@ const Strategy = props => {
                 <Descriptions.Item label="Underlying Token(s)">
                   {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
                 </Descriptions.Item>
-                <Descriptions.Item label="Strategy Net Asset">
+                <Descriptions.Item
+                  label={
+                    <Space>
+                      Strategy Net Assets
+                      <Tooltip title="Net Assets in strategy">{icon}</Tooltip>
+                    </Space>
+                  }
+                >
                   {toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}
                 </Descriptions.Item>
-
                 {/* // type 2 */}
-                {!isNil(details['pool-assets']) && (
-                  <Descriptions.Item label="3rd Pool Assets">
-                    {toFixed(details['pool-assets'], decimals, displayDecimals) + ` ${unit}`}
-                  </Descriptions.Item>
-                )}
-                {!isNil(details['token-ratio']) && (
-                  <Descriptions.Item label="Token Ratio">
-                    {map(keys(details['token-ratio']), (key, index) => {
-                      console.log('key=', details['token-ratio'], key)
-                      return [
-                        index === 0 ? '' : <span style={{ margin: '0 5px' }}>:</span>,
-                        <CoinSuperPosition key={key} array={key} />,
-                        toFixed(details['token-ratio'][key], decimals, displayDecimals)
-                      ]
-                    })}
-                  </Descriptions.Item>
-                )}
 
+                {!isNil(details['liquidation-threshold']) && (
+                  <Descriptions.Item label="LTV">{toFixed(details['liquidation-threshold'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['health-ratio']) && (
+                  <Descriptions.Item label="Health Ratio">{toFixed(details['health-ratio'], 1e-2, 2)}%</Descriptions.Item>
+                )}
                 {/* // type1 */}
                 {!isNil(details['borrow-amounts']) && (
-                  <Descriptions.Item label="Debts">{toFixed(details['borrow-amounts'], decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Debts
+                        <Tooltip title="Amount of debt">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {toFixed(details['borrow-amounts'], decimals, displayDecimals) + ` ${unit}`}
+                  </Descriptions.Item>
                 )}
                 {!isNil(details['borrow-to-supply-ratio']) && (
                   <Descriptions.Item label="Debts Ratio">{toFixed(details['borrow-to-supply-ratio'], 1e-2, 2)}%</Descriptions.Item>
@@ -531,13 +542,19 @@ const Strategy = props => {
                   <Descriptions.Item label="Borrow Interest">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
                 )}
                 {!isNil(details['interest-supply-apy']) && (
-                  <Descriptions.Item label="Supply Interest">{toFixed(details['interest-supply-apy'], 1e-2, 2)}%</Descriptions.Item>
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Supply Interest
+                        <Tooltip title="the USDT pledge proceeds">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {toFixed(details['interest-supply-apy'], 1e-2, 2)}%
+                  </Descriptions.Item>
                 )}
                 {!isNil(details['strategy-leverage']) && (
-                  <Descriptions.Item label="Strategy Leverage">{toFixed(details['strategy-leverage'], 1, displayDecimals)}</Descriptions.Item>
-                )}
-                {!isNil(details['liquidation-threshold']) && (
-                  <Descriptions.Item label="LTV">{toFixed(details['liquidation-threshold'], 1e-2, 2)}%</Descriptions.Item>
+                  <Descriptions.Item label="Strategy Leverage">{toFixed(details['strategy-leverage'], decimals, 2)}</Descriptions.Item>
                 )}
                 {!isNil(details['underlying-borrow']) && (
                   <Descriptions.Item label="Underlying Borrow">
@@ -550,32 +567,107 @@ const Strategy = props => {
                   </Descriptions.Item>
                 )}
                 {!isNil(details['supply-amounts']) && (
-                  <Descriptions.Item label="Supply Amounts">
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Supply Amounts
+                        <Tooltip title="the quantity of collateral">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
                     {toFixed(details['supply-amounts'], decimals, displayDecimals) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
 
                 {/* // type 3 */}
                 {!isNil(details['foreign-currency-lending-rate']) && (
-                  <Descriptions.Item label="Borrow Interest">{toFixed(details['foreign-currency-lending-rate'], 1e-2, 2)}%</Descriptions.Item>
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Borrow Interest
+                        <Tooltip title="Foreign exchange borrowing rate">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {toFixed(details['foreign-currency-lending-rate'], 1e-2, 2)}%
+                  </Descriptions.Item>
                 )}
                 {!isNil(details['lend-to-curve-total-assets']) && (
                   <Descriptions.Item label="Liquidity Assets">
                     {toFixed(details['lend-to-curve-total-assets'], decimals, displayDecimals) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
-
                 {/* // type 4 */}
                 {!isNil(details['base-order-lower']) && !isNil(details['base-order-upper']) && (
-                  <Descriptions.Item label="Base Order">
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Base Order
+                        <Tooltip title="The range of the best order">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
                     [<span style={{ margin: '0 5px' }}>{toFixed(details['base-order-lower'], decimals, displayDecimals)}</span>,
                     <span style={{ margin: '0 5px' }}>{toFixed(details['base-order-upper'], decimals, displayDecimals)}</span>]
                   </Descriptions.Item>
                 )}
                 {!isNil(details['limit-order-lower']) && !isNil(details['limit-order-upper']) && (
-                  <Descriptions.Item label="Limit Order">
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Limit Order
+                        <Tooltip title="The range of the limit order">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
                     [<span style={{ margin: '0 5px' }}>{toFixed(details['limit-order-lower'], decimals, displayDecimals)}</span>,
                     <span style={{ margin: '0 5px' }}>{toFixed(details['limit-order-upper'], decimals, displayDecimals)}</span> ]
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['pool-assets']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        3rd Pool Assets
+                        <Tooltip title="The total value of pool">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {toFixed(details['pool-assets'], decimals, displayDecimals) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['token-ratio']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Token Ratio
+                        <Tooltip title="the proportion of each token in thirdpart pool">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    <Tooltip
+                      title={
+                        <Space>
+                          {map(keys(details['token-ratio']), (key, index) => {
+                            console.log('key=', details['token-ratio'], key)
+                            return [
+                              index === 0 ? '' : <span style={{ margin: '0 5px' }}>:</span>,
+                              <CoinSuperPosition key={key} array={key} />,
+                              toFixed(details['token-ratio'][key], decimals, displayDecimals)
+                            ]
+                          })}
+                        </Space>
+                      }
+                    >
+                      <PieChartOutlined
+                        style={{
+                          cursor: 'pointer',
+                          margin: 'auto 0',
+                          fontSize: '24px',
+                          color: '#A68EFE'
+                        }}
+                      />
+                    </Tooltip>
                   </Descriptions.Item>
                 )}
               </Descriptions>
