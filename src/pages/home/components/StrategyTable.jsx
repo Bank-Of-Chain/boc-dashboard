@@ -62,9 +62,8 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
             title={text}
             target={'_blank'}
             rel="noreferrer"
-            href={`${isMarketingHost() ? 'https://dashboard.bankofchain.io' : DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${
-              initialState.chain
-            }&vault=${initialState.vault}`}
+            className={styles.text}
+            href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}
           >
             {text}
           </a>
@@ -222,12 +221,19 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
-      title: 'Strategy Address',
+      title: 'Strategy Report',
       dataIndex: 'strategyAddress',
       key: 'strategyAddress',
       align: 'center',
       render: (text, item) => (
-        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}>
+        <a
+          title={text}
+          target={'_blank'}
+          rel="noreferrer"
+          href={`${isMarketingHost() ? 'https://dashboard.bankofchain.io' : DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${
+            initialState.chain
+          }&vault=${initialState.vault}`}
+        >
           <Icon component={GoIcon} />
         </a>
       )
