@@ -228,12 +228,12 @@ const ETHiHome = () => {
         </span>
       )
     },
-    {
-      title: 'Holders',
-      tip: 'Number Of ETHi holders.',
-      content: numeral(pegToken?.holderCount).format('0.[0000]a'),
-      loading
-    },
+    // {
+    //   title: 'Holders',
+    //   tip: 'Number Of ETHi holders.',
+    //   content: numeral(pegToken?.holderCount).format('0.[0000]a'),
+    //   loading
+    // },
     {
       title: 'APY (last 30 days)',
       tip: 'Yield over the past month.',
