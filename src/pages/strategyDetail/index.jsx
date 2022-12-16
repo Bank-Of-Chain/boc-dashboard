@@ -20,6 +20,7 @@ import IFrameLoader from '@/components/IFrameLoader'
 // === Utils === //
 import moment from 'moment'
 import BN from 'bignumber.js'
+import numeral from 'numeral'
 import last from 'lodash/last'
 import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
@@ -87,6 +88,11 @@ const Strategy = props => {
   const displayDecimals = {
     [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
     [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+  }[initialState.vault]
+
+  const displayFormat = {
+    [VAULT_TYPE.USDi]: '0,0.[00]',
+    [VAULT_TYPE.ETHi]: '0,0.[0000]'
   }[initialState.vault]
 
   useEffect(() => {
@@ -454,9 +460,9 @@ const Strategy = props => {
   }[deviceType]
 
   const infoFontSize = {
-    [DEVICE_TYPE.Desktop]: 20,
-    [DEVICE_TYPE.Tablet]: 20,
-    [DEVICE_TYPE.Mobile]: 12
+    [DEVICE_TYPE.Desktop]: 16,
+    [DEVICE_TYPE.Tablet]: 16,
+    [DEVICE_TYPE.Mobile]: 10
   }[deviceType]
 
   const columnSize = {
@@ -504,23 +510,32 @@ const Strategy = props => {
                 contentStyle={{ color: '#fff', fontSize: infoFontSize }}
                 {...infoResponsiveConfig.descriptionProps}
               >
-                <Descriptions.Item label="Underlying Token(s)">
+                <Descriptions.Item label="Underlying">
                   {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
                 </Descriptions.Item>
                 <Descriptions.Item
                   label={
                     <Space>
                       Strategy Net Assets
-                      <Tooltip title="Net Assets in strategy">{icon}</Tooltip>
+                      <Tooltip title="Net assets in strategy">{icon}</Tooltip>
                     </Space>
                   }
                 >
-                  {toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}
+                  {numeral(toFixed(totalAssetBaseCurrent, decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
                 </Descriptions.Item>
                 {/* // type 2 */}
 
                 {!isNil(details['liquidation-threshold']) && (
-                  <Descriptions.Item label="LTV">{toFixed(details['liquidation-threshold'], 1e-2, 2)}%</Descriptions.Item>
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        LTV
+                        <Tooltip title="Loan to value">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {toFixed(details['liquidation-threshold'], 1e-2, 2)}%
+                  </Descriptions.Item>
                 )}
                 {!isNil(details['health-ratio']) && (
                   <Descriptions.Item label="Health Ratio">{toFixed(details['health-ratio'], 1e-2, 2)}%</Descriptions.Item>
@@ -545,28 +560,36 @@ const Strategy = props => {
                   <Descriptions.Item label="Borrow Interest">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
                 )}
                 {!isNil(details['interest-supply-apy']) && (
+                  <Descriptions.Item label={'Supply Interest'}>{toFixed(details['interest-supply-apy'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['underlying-liquidity']) && (
                   <Descriptions.Item
                     label={
                       <Space>
-                        Supply Interest
-                        <Tooltip title="the USDT pledge proceeds">{icon}</Tooltip>
+                        3rd Total Liquidity
+                        <Tooltip title="Total liquidity from lending pool">{icon}</Tooltip>
                       </Space>
                     }
                   >
-                    {toFixed(details['interest-supply-apy'], 1e-2, 2)}%
+                    {numeral(toFixed(details['underlying-liquidity'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
                   </Descriptions.Item>
-                )}
-                {!isNil(details['strategy-leverage']) && (
-                  <Descriptions.Item label="Strategy Leverage">{toFixed(details['strategy-leverage'], decimals, 2)}</Descriptions.Item>
                 )}
                 {!isNil(details['underlying-borrow']) && (
-                  <Descriptions.Item label="Underlying Borrow">
-                    {toFixed(details['underlying-borrow'], decimals, displayDecimals) + ` ${unit}`}
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        3rd Total Borrowed
+                        <Tooltip title="Borrowed assets from lending pool">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['underlying-borrow'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
-                {!isNil(details['underlying-liquidity']) && (
-                  <Descriptions.Item label="Underlying Liquidity">
-                    {toFixed(details['underlying-liquidity'], decimals, displayDecimals) + ` ${unit}`}
+
+                {!isNil(details['strategy-leverage']) && (
+                  <Descriptions.Item label="Leverage Ratio">
+                    {numeral(toFixed(details['strategy-leverage'], decimals, 2)).format('0.00')}
                   </Descriptions.Item>
                 )}
                 {!isNil(details['supply-amounts']) && (
@@ -596,8 +619,15 @@ const Strategy = props => {
                   </Descriptions.Item>
                 )}
                 {!isNil(details['lend-to-curve-total-assets']) && (
-                  <Descriptions.Item label="Liquidity Assets">
-                    {toFixed(details['lend-to-curve-total-assets'], decimals, displayDecimals) + ` ${unit}`}
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Liquidity Assets
+                        <Tooltip title="The assets in the curve to provide liquidity">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['lend-to-curve-total-assets'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
                 {/* // type 4 */}
@@ -636,7 +666,19 @@ const Strategy = props => {
                       </Space>
                     }
                   >
-                    {toFixed(details['pool-assets'], decimals, displayDecimals) + ` ${unit}`}
+                    {numeral(toFixed(details['pool-assets'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['current-price']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Current Price
+                        <Tooltip title="The price of quote token relative to base token">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {toFixed(details['current-price'], decimals, displayDecimals)}
                   </Descriptions.Item>
                 )}
                 {!isNil(details['token-ratio']) && (
@@ -650,16 +692,19 @@ const Strategy = props => {
                   >
                     <Tooltip
                       title={
-                        <Space>
-                          {map(keys(details['token-ratio']), (key, index) => {
+                        <div>
+                          {map(keys(details['token-ratio']), key => {
                             console.log('key=', details['token-ratio'], key)
-                            return [
-                              index === 0 ? '' : <span style={{ margin: '0 5px' }}>:</span>,
-                              <CoinSuperPosition key={key} array={key} />,
-                              toFixed(details['token-ratio'][key], decimals, displayDecimals)
-                            ]
+                            return (
+                              <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
+                                <Space>
+                                  <CoinSuperPosition key={key} array={key} />
+                                  {toFixed(details['token-ratio'][key], decimals, displayDecimals)}
+                                </Space>
+                              </div>
+                            )
                           })}
-                        </Space>
+                        </div>
                       }
                     >
                       <PieChartOutlined
