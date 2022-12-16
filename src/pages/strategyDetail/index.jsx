@@ -33,6 +33,9 @@ import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrat
 // === Hooks === //
 import useStrategyDetails from '@/hooks/useStrategyDetails'
 
+// === Constants === //
+import URL from '@/constants/dune'
+
 // === Styles === //
 import styles from './style.less'
 
@@ -696,16 +699,14 @@ const Strategy = props => {
           </div>
         </Card>
       </Suspense>
-      {ori && (
-        <Suspense fallback={null}>
-          <IFrameLoader
-            className={styles.iframe}
-            src="https://dune.com/embeds/1700380/2847381/1dd8e6ae-29e8-4778-ad35-4cd38af7c204"
-            frameBorder="0"
-            onload={iframeStyleUpdate}
-          />
-        </Suspense>
-      )}
+      {ori &&
+        map(URL[strategy.strategyName], item => {
+          return (
+            <Suspense fallback={null} key={item}>
+              <IFrameLoader className={styles.iframe} src={item} frameBorder="0" onload={iframeStyleUpdate} />
+            </Suspense>
+          )
+        })}
       <Suspense fallback={null}>
         <StrategyApyTable
           vault={vault}
