@@ -38,6 +38,17 @@ export const getReports = (params, offset = 0, limit = 20) => {
 }
 
 /**
+ * get allocation report
+ * @param {*} params
+ * @param {*} offset
+ * @param {*} limit
+ * @returns
+ */
+export const getReportsById = (chainId, vaultAddress, id) => {
+  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${id}`)
+}
+
+/**
  * get strategy detail
  * @param {String} chainId
  * @param {number} offset
