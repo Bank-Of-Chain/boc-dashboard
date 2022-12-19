@@ -4,8 +4,7 @@ import React, { useState } from 'react'
 import { Card, Table, Image, Switch, Tooltip, Badge, Space } from 'antd'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import Icon, { InfoCircleOutlined } from '@ant-design/icons'
-import { GoIcon } from '@/components/SvgIcons'
+import { InfoCircleOutlined, FileTextOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { useModel, useRequest } from 'umi'
@@ -234,7 +233,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
             initialState.chain
           }&vault=${initialState.vault}`}
         >
-          <Icon component={GoIcon} />
+          <FileTextOutlined style={{ fontSize: '1.5rem' }} />
         </a>
       )
     }
