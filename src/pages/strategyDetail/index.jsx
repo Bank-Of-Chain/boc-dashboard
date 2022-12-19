@@ -6,7 +6,7 @@ import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Components === //
-import { LeftOutlined, PieChartOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { LeftOutlined, PieChartOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { LineEchart } from '@/components/echarts'
 import ReportTable from './components/ReportTable'
 import { GridContent } from '@ant-design/pro-layout'
@@ -473,7 +473,7 @@ const Strategy = props => {
     [DEVICE_TYPE.Mobile]: 1
   }[deviceType]
 
-  const icon = <ExclamationCircleOutlined style={{ fontSize: '1rem' }} />
+  const icon = <InfoCircleOutlined style={{ fontSize: '1rem' }} />
 
   const extendsWarn = get(BorrowingExtends, `${strategy.strategyName}.warn`, '')
 
@@ -547,7 +547,7 @@ const Strategy = props => {
                   </Descriptions.Item>
                 )}
                 {!isNil(details['health-ratio']) && (
-                  <Descriptions.Item label="Health Ratio">{toFixed(details['health-ratio'], 1e-2, 2)}%</Descriptions.Item>
+                  <Descriptions.Item label="Health Factor">{numeral(details['health-ratio']).format('0.00')}</Descriptions.Item>
                 )}
                 {/* // type1 */}
                 {!isNil(details['debts']) && (
@@ -605,7 +605,7 @@ const Strategy = props => {
                   <Descriptions.Item
                     label={
                       <Space>
-                        Supply Amounts
+                        Assets
                         <Tooltip title="the quantity of collateral">{icon}</Tooltip>
                       </Space>
                     }

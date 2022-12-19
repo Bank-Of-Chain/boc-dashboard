@@ -5,9 +5,9 @@ export const riskText1 = text => {
 }
 
 export const riskText2 = (coin1, coin2) => {
-  return `Risk of ${coin1} depeg with ${coin2}`
+  return `Risk of ${coin1} being depegged from ${coin2}`
 }
 
 export const riskText3 = (coin = 'Eth') => {
-  return `${coin} liquidation risk`
+  return `${coin} settlement risk`
 }
