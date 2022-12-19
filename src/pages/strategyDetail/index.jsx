@@ -22,6 +22,7 @@ import moment from 'moment'
 import BN from 'bignumber.js'
 import numeral from 'numeral'
 import last from 'lodash/last'
+import uniq from 'lodash/uniq'
 import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
@@ -517,7 +518,7 @@ const Strategy = props => {
                 <Descriptions.Item label="Underlying">
                   {!isEmpty(underlyingTokens) && (
                     <CoinSuperPosition
-                      array={[...underlyingTokens.split(','), ...get(BorrowingExtends, `${strategy.strategyName}.pathTokens`, [])]}
+                      array={uniq([...underlyingTokens.split(','), ...get(BorrowingExtends, `${strategy.strategyName}.pathTokens`, [])])}
                     />
                   )}
                 </Descriptions.Item>
@@ -549,7 +550,7 @@ const Strategy = props => {
                   <Descriptions.Item label="Health Ratio">{toFixed(details['health-ratio'], 1e-2, 2)}%</Descriptions.Item>
                 )}
                 {/* // type1 */}
-                {!isNil(details['borrow-amounts']) && (
+                {!isNil(details['debts']) && (
                   <Descriptions.Item
                     label={
                       <Space>
@@ -558,11 +559,11 @@ const Strategy = props => {
                       </Space>
                     }
                   >
-                    {toFixed(details['borrow-amounts'], decimals, displayDecimals) + ` ${unit}`}
+                    {toFixed(details['debts'], decimals, displayDecimals) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
-                {!isNil(details['borrow-to-supply-ratio']) && (
-                  <Descriptions.Item label="Debts Ratio">{toFixed(details['borrow-to-supply-ratio'], 1e-2, 2)}%</Descriptions.Item>
+                {!isNil(details['debts-to-assets-ratio']) && (
+                  <Descriptions.Item label="Debts Ratio">{toFixed(details['debts-to-assets-ratio'], 1e-2, 2)}%</Descriptions.Item>
                 )}
                 {!isNil(details['interest-borrow-apy']) && (
                   <Descriptions.Item label="Borrow Interest">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
@@ -600,7 +601,7 @@ const Strategy = props => {
                     {numeral(toFixed(details['strategy-leverage'], decimals, 2)).format('0.00')}
                   </Descriptions.Item>
                 )}
-                {!isNil(details['supply-amounts']) && (
+                {!isNil(details['assets']) && (
                   <Descriptions.Item
                     label={
                       <Space>
@@ -609,7 +610,7 @@ const Strategy = props => {
                       </Space>
                     }
                   >
-                    {toFixed(details['supply-amounts'], decimals, displayDecimals) + ` ${unit}`}
+                    {toFixed(details['assets'], decimals, displayDecimals) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
 
@@ -730,7 +731,7 @@ const Strategy = props => {
               {!isEmpty(extendsWarn) && (
                 <Descriptions title={null} column={1}>
                   <Descriptions.Item label="">
-                    <p className={styles.warningTip}>Warning: {extendsWarn}</p>
+                    <p className={styles.warningTip}>Warning: {extendsWarn.join('; ')}</p>
                   </Descriptions.Item>
                 </Descriptions>
               )}
