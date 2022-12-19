@@ -562,8 +562,10 @@ const Strategy = props => {
                     {toFixed(details['debts'], decimals, displayDecimals) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
-                {!isNil(details['debts-to-assets-ratio']) && (
-                  <Descriptions.Item label="Debts Ratio">{toFixed(details['debts-to-assets-ratio'], 1e-2, 2)}%</Descriptions.Item>
+                {!isNil(details['assets']) && (
+                  <Descriptions.Item label={'Strategy Assets'}>
+                    {toFixed(details['assets'], decimals, displayDecimals) + ` ${unit}`}
+                  </Descriptions.Item>
                 )}
                 {!isNil(details['interest-borrow-apy']) && (
                   <Descriptions.Item label="Borrow Interest">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
@@ -601,17 +603,8 @@ const Strategy = props => {
                     {numeral(toFixed(details['strategy-leverage'], decimals, 2)).format('0.00')}
                   </Descriptions.Item>
                 )}
-                {!isNil(details['assets']) && (
-                  <Descriptions.Item
-                    label={
-                      <Space>
-                        Assets
-                        <Tooltip title="the quantity of collateral">{icon}</Tooltip>
-                      </Space>
-                    }
-                  >
-                    {toFixed(details['assets'], decimals, displayDecimals) + ` ${unit}`}
-                  </Descriptions.Item>
+                {!isNil(details['debts-to-assets-ratio']) && (
+                  <Descriptions.Item label="Debts Ratio">{toFixed(details['debts-to-assets-ratio'], 1e-2, 2)}%</Descriptions.Item>
                 )}
 
                 {/* // type 3 */}
@@ -640,32 +633,42 @@ const Strategy = props => {
                   </Descriptions.Item>
                 )}
                 {/* // type 4 */}
-                {!isNil(details['base-order-lower']) && !isNil(details['base-order-upper']) && (
-                  <Descriptions.Item
-                    label={
-                      <Space>
-                        Base Order
-                        <Tooltip title="The range of the base order">{icon}</Tooltip>
-                      </Space>
-                    }
-                  >
-                    [<span style={{ margin: '0 5px' }}>{toFixed(details['base-order-lower'], decimals, displayDecimals)}</span>,
-                    <span style={{ margin: '0 5px' }}>{toFixed(details['base-order-upper'], decimals, displayDecimals)}</span>]
-                  </Descriptions.Item>
-                )}
-                {!isNil(details['limit-order-lower']) && !isNil(details['limit-order-upper']) && (
-                  <Descriptions.Item
-                    label={
-                      <Space>
-                        Limit Order
-                        <Tooltip title="The range of the limit order">{icon}</Tooltip>
-                      </Space>
-                    }
-                  >
-                    [<span style={{ margin: '0 5px' }}>{toFixed(details['limit-order-lower'], decimals, displayDecimals)}</span>,
-                    <span style={{ margin: '0 5px' }}>{toFixed(details['limit-order-upper'], decimals, displayDecimals)}</span> ]
-                  </Descriptions.Item>
-                )}
+                <Descriptions.Item
+                  label={
+                    <Space>
+                      Base Order
+                      <Tooltip title="The range of the base order">{icon}</Tooltip>
+                    </Space>
+                  }
+                >
+                  [
+                  <span style={{ margin: '0 5px' }}>
+                    {isEmpty(details['base-order-lower']) ? 'N/A' : toFixed(details['base-order-lower'], decimals, displayDecimals)}
+                  </span>
+                  ,
+                  <span style={{ margin: '0 5px' }}>
+                    {isEmpty(details['base-order-lower']) ? 'N/A' : toFixed(details['base-order-upper'], decimals, displayDecimals)}
+                  </span>
+                  ]
+                </Descriptions.Item>
+                <Descriptions.Item
+                  label={
+                    <Space>
+                      Limit Order
+                      <Tooltip title="The range of the limit order">{icon}</Tooltip>
+                    </Space>
+                  }
+                >
+                  [
+                  <span style={{ margin: '0 5px' }}>
+                    {isEmpty(details['limit-order-lower']) ? 'N/A' : toFixed(details['limit-order-lower'], decimals, displayDecimals)}
+                  </span>
+                  ,
+                  <span style={{ margin: '0 5px' }}>
+                    {isEmpty(details['limit-order-upper']) ? 'N/A' : toFixed(details['limit-order-upper'], decimals, displayDecimals)}
+                  </span>
+                  ]
+                </Descriptions.Item>
                 {!isNil(details['pool-assets']) && (
                   <Descriptions.Item
                     label={
