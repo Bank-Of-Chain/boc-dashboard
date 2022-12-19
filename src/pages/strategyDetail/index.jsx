@@ -636,7 +636,7 @@ const Strategy = props => {
                     label={
                       <Space>
                         Base Order
-                        <Tooltip title="The range of the best order">{icon}</Tooltip>
+                        <Tooltip title="The range of the base order">{icon}</Tooltip>
                       </Space>
                     }
                   >
