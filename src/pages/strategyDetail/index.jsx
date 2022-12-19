@@ -644,11 +644,11 @@ const Strategy = props => {
                   >
                     [
                     <span style={{ margin: '0 5px' }}>
-                      {isEmpty(details['base-order-lower']) ? 'N/A' : toFixed(details['base-order-lower'], decimals, displayDecimals)}
+                      {isEmpty(details['base-order-lower']) ? 'N/A' : numeral(toFixed(details['base-order-lower'], decimals)).format('0.000000')}
                     </span>
                     ,
                     <span style={{ margin: '0 5px' }}>
-                      {isEmpty(details['base-order-upper']) ? 'N/A' : toFixed(details['base-order-upper'], decimals, displayDecimals)}
+                      {isEmpty(details['base-order-upper']) ? 'N/A' : numeral(toFixed(details['base-order-upper'], decimals)).format('0.000000')}
                     </span>
                     ]
                   </Descriptions.Item>
@@ -664,11 +664,11 @@ const Strategy = props => {
                   >
                     [
                     <span style={{ margin: '0 5px' }}>
-                      {isEmpty(details['limit-order-lower']) ? 'N/A' : toFixed(details['limit-order-lower'], decimals, displayDecimals)}
+                      {isEmpty(details['limit-order-lower']) ? 'N/A' : numeral(toFixed(details['limit-order-lower'], decimals)).format('0.000000')}
                     </span>
                     ,
                     <span style={{ margin: '0 5px' }}>
-                      {isEmpty(details['limit-order-upper']) ? 'N/A' : toFixed(details['limit-order-upper'], decimals, displayDecimals)}
+                      {isEmpty(details['limit-order-upper']) ? 'N/A' : numeral(toFixed(details['limit-order-upper'], decimals)).format('0.000000')}
                     </span>
                     ]
                   </Descriptions.Item>
@@ -694,7 +694,7 @@ const Strategy = props => {
                       </Space>
                     }
                   >
-                    {toFixed(details['current-price'], decimals, displayDecimals)}
+                    {numeral(toFixed(details['current-price'], decimals)).format('0.000000')}
                   </Descriptions.Item>
                 )}
                 {!isNil(details['token-ratio']) && (
