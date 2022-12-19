@@ -36,6 +36,7 @@ import useStrategyDetails from '@/hooks/useStrategyDetails'
 
 // === Constants === //
 import URL from '@/constants/dune'
+import BorrowingExtends from '@/constants/borrowing-extends'
 
 // === Styles === //
 import styles from './style.less'
@@ -472,6 +473,9 @@ const Strategy = props => {
   }[deviceType]
 
   const icon = <ExclamationCircleOutlined style={{ fontSize: '1rem' }} />
+
+  const extendsWarn = get(BorrowingExtends, `${strategy.strategyName}.warn`, '')
+
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -511,7 +515,11 @@ const Strategy = props => {
                 {...infoResponsiveConfig.descriptionProps}
               >
                 <Descriptions.Item label="Underlying">
-                  {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
+                  {!isEmpty(underlyingTokens) && (
+                    <CoinSuperPosition
+                      array={[...underlyingTokens.split(','), ...get(BorrowingExtends, `${strategy.strategyName}.pathTokens`, [])]}
+                    />
+                  )}
                 </Descriptions.Item>
                 <Descriptions.Item
                   label={
@@ -719,6 +727,13 @@ const Strategy = props => {
                   </Descriptions.Item>
                 )}
               </Descriptions>
+              {!isEmpty(extendsWarn) && (
+                <Descriptions title={null} column={1}>
+                  <Descriptions.Item label="">
+                    <p className={styles.warningTip}>Warning: {extendsWarn}</p>
+                  </Descriptions.Item>
+                </Descriptions>
+              )}
             </Col>
           </Row>
         </Card>
