@@ -6,28 +6,38 @@ import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Components === //
-import { LeftOutlined } from '@ant-design/icons'
+import { LeftOutlined, PieChartOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { LineEchart } from '@/components/echarts'
 import ReportTable from './components/ReportTable'
 import { GridContent } from '@ant-design/pro-layout'
 import StrategyApyTable from './components/StrategyApyTable'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
-import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space } from 'antd'
+import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space, Tooltip } from 'antd'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
+import IFrameLoader from '@/components/IFrameLoader'
 
 // === Utils === //
 import moment from 'moment'
 import BN from 'bignumber.js'
+import numeral from 'numeral'
 import last from 'lodash/last'
+import uniq from 'lodash/uniq'
 import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
-import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find } from 'lodash'
+import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, keys } from 'lodash'
 
 // === Services === //
 import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails } from '@/services/api-service'
+
+// === Hooks === //
+import useStrategyDetails from '@/hooks/useStrategyDetails'
+
+// === Constants === //
+import URL from '@/constants/dune'
+import BorrowingExtends from '@/constants/borrowing-extends'
 
 // === Styles === //
 import styles from './style.less'
@@ -66,6 +76,9 @@ const Strategy = props => {
   const [isOfficalApyEnable, setIsOfficalApyEnable] = useState(true)
   const [isVerifiedApyEnable, setIsVerifiedApyEnable] = useState(true)
 
+  const details = useStrategyDetails(initialState.chain, initialState.vaultAddress, id)
+  console.log('initialState', details)
+
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
 
@@ -77,6 +90,11 @@ const Strategy = props => {
   const displayDecimals = {
     [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
     [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
+  }[initialState.vault]
+
+  const displayFormat = {
+    [VAULT_TYPE.USDi]: '0,0.[00]',
+    [VAULT_TYPE.ETHi]: '0,0.[0000]'
   }[initialState.vault]
 
   useEffect(() => {
@@ -426,6 +444,17 @@ const Strategy = props => {
     )
   }
 
+  const iframeStyleUpdate = dom => {
+    //TODO:
+    console.log('dom=', dom)
+    // if (isUndefined(dom)) return
+    // const htmlDom = dom.querySelector('html')
+    // if (isUndefined(htmlDom)) return
+    // var style = dom.createElement('style')
+    // style.innerHTML = `.header_owner__vd8ip,.status_icon__mGOok{display: none;}`
+    // htmlDom.append(style)
+  }
+
   const titleFontSize = {
     [DEVICE_TYPE.Desktop]: 30,
     [DEVICE_TYPE.Tablet]: 26,
@@ -433,10 +462,20 @@ const Strategy = props => {
   }[deviceType]
 
   const infoFontSize = {
-    [DEVICE_TYPE.Desktop]: 20,
-    [DEVICE_TYPE.Tablet]: 20,
-    [DEVICE_TYPE.Mobile]: 12
+    [DEVICE_TYPE.Desktop]: 16,
+    [DEVICE_TYPE.Tablet]: 16,
+    [DEVICE_TYPE.Mobile]: 10
   }[deviceType]
+
+  const columnSize = {
+    [DEVICE_TYPE.Desktop]: 2,
+    [DEVICE_TYPE.Tablet]: 1,
+    [DEVICE_TYPE.Mobile]: 1
+  }[deviceType]
+
+  const icon = <InfoCircleOutlined style={{ fontSize: '1rem' }} />
+
+  const extendsWarn = get(BorrowingExtends, `${strategy.strategyName}.warn`, '')
 
   return (
     <GridContent>
@@ -446,7 +485,7 @@ const Strategy = props => {
             <LeftOutlined onClick={() => history.push('/')} />
           </div>
           <Row justify="space-around">
-            <Col xl={10} lg={10} md={10} sm={8} xs={6}>
+            <Col xl={8} lg={8} md={8} sm={24} xs={24}>
               <div className={styles.imgWrapper}>
                 <Image
                   preview={false}
@@ -457,30 +496,252 @@ const Strategy = props => {
                 />
               </div>
             </Col>
-            <Col xl={14} lg={14} md={14} sm={16} xs={18}>
+            <Col xl={16} lg={16} md={16} sm={24} xs={20}>
               <Descriptions
-                column={1}
-                title={<span style={{ color: '#fff', fontSize: titleFontSize, fontWeight: 'normal' }}>Base Info</span>}
+                column={columnSize}
+                title={
+                  <span style={{ color: '#fff', fontSize: titleFontSize, fontWeight: 'normal' }}>
+                    <a
+                      target={'_blank'}
+                      rel="noreferrer"
+                      href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
+                      className={styles.strategyName}
+                    >
+                      {strategy.strategyName}
+                    </a>
+                  </span>
+                }
                 labelStyle={{ color: '#fff', fontSize: infoFontSize }}
                 contentStyle={{ color: '#fff', fontSize: infoFontSize }}
                 {...infoResponsiveConfig.descriptionProps}
               >
-                <Descriptions.Item label="Name">
-                  <a
-                    target={'_blank'}
-                    rel="noreferrer"
-                    href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
-                    className={styles.strategyName}
+                <Descriptions.Item label="Underlying">
+                  {!isEmpty(underlyingTokens) && (
+                    <CoinSuperPosition
+                      array={uniq([...underlyingTokens.split(','), ...get(BorrowingExtends, `${strategy.strategyName}.pathTokens`, [])])}
+                    />
+                  )}
+                </Descriptions.Item>
+                <Descriptions.Item
+                  label={
+                    <Space>
+                      Strategy Net Assets
+                      <Tooltip title="Net assets in strategy">{icon}</Tooltip>
+                    </Space>
+                  }
+                >
+                  {numeral(toFixed(totalAssetBaseCurrent, decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                </Descriptions.Item>
+                {/* // type 2 */}
+
+                {!isNil(details['liquidation-threshold']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        LTV
+                        <Tooltip title="Loan to value">{icon}</Tooltip>
+                      </Space>
+                    }
                   >
-                    {strategy.strategyName}
-                  </a>
-                </Descriptions.Item>
-                <Descriptions.Item label="Underlying Token(s)">
-                  {!isEmpty(underlyingTokens) && <CoinSuperPosition array={underlyingTokens.split(',')} />}
-                </Descriptions.Item>
-                <Descriptions.Item label="Asset Value">{toFixed(totalAssetBaseCurrent, decimals, displayDecimals) + ` ${unit}`}</Descriptions.Item>
-                <Descriptions.Item label="Status">Active</Descriptions.Item>
+                    {toFixed(details['liquidation-threshold'], 1e-2, 2)}%
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['health-ratio']) && (
+                  <Descriptions.Item label="Health Factor">{numeral(details['health-ratio']).format('0.00')}</Descriptions.Item>
+                )}
+                {/* // type1 */}
+                {!isNil(details['debts']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Debts
+                        <Tooltip title="Amount of debt">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['debts'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['assets']) && (
+                  <Descriptions.Item label={'Strategy Assets'}>
+                    {numeral(toFixed(details['assets'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['interest-borrow-apy']) && (
+                  <Descriptions.Item label="Borrow Interest">{toFixed(details['interest-borrow-apy'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['interest-supply-apy']) && (
+                  <Descriptions.Item label={'Supply Interest'}>{toFixed(details['interest-supply-apy'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+                {!isNil(details['underlying-liquidity']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        3rd Total Liquidity
+                        <Tooltip title="Total liquidity from lending pool">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['underlying-liquidity'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['underlying-borrow']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        3rd Total Borrowed
+                        <Tooltip title="Borrowed assets from lending pool">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['underlying-borrow'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+
+                {!isNil(details['strategy-leverage']) && (
+                  <Descriptions.Item label="Leverage Ratio">
+                    {numeral(toFixed(details['strategy-leverage'], decimals, 2)).format('0.00')}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['debts-to-assets-ratio']) && (
+                  <Descriptions.Item label="Debts Ratio">{toFixed(details['debts-to-assets-ratio'], 1e-2, 2)}%</Descriptions.Item>
+                )}
+
+                {/* // type 3 */}
+                {!isNil(details['foreign-currency-lending-rate']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Borrow Interest
+                        <Tooltip title="Foreign exchange borrowing rate">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {toFixed(details['foreign-currency-lending-rate'], 1e-2, 2)}%
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['lend-to-curve-total-assets']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Liquidity Assets
+                        <Tooltip title="The assets in the curve to provide liquidity">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['lend-to-curve-total-assets'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {/* // type 4 */}
+                {!isNil(details['base-order-lower']) && !isNil(details['base-order-upper']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Base Order
+                        <Tooltip title="The range of the base order">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    [
+                    <span style={{ margin: '0 5px' }}>
+                      {isEmpty(details['base-order-lower']) ? 'N/A' : numeral(toFixed(details['base-order-lower'], decimals)).format('0.000000')}
+                    </span>
+                    ,
+                    <span style={{ margin: '0 5px' }}>
+                      {isEmpty(details['base-order-upper']) ? 'N/A' : numeral(toFixed(details['base-order-upper'], decimals)).format('0.000000')}
+                    </span>
+                    ]
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['limit-order-lower']) && !isNil(details['limit-order-upper']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Limit Order
+                        <Tooltip title="The range of the limit order">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    [
+                    <span style={{ margin: '0 5px' }}>
+                      {isEmpty(details['limit-order-lower']) ? 'N/A' : numeral(toFixed(details['limit-order-lower'], decimals)).format('0.000000')}
+                    </span>
+                    ,
+                    <span style={{ margin: '0 5px' }}>
+                      {isEmpty(details['limit-order-upper']) ? 'N/A' : numeral(toFixed(details['limit-order-upper'], decimals)).format('0.000000')}
+                    </span>
+                    ]
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['pool-assets']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        3rd Pool Assets
+                        <Tooltip title="The total value of pool">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['pool-assets'], decimals, displayDecimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['current-price']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Current Price
+                        <Tooltip title="The price of quote token relative to base token">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['current-price'], decimals)).format('0.000000')}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['token-ratio']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Token Ratio
+                        <Tooltip title="the proportion of each token in thirdpart pool">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    <Tooltip
+                      title={
+                        <div>
+                          {map(keys(details['token-ratio']), key => {
+                            console.log('key=', details['token-ratio'], key)
+                            return (
+                              <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
+                                <Space>
+                                  <CoinSuperPosition key={key} array={key} />
+                                  {toFixed(details['token-ratio'][key], decimals, displayDecimals)}
+                                </Space>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      }
+                    >
+                      <PieChartOutlined
+                        style={{
+                          cursor: 'pointer',
+                          margin: 'auto 0',
+                          fontSize: '24px',
+                          color: '#A68EFE'
+                        }}
+                      />
+                    </Tooltip>
+                  </Descriptions.Item>
+                )}
               </Descriptions>
+              {!isEmpty(extendsWarn) && (
+                <Descriptions title={null} column={1}>
+                  <Descriptions.Item label="">
+                    <p className={styles.warningTip}>Warning: {extendsWarn.join('; ')}</p>
+                  </Descriptions.Item>
+                </Descriptions>
+              )}
             </Col>
           </Row>
         </Card>
@@ -506,6 +767,14 @@ const Strategy = props => {
           </div>
         </Card>
       </Suspense>
+      {ori &&
+        map(URL[strategy.strategyName], item => {
+          return (
+            <Suspense fallback={null} key={item}>
+              <IFrameLoader className={styles.iframe} src={item} frameBorder="0" onload={iframeStyleUpdate} />
+            </Suspense>
+          )
+        })}
       <Suspense fallback={null}>
         <StrategyApyTable
           vault={vault}
