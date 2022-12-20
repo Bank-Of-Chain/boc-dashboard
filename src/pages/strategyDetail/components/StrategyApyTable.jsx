@@ -122,7 +122,9 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
                   {`${formatApyLabel(toFixed(new BN(weeklyApy).multipliedBy(100), 1, 2))}%`}
                   {i.weeklyUnrealizedApy > 0 && comp}
                 </div>
-              )
+              ),
+            dailyAssetChanged: toFixed(i.dailyAssetChanged, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals),
+            weeklyAssetChanged: toFixed(i.weeklyAssetChanged, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals)
           }
         })
       }
@@ -151,7 +153,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
     }
   ]
 
-  const array = [`Weighted Assets (${unit})`, `Profits (${unit})`, 'Official APY', 'BoC Verified APY']
+  const array = [`Weighted Assets (${unit})`, `Profits (${unit})`, 'Official APY', 'BoC Verified APY', 'Net Profits']
   const dataSource1 = map(array, (i, index) => {
     const obj = map(keyBy(dataSource, 'date'), (j, key) => {
       let value = ''
@@ -197,6 +199,17 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
           <Space>
             {i}
             <Tooltip title="APY verified by the BoC strategy, calculated by using the corresponding profits and weighted assets.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        )
+      } else if (i === array[4]) {
+        value = j.dailyAssetChanged
+        weekly = j.weeklyAssetChanged
+        nextName = (
+          <Space>
+            {i}
+            <Tooltip title="Net profits grown daily/weekly in the strategy.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
