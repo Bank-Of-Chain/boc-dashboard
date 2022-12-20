@@ -16,14 +16,6 @@ const EXTENDS = {
     pathTokens: [ST_ETH, WETH_ADDRESS],
     warn: [riskText1('Usdc'), riskText2('stETH', 'Eth'), riskText3()]
   },
-  EulerRevolvingLoanDaiStrategy: {
-    //TODO:
-    // pathTokens: [DAI_ADDRESS]
-  },
-  EulerRevolvingLoanUsdcStrategy: {
-    //TODO:
-    // pathTokens: [USDC_ADDRESS]
-  },
   ConvexIBUsdtGbpStrategy: {
     pathTokens: [IB_GBP_ADDRESS],
     warn: [riskText1('Usdt'), riskText2('ibGBP', 'sGBP'), riskText3('Usdt')]
@@ -40,34 +32,16 @@ const EXTENDS = {
     pathTokens: [IB_EUR_ADDRESS],
     warn: [riskText1('Usdt'), riskText2('ibEUR', 'sEUR'), riskText3('Usdt')]
   },
-
   ConvexIBUsdtJpyStrategy: {
     pathTokens: [IB_JPY_ADDRESS],
     warn: [riskText1('Usdt'), riskText2('ibJPY', 'sJPY'), riskText3('Usdt')]
   },
-
   ConvexIBUsdtKrwStrategy: {
     pathTokens: [IB_KRW_ADDRESS],
     warn: [riskText1('Usdt'), riskText2('ibKRW', 'sKRW'), riskText3('Usdt')]
   },
-  DForceRevolvingLoanDaiStrategy: {
-    //TODO:
-  },
-
   //ethi
   AaveWETHstETHStrategy: {
-    pathTokens: [ST_ETH, WETH_ADDRESS],
-    warn: [riskText2('stETH', 'Eth'), riskText3()]
-  },
-  EulerRevolvingLoanWETHStrategy: {
-    pathTokens: [ST_ETH, WETH_ADDRESS],
-    warn: [riskText2('stETH', 'Eth'), riskText3()]
-  },
-  EulerRevolvingLoanWstETHStrategy: {
-    pathTokens: [ST_ETH, WETH_ADDRESS],
-    warn: [riskText2('stETH', 'Eth'), riskText3()]
-  },
-  DForceRevolvingLoanETHStrategy: {
     pathTokens: [ST_ETH, WETH_ADDRESS],
     warn: [riskText2('stETH', 'Eth'), riskText3()]
   }
