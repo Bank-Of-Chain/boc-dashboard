@@ -123,8 +123,12 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
                   {i.weeklyUnrealizedApy > 0 && comp}
                 </div>
               ),
-            dailyAssetChanged: toFixed(i.dailyAssetChanged, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals),
-            weeklyAssetChanged: toFixed(i.weeklyAssetChanged, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals)
+            dailyAssetChanged: isEmpty(i.dailyAssetChanged)
+              ? 'N/A'
+              : toFixed(i.dailyAssetChanged, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals),
+            weeklyAssetChanged: isEmpty(i.weeklyAssetChanged)
+              ? 'N/A'
+              : toFixed(i.weeklyAssetChanged, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals)
           }
         })
       }
@@ -153,7 +157,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
     }
   ]
 
-  const array = [`Weighted Assets (${unit})`, `Profits (${unit})`, 'Official APY', 'BoC Verified APY', 'Net Profits']
+  const array = [`Weighted Assets (${unit})`, `Profits (${unit})`, 'Official APY', 'BoC Verified APY', 'Valuation Changed']
   const dataSource1 = map(array, (i, index) => {
     const obj = map(keyBy(dataSource, 'date'), (j, key) => {
       let value = ''
@@ -209,7 +213,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="Net profits grown daily/weekly in the strategy.">
+            <Tooltip title="Valuation changed daily/weekly in the strategy.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>

@@ -208,6 +208,15 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
+      title: 'Asset Changed',
+      dataIndex: 'weeklyAssetChanged',
+      key: 'weeklyAssetChanged',
+      render: text => {
+        if (isEmpty(text)) return 'N/A'
+        return toFixed(text, decimals, displayDecimals)
+      }
+    },
+    {
       title: 'Strategy Report',
       dataIndex: 'strategyAddress',
       key: 'strategyAddress',
