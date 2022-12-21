@@ -208,7 +208,14 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
-      title: 'Asset Changed',
+      title: (
+        <Space>
+          Valuation Changed
+          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </Space>
+      ),
       dataIndex: 'weeklyAssetChanged',
       key: 'weeklyAssetChanged',
       render: text => {
