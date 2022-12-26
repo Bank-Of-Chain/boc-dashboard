@@ -230,15 +230,15 @@ const USDiHome = () => {
         </span>
       )
     },
+    // {
+    //   title: 'Holders',
+    //   tip: 'Number Of USDi holders.',
+    //   content: numeral(pegToken?.holderCount).format('0.[0000]a'),
+    //   loading
+    // },
     {
-      title: 'Holders',
-      tip: 'Number Of USDi holders.',
-      content: numeral(pegToken?.holderCount).format('0.[0000]a'),
-      loading
-    },
-    {
-      title: 'APY (last 30 days)',
-      tip: 'Yield over the past month.',
+      title: 'APY (last 7 days)',
+      tip: 'Yield over the past week.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
       unit: '%'
