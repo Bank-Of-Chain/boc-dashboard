@@ -9,7 +9,7 @@ import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message
 import VaultChange from '@/components/VaultChange'
 
 // === Services === //
-import { getReports, updateReportStatus } from '@/services/api-service'
+import { getReports, updateReportStatus, getReportsById } from '@/services/api-service'
 
 // === Utils === //
 import moment from 'moment'
@@ -20,7 +20,7 @@ import BN from 'bignumber.js'
 import noop from 'lodash/noop'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
-import { useRequest, useModel } from 'umi'
+import { useRequest, useModel, history } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { changeNetwork } from '@/utils/network'
 import { BigNumber } from 'ethers'
@@ -44,9 +44,10 @@ import styles from './style.less'
 
 const fixedDecimals = BN(1e18)
 
-const Reports = () => {
+const Reports = props => {
+  const { id } = props?.location?.query
   const { initialState } = useModel('@@initialState')
-  const [showIndex, setShowIndex] = useState(-1)
+  const [current, setCurrent] = useState({})
   const { userProvider, getWalletName } = useWallet()
   const [isRedUp, setIsRedUp] = useState(true)
   const deviceType = useDeviceType()
@@ -100,6 +101,25 @@ const Reports = () => {
       current: 1
     })
   }, [initialState.vault])
+
+  useEffect(() => {
+    if (isEmpty(id)) {
+      setCurrent({})
+      return
+    }
+    getReportsById(initialState.chain, initialState.vaultAddress, id)
+      .then(resp => {
+        const { investStrategies, optimizeResult, loss } = resp
+        return {
+          ...resp,
+          investStrategies: JSON.parse(investStrategies),
+          optimizeResult: JSON.parse(optimizeResult),
+          loss: JSON.parse(loss)
+        }
+      })
+      .then(setCurrent)
+      .catch(() => setCurrent({}))
+  }, [initialState.chain, initialState.vaultAddress, id])
 
   const { isAdmin, loading: roleLoading, error: roleError } = useAdminRole(initialState.address)
 
@@ -155,7 +175,22 @@ const Reports = () => {
       title: 'Name',
       dataIndex: 'id',
       key: 'id',
-      render: (text, item, index) => <a onClick={() => setShowIndex(index)}>Report-{text}</a>
+      render: text => (
+        <a
+          onClick={() => {
+            history.push({
+              pathname: '/reports',
+              query: {
+                chain: initialState.chain,
+                vault: initialState.vault,
+                id: text
+              }
+            })
+          }}
+        >
+          Report-{text}
+        </a>
+      )
     },
     {
       title: 'Generate Time',
@@ -205,7 +240,7 @@ const Reports = () => {
     {
       title: 'Operation',
       width: '10rem',
-      render: (text, record, index) => {
+      render: (text, record) => {
         const { id, isReject, rejectTime, rejecter, type, geneTime } = record
         let rejectElement = null
         // Cannot reject report passed 1 day
@@ -245,7 +280,19 @@ const Reports = () => {
         return (
           <Row>
             <Col md={12}>
-              <a style={{ marginRight: '1rem' }} onClick={() => setShowIndex(index)}>
+              <a
+                style={{ marginRight: '1rem' }}
+                onClick={() => {
+                  history.push({
+                    pathname: '/reports',
+                    query: {
+                      chain: initialState.chain,
+                      vault: initialState.vault,
+                      id: id
+                    }
+                  })
+                }}
+              >
                 View
               </a>
             </Col>
@@ -377,7 +424,7 @@ const Reports = () => {
       }
     }
   ]
-  const currentReport = get(data.list, showIndex, {})
+  const currentReport = current
   console.log('currentReport=', currentReport)
   const { optimizeResult = {}, investStrategies = {}, loss = {}, isExec, forcedExecuted } = currentReport
   const {
@@ -833,9 +880,17 @@ const Reports = () => {
         title={''}
         style={{ top: 20 }}
         bodyStyle={{ background: '#323338' }}
-        visible={showIndex !== -1}
+        visible={!isEmpty(currentReport)}
         footer={null}
-        onCancel={() => setShowIndex(-1)}
+        onCancel={() => {
+          history.push({
+            pathname: '/reports',
+            query: {
+              chain: initialState.chain,
+              vault: initialState.vault
+            }
+          })
+        }}
         width="1200px"
       >
         <Row>

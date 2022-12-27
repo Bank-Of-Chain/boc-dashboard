@@ -4,8 +4,7 @@ import React, { useState } from 'react'
 import { Card, Table, Image, Switch, Tooltip, Badge, Space } from 'antd'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
-import Icon, { InfoCircleOutlined } from '@ant-design/icons'
-import { GoIcon } from '@/components/SvgIcons'
+import { InfoCircleOutlined, FileTextOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import { useModel, useRequest } from 'umi'
@@ -32,19 +31,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   const decimals = BN(1e18)
   const columns = [
     {
-      title: (
-        <Space>
-          Name
-          <Tooltip
-            placement="topLeft"
-            arrowPointAtCenter
-            overlayStyle={{ width: 300 }}
-            title="By clicking on the strategy name you will be directed to the strategy page with all the related information viewable, e.g., strategy profits and official APY."
-          >
-            <InfoCircleOutlined />
-          </Tooltip>
-        </Space>
-      ),
+      title: 'Name',
       dataIndex: 'strategyName',
       key: 'strategyName',
       render: (text, item) => (
@@ -62,9 +49,8 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
             title={text}
             target={'_blank'}
             rel="noreferrer"
-            href={`${isMarketingHost() ? 'https://dashboard.bankofchain.io' : DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${
-              initialState.chain
-            }&vault=${initialState.vault}`}
+            className={styles.text}
+            href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}
           >
             {text}
           </a>
@@ -222,13 +208,36 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       }
     },
     {
-      title: 'Strategy Address',
+      title: (
+        <Space>
+          Valuation Changed
+          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </Space>
+      ),
+      dataIndex: 'weeklyAssetChanged',
+      key: 'weeklyAssetChanged',
+      render: text => {
+        if (isEmpty(text)) return 'N/A'
+        return toFixed(text, decimals, displayDecimals)
+      }
+    },
+    {
+      title: 'Strategy Report',
       dataIndex: 'strategyAddress',
       key: 'strategyAddress',
       align: 'center',
       render: (text, item) => (
-        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}>
-          <Icon component={GoIcon} />
+        <a
+          title={text}
+          target={'_blank'}
+          rel="noreferrer"
+          href={`${isMarketingHost() ? 'https://dashboard.bankofchain.io' : DASHBOARD_ROOT}/#/strategy?id=${item.strategyAddress}&chain=${
+            initialState.chain
+          }&vault=${initialState.vault}`}
+        >
+          <FileTextOutlined style={{ fontSize: '1.5rem' }} />
         </a>
       )
     }
