@@ -237,8 +237,8 @@ const USDiHome = () => {
     //   loading
     // },
     {
-      title: 'APY (last 7 days)',
-      tip: 'Yield over the past week.',
+      title: 'APY (last 30 days)',
+      tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
       unit: '%'
