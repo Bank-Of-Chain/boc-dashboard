@@ -95,7 +95,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
     {
       title: (
         <Space>
-          Realized APY
+          Harvested APY
           <Tooltip placement="top" arrowPointAtCenter title="7 days">
             <InfoCircleOutlined />
           </Tooltip>
@@ -136,7 +136,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
     {
       title: (
         <Space>
-          Unrealized APY
+          Unharvested APY
           <Tooltip placement="top" arrowPointAtCenter title="7 days">
             <InfoCircleOutlined />
           </Tooltip>
