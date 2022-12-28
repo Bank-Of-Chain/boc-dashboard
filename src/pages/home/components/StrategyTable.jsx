@@ -178,7 +178,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
     {
       title: (
         <Space>
-          Realized Profit
+          Harvested Profit
           <Tooltip placement="top" arrowPointAtCenter title="7 days">
             <InfoCircleOutlined />
           </Tooltip>

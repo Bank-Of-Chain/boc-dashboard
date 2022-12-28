@@ -43,9 +43,9 @@ import BorrowingExtends from '@/constants/borrowing-extends'
 import styles from './style.less'
 
 const OFFICIAL_APY = 'Official Weekly APY'
-const VERIFIED_APY = 'Verified Weekly APY'
+const VERIFIED_APY = 'BoC Weekly APY'
 const OFFICIAL_DAILY_APY = 'Official Daily APY'
-const VERIFIED_DAILY_APY = 'Verified Daily APY'
+const VERIFIED_DAILY_APY = 'BoC Daily APY'
 
 const feeApyStatusMap = {
   0: 'Unrealized',
@@ -438,7 +438,7 @@ const Strategy = props => {
       <Space>
         <span style={{ verticalAlign: 'sub' }}>Offical APY</span>
         <Switch className={styles.officalSwitch} size="small" checked={isOfficalApyEnable} onChange={setIsOfficalApyEnable} />
-        <span style={{ verticalAlign: 'sub' }}>Verified APY</span>
+        <span style={{ verticalAlign: 'sub' }}>BoC APY</span>
         <Switch className={styles.verifiedSwitch} size="small" checked={isVerifiedApyEnable} onChange={setIsVerifiedApyEnable} />
       </Space>
     )
