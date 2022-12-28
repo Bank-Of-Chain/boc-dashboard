@@ -336,8 +336,8 @@ const Strategy = props => {
               const unrealizedApy = param.data?.unrealizedApy
               const realizedApyText = `${isNil(realizedApy) ? '-' : formatApyLabel(realizedApy) + unit}`
               const unrealizedApyText = `${isNil(unrealizedApy) ? '-' : formatApyLabel(unrealizedApy) + unit}`
-              message += `${getMarker('#dc69aa')}Realized APY: ${realizedApyText}`
-              message += `${getMarker('#95706d')}UnRealized APY: ${unrealizedApyText}`
+              message += `${getMarker('#dc69aa')}Harvested APY: ${realizedApyText}`
+              message += `${getMarker('#95706d')}Unharvested APY: ${unrealizedApyText}`
             }
             if (param?.seriesName === OFFICIAL_DAILY_APY) {
               const offcialDetail = param?.data?.offcialDetail

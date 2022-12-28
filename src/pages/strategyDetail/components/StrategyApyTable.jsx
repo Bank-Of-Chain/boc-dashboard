@@ -27,8 +27,8 @@ const dateFormat = 'MMM DD'
 const comp = <HourglassOutlined style={{ color: '#a68efe' }} />
 
 const feeApyStatusMap = {
-  0: 'Unrealized',
-  1: 'Realized'
+  0: 'Unharvested',
+  1: 'Harvested'
 }
 
 const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayDecimals = TOKEN_DISPLAY_DECIMALS, dropdownGroup }) => {
@@ -157,7 +157,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
     }
   ]
 
-  const array = [`Weighted Assets (${unit})`, `Profits (${unit})`, 'Official APY', 'BoC Verified APY', 'Valuation Changed']
+  const array = [`Weighted Assets (${unit})`, `Profits (${unit})`, 'Official APY', 'BoC APY', 'Valuation Changed']
   const dataSource1 = map(array, (i, index) => {
     const obj = map(keyBy(dataSource, 'date'), (j, key) => {
       let value = ''
