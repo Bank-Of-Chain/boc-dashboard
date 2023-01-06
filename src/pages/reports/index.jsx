@@ -440,7 +440,6 @@ const Reports = props => {
     operateLoss,
     originalApr,
     originalGain,
-    totalDeltaGain = 0,
     durationDays,
     originalHarvestFee = [],
     harvestFee,
@@ -972,7 +971,7 @@ const Reports = props => {
               Profit
             </Divider>
             <Descriptions {...detailHeaderResponsiveConfig.lastDescProps}>
-              <Descriptions.Item label="Allocation Profit">{totalDeltaGain.toFixed(6)}</Descriptions.Item>
+              <Descriptions.Item label="Allocation Profit">{(sumGainVariation - sum(operateFee)).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label="Allocation Cost">{sum(operateLoss).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label="Operate Gas Fee">{sum(operateFee).toFixed(6)}</Descriptions.Item>
               <Descriptions.Item label="Exchange Loss">{sum(exchangeLoss).toFixed(6)}</Descriptions.Item>
