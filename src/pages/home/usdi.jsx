@@ -38,6 +38,7 @@ const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [apyEchartOpt, setApyEchartOpt] = useState({})
+  const [apy7, setApy7] = useState(0)
   const [apy30, setApy30] = useState(0)
 
   const { initialState } = useModel('@@initialState')
@@ -60,6 +61,15 @@ const USDiHome = () => {
     if (calDateRange > 7) {
       params.format = 'MM-DD'
     }
+    getValutAPYList({
+      chainId: initialState.chain,
+      duration: APY_DURATION.weekly,
+      limit: calDateRange,
+      tokenType: TOKEN_TYPE.usdi
+    }).then(data => {
+      const nextApy7 = get(data, 'content.[0].apy', 0)
+      setApy7(nextApy7)
+    })
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
@@ -239,6 +249,13 @@ const USDiHome = () => {
     {
       title: 'APY (last 7 days)',
       tip: 'Yield over the past week.',
+      content: formatApyLabel(parseFloat(apy7).toFixed(2)),
+      loading,
+      unit: '%'
+    },
+    {
+      title: 'APY (last 30 days)',
+      tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
       unit: '%'

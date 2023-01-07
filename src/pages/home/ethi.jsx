@@ -29,7 +29,7 @@ import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
-import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce } from 'lodash'
+import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce, get } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
@@ -38,6 +38,7 @@ const ETHiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
   const [tvlEchartOpt, setTvlEchartOpt] = useState({})
   const [apyEchartOpt, setApyEchartOpt] = useState({})
+  const [apy7, setApy7] = useState(0)
   const [apy30, setApy30] = useState(0)
 
   const { initialState } = useModel('@@initialState')
@@ -62,6 +63,15 @@ const ETHiHome = () => {
     }
     getValutAPYList({
       chainId: initialState.chain,
+      duration: APY_DURATION.weekly,
+      limit: calDateRange,
+      tokenType: TOKEN_TYPE.ethi
+    }).then(data => {
+      const nextApy7 = get(data, 'content.[0].apy', 0)
+      setApy7(nextApy7)
+    })
+    getValutAPYList({
+      chainId: initialState.chain,
       duration: APY_DURATION.monthly,
       limit: calDateRange,
       tokenType: TOKEN_TYPE.ethi
@@ -75,7 +85,8 @@ const ETHiHome = () => {
             apy: apyValue
           }
         })
-        setApy30(data.content[0] ? data.content[0].apy : 0)
+        const nextApy30 = get(data, 'content.[0].apy', 0)
+        setApy30(nextApy30)
 
         const xAxisData = uniq(map(result, ({ date }) => date))
         // option for multi line
@@ -237,6 +248,13 @@ const ETHiHome = () => {
     {
       title: 'APY (last 7 days)',
       tip: 'Yield over the past week.',
+      content: formatApyLabel(parseFloat(apy7).toFixed(2)),
+      loading,
+      unit: '%'
+    },
+    {
+      title: 'APY (last 30 days)',
+      tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
       unit: '%'
