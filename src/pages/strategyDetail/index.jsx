@@ -436,9 +436,9 @@ const Strategy = props => {
   const titleRender = () => {
     return (
       <Space>
-        <span style={{ verticalAlign: 'sub' }}>Offical APY</span>
+        <span style={{ verticalAlign: 'sub' }}>Offical Weekly APY</span>
         <Switch className={styles.officalSwitch} size="small" checked={isOfficalApyEnable} onChange={setIsOfficalApyEnable} />
-        <span style={{ verticalAlign: 'sub' }}>BoC APY</span>
+        <span style={{ verticalAlign: 'sub' }}>BoC Weekly APY</span>
         <Switch className={styles.verifiedSwitch} size="small" checked={isVerifiedApyEnable} onChange={setIsVerifiedApyEnable} />
       </Space>
     )
