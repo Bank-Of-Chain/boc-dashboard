@@ -697,6 +697,19 @@ const Strategy = props => {
                     {numeral(toFixed(details['current-price'], decimals)).format('0.000000')}
                   </Descriptions.Item>
                 )}
+                {!isNil(details['allow-withdraw-asset']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Allow Withdraw Assets
+                        <Tooltip title="Third party redeemable Assets (buffer pool assets)">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['allow-withdraw-asset'], decimals)).format('0.00')}
+                  </Descriptions.Item>
+                )}
+
                 {!isNil(details['token-ratio']) && (
                   <Descriptions.Item
                     label={
