@@ -706,7 +706,7 @@ const Strategy = props => {
                       </Space>
                     }
                   >
-                    {numeral(toFixed(details['allow-withdraw-asset'], decimals)).format('0.00')}
+                    {numeral(toFixed(details['allow-withdraw-asset'], decimals)).format(displayFormat) + ` ${unit}`}
                   </Descriptions.Item>
                 )}
 
