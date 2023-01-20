@@ -180,7 +180,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="Daily/Weekly strategy profit.">
+            <Tooltip title="Daily/Weekly strategy profit (Including Harvested and Unharvested profits).">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
