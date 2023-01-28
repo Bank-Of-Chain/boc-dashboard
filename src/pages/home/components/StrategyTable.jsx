@@ -179,7 +179,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       title: (
         <Space>
           Harvested Profit
-          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+          <Tooltip placement="top" arrowPointAtCenter title="including government token and transaction fee of uni v3 in last 7 days">
             <InfoCircleOutlined />
           </Tooltip>
         </Space>
