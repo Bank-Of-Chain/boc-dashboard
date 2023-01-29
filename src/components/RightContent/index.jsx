@@ -114,7 +114,7 @@ const GlobalHeaderRight = () => {
             <DownOutlined style={{ fontSize: 10 }} />
           </Space>
         </Dropdown> */}
-        <Button type="text" href="https://docs.bankofchain.io/" target="_blank" className={styles.colorful}>
+        <Button type="text" href="https://docs.bankofchain.io/en" target="_blank" className={styles.colorful}>
           Docs
         </Button>
         {isLoading ? (
