@@ -26,7 +26,9 @@ const OPERATION = {
   2: 'withdraw',
   3: 'redeem',
   4: 'exchange',
-  5: 'rebalance'
+  5: 'rebalance',
+  6: 'remove strategy',
+  7: 'add strategy'
 }
 
 const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
