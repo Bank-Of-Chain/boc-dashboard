@@ -179,7 +179,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       title: (
         <Space>
           Harvested Profit
-          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+          <Tooltip placement="top" arrowPointAtCenter title="including government token and transaction fee of uni v3 in last 7 days">
             <InfoCircleOutlined />
           </Tooltip>
         </Space>
@@ -244,7 +244,11 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   ]
   const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
   const responsiveConfig = {
-    [DEVICE_TYPE.Desktop]: {},
+    [DEVICE_TYPE.Desktop]: {
+      tableProps: {
+        scroll: { x: 1000 }
+      }
+    },
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
         size: 'small'

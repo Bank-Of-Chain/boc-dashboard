@@ -436,9 +436,9 @@ const Strategy = props => {
   const titleRender = () => {
     return (
       <Space>
-        <span style={{ verticalAlign: 'sub' }}>Offical APY</span>
+        <span style={{ verticalAlign: 'sub' }}>Offical Weekly APY</span>
         <Switch className={styles.officalSwitch} size="small" checked={isOfficalApyEnable} onChange={setIsOfficalApyEnable} />
-        <span style={{ verticalAlign: 'sub' }}>BoC APY</span>
+        <span style={{ verticalAlign: 'sub' }}>BoC Weekly APY</span>
         <Switch className={styles.verifiedSwitch} size="small" checked={isVerifiedApyEnable} onChange={setIsVerifiedApyEnable} />
       </Space>
     )
@@ -697,6 +697,19 @@ const Strategy = props => {
                     {numeral(toFixed(details['current-price'], decimals)).format('0.000000')}
                   </Descriptions.Item>
                 )}
+                {!isNil(details['allow-withdraw-asset']) && (
+                  <Descriptions.Item
+                    label={
+                      <Space>
+                        Allow Withdraw Assets
+                        <Tooltip title="Third party redeemable Assets (buffer pool assets)">{icon}</Tooltip>
+                      </Space>
+                    }
+                  >
+                    {numeral(toFixed(details['allow-withdraw-asset'], decimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+
                 {!isNil(details['token-ratio']) && (
                   <Descriptions.Item
                     label={

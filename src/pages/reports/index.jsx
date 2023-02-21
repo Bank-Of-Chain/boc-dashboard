@@ -345,7 +345,8 @@ const Reports = props => {
       title: 'APR (Before)',
       dataIndex: 'originalApr',
       key: 'originalApr',
-      width: '6rem',
+      width: '7rem',
+      sorter: (a, b) => b.originalApr - a.originalApr,
       render: value => {
         return <span>{(100 * value).toFixed(4)}%</span>
       }

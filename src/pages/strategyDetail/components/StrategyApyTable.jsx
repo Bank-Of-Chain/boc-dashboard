@@ -169,7 +169,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="Assets deposited daily/weekly into the strategy.">
+            <Tooltip title="Assets deposited daily into the strategy.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
@@ -180,7 +180,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="Daily/Weekly strategy profit.">
+            <Tooltip title="Daily strategy profit (Including Harvested and Unharvested profits).">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
@@ -213,7 +213,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         nextName = (
           <Space>
             {i}
-            <Tooltip title="Valuation changed daily/weekly in the strategy.">
+            <Tooltip title="Valuation changed daily in the strategy.">
               <InfoCircleOutlined />
             </Tooltip>
           </Space>
