@@ -14,8 +14,12 @@ import StrategyApyTable from './components/StrategyApyTable'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space, Tooltip } from 'antd'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
+import multipleLineV2 from '@/components/echarts/options/line/multipleLineV2'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import IFrameLoader from '@/components/IFrameLoader'
+
+// === Hooks === //
+import { useAsync } from 'react-async-hook'
 
 // === Utils === //
 import moment from 'moment'
@@ -27,10 +31,10 @@ import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
-import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, keys } from 'lodash'
+import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, keys, groupBy, sortBy } from 'lodash'
 
 // === Services === //
-import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails } from '@/services/api-service'
+import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails, getStrategyDataCollect } from '@/services/api-service'
 
 // === Hooks === //
 import useStrategyDetails from '@/hooks/useStrategyDetails'
@@ -77,7 +81,52 @@ const Strategy = props => {
   const [isVerifiedApyEnable, setIsVerifiedApyEnable] = useState(true)
 
   const details = useStrategyDetails(initialState.chain, initialState.vaultAddress, id)
-  console.log('initialState', details)
+
+  const { loading: collectLoading, result } = useAsync(() => {
+    if (!ori) return
+    if (isEmpty(strategy)) return
+    const { chain, vaultAddress } = initialState
+    const { strategyName } = strategy
+    const current = moment()
+    const params = {
+      end_seconds: current.format('X'),
+      start_seconds: current.subtract(7, 'days').format('X'),
+      types: 'current-price,base-order-lower,base-order-upper,limit-order-lower,limit-order-upper'
+    }
+    return (
+      ori &&
+      getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
+        const nextArray = map(
+          groupBy(
+            map(content, item => {
+              const { type, result, blockNumber, blockTimestamp } = item
+              return {
+                blockNumber,
+                blockTimestamp,
+                [type]: result
+              }
+            }),
+            'blockNumber'
+          ),
+          items => {
+            return reduce(
+              items,
+              (rs, item) => {
+                return {
+                  ...rs,
+                  ...item
+                }
+              },
+              {}
+            )
+          }
+        )
+        return sortBy(nextArray, 'blockNumber')
+      })
+    )
+  }, [initialState, ori, strategy])
+
+  console.log('initialState', result)
 
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
@@ -477,6 +526,32 @@ const Strategy = props => {
 
   const extendsWarn = get(BorrowingExtends, `${strategy.strategyName}.warn`, '')
 
+  const collectObj = {
+    legend: {
+      data: ['Base Order Upper', 'Base Order Lower', 'Current Price', 'Limit Order Upper', 'Limit Order Lower'],
+      textStyle: { color: '#fff' }
+    },
+    xAxisData: map(result, item => moment(1000 * item.blockTimestamp).format('YYYY-MM-DD HH:mm')),
+    data: [
+      { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals)), showSymbol: false },
+      { seriesName: 'Base Order Upper', seriesData: map(result, item => toFixed(item['base-order-upper'], decimals)), showSymbol: false },
+      { seriesName: 'Current Price', seriesData: map(result, item => toFixed(item['current-price'], decimals)), showSymbol: false },
+      { seriesName: 'Limit Order Lower', seriesData: map(result, item => toFixed(item['limit-order-lower'], decimals)), showSymbol: false },
+      { seriesName: 'Limit Order Upper', seriesData: map(result, item => toFixed(item['limit-order-upper'], decimals)), showSymbol: false }
+    ],
+    color: ['#70cef5', '#70cef5', '#b7a8e8', '#70cef5', '#70cef5'],
+    yAxis: {
+      min: value => {
+        console.log('yAxisMin=', value)
+        return (1 - Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 0.97
+      },
+      max: value => {
+        return (1 + Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 1.03
+      }
+    }
+  }
+  const collectOption = multipleLineV2(collectObj)
+
   return (
     <GridContent>
       <Suspense fallback={null}>
@@ -723,7 +798,6 @@ const Strategy = props => {
                       title={
                         <div>
                           {map(keys(details['token-ratio']), key => {
-                            console.log('key=', details['token-ratio'], key)
                             return (
                               <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
                                 <Space>
@@ -780,6 +854,29 @@ const Strategy = props => {
           </div>
         </Card>
       </Suspense>
+      {ori && (
+        <Suspense fallback={null}>
+          <Card
+            className={styles.offlineCard}
+            bordered={false}
+            style={{
+              marginTop: 32
+            }}
+            {...chartResponsiveConfig.cardProps}
+          >
+            <div className={styles.cardTitle}>策略做市区间与价格</div>
+            <div style={chartResponsiveConfig.chartStyle}>
+              {collectLoading ? (
+                <div className={styles.loadingContainer}>
+                  <Spin size="large" />
+                </div>
+              ) : (
+                <LineEchart option={collectOption} style={{ height: '100%', width: '100%' }} />
+              )}
+            </div>
+          </Card>
+        </Suspense>
+      )}
       {ori &&
         map(URL[strategy.strategyName], item => {
           return (
