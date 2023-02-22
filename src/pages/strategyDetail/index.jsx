@@ -14,7 +14,6 @@ import StrategyApyTable from './components/StrategyApyTable'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space, Tooltip } from 'antd'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
-import multipleLineV2 from '@/components/echarts/options/line/multipleLineV2'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import IFrameLoader from '@/components/IFrameLoader'
 
@@ -344,10 +343,10 @@ const Strategy = props => {
       textStyle: { color: '#fff' }
     },
     xAxisData: map(apyArray, 'date'),
-    data
+    data,
+    color: ['#CABBFF', '#7E6DD2', '#ffb980', '#d87a80', '#e5cf0d', '#97b552', '#8d98b3', '#07a2a4', '#95706d', '#dc69aa']
   }
   const option = multipleLine(obj)
-  option.color = ['#CABBFF', '#7E6DD2', '#ffb980', '#d87a80', '#e5cf0d', '#97b552', '#8d98b3', '#07a2a4', '#95706d', '#dc69aa']
   option.series.forEach((serie, index) => {
     serie.connectNulls = false
     serie.z = option.series.length - index
@@ -550,7 +549,7 @@ const Strategy = props => {
       }
     }
   }
-  const collectOption = multipleLineV2(collectObj)
+  const collectOption = multipleLine(collectObj)
 
   return (
     <GridContent>

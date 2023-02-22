@@ -1,12 +1,14 @@
 import { getNoDataGraphic } from '@/components/echarts/options/optionHelper'
+import { isEmpty } from 'lodash'
 
 /**
  * Multiple line chart
  */
-export default function (obj) {
+const multipleLine = obj => {
   let data = []
   let dataCount = 0
   let dataArray = []
+  const { color, yAxis } = obj
   dataArray = obj.data
   if (dataArray.length > 0) {
     dataArray.forEach(element => {
@@ -55,8 +57,21 @@ export default function (obj) {
     option.tooltip.formatter = obj.tooltipFormatter
   }
 
+  if (!isEmpty(color)) {
+    option.color = color
+  }
+
+  if (!isEmpty(yAxis)) {
+    option.yAxis = {
+      ...option.yAxis,
+      ...yAxis
+    }
+  }
+
   return {
     ...getNoDataGraphic(dataCount > 0),
     ...option
   }
 }
+
+export default multipleLine
