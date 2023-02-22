@@ -95,9 +95,15 @@ const Strategy = props => {
     return (
       ori &&
       getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
+        const nextContent = filter(content, item => {
+          if (item.type === 'limit-order-upper' || item.type === 'limit-order-lower') {
+            return !isEmpty(item.result)
+          }
+          return true
+        })
         const nextArray = map(
           groupBy(
-            map(content, item => {
+            map(nextContent, item => {
               const { type, result, blockNumber, blockTimestamp } = item
               return {
                 blockNumber,
@@ -532,20 +538,20 @@ const Strategy = props => {
     },
     xAxisData: map(result, item => moment(1000 * item.blockTimestamp).format('YYYY-MM-DD HH:mm')),
     data: [
-      { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals)), showSymbol: false },
       { seriesName: 'Base Order Upper', seriesData: map(result, item => toFixed(item['base-order-upper'], decimals)), showSymbol: false },
+      { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals)), showSymbol: false },
       { seriesName: 'Current Price', seriesData: map(result, item => toFixed(item['current-price'], decimals)), showSymbol: false },
-      { seriesName: 'Limit Order Lower', seriesData: map(result, item => toFixed(item['limit-order-lower'], decimals)), showSymbol: false },
-      { seriesName: 'Limit Order Upper', seriesData: map(result, item => toFixed(item['limit-order-upper'], decimals)), showSymbol: false }
+      { seriesName: 'Limit Order Upper', seriesData: map(result, item => toFixed(item['limit-order-upper'], decimals)), showSymbol: false },
+      { seriesName: 'Limit Order Lower', seriesData: map(result, item => toFixed(item['limit-order-lower'], decimals)), showSymbol: false }
     ],
-    color: ['#70cef5', '#70cef5', '#b7a8e8', '#70cef5', '#70cef5'],
+    color: ['#70cef5', '#70cef5', '#b7a8e8', '#d89614', '#d89614'],
     yAxis: {
       min: value => {
         console.log('yAxisMin=', value)
-        return (1 - Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 0.97
+        return (1 - Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 0.999
       },
       max: value => {
-        return (1 + Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 1.03
+        return (1 + Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 1.001
       }
     }
   }
