@@ -89,7 +89,7 @@ const Strategy = props => {
     const current = moment()
     const params = {
       end_seconds: current.format('X'),
-      start_seconds: current.subtract(7, 'days').format('X'),
+      start_seconds: current.subtract(8, 'days').format('X'),
       types: 'current-price,base-order-lower,base-order-upper,limit-order-lower,limit-order-upper'
     }
     return (
