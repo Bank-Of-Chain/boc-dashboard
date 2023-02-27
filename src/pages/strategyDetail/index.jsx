@@ -536,7 +536,7 @@ const Strategy = props => {
       data: ['Base Order Upper', 'Base Order Lower', 'Current Price', 'Limit Order Upper', 'Limit Order Lower'],
       textStyle: { color: '#fff' }
     },
-    xAxisData: map(result, item => moment(1000 * item.blockTimestamp).format('YYYY-MM-DD HH:mm')),
+    xAxisData: map(result, item => formatToUTC0(1000 * item.blockTimestamp, 'YYYY-MM-DD HH:mm')),
     data: [
       { seriesName: 'Base Order Upper', seriesData: map(result, item => toFixed(item['base-order-upper'], decimals)), showSymbol: false },
       { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals)), showSymbol: false },
@@ -547,13 +547,18 @@ const Strategy = props => {
     color: ['#70cef5', '#70cef5', '#b7a8e8', '#d89614', '#d89614'],
     yAxis: {
       min: value => {
-        console.log('yAxisMin=', value)
-        return (1 - Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 0.999
+        return value.min * 0.999
       },
       max: value => {
-        return (1 + Math.max(Math.abs(value.min - 1), Math.abs(value.max - 1))) * 1.001
+        return value.max * 1.001
       }
-    }
+    },
+    dataZoom: [
+      {
+        end: 100,
+        start: 0
+      }
+    ]
   }
   const collectOption = multipleLine(collectObj)
 
