@@ -8,7 +8,7 @@ const multipleLine = obj => {
   let data = []
   let dataCount = 0
   let dataArray = []
-  const { color, yAxis, dataZoom } = obj
+  const { color, yAxis, dataZoom, grid } = obj
   dataArray = obj.data
   if (dataArray.length > 0) {
     dataArray.forEach(element => {
@@ -69,6 +69,13 @@ const multipleLine = obj => {
   }
   if (!isEmpty(dataZoom)) {
     option.dataZoom = dataZoom
+  }
+
+  if (!isEmpty(grid)) {
+    option.grid = {
+      ...option.grid,
+      ...grid
+    }
   }
 
   return {

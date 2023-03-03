@@ -16,6 +16,10 @@ import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space, Tooltip } fro
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import IFrameLoader from '@/components/IFrameLoader'
+import PositionDetails from './components/PositionDetails'
+import PriceChart from './components/PriceChart'
+import TokenRatio from './components/TokenRatio'
+import UniswapV3PositionDetails from './components/UniswapV3PositionDetails'
 
 // === Hooks === //
 import { useAsync } from 'react-async-hook'
@@ -547,10 +551,10 @@ const Strategy = props => {
     color: ['#70cef5', '#70cef5', '#b7a8e8', '#d89614', '#d89614'],
     yAxis: {
       min: value => {
-        return value.min * 0.999
+        return Math.floor(value.min * 999) / 1000
       },
       max: value => {
-        return value.max * 1.001
+        return Math.ceil(value.max * 1001) / 1000
       }
     },
     dataZoom: [
@@ -558,7 +562,11 @@ const Strategy = props => {
         end: 100,
         start: 0
       }
-    ]
+    ],
+    grid: {
+      left: 50,
+      right: 20
+    }
   }
   const collectOption = multipleLine(collectObj)
 
@@ -895,6 +903,26 @@ const Strategy = props => {
             </Suspense>
           )
         })}
+      {ori && (
+        <Suspense fallback={null}>
+          <PositionDetails strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
+      {ori && (
+        <Suspense fallback={null}>
+          <UniswapV3PositionDetails strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
+      {ori && (
+        <Suspense fallback={null}>
+          <PriceChart strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
+      {ori && (
+        <Suspense fallback={null}>
+          <TokenRatio strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
       <Suspense fallback={null}>
         <StrategyApyTable
           vault={vault}
