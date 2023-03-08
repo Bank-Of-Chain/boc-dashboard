@@ -14,12 +14,17 @@ import { getStrategyDataCollect } from '@/services/api-service'
 
 // === Utils === //
 import moment from 'moment'
-import { filter, isEmpty, map, reduce, groupBy, sortBy } from 'lodash'
+import { BigNumber } from 'ethers'
+import { formatToUTC0 } from '@/utils/date'
+import { toFixed } from '@/utils/number-format'
+import { isEmpty, map, reduce, groupBy, sortBy, get, sumBy, forEach } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
 
-const PositionDetails = props => {
+const decimals = BigNumber.from(10).pow(18)
+
+const TokenRadio = props => {
   const { strategyName } = props
   const deviceType = useDeviceType()
 
@@ -31,24 +36,27 @@ const PositionDetails = props => {
     const current = moment()
     const params = {
       end_seconds: current.format('X'),
-      start_seconds: current.subtract(8, 'days').format('X'),
-      types: 'position-detail'
+      start_seconds: current.subtract(31, 'days').format('X'),
+      types: 'token-ratio-new'
     }
     return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
-      const nextContent = filter(content, item => {
-        if (item.type === 'limit-order-upper' || item.type === 'limit-order-lower') {
-          return !isEmpty(item.result)
-        }
-        return true
-      })
+      const nextContent = content
+
       const nextArray = map(
         groupBy(
           map(nextContent, item => {
             const { type, result, blockNumber, blockTimestamp } = item
+            const obj = JSON.parse(result)
+            const nextAmounts = map(obj.amounts, item => toFixed(item, decimals, 4))
+            const total = sumBy(nextAmounts, i => 1 * i)
             return {
               blockNumber,
               blockTimestamp,
-              [type]: result
+              [type]: {
+                ...obj,
+                amounts: nextAmounts,
+                total
+              }
             }
           }),
           'blockNumber'
@@ -95,13 +103,39 @@ const PositionDetails = props => {
     }
   }[deviceType]
 
-  const total = 600
+  if (isEmpty(result)) {
+    return ''
+  }
+
+  const firstItemTokens = get(result, '[0].token-ratio-new.names', [])
+
+  const nextSeries = map(firstItemTokens, (item, index) => {
+    return {
+      name: item,
+      type: 'bar',
+      stack: 'A',
+      data: map(result, item => get(item, `token-ratio-new.amounts[${index}]`, '0'))
+    }
+  })
 
   const option = {
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow'
+      },
+      formatter: function (params) {
+        // 这里鼠标悬浮显示对应item的每项数值
+        var relVal = params[0].name
+
+        forEach(firstItemTokens, (item, index) => {
+          const val = params[index].data
+          const total = get(result, `${params[index].dataIndex}.token-ratio-new.total`, '0')
+          const percents = total === '0' ? '0' : ((100 * val) / total).toFixed(2)
+          relVal += `<br/>${params[index].marker} ${params[index].seriesName} : <span style="font-weight: bold">${val}(${percents}%)</span>`
+        })
+
+        return relVal
       }
     },
     textStyle: { color: '#fff' },
@@ -120,7 +154,7 @@ const PositionDetails = props => {
         axisTick: {
           alignWithLabel: true
         },
-        data: ['3-3', '3-4', '3-5', '3-6', '3-7', '3-8', '3-9', '3-10', '3-11', '3-12']
+        data: map(result, item => formatToUTC0(1000 * item.blockTimestamp, 'YYYY-MM-DD HH:mm'))
       }
     ],
     yAxis: [
@@ -128,34 +162,7 @@ const PositionDetails = props => {
         type: 'value'
       }
     ],
-    series: [
-      {
-        name: 'A token',
-        type: 'bar',
-        stack: 'A',
-        data: [120, 132, 101, 134, 90, 230, 210, 90, 230, 210],
-        tooltip: {
-          valueFormatter: value => {
-            return `${value}(${((100 * value) / total).toFixed(2)}%)`
-          }
-        }
-      },
-      {
-        name: 'B token',
-        type: 'bar',
-        stack: 'A',
-        data: [220, 182, 191, 234, 290, 330, 310, 90, 230, 210],
-        tooltip: {
-          valueFormatter: value => {
-            return `${value}(${((100 * value) / total).toFixed(2)}%)`
-          }
-        }
-      }
-    ]
-  }
-
-  if (isEmpty(result)) {
-    return ''
+    series: nextSeries
   }
 
   return (
@@ -181,4 +188,4 @@ const PositionDetails = props => {
   )
 }
 
-export default PositionDetails
+export default TokenRadio

@@ -15,13 +15,13 @@ import { getStrategyDataCollect } from '@/services/api-service'
 
 // === Utils === //
 import moment from 'moment'
+import { BigNumber } from 'ethers'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed } from '@/utils/number-format'
-import { filter, isEmpty, map, reduce, groupBy, sortBy } from 'lodash'
+import { isEmpty, map, reduce, groupBy, sortBy, get } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
-import { BigNumber } from 'ethers'
 
 const decimals = BigNumber.from(10).pow(18)
 
@@ -36,16 +36,11 @@ const PriceChart = props => {
     const current = moment()
     const params = {
       end_seconds: current.format('X'),
-      start_seconds: current.subtract(8, 'days').format('X'),
-      types: 'current-price,base-order-lower,base-order-upper,limit-order-lower,limit-order-upper'
+      start_seconds: current.subtract(31, 'days').format('X'),
+      types: 'token-price'
     }
     return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
-      const nextContent = filter(content, item => {
-        if (item.type === 'limit-order-upper' || item.type === 'limit-order-lower') {
-          return !isEmpty(item.result)
-        }
-        return true
-      })
+      const nextContent = content
       const nextArray = map(
         groupBy(
           map(nextContent, item => {
@@ -53,7 +48,7 @@ const PriceChart = props => {
             return {
               blockNumber,
               blockTimestamp,
-              [type]: result
+              [type]: JSON.parse(result)
             }
           }),
           'blockNumber'
@@ -100,20 +95,24 @@ const PriceChart = props => {
     }
   }[deviceType]
 
+  const firstItemTokens = get(result, '[0].token-price', [])
+
+  const nextData = map(firstItemTokens, (item, index) => {
+    const tokenName = get(item, 'symbol')
+    return {
+      seriesName: `${tokenName} price`,
+      seriesData: map(result, item => toFixed(`${get(item, `token-price.${index}.price`)}`, decimals, 6)),
+      showSymbol: false
+    }
+  })
+
   const obj = {
     legend: {
-      data: ['Base Order Upper', 'Base Order Lower', 'Current Price', 'Limit Order Upper', 'Limit Order Lower'],
       textStyle: { color: '#fff' }
     },
     xAxisData: map(result, item => formatToUTC0(1000 * item.blockTimestamp, 'YYYY-MM-DD HH:mm')),
-    data: [
-      { seriesName: 'Base Order Upper', seriesData: map(result, item => toFixed(item['base-order-upper'], decimals)), showSymbol: false },
-      { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals)), showSymbol: false },
-      { seriesName: 'Current Price', seriesData: map(result, item => toFixed(item['current-price'], decimals)), showSymbol: false },
-      { seriesName: 'Limit Order Upper', seriesData: map(result, item => toFixed(item['limit-order-upper'], decimals)), showSymbol: false },
-      { seriesName: 'Limit Order Lower', seriesData: map(result, item => toFixed(item['limit-order-lower'], decimals)), showSymbol: false }
-    ],
-    color: ['#70cef5', '#70cef5', '#b7a8e8', '#d89614', '#d89614'],
+    data: nextData,
+    color: ['#70cef5', '#b7a8e8', '#d89614'],
     yAxis: {
       min: value => {
         return Math.floor(value.min * 999) / 1000

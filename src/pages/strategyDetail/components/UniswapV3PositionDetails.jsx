@@ -14,10 +14,15 @@ import { getStrategyDataCollect } from '@/services/api-service'
 
 // === Utils === //
 import moment from 'moment'
-import { filter, isEmpty, map, reduce, groupBy, sortBy } from 'lodash'
+import { BigNumber } from 'ethers'
+import { formatToUTC0 } from '@/utils/date'
+import { toFixed } from '@/utils/number-format'
+import { isEmpty, map, reduce, groupBy, sortBy } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
+
+const decimals = BigNumber.from(10).pow(18)
 
 const UniswapV3PositionDetails = props => {
   const { strategyName } = props
@@ -31,16 +36,11 @@ const UniswapV3PositionDetails = props => {
     const current = moment()
     const params = {
       end_seconds: current.format('X'),
-      start_seconds: current.subtract(8, 'days').format('X'),
-      types: 'position-detail'
+      start_seconds: current.subtract(31, 'days').format('X'),
+      types: 'base-amount0-for-liquidity,base-amount1-for-liquidity,limit-amount0-for-liquidity,limit-amount1-for-liquidity '
     }
     return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
-      const nextContent = filter(content, item => {
-        if (item.type === 'limit-order-upper' || item.type === 'limit-order-lower') {
-          return !isEmpty(item.result)
-        }
-        return true
-      })
+      const nextContent = content
       const nextArray = map(
         groupBy(
           map(nextContent, item => {
@@ -48,7 +48,7 @@ const UniswapV3PositionDetails = props => {
             return {
               blockNumber,
               blockTimestamp,
-              [type]: result
+              [type]: toFixed(result, decimals, 6)
             }
           }),
           'blockNumber'
@@ -95,7 +95,10 @@ const UniswapV3PositionDetails = props => {
     }
   }[deviceType]
 
-  const total = 225
+  if (isEmpty(result)) {
+    return ''
+  }
+
   const option = {
     tooltip: {
       trigger: 'axis',
@@ -119,7 +122,7 @@ const UniswapV3PositionDetails = props => {
         axisTick: {
           alignWithLabel: true
         },
-        data: ['3-3', '3-4', '3-5', '3-6', '3-7', '3-8', '3-9', '3-10', '3-11', '3-12']
+        data: map(result, item => formatToUTC0(1000 * item.blockTimestamp, 'YYYY-MM-DD HH:mm'))
       }
     ],
     yAxis: [
@@ -127,56 +130,33 @@ const UniswapV3PositionDetails = props => {
         type: 'value'
       }
     ],
+    color: [ '#CABBFF', '#7E6DD2', '#95706d', '#d87a80'],
     series: [
       {
-        name: 'base lower',
+        name: 'base amount0',
         type: 'bar',
         stack: 'A',
-        data: [230, 210, 220, 182, 191, 234, 290, 330, 310, 90, 230, 210],
-        tooltip: {
-          valueFormatter: value => {
-            return `${value}(${((100 * value) / total).toFixed(2)}%)`
-          }
-        }
+        data: map(result, 'base-amount0-for-liquidity')
       },
       {
-        name: 'limit lower',
+        name: 'base amount1',
         type: 'bar',
         stack: 'A',
-        data: [90, 220, 182, 191, 234, 290, 330, 310, 90, 230, 210],
-        tooltip: {
-          valueFormatter: value => {
-            return `${value}(${((100 * value) / total).toFixed(2)}%)`
-          }
-        }
+        data: map(result, 'base-amount1-for-liquidity')
       },
       {
-        name: 'limit upper',
+        name: 'limit amount0',
         type: 'bar',
         stack: 'A',
-        data: [101, 120, 132, 134, 90, 230, 210, 90, 230, 210],
-        tooltip: {
-          valueFormatter: value => {
-            return `${value}(${((100 * value) / total).toFixed(2)}%)`
-          }
-        }
+        data: map(result, 'limit-amount0-for-liquidity')
       },
       {
-        name: 'base upper',
+        name: 'limit amount1',
         type: 'bar',
         stack: 'A',
-        data: [120, 132, 101, 134, 90, 230, 210, 90, 230, 210],
-        tooltip: {
-          valueFormatter: value => {
-            return `${value}(${((100 * value) / total).toFixed(2)}%)`
-          }
-        }
+        data: map(result, 'limit-amount1-for-liquidity')
       }
     ]
-  }
-
-  if (isEmpty(result)) {
-    return ''
   }
 
   return (

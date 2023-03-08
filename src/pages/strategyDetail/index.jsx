@@ -135,8 +135,6 @@ const Strategy = props => {
     )
   }, [initialState, ori, strategy])
 
-  console.log('initialState', result)
-
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
 
@@ -542,11 +540,11 @@ const Strategy = props => {
     },
     xAxisData: map(result, item => formatToUTC0(1000 * item.blockTimestamp, 'YYYY-MM-DD HH:mm')),
     data: [
-      { seriesName: 'Base Order Upper', seriesData: map(result, item => toFixed(item['base-order-upper'], decimals)), showSymbol: false },
-      { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals)), showSymbol: false },
-      { seriesName: 'Current Price', seriesData: map(result, item => toFixed(item['current-price'], decimals)), showSymbol: false },
-      { seriesName: 'Limit Order Upper', seriesData: map(result, item => toFixed(item['limit-order-upper'], decimals)), showSymbol: false },
-      { seriesName: 'Limit Order Lower', seriesData: map(result, item => toFixed(item['limit-order-lower'], decimals)), showSymbol: false }
+      { seriesName: 'Base Order Upper', seriesData: map(result, item => toFixed(item['base-order-upper'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Current Price', seriesData: map(result, item => toFixed(item['current-price'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Limit Order Upper', seriesData: map(result, item => toFixed(item['limit-order-upper'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Limit Order Lower', seriesData: map(result, item => toFixed(item['limit-order-lower'], decimals, 6)), showSymbol: false }
     ],
     color: ['#70cef5', '#70cef5', '#b7a8e8', '#d89614', '#d89614'],
     yAxis: {
@@ -819,7 +817,7 @@ const Strategy = props => {
                             return (
                               <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
                                 <Space>
-                                  <CoinSuperPosition key={key} array={key} />
+                                  <CoinSuperPosition key={key} array={[key]} />
                                   {toFixed(details['token-ratio'][key], decimals, displayDecimals)}
                                 </Space>
                               </div>
