@@ -870,7 +870,7 @@ const Strategy = props => {
           </div>
         </Card>
       </Suspense>
-      {ori && (
+      {ori && !isEmpty(result) && (
         <Suspense fallback={null}>
           <Card
             className={styles.offlineCard}
@@ -908,7 +908,7 @@ const Strategy = props => {
       )}
       {ori && (
         <Suspense fallback={null}>
-          <UniswapV3PositionDetails strategyName={strategy?.strategyName} />
+          <UniswapV3PositionDetails names={get(details, 'position-detail.names', [])} strategyName={strategy?.strategyName} />
         </Suspense>
       )}
       {ori && (

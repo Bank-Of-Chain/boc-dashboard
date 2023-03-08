@@ -17,7 +17,7 @@ import moment from 'moment'
 import { BigNumber } from 'ethers'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed } from '@/utils/number-format'
-import { isEmpty, map, reduce, groupBy, sortBy } from 'lodash'
+import { isEmpty, map, reduce, groupBy, sortBy, get } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
@@ -25,7 +25,7 @@ import styles from './style.less'
 const decimals = BigNumber.from(10).pow(18)
 
 const UniswapV3PositionDetails = props => {
-  const { strategyName } = props
+  const { strategyName, names } = props
   const deviceType = useDeviceType()
 
   const { initialState } = useModel('@@initialState')
@@ -130,28 +130,28 @@ const UniswapV3PositionDetails = props => {
         type: 'value'
       }
     ],
-    color: [ '#CABBFF', '#7E6DD2', '#95706d', '#d87a80'],
+    color: ['#5470c6', '#73c0de', '#fc8452', '#fcb952'],
     series: [
       {
-        name: 'base amount0',
+        name: `${get(names, '[0]', 'base')} amount0`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'base-amount0-for-liquidity')
       },
       {
-        name: 'base amount1',
+        name: `${get(names, '[0]', 'base')} amount1`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'base-amount1-for-liquidity')
       },
       {
-        name: 'limit amount0',
+        name: `${get(names, '[1]', 'limit')} amount0`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'limit-amount0-for-liquidity')
       },
       {
-        name: 'limit amount1',
+        name: `${get(names, '[1]', 'limit')} amount1`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'limit-amount1-for-liquidity')
