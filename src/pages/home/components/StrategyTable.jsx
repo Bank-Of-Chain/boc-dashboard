@@ -22,9 +22,12 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
-  const { data: searchData, loading: dataLoading } = useRequest(() => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100), {
-    formatResult: resp => sortBy(resp.content, ['strategyName'])
-  })
+  const { data: searchData, loading: dataLoading } = useRequest(
+    () => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100).catch(() => []),
+    {
+      formatResult: resp => sortBy(resp.content, ['strategyName'])
+    }
+  )
   if (!initialState.chain) return null
 
   // boc-service fixed the number to 6

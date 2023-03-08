@@ -70,6 +70,9 @@ const USDiHome = () => {
       const nextApy7 = get(data, 'content.[0].apy', 0)
       setApy7(nextApy7)
     })
+    .catch(e => {
+      console.error(e)
+    })
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
