@@ -133,25 +133,25 @@ const UniswapV3PositionDetails = props => {
     color: ['#5470c6', '#73c0de', '#fc8452', '#fcb952'],
     series: [
       {
-        name: `${get(names, '[0]', 'base')} amount0`,
+        name: `base ${get(names, '[0]', '')}`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'base-amount0-for-liquidity')
       },
       {
-        name: `${get(names, '[0]', 'base')} amount1`,
+        name: `base ${get(names, '[1]', '')}`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'base-amount1-for-liquidity')
       },
       {
-        name: `${get(names, '[1]', 'limit')} amount0`,
+        name: `limit ${get(names, '[0]', '')}`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'limit-amount0-for-liquidity')
       },
       {
-        name: `${get(names, '[1]', 'limit')} amount1`,
+        name: `limit ${get(names, '[1]', '')}`,
         type: 'bar',
         stack: 'A',
         data: map(result, 'limit-amount1-for-liquidity')
