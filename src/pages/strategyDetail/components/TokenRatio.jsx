@@ -129,7 +129,8 @@ const TokenRadio = props => {
         var relVal = params[0].name
 
         forEach(firstItemTokens, (item, index) => {
-          const val = params[index].data
+          const val = get(params, `[${index}].data`)
+          if (isEmpty(val)) return
           const total = get(result, `${params[index].dataIndex}.token-ratio-new.total`, '0')
           const percents = total === '0' ? '0' : ((100 * val) / total).toFixed(2)
           relVal += `<br/>${params[index].marker} ${params[index].seriesName} : <span style="font-weight: bold">${val}(${percents}%)</span>`
