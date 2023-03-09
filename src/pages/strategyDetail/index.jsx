@@ -34,7 +34,7 @@ import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
-import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, keys, groupBy, sortBy } from 'lodash'
+import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, groupBy, sortBy } from 'lodash'
 
 // === Services === //
 import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails, getStrategyDataCollect } from '@/services/api-service'
@@ -801,7 +801,7 @@ const Strategy = props => {
                   </Descriptions.Item>
                 )}
 
-                {!isNil(details['token-ratio']) && (
+                {!isNil(details['token-ratio-new']) && (
                   <Descriptions.Item
                     label={
                       <Space>
@@ -813,12 +813,12 @@ const Strategy = props => {
                     <Tooltip
                       title={
                         <div>
-                          {map(keys(details['token-ratio']), key => {
+                          {map(get(details, 'token-ratio-new.tokens', []), (token, index) => {
                             return (
                               <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
                                 <Space>
-                                  <CoinSuperPosition key={key} array={[key]} />
-                                  {toFixed(details['token-ratio'][key], decimals, displayDecimals)}
+                                  <CoinSuperPosition key={token} array={[token]} />
+                                  {toFixed(get(details, `token-ratio-new.amounts.[${index}]`, '0'), decimals, displayDecimals)}
                                 </Space>
                               </div>
                             )
