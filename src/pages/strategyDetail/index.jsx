@@ -16,6 +16,13 @@ import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space, Tooltip } fro
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import IFrameLoader from '@/components/IFrameLoader'
+import PositionDetails from './components/PositionDetails'
+import PriceChart from './components/PriceChart'
+import TokenRatio from './components/TokenRatio'
+import UniswapV3PositionDetails from './components/UniswapV3PositionDetails'
+
+// === Hooks === //
+import { useAsync } from 'react-async-hook'
 
 // === Utils === //
 import moment from 'moment'
@@ -27,10 +34,10 @@ import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
-import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, keys } from 'lodash'
+import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, groupBy, sortBy } from 'lodash'
 
 // === Services === //
-import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails } from '@/services/api-service'
+import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails, getStrategyDataCollect } from '@/services/api-service'
 
 // === Hooks === //
 import useStrategyDetails from '@/hooks/useStrategyDetails'
@@ -77,7 +84,56 @@ const Strategy = props => {
   const [isVerifiedApyEnable, setIsVerifiedApyEnable] = useState(true)
 
   const details = useStrategyDetails(initialState.chain, initialState.vaultAddress, id)
-  console.log('initialState', details)
+
+  const { loading: collectLoading, result } = useAsync(() => {
+    if (!ori) return
+    if (isEmpty(strategy)) return
+    const { chain, vaultAddress } = initialState
+    const { strategyName } = strategy
+    const current = moment()
+    const params = {
+      end_seconds: current.format('X'),
+      start_seconds: current.subtract(8, 'days').format('X'),
+      types: 'current-price,base-order-lower,base-order-upper,limit-order-lower,limit-order-upper'
+    }
+    return (
+      ori &&
+      getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
+        const nextContent = filter(content, item => {
+          if (item.type === 'limit-order-upper' || item.type === 'limit-order-lower') {
+            return !isEmpty(item.result)
+          }
+          return true
+        })
+        const nextArray = map(
+          groupBy(
+            map(nextContent, item => {
+              const { type, result, blockNumber, blockTimestamp } = item
+              return {
+                blockNumber,
+                blockTimestamp,
+                [type]: result
+              }
+            }),
+            'blockNumber'
+          ),
+          items => {
+            return reduce(
+              items,
+              (rs, item) => {
+                return {
+                  ...rs,
+                  ...item
+                }
+              },
+              {}
+            )
+          }
+        )
+        return sortBy(nextArray, 'blockNumber')
+      })
+    )
+  }, [initialState, ori, strategy])
 
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
@@ -295,10 +351,10 @@ const Strategy = props => {
       textStyle: { color: '#fff' }
     },
     xAxisData: map(apyArray, 'date'),
-    data
+    data,
+    color: ['#CABBFF', '#7E6DD2', '#ffb980', '#d87a80', '#e5cf0d', '#97b552', '#8d98b3', '#07a2a4', '#95706d', '#dc69aa']
   }
   const option = multipleLine(obj)
-  option.color = ['#CABBFF', '#7E6DD2', '#ffb980', '#d87a80', '#e5cf0d', '#97b552', '#8d98b3', '#07a2a4', '#95706d', '#dc69aa']
   option.series.forEach((serie, index) => {
     serie.connectNulls = false
     serie.z = option.series.length - index
@@ -476,6 +532,41 @@ const Strategy = props => {
   const icon = <InfoCircleOutlined style={{ fontSize: '1rem' }} />
 
   const extendsWarn = get(BorrowingExtends, `${strategy.strategyName}.warn`, '')
+
+  const collectObj = {
+    legend: {
+      data: ['Base Order Upper', 'Base Order Lower', 'Current Price', 'Limit Order Upper', 'Limit Order Lower'],
+      textStyle: { color: '#fff' }
+    },
+    xAxisData: map(result, item => formatToUTC0(1000 * item.blockTimestamp, 'YYYY-MM-DD HH:mm')),
+    data: [
+      { seriesName: 'Base Order Upper', seriesData: map(result, item => toFixed(item['base-order-upper'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Base Order Lower', seriesData: map(result, item => toFixed(item['base-order-lower'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Current Price', seriesData: map(result, item => toFixed(item['current-price'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Limit Order Upper', seriesData: map(result, item => toFixed(item['limit-order-upper'], decimals, 6)), showSymbol: false },
+      { seriesName: 'Limit Order Lower', seriesData: map(result, item => toFixed(item['limit-order-lower'], decimals, 6)), showSymbol: false }
+    ],
+    color: ['#70cef5', '#70cef5', '#b7a8e8', '#d89614', '#d89614'],
+    yAxis: {
+      min: value => {
+        return Math.floor(value.min * 999) / 1000
+      },
+      max: value => {
+        return Math.ceil(value.max * 1001) / 1000
+      }
+    },
+    dataZoom: [
+      {
+        end: 100,
+        start: 0
+      }
+    ],
+    grid: {
+      left: 50,
+      right: 20
+    }
+  }
+  const collectOption = multipleLine(collectObj)
 
   return (
     <GridContent>
@@ -710,7 +801,7 @@ const Strategy = props => {
                   </Descriptions.Item>
                 )}
 
-                {!isNil(details['token-ratio']) && (
+                {!isNil(details['token-ratio-new']) && (
                   <Descriptions.Item
                     label={
                       <Space>
@@ -722,13 +813,12 @@ const Strategy = props => {
                     <Tooltip
                       title={
                         <div>
-                          {map(keys(details['token-ratio']), key => {
-                            console.log('key=', details['token-ratio'], key)
+                          {map(get(details, 'token-ratio-new.tokens', []), (token, index) => {
                             return (
                               <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
                                 <Space>
-                                  <CoinSuperPosition key={key} array={key} />
-                                  {toFixed(details['token-ratio'][key], decimals, displayDecimals)}
+                                  <CoinSuperPosition key={token} array={[token]} />
+                                  {toFixed(get(details, `token-ratio-new.amounts.[${index}]`, '0'), decimals, displayDecimals)}
                                 </Space>
                               </div>
                             )
@@ -780,6 +870,29 @@ const Strategy = props => {
           </div>
         </Card>
       </Suspense>
+      {ori && !isEmpty(result) && (
+        <Suspense fallback={null}>
+          <Card
+            className={styles.offlineCard}
+            bordered={false}
+            style={{
+              marginTop: 32
+            }}
+            {...chartResponsiveConfig.cardProps}
+          >
+            <div className={styles.cardTitle}>策略做市区间与价格</div>
+            <div style={chartResponsiveConfig.chartStyle}>
+              {collectLoading ? (
+                <div className={styles.loadingContainer}>
+                  <Spin size="large" />
+                </div>
+              ) : (
+                <LineEchart option={collectOption} style={{ height: '100%', width: '100%' }} />
+              )}
+            </div>
+          </Card>
+        </Suspense>
+      )}
       {ori &&
         map(URL[strategy.strategyName], item => {
           return (
@@ -788,6 +901,26 @@ const Strategy = props => {
             </Suspense>
           )
         })}
+      {ori && (
+        <Suspense fallback={null}>
+          <PositionDetails strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
+      {ori && (
+        <Suspense fallback={null}>
+          <UniswapV3PositionDetails names={get(details, 'position-detail.names', [])} strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
+      {ori && (
+        <Suspense fallback={null}>
+          <PriceChart strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
+      {ori && (
+        <Suspense fallback={null}>
+          <TokenRatio strategyName={strategy?.strategyName} />
+        </Suspense>
+      )}
       <Suspense fallback={null}>
         <StrategyApyTable
           vault={vault}
