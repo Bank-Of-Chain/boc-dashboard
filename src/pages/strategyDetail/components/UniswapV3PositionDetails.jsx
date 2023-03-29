@@ -37,7 +37,7 @@ const UniswapV3PositionDetails = props => {
     const params = {
       end_seconds: current.format('X'),
       start_seconds: current.subtract(31, 'days').format('X'),
-      types: 'base-amount0-for-liquidity,base-amount1-for-liquidity,limit-amount0-for-liquidity,limit-amount1-for-liquidity '
+      types: 'base-amount0-for-liquidity,base-amount1-for-liquidity,limit-amount0-for-liquidity,limit-amount1-for-liquidity'
     }
     return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
       const nextContent = content
