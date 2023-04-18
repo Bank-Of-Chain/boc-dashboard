@@ -100,6 +100,7 @@ const GlobalHeaderRight = () => {
     })
   }, [userProvider, address, history.location.pathname])
 
+  console.log('history=', history.location.pathname)
   return (
     <div className={styles.header}>
       <Space
@@ -117,28 +118,29 @@ const GlobalHeaderRight = () => {
         <Button type="text" href="https://docs.bankofchain.io/" target="_blank" className={styles.colorful}>
           Docs
         </Button>
-        {isLoading ? (
-          <LoadingOutlined style={{ fontSize: 24 }} spin />
-        ) : isEmpty(address) ? (
-          <Button className={styles.connectBtn} onClick={handleClickConnect}>
-            Connect Wallet
-          </Button>
-        ) : (
-          [
-            <Button className={styles.myDasboardBtn} key="mine" icon={<Icon component={MyAccountIcon} />} type="primary" onClick={goToMyAccount}>
-              My Account
-            </Button>,
-            <Avatar
-              key="avatar"
-              menu
-              showChangeWallet={!isInMobileWalletApp()}
-              onChangeWallet={handleClickConnect}
-              address={address}
-              logoutOfWeb3Modal={disconnect}
-              onCopy={copyAddress}
-            />
-          ]
-        )}
+        {history.location.pathname === '/reports' &&
+          (isLoading ? (
+            <LoadingOutlined style={{ fontSize: 24 }} spin />
+          ) : isEmpty(address) ? (
+            <Button className={styles.connectBtn} onClick={handleClickConnect}>
+              Connect Wallet
+            </Button>
+          ) : (
+            [
+              <Button className={styles.myDasboardBtn} key="mine" icon={<Icon component={MyAccountIcon} />} type="primary" onClick={goToMyAccount}>
+                My Account
+              </Button>,
+              <Avatar
+                key="avatar"
+                menu
+                showChangeWallet={!isInMobileWalletApp()}
+                onChangeWallet={handleClickConnect}
+                address={address}
+                logoutOfWeb3Modal={disconnect}
+                onCopy={copyAddress}
+              />
+            ]
+          ))}
       </Space>
       <WalletModal
         visible={walletModalVisible}
