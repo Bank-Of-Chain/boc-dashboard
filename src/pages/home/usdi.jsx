@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState, useMemo } from 'react'
 
 // === Components === //
 import { Row, Col } from 'antd'
@@ -11,6 +11,9 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import VaultChange from '@/components/VaultChange'
+
+// === Hooks === //
+import useErc20Token from '@/hooks/useErc20Token'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -27,9 +30,11 @@ import { useModel, history } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import { BigNumber } from 'ethers'
+import BN from 'bignumber.js'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
-import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN } from 'lodash'
+import { getJsonRpcProvider } from '@/utils/json-provider'
+import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN, cloneDeep, reduce } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
@@ -45,7 +50,10 @@ const USDiHome = () => {
 
   const { dataSource = {}, loading } = useDashboardData()
   const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource
-
+  const jsonRpcProvider = useMemo(() => getJsonRpcProvider(initialState.chain), [initialState.chain])
+  const vaultBufferAddress = useMemo(() => USDI.VAULT_BUFFER_ADDRESS[initialState.chain], [initialState.chain])
+  const { totalSupply } = useErc20Token(vaultBufferAddress, jsonRpcProvider)
+  console.log('totalSupply=', totalSupply.toString())
   useEffect(() => {
     if (!initialState.chain) {
       return
@@ -66,13 +74,14 @@ const USDiHome = () => {
       duration: APY_DURATION.weekly,
       limit: calDateRange,
       tokenType: TOKEN_TYPE.usdi
-    }).then(data => {
-      const nextApy7 = get(data, 'content.[0].apy', 0)
-      setApy7(nextApy7)
     })
-    .catch(e => {
-      console.error(e)
-    })
+      .then(data => {
+        const nextApy7 = get(data, 'content.[0].apy', 0)
+        setApy7(nextApy7)
+      })
+      .catch(e => {
+        console.error(e)
+      })
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
@@ -264,6 +273,18 @@ const USDiHome = () => {
       unit: '%'
     }
   ]
+  const vaultData = cloneDeep(dataSource.vault)
+  if (vaultData) {
+    const strategyTotal = reduce(
+      vaultData.strategies,
+      (rs, o) => {
+        return rs.plus(o.totalValue)
+      },
+      BN(0)
+    )
+    vaultData.totalValueInVault = BN(vaultData.totalAssets).plus(totalSupply.toString()).minus(strategyTotal).toString()
+  }
+
   return (
     <GridContent>
       <VaultChange />
@@ -287,7 +308,7 @@ const USDiHome = () => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
+            <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={vaultData} />
           </Suspense>
         </Col>
         <Col span={24}>

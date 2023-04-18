@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState, useMemo } from 'react'
 
 // === Components === //
 import { Row, Col } from 'antd'
@@ -11,6 +11,9 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import VaultChange from '@/components/VaultChange'
+
+// === Hooks === //
+import useErc20Token from '@/hooks/useErc20Token'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -27,8 +30,9 @@ import numeral from 'numeral'
 import moment from 'moment'
 import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
+import { getJsonRpcProvider } from '@/utils/json-provider'
+import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce, get } from 'lodash'
 
 // === Styles === //
@@ -42,6 +46,9 @@ const ETHiHome = () => {
   const [apy30, setApy30] = useState(0)
 
   const { initialState } = useModel('@@initialState')
+  const jsonRpcProvider = useMemo(() => getJsonRpcProvider(initialState.chain), [initialState.chain])
+  const vaultBufferAddress = useMemo(() => ETHI.VAULT_BUFFER_ADDRESS[initialState.chain], [initialState.chain])
+  const { totalSupply } = useErc20Token(vaultBufferAddress, jsonRpcProvider)
 
   const { dataSource = {}, loading } = useDashboardData()
   const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource
@@ -274,7 +281,7 @@ const ETHiHome = () => {
       },
       BN(0)
     )
-    vaultData.totalValueInVault = BN(vaultData.totalAssets).minus(strategyTotal).toString()
+    vaultData.totalValueInVault = BN(vaultData.totalAssets).plus(totalSupply.toString()).minus(strategyTotal).toString()
     vaultData.strategies.map(item => (item.totalValue = item.debtRecordInVault))
   }
 
