@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState, useMemo } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
 import { Row, Col } from 'antd'
@@ -11,9 +11,6 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import VaultChange from '@/components/VaultChange'
-
-// === Hooks === //
-import useErc20Token from '@/hooks/useErc20Token'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -33,7 +30,6 @@ import { BigNumber } from 'ethers'
 import BN from 'bignumber.js'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
-import { getJsonRpcProvider } from '@/utils/json-provider'
 import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN, cloneDeep, reduce } from 'lodash'
 
 // === Styles === //
@@ -50,10 +46,6 @@ const USDiHome = () => {
 
   const { dataSource = {}, loading } = useDashboardData()
   const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource
-  const jsonRpcProvider = useMemo(() => getJsonRpcProvider(initialState.chain), [initialState.chain])
-  const vaultBufferAddress = useMemo(() => USDI.VAULT_BUFFER_ADDRESS[initialState.chain], [initialState.chain])
-  const { totalSupply } = useErc20Token(vaultBufferAddress, jsonRpcProvider)
-  console.log('totalSupply=', totalSupply.toString())
   useEffect(() => {
     if (!initialState.chain) {
       return
@@ -282,7 +274,7 @@ const USDiHome = () => {
       },
       BN(0)
     )
-    vaultData.totalValueInVault = BN(vaultData.totalAssets).plus(totalSupply.toString()).minus(strategyTotal).toString()
+    vaultData.totalValueInVault = BN(vaultData.totalAssetsIncludeVaultBuffer).minus(strategyTotal).toString()
   }
 
   return (
