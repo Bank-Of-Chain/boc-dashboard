@@ -11,12 +11,14 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import VaultChange from '@/components/VaultChange'
+import { SoundOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
+import { notice } from '@/constants/notice'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
@@ -40,6 +42,7 @@ const USDiHome = () => {
   const [apyEchartOpt, setApyEchartOpt] = useState({})
   const [apy7, setApy7] = useState(0)
   const [apy30, setApy30] = useState(0)
+  const [isNoticeOpen, setIsNoticeOpen] = useState(false)
 
   const { initialState } = useModel('@@initialState')
 
@@ -66,13 +69,14 @@ const USDiHome = () => {
       duration: APY_DURATION.weekly,
       limit: calDateRange,
       tokenType: TOKEN_TYPE.usdi
-    }).then(data => {
-      const nextApy7 = get(data, 'content.[0].apy', 0)
-      setApy7(nextApy7)
     })
-    .catch(e => {
-      console.error(e)
-    })
+      .then(data => {
+        const nextApy7 = get(data, 'content.[0].apy', 0)
+        setApy7(nextApy7)
+      })
+      .catch(e => {
+        console.error(e)
+      })
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
@@ -268,6 +272,35 @@ const USDiHome = () => {
     <GridContent>
       <VaultChange />
       <Row gutter={[0, 30]}>
+        <Col span={24}>
+          <div
+            style={{
+              color: 'rgb(148, 163, 184)',
+              background: 'linear-gradient(111.68deg, rgba(87, 97, 125, 0.2) 7.59%, rgba(255, 255, 255, 0.078) 102.04%)',
+              padding: '1rem',
+              borderRadius: '1rem'
+            }}
+          >
+            <SoundOutlined />
+            &nbsp;&nbsp;
+            {isNoticeOpen ? (
+              <span>
+                <span>Please be well noticed !</span>
+                <br></br>
+                {notice}
+                <CaretUpOutlined style={{ float: 'right', lineHeight: 2, clear: 'both', cursor: 'pointer' }} onClick={() => setIsNoticeOpen(false)} />
+              </span>
+            ) : (
+              <span>
+                Please be well noticed !
+                <CaretDownOutlined
+                  style={{ float: 'right', lineHeight: 2, clear: 'both', cursor: 'pointer' }}
+                  onClick={() => setIsNoticeOpen(true)}
+                />
+              </span>
+            )}
+          </div>
+        </Col>
         <Col span={24}>
           <Suspense fallback={null}>
             <IntroduceRow data={introduceData} />
