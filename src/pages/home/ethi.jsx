@@ -11,12 +11,13 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import VaultChange from '@/components/VaultChange'
-import { SoundOutlined } from '@ant-design/icons'
+import { SoundOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons'
 
 // === Constants === //
 import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { notice } from '@/constants/notice'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
@@ -41,6 +42,7 @@ const ETHiHome = () => {
   const [apyEchartOpt, setApyEchartOpt] = useState({})
   const [apy7, setApy7] = useState(0)
   const [apy30, setApy30] = useState(0)
+  const [isNoticeOpen, setIsNoticeOpen] = useState(false)
 
   const { initialState } = useModel('@@initialState')
 
@@ -284,13 +286,32 @@ const ETHiHome = () => {
       <VaultChange />
       <Row gutter={[0, 30]}>
         <Col span={24}>
-          <div style={{ color: '#ec4899', background: 'yellow', padding: '1rem' }}>
+          <div
+            style={{
+              color: 'rgb(148, 163, 184)',
+              background: 'linear-gradient(111.68deg, rgba(87, 97, 125, 0.2) 7.59%, rgba(255, 255, 255, 0.078) 102.04%)',
+              padding: '1rem',
+              borderRadius: '1rem'
+            }}
+          >
             <SoundOutlined />
-            &nbsp; The BOC team is preparing for the BOC V2.0 release development and release, so the regular operation of the current online V1.0
-            release is suspended (including regular harvesting and warehousing). Therefore, it is expected that BoC APY will continue to decline even
-            to 0% in the near term. BOC V1.0 has invested in the strategy is still operating normally and the actual yield will be reflected in the
-            future when the strategy is reaped at an appropriate time. We&apos;re going to bring you a whole new version. Please contact us if you
-            have any questions or suggestions (contact@bankofchain.io)
+            &nbsp;&nbsp;
+            {isNoticeOpen ? (
+              <span>
+                <span>Please be well noticed !</span>
+                <br></br>
+                {notice}
+                <CaretUpOutlined style={{ float: 'right', lineHeight: 2, clear: 'both', cursor: 'pointer' }} onClick={() => setIsNoticeOpen(false)} />
+              </span>
+            ) : (
+              <span>
+                Please be well noticed !
+                <CaretDownOutlined
+                  style={{ float: 'right', lineHeight: 2, clear: 'both', cursor: 'pointer' }}
+                  onClick={() => setIsNoticeOpen(true)}
+                />
+              </span>
+            )}
           </div>
         </Col>
         <Col span={24}>
