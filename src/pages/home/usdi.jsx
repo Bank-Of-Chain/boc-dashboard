@@ -11,6 +11,7 @@ import TransationsTable from './components/TransationsTable'
 import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import VaultChange from '@/components/VaultChange'
+import { SoundOutlined } from '@ant-design/icons'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -66,13 +67,14 @@ const USDiHome = () => {
       duration: APY_DURATION.weekly,
       limit: calDateRange,
       tokenType: TOKEN_TYPE.usdi
-    }).then(data => {
-      const nextApy7 = get(data, 'content.[0].apy', 0)
-      setApy7(nextApy7)
     })
-    .catch(e => {
-      console.error(e)
-    })
+      .then(data => {
+        const nextApy7 = get(data, 'content.[0].apy', 0)
+        setApy7(nextApy7)
+      })
+      .catch(e => {
+        console.error(e)
+      })
     getValutAPYList({
       chainId: initialState.chain,
       duration: APY_DURATION.monthly,
@@ -268,6 +270,16 @@ const USDiHome = () => {
     <GridContent>
       <VaultChange />
       <Row gutter={[0, 30]}>
+        <Col span={24}>
+          <div style={{ color: '#ec4899', background: 'yellow', padding: '1rem' }}>
+            <SoundOutlined />
+            &nbsp; The BOC team is preparing for the BOC V2.0 release development and release, so the regular operation of the current online V1.0
+            release is suspended (including regular harvesting and warehousing). Therefore, it is expected that BoC APY will continue to decline even
+            to 0% in the near term. BOC V1.0 has invested in the strategy is still operating normally and the actual yield will be reflected in the
+            future when the strategy is reaped at an appropriate time. We&apos;re going to bring you a whole new version. Please contact us if you
+            have any questions or suggestions (contact@bankofchain.io)
+          </div>
+        </Col>
         <Col span={24}>
           <Suspense fallback={null}>
             <IntroduceRow data={introduceData} />
