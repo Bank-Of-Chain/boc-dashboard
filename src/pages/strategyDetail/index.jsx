@@ -788,6 +788,16 @@ const Strategy = props => {
                     {numeral(toFixed(details['current-price'], decimals)).format('0.000000')}
                   </Descriptions.Item>
                 )}
+                {!isNil(details['current-debt']) && (
+                  <Descriptions.Item label={<Space>Current Debt</Space>}>
+                    {numeral(toFixed(details['current-debt'], decimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
+                {!isNil(details['target-debt']) && (
+                  <Descriptions.Item label={<Space>Target Debt</Space>}>
+                    {numeral(toFixed(details['target-debt'], decimals)).format(displayFormat) + ` ${unit}`}
+                  </Descriptions.Item>
+                )}
                 {!isNil(details['allow-withdraw-asset']) && (
                   <Descriptions.Item
                     label={
