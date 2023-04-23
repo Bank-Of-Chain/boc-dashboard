@@ -522,6 +522,7 @@ const Reports = props => {
 
   const tvlChangeData = [
     {
+      key: 1,
       assetsBefore: get(loss, 'vaultAssetsBefore', '0'),
       assetsAfter: get(loss, 'vaultAssetsAfter', '0'),
       totalLoss: get(loss, 'totalLoss', '0'),
@@ -583,32 +584,6 @@ const Reports = props => {
       render: value => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
       }
-    },
-    {
-      title: 'Gas Used',
-      dataIndex: 'gasUsed',
-      key: 'gasUsed'
-    },
-    {
-      title: 'Gas Price(Gwei)',
-      dataIndex: 'gasPrice',
-      key: 'gasPrice',
-      render: value => {
-        const decimals = BigNumber.from(10).pow(9)
-        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
-      }
-    },
-    {
-      title: 'Txn Hash',
-      dataIndex: 'txnHash',
-      key: 'txnHash',
-      width: '14rem',
-      ellipsis: true,
-      render: text => (
-        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
-          {text}
-        </a>
-      )
     }
   ]
 
@@ -643,28 +618,12 @@ const Reports = props => {
       }
     },
     {
-      title: `From Token Price（${loss?.currency}）`,
-      dataIndex: 'fromTokenPriceRate',
-      key: 'fromTokenPriceRate',
-      render: value => {
-        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
-      }
-    },
-    {
       title: 'To Amount',
       dataIndex: 'toAmount',
       key: 'toAmount',
       render: (value, item) => {
         const decimals = BigNumber.from(10).pow(item.toTokenDecimal)
         return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, displayDecimals)}</span>
-      }
-    },
-    {
-      title: `To Token Price（${loss?.currency}）`,
-      dataIndex: 'toTokenPriceRate',
-      key: 'toTokenPriceRate',
-      render: value => {
-        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
       }
     },
     {
@@ -682,41 +641,6 @@ const Reports = props => {
       render: value => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
       }
-    },
-    {
-      title: 'Gas Used',
-      dataIndex: 'gasUsed',
-      key: 'gasUsed'
-    },
-    {
-      title: 'Gas Price(Gwei)',
-      dataIndex: 'gasPrice',
-      key: 'gasPrice',
-      render: value => {
-        const decimals = BigNumber.from(10).pow(9)
-        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
-      }
-    },
-    {
-      title: 'Path',
-      dataIndex: 'exchangeName',
-      key: 'exchangeName',
-      render: value => {
-        if (isArray(value)) return value.join(' ')
-        return value
-      }
-    },
-    {
-      title: 'Txn Hash',
-      dataIndex: 'txnHash',
-      key: 'txnHash',
-      width: '14rem',
-      ellipsis: true,
-      render: text => (
-        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
-          {text}
-        </a>
-      )
     }
   ]
 
@@ -776,32 +700,6 @@ const Reports = props => {
       render: value => {
         return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
       }
-    },
-    {
-      title: 'Gas Used',
-      dataIndex: 'gasUsed',
-      key: 'gasUsed'
-    },
-    {
-      title: 'Gas Price(Gwei)',
-      dataIndex: 'gasPrice',
-      key: 'gasPrice',
-      render: value => {
-        const decimals = BigNumber.from(10).pow(9)
-        return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
-      }
-    },
-    {
-      title: 'Txn Hash',
-      dataIndex: 'txnHash',
-      key: 'txnHash',
-      width: '14rem',
-      ellipsis: true,
-      render: text => (
-        <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
-          {text}
-        </a>
-      )
     }
   ]
 
@@ -854,12 +752,253 @@ const Reports = props => {
     [DEVICE_TYPE.Mobile]: smallConfig
   }[deviceType]
 
+  const swapExpandedRowRender = item => {
+    const { details = [] } = item
+    const columns = [
+      {
+        title: 'From Amount',
+        dataIndex: 'fromAmount',
+        key: 'fromAmount',
+        render: value => {
+          const decimals = BigNumber.from(10).pow(item.fromTokenDecimal)
+          return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `From Token Price（${loss?.currency}）`,
+        dataIndex: 'fromTokenPriceRate',
+        key: 'fromTokenPriceRate',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+        }
+      },
+      {
+        title: 'To Amount',
+        dataIndex: 'toAmount',
+        key: 'toAmount',
+        render: value => {
+          const decimals = BigNumber.from(10).pow(item.toTokenDecimal)
+          return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `To Token Price（${loss?.currency}）`,
+        dataIndex: 'toTokenPriceRate',
+        key: 'toTokenPriceRate',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+        }
+      },
+      {
+        title: 'Loss',
+        dataIndex: 'loss',
+        key: 'loss',
+        render: value => {
+          const decimals = BigNumber.from(10).pow(item.toTokenDecimal)
+          return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: 'Gas Fees(ETH)',
+        dataIndex: 'gasFees',
+        key: 'gasFees',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+        }
+      },
+      {
+        title: 'Gas Used',
+        dataIndex: 'gasUsed',
+        key: 'gasUsed'
+      },
+      {
+        title: 'Gas Price(Gwei)',
+        dataIndex: 'gasPrice',
+        key: 'gasPrice',
+        render: value => {
+          const decimals = BigNumber.from(10).pow(9)
+          return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
+        }
+      },
+      {
+        title: 'Path',
+        dataIndex: 'exchangeName',
+        key: 'exchangeName',
+        render: value => {
+          if (isArray(value)) return value.join(' ')
+          return value
+        }
+      },
+      {
+        title: 'Txn Hash',
+        dataIndex: 'txnHash',
+        key: 'txnHash',
+        width: '14rem',
+        ellipsis: true,
+        render: text => (
+          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+            {text}
+          </a>
+        )
+      }
+    ]
+
+    return <Table size="small" style={{ margin: '1rem 0', marginRight: '1rem' }} columns={columns} dataSource={details} pagination={false} />
+  }
+
+  const lendExpandedRowRender = item => {
+    const { details = [] } = item
+    const columns = [
+      {
+        title: `Before（${loss?.currency}）`,
+        dataIndex: 'before',
+        key: 'before',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `After（${loss?.currency}）`,
+        dataIndex: 'after',
+        key: 'after',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `Lend Assets Value（${loss?.currency}）`,
+        dataIndex: 'lendValue',
+        key: 'lendValue',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `Loss（${loss?.currency}）`,
+        dataIndex: 'loss',
+        key: 'loss',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: 'Gas Fees（ETH）',
+        dataIndex: 'gasFees',
+        key: 'gasFees',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
+        }
+      },
+      {
+        title: 'Gas Used',
+        dataIndex: 'gasUsed',
+        key: 'gasUsed'
+      },
+      {
+        title: 'Gas Price(Gwei)',
+        dataIndex: 'gasPrice',
+        key: 'gasPrice',
+        render: value => {
+          const decimals = BigNumber.from(10).pow(9)
+          return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
+        }
+      },
+      {
+        title: 'Txn Hash',
+        dataIndex: 'txnHash',
+        key: 'txnHash',
+        width: '14rem',
+        ellipsis: true,
+        render: text => (
+          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+            {text}
+          </a>
+        )
+      }
+    ]
+
+    return <Table size="small" style={{ margin: '1rem 0' }} columns={columns} dataSource={details} pagination={false} />
+  }
+
+  const redeemExpandedRowRender = item => {
+    const { details = [] } = item
+    const columns = [
+      {
+        title: `Before（${loss?.currency}）`,
+        dataIndex: 'before',
+        key: 'before',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `After（${loss?.currency}）`,
+        dataIndex: 'after',
+        key: 'after',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `Redeem Assets Value（${loss?.currency}）`,
+        dataIndex: 'redeemValue',
+        key: 'redeemValue',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: `Loss（${loss?.currency}）`,
+        dataIndex: 'loss',
+        key: 'loss',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: 'Gas Fees(ETH)',
+        dataIndex: 'gasFees',
+        key: 'gasFees',
+        render: value => {
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        }
+      },
+      {
+        title: 'Gas Used',
+        dataIndex: 'gasUsed',
+        key: 'gasUsed'
+      },
+      {
+        title: 'Gas Price(Gwei)',
+        dataIndex: 'gasPrice',
+        key: 'gasPrice',
+        render: value => {
+          const decimals = BigNumber.from(10).pow(9)
+          return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, 6)}</span>
+        }
+      },
+      {
+        title: 'Txn Hash',
+        dataIndex: 'txnHash',
+        key: 'txnHash',
+        width: '14rem',
+        ellipsis: true,
+        render: text => (
+          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+            {text}
+          </a>
+        )
+      }
+    ]
+
+    return <Table size="small" style={{ margin: '1rem 0' }} columns={columns} dataSource={details} pagination={false} />
+  }
+
   return (
     <GridContent>
       <Suspense fallback={null}>
         <VaultChange />
       </Suspense>
-      {/* <Suspense fallback={null}>{initialState.vault === 'usdi' && <ChainChange shouldChangeChain />}</Suspense> */}
       <Suspense fallback={null}>
         <Card bordered={false} {...listResponsiveConfig.cardProps}>
           <div className={styles.title}>Allocation Reports</div>
@@ -1022,8 +1161,10 @@ const Reports = props => {
                   </Descriptions.Item>
                 </Descriptions>
                 <Table
+                  rowKey={record => record.txnHash}
                   columns={redeemChangeColumns}
                   dataSource={redeemChangeData}
+                  expandable={{ expandedRowRender: redeemExpandedRowRender, defaultExpandedRowKeys: [get(redeemChangeData, '[0].txnHash')] }}
                   scroll={{ x: 1600, y: 400 }}
                   pagination={false}
                   {...detailTableResponsiveConfig.tableProps}
@@ -1046,8 +1187,13 @@ const Reports = props => {
                   </Descriptions.Item>
                 </Descriptions>
                 <Table
+                  rowKey={record => record.fromToken + record.toToken}
                   columns={swapChangeColumns}
                   dataSource={swapChangeData}
+                  expandable={{
+                    expandedRowRender: swapExpandedRowRender,
+                    defaultExpandedRowKeys: [get(swapChangeData, '[0].fromToken') + get(swapChangeData, '[0].toToken')]
+                  }}
                   scroll={{ x: 1600, y: 400 }}
                   pagination={false}
                   {...detailTableResponsiveConfig.tableProps}
@@ -1070,8 +1216,10 @@ const Reports = props => {
                   </Descriptions.Item>
                 </Descriptions>
                 <Table
+                  rowKey={record => record.name}
                   columns={lendChangeColumns}
                   dataSource={lendChangeData}
+                  expandable={{ expandedRowRender: lendExpandedRowRender, defaultExpandedRowKeys: [get(lendChangeData, '[0].name')] }}
                   scroll={{ x: 1600, y: 400 }}
                   pagination={false}
                   {...detailTableResponsiveConfig.tableProps}
