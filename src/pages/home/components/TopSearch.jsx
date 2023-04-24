@@ -10,7 +10,10 @@ import { toFixed } from '@/utils/number-format'
 import { mapValues, values, groupBy, reduce, filter } from 'lodash'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
-const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}, unit }) => {
+// === Constants === //
+import { STRATEGIES_MAP } from '@/constants/strategies'
+
+const TopSearch = ({ tokenDecimals, displayDecimals, visitData = {}, unit }) => {
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
 
@@ -42,7 +45,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, strategyMap, visitData = {}
           BN(0)
         )
         return {
-          name: strategyMap[initialState.chain][key],
+          name: STRATEGIES_MAP[key],
           amount,
           percent: amount.div(tvl)
         }

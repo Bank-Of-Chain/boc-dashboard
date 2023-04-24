@@ -15,7 +15,6 @@ import styles from '../style.less'
 export default function ProtocolAllocation({
   loading = false,
   tokenDecimals,
-  strategyMap = {},
   vaultData = {},
   unit = 'USD',
   displayDecimals = TOKEN_DISPLAY_DECIMALS
@@ -44,7 +43,6 @@ export default function ProtocolAllocation({
           <Suspense fallback={null}>
             <ProportionSales
               loading={loading}
-              strategyMap={strategyMap}
               tokenDecimals={tokenDecimals}
               displayDecimals={displayDecimals}
               visitData={vaultData || {}}
@@ -54,14 +52,7 @@ export default function ProtocolAllocation({
         </Col>
         <Col xl={12} lg={24} md={24} sm={24} xs={24}>
           <Suspense fallback={null}>
-            <TopSearch
-              loading={loading}
-              strategyMap={strategyMap}
-              tokenDecimals={tokenDecimals}
-              displayDecimals={displayDecimals}
-              visitData={vaultData || {}}
-              unit={unit}
-            />
+            <TopSearch loading={loading} tokenDecimals={tokenDecimals} displayDecimals={displayDecimals} visitData={vaultData || {}} unit={unit} />
           </Suspense>
         </Col>
       </Row>

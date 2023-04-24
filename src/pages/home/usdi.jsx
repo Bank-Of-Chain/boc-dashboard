@@ -14,7 +14,6 @@ import VaultChange from '@/components/VaultChange'
 import { SoundOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons'
 
 // === Constants === //
-import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
@@ -332,12 +331,12 @@ const USDiHome = () => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={vaultData} />
+            <ProtocolAllocation loading={loading} tokenDecimals={USDI_BN_DECIMALS} vaultData={vaultData} />
           </Suspense>
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
+            <StrategyTable loading={loading} />
           </Suspense>
         </Col>
         <Col span={24}>

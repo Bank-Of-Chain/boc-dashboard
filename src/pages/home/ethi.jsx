@@ -14,7 +14,6 @@ import VaultChange from '@/components/VaultChange'
 import { SoundOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons'
 
 // === Constants === //
-import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import { notice } from '@/constants/notice'
@@ -334,7 +333,6 @@ const ETHiHome = () => {
           <Suspense fallback={null}>
             <ProtocolAllocation
               loading={loading}
-              strategyMap={ETHI_STRATEGIES_MAP}
               tokenDecimals={ETHI_BN_DECIMALS}
               displayDecimals={ETHI_DISPLAY_DECIMALS}
               vaultData={vaultData}
@@ -344,7 +342,7 @@ const ETHiHome = () => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <StrategyTable unit="ETH" loading={loading} strategyMap={ETHI_STRATEGIES_MAP} displayDecimals={ETHI_DISPLAY_DECIMALS} />
+            <StrategyTable unit="ETH" loading={loading} displayDecimals={ETHI_DISPLAY_DECIMALS} />
           </Suspense>
         </Col>
         <Col span={24}>

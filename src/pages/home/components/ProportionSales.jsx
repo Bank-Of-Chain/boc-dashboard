@@ -11,10 +11,13 @@ import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { reduce, mapValues, groupBy, values, filter, isEmpty, map } from 'lodash'
 
+// === Constants === //
+import { STRATEGIES_MAP } from '@/constants/strategies'
+
 // === Styles === //
 import styles from '../style.less'
 
-const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitData = {}, unit }) => {
+const ProportionSales = ({ tokenDecimals, displayDecimals, visitData = {}, unit }) => {
   const { strategies = [], totalValueInVault = '0' } = visitData
   const { initialState } = useModel('@@initialState')
   const suffix = ` (${unit})`
@@ -47,7 +50,7 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
           BN(0)
         )
         return {
-          Protocol: `${strategyMap[initialState.chain][key]}${suffix}`,
+          Protocol: `${STRATEGIES_MAP[key]}${suffix}`,
           amount: toFixed(amount, tokenDecimals, displayDecimals)
         }
       })
