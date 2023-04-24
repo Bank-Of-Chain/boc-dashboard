@@ -7,13 +7,11 @@ import copy from 'copy-to-clipboard'
 // === Components === //
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
-import { MyAccountIcon } from '@/components/SvgIcons'
-import Icon, { LoadingOutlined } from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
 import { isInMobileWalletApp, isInMobileH5 } from '@/utils/device'
-import { isMarketingHost } from '@/utils/location'
 
 // === Contansts === //
 import { WALLET_OPTIONS } from '@/constants/wallet'
@@ -74,12 +72,6 @@ const GlobalHeaderRight = () => {
     }
   }
 
-  const goToMyAccount = () => {
-    const isMarketing = isMarketingHost()
-    const url = `${isMarketing ? 'https://bankofchain.io' : IMAGE_ROOT}/#/${initialState.vault}`
-    window.open(url)
-  }
-
   const copyAddress = () => {
     copy(address)
     message.success('Copied')
@@ -127,9 +119,6 @@ const GlobalHeaderRight = () => {
             </Button>
           ) : (
             [
-              <Button className={styles.myDasboardBtn} key="mine" icon={<Icon component={MyAccountIcon} />} type="primary" onClick={goToMyAccount}>
-                My Account
-              </Button>,
               <Avatar
                 key="avatar"
                 menu
