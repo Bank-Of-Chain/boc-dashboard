@@ -286,6 +286,7 @@ const USDiHome = () => {
         <Col span={24}>
           <div
             style={{
+              display: 'none',
               color: 'rgb(148, 163, 184)',
               background: 'linear-gradient(111.68deg, rgba(87, 97, 125, 0.2) 7.59%, rgba(255, 255, 255, 0.078) 102.04%)',
               padding: '1rem',
