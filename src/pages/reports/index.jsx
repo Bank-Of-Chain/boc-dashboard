@@ -795,7 +795,7 @@ const Reports = props => {
         key: 'loss',
         render: value => {
           const decimals = BigNumber.from(10).pow(item.toTokenDecimal)
-          return <span title={toFixed(value, decimals)}>{toFixed(value, decimals, displayDecimals)}</span>
+          return <span title={toFixed(value, decimals)}>{toFixed(value, BigNumber.from(10).pow(18), displayDecimals)}</span>
         }
       },
       {
@@ -878,7 +878,7 @@ const Reports = props => {
         dataIndex: 'loss',
         key: 'loss',
         render: value => {
-          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, BigNumber.from(10).pow(18), displayDecimals)}</span>
         }
       },
       {
@@ -952,7 +952,7 @@ const Reports = props => {
         dataIndex: 'loss',
         key: 'loss',
         render: value => {
-          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, BigNumber.from(10).pow(18), displayDecimals)}</span>
         }
       },
       {
