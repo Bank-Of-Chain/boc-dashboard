@@ -211,7 +211,7 @@ const Reports = props => {
               </Tag>
             </span>
           )
-        if (text === 2)
+        else if (text === 2) {
           return (
             <span>
               <Tag key={text} color="#87d068">
@@ -219,6 +219,15 @@ const Reports = props => {
               </Tag>
             </span>
           )
+        } else if (text === 3) {
+          return (
+            <span>
+              <Tag key={text} color="#10b981">
+                DoHardwork
+              </Tag>
+            </span>
+          )
+        }
       }
     },
     {
