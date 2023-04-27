@@ -30,8 +30,44 @@ export const layout = ({ initialState, setInitialState }) => {
   return {
     logo: (
       <HoverIcon
-        defaultIcon={<img src={`${IMAGE_ROOT}/logo-v2.svg`} alt="logo" />}
-        activeIcon={<img src={`${IMAGE_ROOT}/logo-active.svg`} alt="logo" />}
+        defaultIcon={
+          <>
+            <img src={`${IMAGE_ROOT}/logo-v2.svg`} alt="logo" />
+            <span
+              style={{
+                color: '#a78bfa',
+                border: '1px solid #a78bfa',
+                padding: '0.05rem 0.125rem',
+                float: 'right',
+                lineHeight: 1,
+                marginTop: '1rem',
+                borderRadius: '0.25rem',
+                fontSize: '0.5rem'
+              }}
+            >
+              Beta
+            </span>
+          </>
+        }
+        activeIcon={
+          <>
+            <img src={`${IMAGE_ROOT}/logo-active.svg`} alt="logo" />
+            <span
+              style={{
+                color: '#a78bfa',
+                border: '1px solid #a78bfa',
+                padding: '0.05rem 0.125rem',
+                float: 'right',
+                lineHeight: 1,
+                marginTop: '1rem',
+                borderRadius: '0.25rem',
+                fontSize: '0.5rem'
+              }}
+            >
+              Beta
+            </span>
+          </>
+        }
       />
     ),
     rightContentRender: () => <RightContent />,
