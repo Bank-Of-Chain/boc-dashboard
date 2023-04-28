@@ -591,7 +591,7 @@ const Reports = props => {
       dataIndex: 'gasFees',
       key: 'gasFees',
       render: value => {
-        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+        return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
       }
     }
   ]
@@ -969,7 +969,7 @@ const Reports = props => {
         dataIndex: 'gasFees',
         key: 'gasFees',
         render: value => {
-          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, displayDecimals)}</span>
+          return <span title={toFixed(value, fixedDecimals)}>{toFixed(value, fixedDecimals, 6)}</span>
         }
       },
       {
@@ -1170,10 +1170,10 @@ const Reports = props => {
                   </Descriptions.Item>
                 </Descriptions>
                 <Table
-                  rowKey={record => record.txnHash}
+                  rowKey={record => record.name}
                   columns={redeemChangeColumns}
                   dataSource={redeemChangeData}
-                  expandable={{ expandedRowRender: redeemExpandedRowRender, defaultExpandedRowKeys: [get(redeemChangeData, '[0].txnHash')] }}
+                  expandable={{ expandedRowRender: redeemExpandedRowRender, defaultExpandedRowKeys: [get(redeemChangeData, '[0].name')] }}
                   scroll={{ x: 1600, y: 400 }}
                   pagination={false}
                   {...detailTableResponsiveConfig.tableProps}
