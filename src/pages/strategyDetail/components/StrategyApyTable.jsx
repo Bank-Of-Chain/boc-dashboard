@@ -282,7 +282,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
       className="b-rd-4"
       bordered={false}
       extra={dropdownGroup}
-      style={{ background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)' }}
+      style={{ marginTop: 32, background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)' }}
       {...responsiveConfig.cardProps}
     >
       <div className="mb-5">{strategyName} APY Details</div>

@@ -712,9 +712,21 @@ const Reports = () => {
       size: 'small'
     },
     tableProps: {
-      size: 'small'
+      size: 'small',
+      scroll: { x: 1000 }
     }
   }
+
+  const detailsConfig = {
+    cardProps: {
+      size: 'small'
+    },
+    tableProps: {
+      size: 'small',
+      scroll: { x: 1500 }
+    }
+  }
+
   const listResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: smallConfig,
@@ -750,8 +762,8 @@ const Reports = () => {
 
   const detailTableResponsiveConfig = {
     [DEVICE_TYPE.Desktop]: {},
-    [DEVICE_TYPE.Tablet]: smallConfig,
-    [DEVICE_TYPE.Mobile]: smallConfig
+    [DEVICE_TYPE.Tablet]: detailsConfig,
+    [DEVICE_TYPE.Mobile]: detailsConfig
   }[deviceType]
 
   const swapExpandedRowRender = item => {

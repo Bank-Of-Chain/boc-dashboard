@@ -98,7 +98,7 @@ const GlobalHeaderRight = () => {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
       >
-        <Button type="text" href="https://docs.bankofchain.io/" target="_blank">
+        <Button className="colorful" type="text" href="https://docs.bankofchain.io/" target="_blank">
           Docs
         </Button>
         {history.location.pathname === '/reports' &&

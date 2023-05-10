@@ -35,4 +35,5 @@ export const SUB_GRAPH_URL_FOR_USDI_ETH = '{{{SUB_GRAPH_URL_FOR_USDI_ETH}}}'
 export const SUB_GRAPH_URL_FOR_ETHI = '{{{SUB_GRAPH_URL_FOR_ETHI}}}'
 
 export const API_SERVER = '{{{API_SERVER}}}'
+
 export const DASHBOARD_ROOT = '{{{DASHBOARD_ROOT}}}'

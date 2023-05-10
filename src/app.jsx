@@ -63,14 +63,17 @@ const App = () => {
   const nextProps = {}
   return (
     <Layout className="h-full bg-[#1e1e1f]">
-      <Header className="h-16 line-height-16 bg-[#1e1e1e] flex justify-between" style={{ position: 'sticky', top: 0, zIndex: 99, width: '100%' }}>
+      <Header
+        className="h-16 line-height-16 bg-[#1e1e1e] flex justify-between m-auto"
+        style={{ width: '100%', maxWidth: '1200px', position: 'sticky', top: 0, zIndex: 99 }}
+      >
         <HoverIcon
           defaultIcon={<img onClick={() => history.push('/')} src={`${IMAGE_ROOT}/logo-v2.svg`} alt="logo" />}
           activeIcon={<img onClick={() => history.push('/')} src={`${IMAGE_ROOT}/logo-active.svg`} alt="logo" />}
         />
         <RightContent />
       </Header>
-      <Content className="min-h-screen p-8">
+      <Content className="min-h-screen p-8 m-auto" style={{ width: '100%', maxWidth: '1200px' }}>
         <Switch>
           <Route exact path="/">
             <Suspense>

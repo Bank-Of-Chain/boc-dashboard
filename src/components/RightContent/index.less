@@ -75,58 +75,55 @@
   }
 }
 
-.right {
+
+.action {
   display: flex;
-  overflow: hidden;
-  .action {
-    display: flex;
-    align-items: center;
-    height: 42px;
-    padding: 0 1.5rem;
-    border: 2px solid transparent;
-    border-radius: 5px;
-    background-clip: padding-box, border-box;
-    background-image: linear-gradient(to right, #1E1E1F, #1E1E1F), linear-gradient(219.17deg, #94E3FF 24.63%, #FE3DCE 104.13%);
-    background-origin: padding-box, border-box;
-    cursor: pointer;
-    transition: all 0.3s;
-    > span {
-      vertical-align: middle;
-      &.name {
-        margin-left: 0.625rem;
-        font-size: 1rem;
-      }
-    }
-    &:hover {
-      background-image: linear-gradient(to right, #1E1E1F, #1E1E1F), linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
-      box-shadow: 0px 0px 5px #a68efe;
-    }
-    &:global(.ant-dropdown-open) {
-      background-clip: border-box;
-      background-image: linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
-      background-origin: border-box;
+  align-items: center;
+  height: 42px;
+  padding: 0 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background-clip: padding-box, border-box;
+  background-image: linear-gradient(to right, #1E1E1F, #1E1E1F), linear-gradient(219.17deg, #94E3FF 24.63%, #FE3DCE 104.13%);
+  background-origin: padding-box, border-box;
+  cursor: pointer;
+  transition: all 0.3s;
+  > span {
+    vertical-align: middle;
+    &.name {
+      margin-left: 0.625rem;
+      font-size: 1rem;
     }
   }
-  .search {
-    padding: 0 12px;
-    &:hover {
-      background: transparent;
-    }
+  &:hover {
+    background-image: linear-gradient(to right, #1E1E1F, #1E1E1F), linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
+    box-shadow: 0px 0px 5px #a68efe;
   }
-  .account {
-    .avatar {
-      margin-right: 8px;
-      color: '#A68EFE';
-      vertical-align: top;
-      background: rgba(255, 255, 255, 0.85);
-    }
+  &:global(.ant-dropdown-open) {
+    background-clip: border-box;
+    background-image: linear-gradient(220.48deg, #FE3DCE 6.75%, #5B93E0 100%);
+    background-origin: border-box;
   }
-  .dot {
-    width: 10px;
-    height: 10px;
-    background: #55e752;
-    border-radius: 50%;
+}
+.search {
+  padding: 0 12px;
+  &:hover {
+    background: transparent;
   }
+}
+.account {
+  .avatar {
+    margin-right: 8px;
+    color: '#A68EFE';
+    vertical-align: top;
+    background: rgba(255, 255, 255, 0.85);
+  }
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #55e752;
+  border-radius: 50%;
 }
 
 .dark {

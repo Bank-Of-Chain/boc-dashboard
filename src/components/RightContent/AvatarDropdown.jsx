@@ -13,12 +13,12 @@ import { useAtom } from 'jotai'
 import { initialStateAtom } from '@/jotai'
 
 // === Styles === //
-import styles from './index.less'
+import './index.less'
 
 const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet, onCopy }) => {
   const [initialState] = useAtom(initialStateAtom)
   const loading = (
-    <span className={`${styles.action} ${styles.account}`}>
+    <span className={'action account'}>
       <Spin
         size="small"
         style={{
@@ -34,22 +34,22 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
   }
 
   const menuHeaderDropdown = (
-    <Menu className={styles.avatarMenu}>
-      <Menu.Item key="copy" onClick={onCopy}>
+    <Menu className="avatarMenu !bg-dark-300">
+      <Menu.Item key="copy" className="px-2 py-4" onClick={onCopy}>
         <Space>
           <Icon component={CopyIcon} />
           Copy Address
         </Space>
       </Menu.Item>
       {showChangeWallet && (
-        <Menu.Item key="change" onClick={onChangeWallet}>
+        <Menu.Item key="change" className="px-2 py-4" onClick={onChangeWallet}>
           <Space>
             <Icon component={ChangeIcon} />
             Change Wallet
           </Space>
         </Menu.Item>
       )}
-      <Menu.Item key="logout" onClick={logoutOfWeb3Modal}>
+      <Menu.Item key="logout" className="px-2 py-4" onClick={logoutOfWeb3Modal}>
         <Space>
           <Icon component={ExitIcon} />
           Disconnect
@@ -59,9 +59,9 @@ const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChange
   )
   return (
     <HeaderDropdown overlay={menuHeaderDropdown} trigger="click">
-      <span className={`${styles.action} ${styles.account}`}>
-        <div className={styles.dot}></div>
-        <Address size="short" wrapClassName={`${styles.name} anticon`} address={address} />
+      <span className={'action account'}>
+        <div className="dot"></div>
+        <Address size="short" wrapClassName={`name anticon`} address={address} />
         <DownOutlined style={{ marginLeft: 10, fontSize: 10 }} />
       </span>
     </HeaderDropdown>

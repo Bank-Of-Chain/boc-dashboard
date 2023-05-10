@@ -65,7 +65,7 @@ const LineChartContent = props => {
   )
   if (deviceType === DEVICE_TYPE.Mobile) {
     extra = (
-      <Select className="px-20 !b-rd-0 text-violet-400" style={{ width: 120 }} value={calDateRange} onChange={onDateChange}>
+      <Select className="!b-rd-0 text-violet-400" style={{ width: 120 }} value={calDateRange} onChange={onDateChange}>
         <Option value={7}>WEEK</Option>
         <Option value={31}>MONTH</Option>
         <Option value={365}>YEAR</Option>

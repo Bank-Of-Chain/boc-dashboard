@@ -597,7 +597,7 @@ const Strategy = () => {
           </div>
           <Row justify="space-around">
             <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-              <div>
+              <div className="text-center">
                 <Image
                   preview={false}
                   width="100%"

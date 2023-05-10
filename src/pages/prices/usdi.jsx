@@ -7,6 +7,7 @@ import { formatToUTC0 } from '@/utils/date'
 import { toFixed } from '@/utils/number-format'
 
 // === Components === //
+import { Spin } from 'antd'
 import { LineEchart } from '@/components/echarts'
 import VaultChange from '@/components/VaultChange'
 
@@ -68,7 +69,17 @@ const USDIPrice = () => {
       <Suspense fallback={null}>
         <VaultChange />
       </Suspense>
-      <Suspense fallback={null}>{!loading && <LineEchart option={tvlEchartOpt} className="w-full min-h-148" />}</Suspense>
+      <Suspense fallback={null}>
+        <Spin spinning={loading}>
+          <LineEchart
+            option={tvlEchartOpt}
+            className="w-full min-h-148 mt-8 p-8"
+            style={{
+              background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
+            }}
+          />
+        </Spin>
+      </Suspense>
     </>
   )
 }
