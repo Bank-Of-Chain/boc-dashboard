@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Footer Component Render 1`] = `
+<DocumentFragment>
+  <div
+    class="text-center"
+  >
+    <p
+      class="flex justify-center"
+    >
+      <a
+        class="text-zinc-500 hover:text-white"
+        href="https://v2.bankofchain.io"
+      >
+        BoC Homepage
+      </a>
+      <a
+        class="ml-4 text-zinc-500 hover:text-white"
+        href="https://dashboard-v2.bankofchain.io"
+      >
+        BoC Dashboard
+      </a>
+    </p>
+    <p
+      class="text-zinc-500"
+    >
+      @Produced by Bank Of Chain $2023
+    </p>
+  </div>
+</DocumentFragment>
+`;

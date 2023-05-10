@@ -1,16 +1,16 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`LineChartContent Component Render 1`] = `
 <DocumentFragment>
   <div
-    class="ant-card ant-card-small"
+    class="ant-card ant-card-small b-rd-5 css-dev-only-do-not-override-ed5zg0"
   >
     <div
       class="ant-card-body"
     >
       <div>
         <div
-          class="ant-tabs ant-tabs-top"
+          class="ant-tabs ant-tabs-top css-dev-only-do-not-override-ed5zg0"
         >
           <div
             class="ant-tabs-nav"
@@ -25,6 +25,7 @@ exports[`LineChartContent Component Render 1`] = `
               >
                 <div
                   class="ant-tabs-tab ant-tabs-tab-active"
+                  data-node-key="apy"
                 >
                   <div
                     aria-controls="rc-tabs-test-panel-apy"
@@ -39,6 +40,7 @@ exports[`LineChartContent Component Render 1`] = `
                 </div>
                 <div
                   class="ant-tabs-tab"
+                  data-node-key="totalSupply"
                 >
                   <div
                     aria-controls="rc-tabs-test-panel-totalSupply"
@@ -95,7 +97,7 @@ exports[`LineChartContent Component Render 1`] = `
               class="ant-tabs-extra-content"
             >
               <div
-                class="ant-select ant-select-single ant-select-show-arrow"
+                class="ant-select px-20 !b-rd-0 text-violet-400 css-dev-only-do-not-override-ed5zg0 ant-select-single ant-select-show-arrow"
                 style="width: 120px;"
               >
                 <div
@@ -108,6 +110,7 @@ exports[`LineChartContent Component Render 1`] = `
                       aria-activedescendant="rc_select_TEST_OR_SSR_list_0"
                       aria-autocomplete="list"
                       aria-controls="rc_select_TEST_OR_SSR_list"
+                      aria-expanded="false"
                       aria-haspopup="listbox"
                       aria-owns="rc_select_TEST_OR_SSR_list"
                       autocomplete="off"
@@ -171,7 +174,7 @@ exports[`LineChartContent Component Render 1`] = `
                 <div
                   aria-busy="true"
                   aria-live="polite"
-                  class="ant-spin ant-spin-spinning ant-spin-show-text"
+                  class="ant-spin ant-spin-spinning ant-spin-show-text css-dev-only-do-not-override-ed5zg0"
                   style="display: flex; align-items: center; justify-content: center; min-height: 20px; font-size: 14px;"
                 >
                   <span
@@ -197,15 +200,6 @@ exports[`LineChartContent Component Render 1`] = `
                   </div>
                 </div>
               </div>
-              <div
-                aria-hidden="true"
-                aria-labelledby="rc-tabs-test-tab-totalSupply"
-                class="ant-tabs-tabpane"
-                id="rc-tabs-test-panel-totalSupply"
-                role="tabpanel"
-                style="display: none;"
-                tabindex="-1"
-              />
             </div>
           </div>
         </div>

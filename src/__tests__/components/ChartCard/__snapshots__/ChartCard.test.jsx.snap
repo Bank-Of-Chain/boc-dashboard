@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ChartCard Component Render 1`] = `
+<DocumentFragment>
+  <div
+    class="ant-card ant-card-bordered p-4 b-rd-5 css-dev-only-do-not-override-ed5zg0"
+  >
+    <div
+      class="ant-card-body"
+    >
+      <div>
+        <div
+          class="w-full overflow-hidden"
+        >
+          <div
+            class="text-4 flex justify-between"
+          >
+            <span
+              class="text-5 text-white"
+            >
+              test text
+            </span>
+            <span
+              class="cursor-pointer"
+            />
+          </div>
+        </div>
+        <div
+          class="text-3 h-4"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

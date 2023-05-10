@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`HeaderDropdown Component Render 1`] = `
 <DocumentFragment>
   <button
-    class="ant-btn ant-btn-default ant-dropdown-trigger"
+    class="ant-btn css-dev-only-do-not-override-ed5zg0 ant-btn-default ant-dropdown-trigger"
     type="button"
   >
     <span>
