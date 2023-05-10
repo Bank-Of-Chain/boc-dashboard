@@ -183,7 +183,7 @@ const Reports = () => {
   }, [roleError])
 
   if (!data) {
-    return <div>loading...</div>
+    return <Spin className="w-full" tip="loading..." spinning></Spin>
   }
   if (error) {
     return <div>{error.message}</div>

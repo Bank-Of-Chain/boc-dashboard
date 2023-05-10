@@ -5,7 +5,7 @@ const HoverIcon = props => {
 
   return (
     <span className="relative inline-block h-full">
-      <span className="h-full flex cursor-pointer">{defaultIcon}</span>
+      <span className="h-full flex cursor-pointer hover:filter-drop-shadow-[0_0_5px_#A68EFE]">{defaultIcon}</span>
       <span className="hidden absolute top-0 left-0 opacity-0">{activeIcon}</span>
     </span>
   )
