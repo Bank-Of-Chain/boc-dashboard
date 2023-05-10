@@ -11,3 +11,8 @@ export const TOKEN_TYPE = {
 }
 
 export const POLYGON_HIDDEN = true
+
+export const CHAIN_BROWSER_URL = {
+  1: 'https://etherscan.io',
+  137: 'https://polygonscan.com'
+}

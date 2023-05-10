@@ -1,7 +1,6 @@
 import React from 'react'
 import Icon from '@ant-design/icons'
 import { Menu, Spin, Space } from 'antd'
-import { useModel } from 'umi'
 import { DownOutlined } from '@ant-design/icons'
 
 // === Components === //
@@ -9,11 +8,15 @@ import HeaderDropdown from '../HeaderDropdown'
 import Address from '../Address'
 import { CopyIcon, ChangeIcon, ExitIcon } from '@/components/SvgIcons'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+
 // === Styles === //
 import styles from './index.less'
 
 const AvatarDropdown = ({ logoutOfWeb3Modal, address, showChangeWallet, onChangeWallet, onCopy }) => {
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
       <Spin

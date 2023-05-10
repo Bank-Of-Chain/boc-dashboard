@@ -1,6 +1,9 @@
 import map from 'lodash/map'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 
+// === Constants === //
+import { RPC_URL } from '@/config/config'
+
 export const WALLETS = {
   MetaMask: {
     info: {

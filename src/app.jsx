@@ -1,66 +1,116 @@
-import React from 'react'
-import { PageLoading } from '@ant-design/pro-layout'
-import { history } from 'umi'
-import RightContent from '@/components/RightContent'
-import Footer from '@/components/Footer'
+import React, { lazy, useEffect, useMemo, Suspense } from 'react'
+import { Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
+
+// === Components === //
+import { Layout } from 'antd'
 import HoverIcon from '@/components/HoverIcon'
+import RightContent from '@/components/RightContent'
+import FooterComponent from '@/components/Footer'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 // === Constants === //
-import { ETH } from './constants/chain'
-import { VAULT_TYPE } from '@/constants/vault'
+import { IMAGE_ROOT } from '@/config/config'
+import { ETHI_VAULT, ETHI_FOR_ETH, USDI_FOR_ETH, USDI_VAULT_FOR_ETH, VAULT_BUFFER_FOR_ETHI_ETH, VAULT_BUFFER_FOR_USDI_ETH } from '@/config/config'
 
-import { getVaultConfig } from '@/utils/vault'
+// === Routers === //
+const Home = lazy(() => import('./pages/home/index'))
+const Prices = lazy(() => import('./pages/prices/index'))
+const Reports = lazy(() => import('./pages/reports/index'))
+const StrategyDetail = lazy(() => import('./pages/strategyDetail/index'))
 
-// loading
-export const initialStateConfig = {
-  loading: <PageLoading />
+const { Header, Footer, Content } = Layout
+
+const App = () => {
+  const [initialState, setInitialState] = useAtom(initialStateAtom)
+
+  const history = useHistory()
+
+  const location = useLocation()
+
+  const { search } = location
+  const query = useMemo(() => new URLSearchParams(search), [search])
+  console.log('initialState=', initialState, search, query.get('vault'))
+
+  useEffect(() => {
+    const nextChain = query.get('chain') || initialState.chain || '1'
+    const nextVault = query.get('vault') || initialState.vault || 'ethi'
+    let nextVaultAddress = '',
+      nextTokenAddress = '',
+      nextVaultBufferAddress = ''
+
+    if (nextVault === 'ethi') {
+      nextVaultAddress = ETHI_VAULT
+      nextTokenAddress = ETHI_FOR_ETH
+      nextVaultBufferAddress = VAULT_BUFFER_FOR_ETHI_ETH
+    } else if (nextVault === 'usdi') {
+      nextVaultAddress = USDI_VAULT_FOR_ETH
+      nextTokenAddress = USDI_FOR_ETH
+      nextVaultBufferAddress = VAULT_BUFFER_FOR_USDI_ETH
+    }
+
+    setInitialState({
+      chain: nextChain,
+      vault: nextVault,
+      vaultAddress: nextVaultAddress,
+      tokenAddress: nextTokenAddress,
+      vaultBufferAddress: nextVaultBufferAddress
+    })
+  }, [setInitialState, query])
+
+  const nextProps = {}
+  return (
+    <Layout className="h-full bg-[#1e1e1f]">
+      <Header className="h-16 line-height-16 bg-[#1e1e1e] flex justify-between" style={{ position: 'sticky', top: 0, zIndex: 99, width: '100%' }}>
+        <HoverIcon
+          defaultIcon={<img onClick={() => history.push('/')} src={`${IMAGE_ROOT}/logo-v2.svg`} alt="logo" />}
+          activeIcon={<img onClick={() => history.push('/')} src={`${IMAGE_ROOT}/logo-active.svg`} alt="logo" />}
+        />
+        <RightContent />
+      </Header>
+      <Content className="min-h-screen p-8">
+        <Switch>
+          <Route exact path="/">
+            <Suspense>
+              <Home {...nextProps} />
+            </Suspense>
+          </Route>
+          <Route exact path="/prices">
+            <Suspense>
+              <Prices {...nextProps} />
+            </Suspense>
+          </Route>
+          <Route exact path="/reports">
+            <Suspense>
+              <Reports {...nextProps} />
+            </Suspense>
+          </Route>
+          <Route exact path="/strategy">
+            <Suspense>
+              <StrategyDetail {...nextProps} />
+            </Suspense>
+          </Route>
+          <Route path="*">
+            <Redirect
+              to={{
+                pathname: '/'
+              }}
+            />
+          </Route>
+        </Switch>
+      </Content>
+      <Footer
+        className="bg-transparent"
+        style={{
+          textAlign: 'center'
+        }}
+      >
+        <FooterComponent />
+      </Footer>
+    </Layout>
+  )
 }
-/**
- * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
- * */
 
-export async function getInitialState() {
-  return {
-    chain: ''
-  }
-}
-
-// ProLayout https://procomponents.ant.design/components/layout
-export const layout = ({ initialState, setInitialState }) => {
-  return {
-    logo: (
-      <HoverIcon
-        defaultIcon={<img src={`${IMAGE_ROOT}/logo-v2.svg`} alt="logo" />}
-        activeIcon={<img src={`${IMAGE_ROOT}/logo-active.svg`} alt="logo" />}
-      />
-    ),
-    rightContentRender: () => <RightContent />,
-    disableContentMargin: false,
-    waterMarkProps: {
-      content: initialState?.chain
-    },
-    headerHeight: '5rem',
-    footerRender: () => <Footer />,
-    onPageChange: () => {
-      const {
-        location: {
-          query: { chain, vault }
-        }
-      } = history
-      let nextChainId = initialState.chain ? initialState.chain : chain ? chain : ETH.id
-      let nextVault = initialState.vault ? initialState.vault : vault ? vault : VAULT_TYPE.ETHi
-      if (vault === VAULT_TYPE.ETHi) {
-        nextChainId = ETH.id
-      }
-      setInitialState({
-        chain: nextChainId,
-        vault: nextVault,
-        ...getVaultConfig(nextChainId, nextVault)
-      })
-    },
-    links: [],
-    menuHeaderRender: undefined,
-    collapsedButtonRender: () => null,
-    ...initialState?.settings
-  }
-}
+export default App

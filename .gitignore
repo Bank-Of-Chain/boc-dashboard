@@ -8,6 +8,7 @@ _roadhog-api-doc
 
 # production
 /dist
+/build
 /zip
 /.vscode
 
@@ -28,11 +29,9 @@ package-lock.json
 functions/*
 .temp/**
 
-# umi
-.umi
-.umi-production
-
 # screenshot
 screenshot
 .firebase
 .eslintcache
+
+stats.html

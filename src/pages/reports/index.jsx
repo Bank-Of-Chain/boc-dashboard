@@ -2,7 +2,6 @@ import React, { useState, Suspense, useEffect } from 'react'
 
 // === Components === //
 import Address from '@/components/Address'
-import { GridContent } from '@ant-design/pro-layout'
 import { FallOutlined, RiseOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { Table, Card, Tag, Modal, Descriptions, Row, Col, Tooltip, Spin, message, Divider, Switch, Space } from 'antd'
@@ -10,6 +9,28 @@ import VaultChange from '@/components/VaultChange'
 
 // === Services === //
 import { getReports, updateReportStatus, getReportsById } from '@/services/api-service'
+
+// === Hooks === //
+import { useAsync } from 'react-async-hook'
+import useAdminRole from '@/hooks/useAdminRole'
+import useWallet from '@/hooks/useWallet'
+import { useHistory, useLocation } from 'react-router-dom'
+
+// === Constants === //
+import { CHIANS_NAME } from '@/constants/chain'
+import { CHAIN_BROWSER_URL } from '@/constants'
+import { ENV } from '@/config/config'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+
+// === Services === //
+import { isProEnv } from '@/services/env-service'
+import { getSignatureHeader } from '@/services/signer-service'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+import { useMemo } from 'react'
 
 // === Utils === //
 import moment from 'moment'
@@ -20,68 +41,66 @@ import BN from 'bignumber.js'
 import noop from 'lodash/noop'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
-import { useRequest, useModel, history } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { changeNetwork } from '@/utils/network'
 import { BigNumber } from 'ethers'
-import { isArray } from 'lodash'
-
-// === Hooks === //
-import useAdminRole from '@/hooks/useAdminRole'
-import useWallet from '@/hooks/useWallet'
+import isArray from 'lodash/isArray'
 
 // === Constants === //
-import { CHIANS_NAME } from '@/constants/chain'
-import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
-import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-
-// === Services === //
-import { isProEnv } from '@/services/env-service'
-import { getSignatureHeader } from '@/services/signer-service'
-
-// === Styles === //
-import styles from './style.less'
+import { DEFAULT_LIMIT } from '@/constants/pagination'
 
 const fixedDecimals = BN(1e18)
 
-const Reports = props => {
-  const { id } = props?.location?.query
-  const { initialState } = useModel('@@initialState')
+const Reports = () => {
+  const history = useHistory()
+  const location = useLocation()
+
+  const [initialState] = useAtom(initialStateAtom)
+
+  const { search } = location
+  const query = useMemo(() => new URLSearchParams(search), [search])
+
+  const id = query.get('id')
+
+  const { vault, vaultAddress, chain } = initialState
   const [current, setCurrent] = useState({})
   const { userProvider, getWalletName } = useWallet()
   const [isRedUp, setIsRedUp] = useState(true)
   const deviceType = useDeviceType()
-
-  const styleMap = {
-    [isRedUp]: styles.danger,
-    [!isRedUp]: styles.success
-  }
-
-  const displayDecimals = {
-    [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
-    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
-  }[initialState.vault]
-
   const [showWarningModal, setShowWarningModal] = useState(false)
 
-  const { data, error, run, loading, pagination, refresh } = useRequest(
-    ({ current, pageSize }) => {
-      return getReports(
-        {
-          chainId: initialState.chain,
-          vaultAddress: initialState.vaultAddress
-        },
-        (current - 1) * pageSize,
-        pageSize
-      ).catch(() => [])
-    },
-    {
-      manual: true,
-      paginated: true,
-      formatResult: resp => {
-        const { content } = resp
+  const [page, setPage] = useState(1)
+
+  const styleMap = {
+    [isRedUp]: 'text-red-500',
+    [!isRedUp]: 'text-green-500'
+  }
+
+  const displayDecimals = useMemo(() => {
+    return vault === VAULT_TYPE.USDi ? TOKEN_DISPLAY_DECIMALS : ETHI_DISPLAY_DECIMALS
+  }, [vault])
+
+  const {
+    result: data,
+    loading,
+    error,
+    execute
+  } = useAsync(() => {
+    if (isEmpty(chain) || isEmpty(vaultAddress)) return
+    return getReports(
+      {
+        chainId: chain,
+        vaultAddress: vaultAddress
+      },
+      (page - 1) * DEFAULT_LIMIT,
+      DEFAULT_LIMIT
+    )
+      .then(resp => {
+        const {
+          data: { content, totalElements }
+        } = resp
         return {
-          total: resp.totalElements,
+          total: totalElements,
           list: map(content, i => {
             return {
               ...i,
@@ -91,25 +110,25 @@ const Reports = props => {
             }
           })
         }
-      }
-    }
-  )
-
-  useEffect(() => {
-    run({
-      ...pagination,
-      current: 1
-    })
-  }, [initialState.vault])
+      })
+      .catch(() => {
+        return {
+          total: 0,
+          list: []
+        }
+      })
+  }, [vaultAddress, chain, page])
 
   useEffect(() => {
     if (isEmpty(id)) {
       setCurrent({})
       return
     }
-    getReportsById(initialState.chain, initialState.vaultAddress, id)
+    getReportsById(chain, vaultAddress, id)
       .then(resp => {
-        const { investStrategies, optimizeResult, loss } = resp
+        const {
+          data: { investStrategies, optimizeResult, loss }
+        } = resp
         return {
           ...resp,
           investStrategies: JSON.parse(investStrategies),
@@ -119,7 +138,7 @@ const Reports = props => {
       })
       .then(setCurrent)
       .catch(() => setCurrent({}))
-  }, [initialState.chain, initialState.vaultAddress, id])
+  }, [chain, vaultAddress, id])
 
   const { isAdmin, loading: roleLoading, error: roleError } = useAdminRole(initialState.address)
 
@@ -131,7 +150,7 @@ const Reports = props => {
     const signer = userProvider.getSigner()
     const close = message.loading('on submit', 60 * 60)
     const headers = await getSignatureHeader(initialState.address, signer).catch(close)
-    updateReportStatus(initialState.chain, initialState.vaultAddress, id, true, headers).then(refresh).catch(noop).finally(close)
+    updateReportStatus(chain, vaultAddress, id, true, headers).then(execute).catch(noop).finally(close)
   }
 
   const hideModal = () => {
@@ -146,7 +165,7 @@ const Reports = props => {
     const { chain, walletChainId } = initialState
     // Do not show in fork chain
     if (!isEmpty(chain) && !isEmpty(walletChainId) && !isEqual(chain, walletChainId)) {
-      if (!isProEnv(ENV_INDEX) && isEqual(walletChainId, '31337')) {
+      if (!isProEnv(ENV) && isEqual(walletChainId, '31337')) {
         setShowWarningModal(false)
         return
       }
@@ -177,16 +196,8 @@ const Reports = props => {
       key: 'id',
       render: text => (
         <a
-          onClick={() => {
-            history.push({
-              pathname: '/reports',
-              query: {
-                chain: initialState.chain,
-                vault: initialState.vault,
-                id: text
-              }
-            })
-          }}
+          className="text-violet-400 hover:text-violet-500"
+          onClick={() => history.push(`/reports?chain=${initialState.chain}&vault=${initialState.vault}&id=${text}`)}
         >
           Report-{text}
         </a>
@@ -251,7 +262,7 @@ const Reports = props => {
             } else {
               if (!isReject) {
                 rejectElement = (
-                  <a className={styles.danger} onClick={() => reportCancel(id)}>
+                  <a className="text-red-500 hover:text-red-600" onClick={() => reportCancel(id)}>
                     Reject
                   </a>
                 )
@@ -273,7 +284,7 @@ const Reports = props => {
                 </div>
               }
             >
-              <a className={styles.disabled}>Rejected</a>
+              <a className="text-gray-500">Rejected</a>
             </Tooltip>
           )
         }
@@ -281,17 +292,8 @@ const Reports = props => {
           <Row>
             <Col md={12}>
               <a
-                style={{ marginRight: '1rem' }}
-                onClick={() => {
-                  history.push({
-                    pathname: '/reports',
-                    query: {
-                      chain: initialState.chain,
-                      vault: initialState.vault,
-                      id: id
-                    }
-                  })
-                }}
+                className="text-violet-400 hover:text-violet-500 mr-4"
+                onClick={() => history.push(`/reports?chain=${initialState.chain}&vault=${initialState.vault}&id=${id}`)}
               >
                 View
               </a>
@@ -311,7 +313,7 @@ const Reports = props => {
       ellipsis: true,
       render: (text, item, index) => {
         return (
-          <a title={text} key={index}>
+          <a className="text-violet-400 hover:text-violet-500" title={text} key={index}>
             {text}
           </a>
         )
@@ -995,20 +997,30 @@ const Reports = props => {
   }
 
   return (
-    <GridContent>
+    <>
       <Suspense fallback={null}>
         <VaultChange />
       </Suspense>
       <Suspense fallback={null}>
-        <Card bordered={false} {...listResponsiveConfig.cardProps}>
-          <div className={styles.title}>Allocation Reports</div>
+        <Card
+          bordered={false}
+          className="b-rd-4"
+          style={{
+            marginTop: 32,
+            background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
+          }}
+          {...listResponsiveConfig.cardProps}
+        >
+          <div className="mb-4">Allocation Reports</div>
           <Table
             rowKey={record => record.id}
             columns={columns}
             dataSource={data.list}
             loading={loading}
             pagination={{
-              ...pagination,
+              onChange: nextPage => setPage(nextPage),
+              total: data.total,
+              current: page,
               showSizeChanger: false
             }}
             {...listResponsiveConfig.tableProps}
@@ -1016,19 +1028,13 @@ const Reports = props => {
         </Card>
       </Suspense>
       <Modal
-        title={''}
-        style={{ top: 20 }}
-        bodyStyle={{ background: '#323338' }}
-        visible={!isEmpty(currentReport)}
+        title={null}
+        className="top-5"
+        bodyStyle={{ background: '#323338', padding: '1.5rem' }}
+        open={!isEmpty(currentReport)}
         footer={null}
         onCancel={() => {
-          history.push({
-            pathname: '/reports',
-            query: {
-              chain: initialState.chain,
-              vault: initialState.vault
-            }
-          })
+          history.push(`/reports?chain=${initialState.chain}&vault=${initialState.vault}`)
         }}
         width="1200px"
       >
@@ -1231,7 +1237,7 @@ const Reports = props => {
       </Modal>
       <Modal
         title="Set wallet's network to current?"
-        visible={showWarningModal}
+        open={showWarningModal}
         onOk={() => changeNetwork(initialState.chain, userProvider, getWalletName())}
         onCancel={hideModal}
         okText="ok"
@@ -1251,7 +1257,7 @@ const Reports = props => {
           </p>
         )}
       </Modal>
-    </GridContent>
+    </>
   )
 }
 

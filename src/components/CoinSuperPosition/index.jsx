@@ -9,9 +9,12 @@ import isString from 'lodash/isString'
 import { isArray } from 'lodash'
 import map from 'lodash/map'
 
+// === Constants === //
+import { IMAGE_ROOT } from '@/config/config'
+
 const DEFAULT = `${IMAGE_ROOT}/default.png`
 
-const CoinSuperPosition = ({ array = [], size = 24 }) => {
+const CoinSuperPosition = ({ className, array = [], size = 24 }) => {
   const imageRender = (address, i) => (
     <Image
       title={address}
@@ -29,9 +32,9 @@ const CoinSuperPosition = ({ array = [], size = 24 }) => {
   )
 
   if (isString(array)) {
-    return imageRender(array, 0)
+    return <div className={className}>{imageRender(array, 0)}</div>
   } else if (isArray(array)) {
-    return <div>{map(array, (address, i) => imageRender(address, i))}</div>
+    return <div className={className}>{map(array, (address, i) => imageRender(address, i))}</div>
   }
   return <span />
 }

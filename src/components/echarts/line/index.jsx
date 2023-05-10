@@ -17,7 +17,7 @@ echarts.use([
   UniversalTransition
 ])
 
-function Line({ theme = 'light', style = {}, option = {} }) {
+function Line({ className, theme = 'light', style = {}, option = {} }) {
   const [echartRef, setRef] = useState(null)
   useEffect(() => {
     if (echartRef) {
@@ -27,6 +27,7 @@ function Line({ theme = 'light', style = {}, option = {} }) {
   return (
     <ReactEChartsCore
       key="echart"
+      className={className}
       ref={e => setRef(e)}
       echarts={echarts}
       option={option}

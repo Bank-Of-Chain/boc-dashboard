@@ -1,27 +1,35 @@
 import React from 'react'
-import map from 'lodash/map'
 import classNames from 'classnames'
-import { Modal } from 'antd'
-import styles from './index.less'
 
-export default function WalletModal({ visible, onCancel, connectTo, selected, walletOptions = [] }) {
+// === Components === //
+import { Modal } from 'antd'
+
+// === Utils === //
+import map from 'lodash/map'
+
+// === Styles === //
+import './index.less'
+
+const WalletModal = props => {
+  const { visible, onCancel, connectTo, selected, walletOptions = [] } = props
+
   const handleConnect = name => {
     connectTo(name)
   }
 
   return (
-    <Modal className={styles.modal} visible={visible} onCancel={onCancel} footer={null} title="Select a wallet">
-      <div className={styles.content}>
+    <Modal className="modal" open={visible} onCancel={onCancel} footer={null} title="Select a wallet">
+      <div className={'content'}>
         {map(walletOptions, wallet => (
           <div
             key={wallet.value}
-            className={classNames(styles.walletItemWrapper, {
-              [styles.walletItemWrapperSelected]: selected === wallet.symbol
+            className={classNames('walletItemWrapper', {
+              ['walletItemWrapperSelected']: selected === wallet.symbol
             })}
           >
-            <div className={styles.walletItem} onClick={() => handleConnect(wallet.value)}>
-              <img className={styles.walletLogo} src={wallet.logo} alt="wallet logo" />
-              <span className={styles.walletName}>{wallet.name}</span>
+            <div className={'walletItem'} onClick={() => handleConnect(wallet.value)}>
+              <img className={'walletLogo'} src={wallet.logo} alt="wallet logo" />
+              <span className={'walletName'}>{wallet.name}</span>
             </div>
           </div>
         ))}
@@ -29,3 +37,5 @@ export default function WalletModal({ visible, onCancel, connectTo, selected, wa
     </Modal>
   )
 }
+
+export default WalletModal

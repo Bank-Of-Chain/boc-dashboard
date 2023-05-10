@@ -1,19 +1,20 @@
-import React from 'react'
-import { useModel, history } from 'umi'
+import React, { useMemo } from 'react'
 
 // === Components === //
 import { Radio } from 'antd'
 
+// === Hooks === //
+import { useHistory, useLocation } from 'react-router-dom'
+
 // === Utils === //
 import map from 'lodash/map'
-import { getVaultConfig } from '@/utils/vault'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 // === Contansts === //
 import { ETH } from '@/constants/chain'
-import { VAULT_TYPE } from '@/constants/vault'
-
-// === Styles === //
-import styles from './index.less'
 
 const options = [
   { key: 'ethi', label: 'ETHi', value: 'ethi' },
@@ -21,35 +22,35 @@ const options = [
 ]
 
 const VaultChange = () => {
-  const { initialState, setInitialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
+
+  const { vault } = initialState
+
+  const history = useHistory()
+
+  const location = useLocation()
+
+  const { search, pathname } = location
+
+  const query = useMemo(() => new URLSearchParams(search), [search])
 
   const changeVault = vault => {
-    const { pathname, query } = history.location
-    let chain = query.chain || ETH.id
-    if (vault === VAULT_TYPE.ETHi) {
-      chain = ETH.id
-      // TODO: After open Polygon network, we need change network here if current network is not Ethereum
-    }
-    setInitialState({
-      ...initialState,
-      chain,
-      vault,
-      ...getVaultConfig(chain, vault)
-    })
-    history.push({
-      pathname,
-      query: {
-        chain,
-        vault
-      }
-    })
+    let chain = query.get('chain') || ETH.id
+    history.push(`${pathname}?chain=${chain}&vault=${vault}`)
   }
 
   return (
-    <div className={styles.container}>
-      <Radio.Group onChange={e => changeVault(e.target.value)} value={initialState.vault} buttonStyle="solid" size="large">
+    <div className="px-8 py-0 text-center">
+      <Radio.Group
+        className="b-2 b-solid b-color-violet-400 border-rd"
+        onChange={e => changeVault(e.target.value)}
+        value={vault}
+        optionType="button"
+        buttonStyle="solid"
+        size="large"
+      >
         {map(options, (item, key) => (
-          <Radio.Button value={item.value} key={key}>
+          <Radio.Button className="px-20 !b-rd-0 text-violet-400 bg-transparent" value={item.value} key={key}>
             {item.label}
           </Radio.Button>
         ))}

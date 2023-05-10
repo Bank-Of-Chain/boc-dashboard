@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useModel, history } from 'umi'
 
 // === Components === //
 import { Radio, Row, Col } from 'antd'
@@ -14,6 +13,10 @@ import map from 'lodash/map'
 import filter from 'lodash/filter'
 import { changeNetwork } from '@/utils/network'
 import useWallet from '@/hooks/useWallet'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 // === Styles === //
 import styles from './index.less'
@@ -33,7 +36,7 @@ const options = map(
 const ChainChange = props => {
   const { shouldChangeChain } = props
 
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
   const { userProvider, getWalletName } = useWallet()
 
   const changeChain = value => {

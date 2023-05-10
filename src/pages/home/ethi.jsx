@@ -2,7 +2,6 @@ import React, { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
 import { Row, Col } from 'antd'
-import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
 import LineChartContent from './components/LineChartContent'
 import ProtocolAllocation from './components/ProtocolAllocation'
@@ -12,6 +11,9 @@ import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt
 import multipleLine from '@/components/echarts/options/line/multipleLine'
 import VaultChange from '@/components/VaultChange'
 import { SoundOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons'
+
+// === Hooks === //
+import { useHistory } from 'react-router-dom'
 
 // === Constants === //
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
@@ -23,7 +25,6 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
-import { useModel, history } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import BN from 'bignumber.js'
@@ -32,8 +33,9 @@ import { appendDate } from '@/utils/array-append'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce, get } from 'lodash'
 
-// === Styles === //
-import styles from './style.less'
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 const ETHiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -43,9 +45,10 @@ const ETHiHome = () => {
   const [apy30, setApy30] = useState(0)
   const [isNoticeOpen, setIsNoticeOpen] = useState(false)
 
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
 
   const { dataSource = {}, loading } = useDashboardData()
+  const history = useHistory()
   const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource
 
   useEffect(() => {
@@ -238,8 +241,8 @@ const ETHiHome = () => {
       unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} ETHi`,
       footer: (
         <span>
-          1ETHi ≈ {price()}ETH{' '}
-          <span className={styles.history} onClick={handleHistoryClick}>
+          1ETHi ≈ {price()}ETH
+          <span className="text-violet-400 cursor-pointer ml-1" onClick={handleHistoryClick}>
             History
           </span>
         </span>
@@ -281,7 +284,7 @@ const ETHiHome = () => {
   }
 
   return (
-    <GridContent>
+    <>
       <VaultChange />
       <Row gutter={[0, 30]}>
         <Col span={24}>
@@ -358,7 +361,7 @@ const ETHiHome = () => {
           </Suspense>
         </Col>
       </Row>
-    </GridContent>
+    </>
   )
 }
 

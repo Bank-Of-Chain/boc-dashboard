@@ -7,21 +7,26 @@ import multipleLine from '@/components/echarts/options/line/multipleLine'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Hooks === //
-import { useModel } from 'umi'
 import { useAsync } from 'react-async-hook'
 
 // === Services === //
 import { getStrategyDataCollect } from '@/services/api-service'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+
 // === Utils === //
 import moment from 'moment'
+import map from 'lodash/map'
+import get from 'lodash/get'
 import { BigNumber } from 'ethers'
+import reduce from 'lodash/reduce'
+import sortBy from 'lodash/sortBy'
+import isEmpty from 'lodash/isEmpty'
+import groupBy from 'lodash/groupBy'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed } from '@/utils/number-format'
-import { isEmpty, map, reduce, groupBy, sortBy, get } from 'lodash'
-
-// === Styles === //
-import styles from './style.less'
 
 const decimals = BigNumber.from(10).pow(18)
 
@@ -29,7 +34,7 @@ const PriceChart = props => {
   const { strategyName } = props
   const deviceType = useDeviceType()
 
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
 
   const { loading, result } = useAsync(() => {
     const { chain, vaultAddress } = initialState
@@ -39,7 +44,10 @@ const PriceChart = props => {
       start_seconds: current.subtract(31, 'days').format('X'),
       types: 'token-price'
     }
-    return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
+    return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(resp => {
+      const {
+        data: { content = [] }
+      } = resp
       const nextContent = content
       const nextArray = map(
         groupBy(
@@ -140,17 +148,18 @@ const PriceChart = props => {
 
   return (
     <Card
-      className={styles.offlineCard}
       bordered={false}
+      className="b-rd-4"
       style={{
-        marginTop: 32
+        marginTop: 32,
+        background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
       }}
       {...chartResponsiveConfig.cardProps}
     >
-      <div className={styles.cardTitle}>Price Chart</div>
+      <div>Price Chart</div>
       <div style={chartResponsiveConfig.chartStyle}>
         {loading ? (
-          <div className={styles.loadingContainer}>
+          <div>
             <Spin size="large" />
           </div>
         ) : (

@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect } from 'react'
+import React, { Suspense, useState, useEffect, useMemo } from 'react'
 
 // === Constants === //
 import { USDI_STRATEGIES_MAP, ETHI_STRATEGIES_MAP } from '@/constants/strategies'
@@ -9,7 +9,6 @@ import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import { LeftOutlined, PieChartOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { LineEchart } from '@/components/echarts'
 import ReportTable from './components/ReportTable'
-import { GridContent } from '@ant-design/pro-layout'
 import StrategyApyTable from './components/StrategyApyTable'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { Col, Row, Card, Image, Descriptions, Spin, Switch, Space, Tooltip } from 'antd'
@@ -30,7 +29,6 @@ import BN from 'bignumber.js'
 import numeral from 'numeral'
 import last from 'lodash/last'
 import uniq from 'lodash/uniq'
-import { history, useModel } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel, formatApyValue } from '@/utils/number-format'
 import { bestIntervalForArrays } from '@/utils/echart-utils'
@@ -40,14 +38,18 @@ import { get, isNil, keyBy, size, filter, isEmpty, map, noop, reduce, find, grou
 import { getStrategyApysOffChain, getBaseApyByPage, getStrategyDetails, getStrategyApyDetails, getStrategyDataCollect } from '@/services/api-service'
 
 // === Hooks === //
+import { useHistory, useLocation } from 'react-router-dom'
 import useStrategyDetails from '@/hooks/useStrategyDetails'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 // === Constants === //
 import URL from '@/constants/dune'
+import { IMAGE_ROOT } from '@/config/config'
+import { CHAIN_BROWSER_URL } from '@/constants'
 import BorrowingExtends from '@/constants/borrowing-extends'
-
-// === Styles === //
-import styles from './style.less'
 
 const OFFICIAL_APY = 'Official Weekly APY'
 const VERIFIED_APY = 'BoC Weekly APY'
@@ -66,29 +68,36 @@ const getMarker = color => {
 const subMarker =
   '<br/><span style="display:inline-block;margin-right:4px;margin-left:10px;border-radius:10px;width:10px;height:10px;background-color:#fff;"></span>'
 
-const Strategy = props => {
-  const { id, ori = false, vault } = props?.location?.query
+const Strategy = () => {
+  const history = useHistory()
+  const location = useLocation()
+  const { search } = location
+  const query = useMemo(() => new URLSearchParams(search), [search])
+  const id = query.get('id')
+  const ori = !!query.get('ori') || false
+
   const [loading, setLoading] = useState(false)
   const [apyLoading, setApyLoading] = useState(false)
   const [strategy, setStrategy] = useState({})
   // Save all apy data
   const [apyArray, setApyArray] = useState([])
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
+
+  const { vault, chain, vaultAddress } = initialState
   const deviceType = useDeviceType()
-  const unit = {
-    [VAULT_TYPE.USDi]: 'USD',
-    [VAULT_TYPE.ETHi]: 'ETH'
-  }[initialState.vault]
+
+  const unit = useMemo(() => {
+    return vault === VAULT_TYPE.USDi ? 'USD' : 'ETH'
+  }, [vault])
 
   const [isOfficalApyEnable, setIsOfficalApyEnable] = useState(true)
   const [isVerifiedApyEnable, setIsVerifiedApyEnable] = useState(true)
 
-  const details = useStrategyDetails(initialState.chain, initialState.vaultAddress, id)
+  const details = useStrategyDetails(chain, vaultAddress, id)
 
   const { loading: collectLoading, result } = useAsync(() => {
     if (!ori) return
     if (isEmpty(strategy)) return
-    const { chain, vaultAddress } = initialState
     const { strategyName } = strategy
     const current = moment()
     const params = {
@@ -98,7 +107,10 @@ const Strategy = props => {
     }
     return (
       ori &&
-      getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
+      getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(resp => {
+        const {
+          data: { content = [] }
+        } = resp
         const nextContent = filter(content, item => {
           if (item.type === 'limit-order-upper' || item.type === 'limit-order-lower') {
             return !isEmpty(item.result)
@@ -133,7 +145,7 @@ const Strategy = props => {
         return sortBy(nextArray, 'blockNumber')
       })
     )
-  }, [initialState, ori, strategy])
+  }, [chain, vaultAddress, ori, strategy])
 
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
@@ -154,26 +166,27 @@ const Strategy = props => {
   }[initialState.vault]
 
   useEffect(() => {
+    if (isEmpty(chain) || isEmpty(vaultAddress)) return
     setLoading(true)
-    getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100)
+    getStrategyDetails(chain, vaultAddress, 0, 100)
       .then(resp => {
-        const strategy = find(resp.content, item => item.strategyAddress === id)
+        const strategy = find(resp.data.content, item => item.strategyAddress === id)
         setStrategy(strategy)
       })
       .catch(noop)
       .finally(() => {
         setLoading(false)
       })
-  }, [id])
+  }, [id, chain, vaultAddress])
 
   useEffect(() => {
-    if (isEmpty(strategy?.strategyName)) return
+    if (isEmpty(strategy?.strategyName) || isEmpty(vaultAddress) || isEmpty(chain)) return
     setApyLoading(true)
     Promise.all([
       getBaseApyByPage(
         {
-          chainId: initialState.chain,
-          vaultAddress: initialState.vaultAddress,
+          chainId: chain,
+          vaultAddress: vaultAddress,
           strategyAddress: strategy?.strategyAddress,
           sort: 'schedule_timestamp desc'
         },
@@ -182,14 +195,14 @@ const Strategy = props => {
       ).catch(() => {}),
       getStrategyApysOffChain(
         {
-          chainId: initialState.chain,
+          chainId: chain,
           strategyName: strategy?.strategyName,
           sort: 'fetch_time desc'
         },
         0,
         365
       ).catch(() => {}),
-      getStrategyApyDetails(initialState.chain, initialState.vaultAddress, strategy?.strategyAddress, 0, 10)
+      getStrategyApyDetails(chain, vaultAddress, strategy?.strategyAddress, 0, 10)
     ])
       .then(([apys = { content: [] }, offChainApys, dailyApy]) => {
         const startMoment = moment().utcOffset(0).subtract(366, 'day').startOf('day')
@@ -268,7 +281,7 @@ const Strategy = props => {
       .finally(() => {
         setApyLoading(false)
       })
-  }, [strategy, strategy?.strategyName])
+  }, [strategy, strategy?.strategyName, vaultAddress, chain])
 
   const intervalArray = []
   const data1 = map(apyArray, i => {
@@ -493,9 +506,9 @@ const Strategy = props => {
     return (
       <Space>
         <span style={{ verticalAlign: 'sub' }}>Offical Weekly APY</span>
-        <Switch className={styles.officalSwitch} size="small" checked={isOfficalApyEnable} onChange={setIsOfficalApyEnable} />
+        <Switch size="small" checked={isOfficalApyEnable} onChange={setIsOfficalApyEnable} />
         <span style={{ verticalAlign: 'sub' }}>BoC Weekly APY</span>
-        <Switch className={styles.verifiedSwitch} size="small" checked={isVerifiedApyEnable} onChange={setIsVerifiedApyEnable} />
+        <Switch size="small" checked={isVerifiedApyEnable} onChange={setIsVerifiedApyEnable} />
       </Space>
     )
   }
@@ -569,15 +582,22 @@ const Strategy = props => {
   const collectOption = multipleLine(collectObj)
 
   return (
-    <GridContent>
+    <>
       <Suspense fallback={null}>
-        <Card bordered={false} {...infoResponsiveConfig.cardProps}>
-          <div className={styles.cardTitle}>
+        <Card
+          bordered={false}
+          className="b-rd-4"
+          style={{
+            background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
+          }}
+          {...infoResponsiveConfig.cardProps}
+        >
+          <div>
             <LeftOutlined onClick={() => history.push('/')} />
           </div>
           <Row justify="space-around">
             <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-              <div className={styles.imgWrapper}>
+              <div>
                 <Image
                   preview={false}
                   width="100%"
@@ -596,9 +616,13 @@ const Strategy = props => {
                       target={'_blank'}
                       rel="noreferrer"
                       href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${strategy.strategyAddress}`}
-                      className={styles.strategyName}
+                      className="bg-clip-text"
+                      style={{
+                        backgroundImage: 'linear-gradient(245.49deg, #A68EFD 18.95%, #F4ACF3 49.92%)',
+                        WebkitTextFillColor: 'transparent'
+                      }}
                     >
-                      {strategy.strategyName}
+                      {strategy?.strategyName}
                     </a>
                   </span>
                 }
@@ -851,7 +875,7 @@ const Strategy = props => {
               {!isEmpty(extendsWarn) && (
                 <Descriptions title={null} column={1}>
                   <Descriptions.Item label="">
-                    <p className={styles.warningTip}>Warning: {extendsWarn.join('; ')}</p>
+                    <p>Warning: {extendsWarn.join('; ')}</p>
                   </Descriptions.Item>
                 </Descriptions>
               )}
@@ -861,17 +885,18 @@ const Strategy = props => {
       </Suspense>
       <Suspense fallback={null}>
         <Card
-          className={styles.offlineCard}
+          className="b-rd-4"
           bordered={false}
           style={{
-            marginTop: 32
+            marginTop: 32,
+            background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
           }}
           {...chartResponsiveConfig.cardProps}
         >
           {titleRender()}
           <div style={chartResponsiveConfig.chartStyle}>
             {apyLoading ? (
-              <div className={styles.loadingContainer}>
+              <div className="h-full text-center flex flex-column justify-center items-center">
                 <Spin size="large" />
               </div>
             ) : (
@@ -883,17 +908,18 @@ const Strategy = props => {
       {ori && !isEmpty(result) && (
         <Suspense fallback={null}>
           <Card
-            className={styles.offlineCard}
+            className="b-rd-4"
             bordered={false}
             style={{
-              marginTop: 32
+              marginTop: 32,
+              background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
             }}
             {...chartResponsiveConfig.cardProps}
           >
-            <div className={styles.cardTitle}>策略做市区间与价格</div>
+            <div>策略做市区间与价格</div>
             <div style={chartResponsiveConfig.chartStyle}>
               {collectLoading ? (
-                <div className={styles.loadingContainer}>
+                <div>
                   <Spin size="large" />
                 </div>
               ) : (
@@ -907,7 +933,7 @@ const Strategy = props => {
         map(URL[strategy.strategyName], item => {
           return (
             <Suspense fallback={null} key={item}>
-              <IFrameLoader className={styles.iframe} src={item} frameBorder="0" onload={iframeStyleUpdate} />
+              <IFrameLoader src={item} frameBorder="0" onload={iframeStyleUpdate} />
             </Suspense>
           )
         })}
@@ -944,7 +970,7 @@ const Strategy = props => {
       <Suspense fallback={null}>
         <ReportTable strategyName={strategy?.strategyName} loading={loading} />
       </Suspense>
-    </GridContent>
+    </>
   )
 }
 

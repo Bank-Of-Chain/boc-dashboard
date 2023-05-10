@@ -2,7 +2,6 @@ import React, { Suspense, useEffect, useState } from 'react'
 
 // === Components === //
 import { Row, Col } from 'antd'
-import { GridContent } from '@ant-design/pro-layout'
 import IntroduceRow from './components/IntroduceRow'
 import LineChartContent from './components/LineChartContent'
 import ProtocolAllocation from './components/ProtocolAllocation'
@@ -24,7 +23,6 @@ import useDashboardData from '@/hooks/useDashboardData'
 import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
 
 // === Utils === //
-import { useModel, history } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import { BigNumber } from 'ethers'
@@ -33,8 +31,9 @@ import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
 import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN, cloneDeep, reduce } from 'lodash'
 
-// === Styles === //
-import styles from './style.less'
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 const USDiHome = () => {
   const [calDateRange, setCalDateRange] = useState(31)
@@ -44,7 +43,7 @@ const USDiHome = () => {
   const [apy30, setApy30] = useState(0)
   const [isNoticeOpen, setIsNoticeOpen] = useState(false)
 
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
 
   const { dataSource = {}, loading } = useDashboardData()
   const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource
@@ -239,8 +238,8 @@ const USDiHome = () => {
       unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} USDi`,
       footer: (
         <span>
-          1USDi ≈ {price()}USD{' '}
-          <span className={styles.history} onClick={handleHistoryClick}>
+          1USDi ≈ {price()}USD
+          <span className="text-violet-400 cursor-pointer ml-1" onClick={handleHistoryClick}>
             History
           </span>
         </span>
@@ -280,7 +279,7 @@ const USDiHome = () => {
   }
 
   return (
-    <GridContent>
+    <>
       <VaultChange />
       <Row gutter={[0, 30]}>
         <Col span={24}>
@@ -346,7 +345,7 @@ const USDiHome = () => {
           </Suspense>
         </Col>
       </Row>
-    </GridContent>
+    </>
   )
 }
 

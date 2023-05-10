@@ -7,19 +7,19 @@ import { PieEchart } from '@/components/echarts'
 // === Utils === //
 import numeral from 'numeral'
 import BN from 'bignumber.js'
-import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { reduce, mapValues, groupBy, values, filter, isEmpty, map } from 'lodash'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 // === Constants === //
 import { STRATEGIES_MAP } from '@/constants/strategies'
 
-// === Styles === //
-import styles from '../style.less'
-
 const ProportionSales = ({ tokenDecimals, displayDecimals, visitData = {}, unit }) => {
   const { strategies = [], totalValueInVault = '0' } = visitData
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
   const suffix = ` (${unit})`
 
   if (!initialState.chain) return null
@@ -154,8 +154,8 @@ const ProportionSales = ({ tokenDecimals, displayDecimals, visitData = {}, unit 
   }
 
   return (
-    <div className={styles.chartWrapper}>
-      <PieEchart option={option} style={{ height: '100%', width: '100%' }} />
+    <div className="h-full min-h-88">
+      <PieEchart className="h-full w-full" option={option} />
     </div>
   )
 }

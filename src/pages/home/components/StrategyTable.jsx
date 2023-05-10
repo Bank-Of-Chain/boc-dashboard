@@ -6,8 +6,10 @@ import CoinSuperPosition from '@/components/CoinSuperPosition'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 import { InfoCircleOutlined, FileTextOutlined } from '@ant-design/icons'
 
+// === Hooks === //
+import { useAsync } from 'react-async-hook'
+
 // === Utils === //
-import { useModel, useRequest } from 'umi'
 import { toFixed, formatApyLabel } from '@/utils/number-format'
 import { isEmpty, filter, isNil, map, sortBy } from 'lodash'
 import BN from 'bignumber.js'
@@ -17,22 +19,30 @@ import { isMarketingHost } from '@/utils/location'
 import { getStrategyDetails } from '@/services/api-service'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+
 // === Constants === //
+import { CHAIN_BROWSER_URL } from '@/constants'
 import { STRATEGIES_MAP } from '@/constants/strategies'
+import { DASHBOARD_ROOT, IMAGE_ROOT } from '@/config/config'
 
-// === Styles === //
-import styles from '../style.less'
+const StrategyTable = props => {
+  const { loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' } = props
 
-const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
+  const { vaultAddress, chain } = initialState
   const deviceType = useDeviceType()
-  const { data: searchData, loading: dataLoading } = useRequest(
-    () => getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100).catch(() => []),
-    {
-      formatResult: resp => sortBy(resp.content, ['strategyName'])
-    }
+  const { result: searchData, loading: dataLoading } = useAsync(
+    () =>
+      getStrategyDetails(initialState.chain, initialState.vaultAddress, 0, 100)
+        .then(resp => sortBy(resp.data.content, ['strategyName']))
+        .catch(() => []),
+    [vaultAddress, chain]
   )
+  console.log('data=', searchData)
   if (!initialState.chain) return null
 
   // boc-service fixed the number to 6
@@ -45,11 +55,11 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
       render: (text, item) => (
         <Space>
           <Image
+            className="b-rd-50%"
             preview={false}
             width={30}
             src={`${IMAGE_ROOT}/images/amms/${STRATEGIES_MAP[item.protocol]}.png`}
             placeholder={item.protocol}
-            style={{ borderRadius: '50%' }}
             alt={STRATEGIES_MAP[item.protocol]}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
@@ -57,7 +67,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
             title={text}
             target={'_blank'}
             rel="noreferrer"
-            className={styles.text}
+            className="w-40 block truncate text-violet-400 hover:text-violet-500"
             href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.strategyAddress}`}
           >
             {text}
@@ -69,8 +79,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
       title: 'Tokens',
       dataIndex: 'underlyingTokens',
       key: 'underlyingTokens',
-      width: 100,
-      render: text => !isEmpty(text) && <CoinSuperPosition array={text.split(',')} />
+      render: text => !isEmpty(text) && <CoinSuperPosition className="min-w-20" array={text.split(',')} />
     },
     {
       title: `Asset (${unit})`,
@@ -87,7 +96,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
       title: (
         <Space>
           Official APY
-          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+          <Tooltip placement="top" arrow title="7 days">
             <InfoCircleOutlined />
           </Tooltip>
         </Space>
@@ -104,7 +113,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
       title: (
         <Space>
           Harvested APY
-          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+          <Tooltip placement="top" arrow title="7 days">
             <InfoCircleOutlined />
           </Tooltip>
         </Space>
@@ -145,7 +154,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
       title: (
         <Space>
           Unharvested APY
-          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+          <Tooltip placement="top" arrow title="7 days">
             <InfoCircleOutlined />
           </Tooltip>
         </Space>
@@ -187,7 +196,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
       title: (
         <Space>
           Harvested Profit
-          <Tooltip placement="top" arrowPointAtCenter title="including government token and transaction fee of uni v3 in last 7 days">
+          <Tooltip placement="top" arrow title="including government token and transaction fee of uni v3 in last 7 days">
             <InfoCircleOutlined />
           </Tooltip>
         </Space>
@@ -219,7 +228,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
       title: (
         <Space>
           Valuation Changed
-          <Tooltip placement="top" arrowPointAtCenter title="7 days">
+          <Tooltip placement="top" arrow title="7 days">
             <InfoCircleOutlined />
           </Tooltip>
         </Space>
@@ -245,7 +254,7 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
             initialState.chain
           }&vault=${initialState.vault}`}
         >
-          <FileTextOutlined style={{ fontSize: '1.5rem' }} />
+          <FileTextOutlined className="text-violet-400 text-5" />
         </a>
       )
     }
@@ -285,12 +294,18 @@ const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit
   }
 
   return (
-    <Card loading={loading} className={styles.strategiesCard} bordered={false} {...responsiveConfig.cardProps}>
-      <div className={styles.title}>
+    <Card
+      className="b-rd-5"
+      style={{ background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)' }}
+      loading={loading}
+      bordered={false}
+      {...responsiveConfig.cardProps}
+    >
+      <div className="flex justify-between align-center mb-4">
         <span>{title}</span>
         <div>
           <Tooltip title="show all strategies added in vault">
-            <span style={{ padding: 10 }}>Show All</span>
+            <span className="pr-4">Show All</span>
           </Tooltip>
           <Switch checked={showAll} onChange={() => setShowAll(!showAll)} />
         </div>

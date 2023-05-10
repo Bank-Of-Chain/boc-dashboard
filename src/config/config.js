@@ -28,6 +28,11 @@ export const BOC_SERVER = 'https://service-pr02-sg.bankofchain.io'
 
 export const ETHI_KEEPER_SERVER = ''
 
-export const IMAGE_ROOT = '{{{IMAGE_ROOT}}}'
+export const IMAGE_ROOT = 'https://v2.bankofchain.io'
 
-export const API_SERVER = '{{{API_SERVER}}}'
+export const SUB_GRAPH_URL_FOR_USDI_ETH = 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-ethereum'
+
+export const SUB_GRAPH_URL_FOR_ETHI = 'https://api.thegraph.com/subgraphs/name/bankofchain/boc-ethi'
+
+export const API_SERVER = 'https://service-pr02-sg.bankofchain.io'
+export const DASHBOARD_ROOT = 'https://dashboard-v2.bankofchain.io'

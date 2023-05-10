@@ -6,10 +6,12 @@ import { Card, Table, Space, Tooltip, Divider } from 'antd'
 import { HourglassOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
+// === Hooks === //
+import { useAsync } from 'react-async-hook'
+
 // === Utils === //
 import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { useModel, useRequest } from 'umi'
 import { formatToUTC0 } from '@/utils/date'
 import { toFixed, formatApyLabel } from '@/utils/number-format'
 import { groupBy, isEmpty, isNil, keyBy, map, reduce } from 'lodash'
@@ -17,10 +19,12 @@ import { groupBy, isEmpty, isNil, keyBy, map, reduce } from 'lodash'
 // === Services === //
 import { getStrategyApyDetails } from '@/services/api-service'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+
 // === Constants === //
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-
-import styles from './style.less'
 
 const dateFormat = 'MMM DD'
 
@@ -33,11 +37,11 @@ const feeApyStatusMap = {
 
 const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayDecimals = TOKEN_DISPLAY_DECIMALS, dropdownGroup }) => {
   const deviceType = useDeviceType()
-  const { initialState } = useModel('@@initialState')
-  const { data: dataSource = [], loading } = useRequest(
-    () => getStrategyApyDetails(initialState.chain, initialState.vaultAddress, strategyAddress, 0, 100),
-    {
-      formatResult: resp => {
+  const [initialState] = useAtom(initialStateAtom)
+  const { chain, vaultAddress } = initialState
+  const { result: dataSource = [], loading } = useAsync(
+    () =>
+      getStrategyApyDetails(chain, vaultAddress, strategyAddress, 0, 100).then(({ data: resp }) => {
         return map(resp, i => {
           const { dailyProfit, weeklyProfit, dailyApy, weeklyApy, detail = [], officialDetail = [] } = i
           const profit = new BN(dailyProfit)
@@ -131,8 +135,8 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
               : toFixed(i.weeklyAssetChanged, BigNumber.from(10).pow(18), vault === 'ethi' ? 6 : displayDecimals)
           }
         })
-      }
-    }
+      }),
+    [strategyAddress, chain, vaultAddress]
   )
   if (isEmpty(dataSource)) return <span />
 
@@ -275,15 +279,13 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
   return (
     <Card
       loading={loading}
+      className="b-rd-4"
       bordered={false}
       extra={dropdownGroup}
-      style={{
-        height: '100%',
-        marginTop: 32
-      }}
+      style={{ background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)' }}
       {...responsiveConfig.cardProps}
     >
-      <div className={styles.cardTitle}>{strategyName} APY Details</div>
+      <div className="mb-5">{strategyName} APY Details</div>
       <Table
         rowKey={record => record.id}
         columns={columns1}
@@ -292,9 +294,9 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
         pagination={false}
         {...responsiveConfig.tableProps}
       />
-      <div className={styles.tip}>
+      <div className="flex pt-1">
         <div>Warning:</div>
-        <div className={styles.right}>
+        <div className="ml-1 flex-1">
           Official APY calculation is also affected by the price of reward token, reward rate and any changes in principal within{' '}
           <span style={{ color: '#a68efe', fontWeight: 'bold' }}>24</span> hours, therefore statistical data could be inaccurate at times.
         </div>

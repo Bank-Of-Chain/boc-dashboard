@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 // === Components === //
@@ -11,14 +11,24 @@ import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import CoinSuperPosition from '@/components/CoinSuperPosition'
 
+// === Hooks === //
+import { useAsync } from 'react-async-hook'
+
 // === Utils === //
 import moment from 'moment'
 import map from 'lodash/map'
 import BN from 'bignumber.js'
 import isEmpty from 'lodash/isEmpty'
 import { toFixed } from '@/utils/number-format'
-import { useModel, useRequest } from 'umi'
-import styles from './style.less'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+import { useMemo } from 'react'
+
+// === Constants === //
+import { CHAIN_BROWSER_URL } from '@/constants'
+import { DEFAULT_LIMIT } from '@/constants/pagination'
 
 const OPERATION = {
   0: 'harvest',
@@ -31,59 +41,46 @@ const OPERATION = {
   7: 'add strategy'
 }
 
+const decimal = BN(1e18)
+
 const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
-  const { initialState } = useModel('@@initialState')
+  const [page, setPage] = useState(1)
+  const [initialState] = useAtom(initialStateAtom)
+  const { vault, chain, vaultAddress } = initialState
   const deviceType = useDeviceType()
   const isETHi = VAULT_TYPE.ETHi === initialState.vault
-  const displayDecimals = {
-    [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
-    [VAULT_TYPE.ETHi]: ETHI_DISPLAY_DECIMALS
-  }[initialState.vault]
+  const displayDecimals = useMemo(() => {
+    return vault === VAULT_TYPE.USDi ? TOKEN_DISPLAY_DECIMALS : ETHI_DISPLAY_DECIMALS
+  }, [vault])
 
-  const {
-    data,
-    run,
-    loading: tableLoading,
-    pagination
-  } = useRequest(
-    pagination => {
-      return getStrategyDetailsReports({
-        strategyName,
-        chainId: initialState.chain,
-        vaultAddress: initialState.vaultAddress,
-        limit: pagination.pageSize,
-        offset: (pagination.current - 1) * pagination.pageSize,
-        sort: 'fetch_index desc'
-      }).catch(() => {
+  const { result: data, loading: tableLoading } = useAsync(() => {
+    return getStrategyDetailsReports({
+      strategyName,
+      chainId: initialState.chain,
+      vaultAddress: initialState.vaultAddress,
+      limit: DEFAULT_LIMIT,
+      offset: (page - 1) * DEFAULT_LIMIT,
+      sort: 'fetch_index desc'
+    })
+      .then(resp => {
+        const {
+          data: { content, totalElements }
+        } = resp
+        return {
+          list: content,
+          total: totalElements
+        }
+      })
+      .catch(() => {
         return {
           content: [],
           total: 0
         }
       })
-    },
-    {
-      manual: true,
-      paginated: true,
-      formatResult: resp => {
-        const { content, totalElements } = resp
-        return {
-          list: content,
-          total: totalElements
-        }
-      }
-    }
-  )
+  }, [chain, vaultAddress, page])
+
   const dataSource = data?.list
   const unit = dataSource && dataSource[0]?.lpTokenUnit ? ` (${dataSource[0]?.lpTokenUnit})` : ''
-
-  useEffect(() => {
-    run({
-      ...pagination,
-      current: 1
-    })
-  }, [initialState.chain, initialState.vault, strategyName])
-
-  const decimal = BN(1e18)
 
   const columns = [
     {
@@ -112,7 +109,13 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
       },
       width: 400,
       render: text => (
-        <a target={'_blank'} rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`} title={text}>
+        <a
+          className="text-violet-400 hover:text-violet-500"
+          target={'_blank'}
+          rel="noreferrer"
+          href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          title={text}
+        >
           {text}
         </a>
       )
@@ -197,21 +200,27 @@ const ReportTable = ({ loading, strategyName, dropdownGroup }) => {
   return (
     <Card
       loading={loading}
+      className="b-rd-4"
       bordered={false}
       extra={dropdownGroup}
       style={{
-        height: '100%',
-        marginTop: 32
+        marginTop: 32,
+        background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
       }}
       {...responsiveConfig.cardProps}
     >
-      <div className={styles.cardTitle}>Reports</div>
+      <div className="mb-4">Reports</div>
       <Table
         rowKey={record => record.id}
         columns={columns}
         dataSource={dataSource}
         loading={tableLoading}
-        pagination={pagination}
+        pagination={{
+          onChange: nextPage => setPage(nextPage),
+          total: data?.total,
+          current: page,
+          showSizeChanger: false
+        }}
         {...responsiveConfig.tableProps}
       />
     </Card>

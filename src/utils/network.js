@@ -1,6 +1,11 @@
+// === Compoents === //
 import { message } from 'antd'
+
+// === Utils === //
 import find from 'lodash/find'
 import isEmpty from 'lodash/isEmpty'
+
+// === Constants === //
 import CHAINS from '@/constants/chain'
 import { WALLETS } from '@/constants/wallet'
 

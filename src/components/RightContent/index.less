@@ -1,4 +1,3 @@
-@import "~antd/es/style/themes/default.less";
 
 @pro-header-hover-bg: rgba(0, 0, 0, 0.025);
 
@@ -62,11 +61,11 @@
   }
 
   :global(.ant-menu-item.ant-menu-item-selected) {
-    color: @primary-color;
+    color: '#A68EFE';
   }
 
   :global(.ant-menu-item.ant-menu-item-selected:after) {
-    border-bottom: 2px solid @primary-color;
+    border-bottom: 2px solid '#A68EFE';
   }
 }
 
@@ -117,7 +116,7 @@
   .account {
     .avatar {
       margin-right: 8px;
-      color: @primary-color;
+      color: '#A68EFE';
       vertical-align: top;
       background: rgba(255, 255, 255, 0.85);
     }
@@ -138,7 +137,6 @@
 
 .chain {
   font-size: 1rem;
-  color: @text-color;
   user-select: none;
 
   &:hover {
@@ -215,28 +213,6 @@
   }
 }
 
-@media only screen and (max-width: @screen-md) {
-  :global(.ant-divider-vertical) {
-    vertical-align: unset;
-  }
-  .name {
-    display: none;
-  }
-  .right {
-    position: absolute;
-    top: 0;
-    right: 12px;
-    .account {
-      .avatar {
-        margin-right: 0;
-        margin-left: 10px;
-      }
-    }
-    .search {
-      display: none;
-    }
-  }
-}
 
 @media screen and (max-width: 554px) {
   .myDasboardBtn {

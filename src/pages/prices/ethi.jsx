@@ -1,36 +1,35 @@
 import React, { Suspense } from 'react'
 
-// === Utils === //
-import { useModel, useRequest } from 'umi'
-import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
-import map from 'lodash/map'
-import { formatToUTC0 } from '@/utils/date'
-import { toFixed } from '@/utils/number-format'
-
 // === Components === //
-import { GridContent } from '@ant-design/pro-layout'
 import { LineEchart } from '@/components/echarts'
 import VaultChange from '@/components/VaultChange'
 
 // === Services === //
 import { getPrices } from '@/services/price-service'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+import { useAsync } from 'react-async-hook'
+
+// === Utils === //
+import getLineEchartOpt from '@/components/echarts/options/line/getLineEchartOpt'
+import map from 'lodash/map'
+import { formatToUTC0 } from '@/utils/date'
+import { toFixed } from '@/utils/number-format'
+
 const ETHIPrice = () => {
-  const { initialState } = useModel('@@initialState')
-  const { data, loading } = useRequest(() => getPrices(initialState.chain, initialState.vaultAddress), {
-    manual: false,
-    paginated: true,
-    formatResult: resp => {
-      const { content } = resp
-      return {
-        total: resp.totalElements,
-        list: map(content, i => {
-          return i
-        })
-      }
-    }
-  })
-  const showData = map(data?.list, i => {
+  const [initialState] = useAtom(initialStateAtom)
+
+  const { chain, vaultAddress } = initialState
+  const { result, loading } = useAsync(
+    () =>
+      getPrices(chain, vaultAddress)
+        .then(resp => resp.data.content)
+        .catch(() => []),
+    [chain, vaultAddress]
+  )
+  const showData = map(result, i => {
     return {
       value: toFixed(i.rate, 1e18),
       date: formatToUTC0(i.validateTime, 'YYYY-MM-DD')
@@ -64,12 +63,12 @@ const ETHIPrice = () => {
     ]
   })
   return (
-    <GridContent>
+    <>
       <Suspense fallback={null}>
         <VaultChange />
       </Suspense>
-      <Suspense fallback={null}>{!loading && <LineEchart option={tvlEchartOpt} style={{ minHeight: '37rem', width: '100%' }} />}</Suspense>
-    </GridContent>
+      <Suspense fallback={null}>{!loading && <LineEchart option={tvlEchartOpt} className="w-full min-h-148" />}</Suspense>
+    </>
   )
 }
 export default ETHIPrice

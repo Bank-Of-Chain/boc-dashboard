@@ -5,16 +5,20 @@ import { Table, Image, Space } from 'antd'
 
 // === Utils === //
 import BN from 'bignumber.js'
-import { useModel } from 'umi'
 import { toFixed } from '@/utils/number-format'
 import { mapValues, values, groupBy, reduce, filter } from 'lodash'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+
 // === Constants === //
+import { IMAGE_ROOT } from '@/config/config'
 import { STRATEGIES_MAP } from '@/constants/strategies'
 
 const TopSearch = ({ tokenDecimals, displayDecimals, visitData = {}, unit }) => {
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null

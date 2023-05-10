@@ -1,5 +1,4 @@
 import React from 'react'
-import { DefaultFooter } from '@ant-design/pro-layout'
 
 // === Hooks === //
 // import useABTest from '@/hooks/useABTest'
@@ -8,30 +7,23 @@ import { DefaultFooter } from '@ant-design/pro-layout'
 import { isMarketingHost } from '@/utils/location'
 
 // === Constants === //
-// import { MAIL_HIDDEN } from '@/constants/abtest'
+import { IMAGE_ROOT, DASHBOARD_ROOT } from '@/config/config'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
   const isMarketing = isMarketingHost()
-  // const { [MAIL_HIDDEN]: mailHidden } = useABTest()
   return (
-    <DefaultFooter
-      copyright={`Produced by Bank Of Chain ${currentYear}`}
-      links={[
-        {
-          key: 'BoC Homepage',
-          title: 'BoC Homepage',
-          href: isMarketing ? 'https://bankofchain.io/' : IMAGE_ROOT,
-          blankTarget: true
-        },
-        {
-          key: 'BoC Dashboard',
-          title: 'BoC Dashboard',
-          href: isMarketing ? 'https://dashboard.bankofchain.io/' : DASHBOARD_ROOT,
-          blankTarget: true
-        }
-      ]}
-    />
+    <div className="text-center">
+      <p className="flex justify-center">
+        <a className="text-zinc-500 hover:text-white" href={isMarketing ? 'https://bankofchain.io/' : IMAGE_ROOT}>
+          BoC Homepage
+        </a>
+        <a className="ml-4 text-zinc-500 hover:text-white" href={isMarketing ? 'https://dashboard.bankofchain.io/' : DASHBOARD_ROOT}>
+          BoC Dashboard
+        </a>
+      </p>
+      <p className="text-zinc-500">@Produced by Bank Of Chain ${currentYear}</p>
+    </div>
   )
 }
 

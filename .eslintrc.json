@@ -2,37 +2,36 @@
   "env": {
     "browser": true,
     "es2021": true,
-    "jest": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "prettier"
   ],
-  "rules": {
-    "react/prop-types": [
-      0
-    ]
-  },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 12,
+    "ecmaVersion": 2021,
     "sourceType": "module"
   },
   "plugins": [
-    "react"
+    "react",
+    "react-hooks",
+    "i18n"
   ],
-  "globals": {
-    "CHAIN_BROWSER_URL": true,
-    "IMAGE_ROOT": true,
-    "DASHBOARD_ROOT": true,
-    "API_SERVER": true,
-    "ENV_INDEX": true,
-    "USDI": true,
-    "ETHI": true,
-    "RPC_URL": true
+  "rules": {
+    "react/prop-types": 0,
+    "no-unused-vars": 1,
+    "no-debugger": 1,
+    "i18n/no-chinese-character": [
+      0,
+      {
+        "includeIdentifier": true
+      }
+    ]
   }
 }

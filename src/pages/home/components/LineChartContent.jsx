@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import classNames from 'classnames'
 
 // === Components === //
@@ -6,26 +6,14 @@ import { LineEchart } from '@/components/echarts'
 import { Card, Tabs, Tooltip, Radio, Select } from 'antd'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
-// === Styles === //
-import styles from '../style.less'
-
-const { TabPane } = Tabs
 const { Option } = Select
 
-export default function LineChartContent({
-  isUsdi,
-  loading = false,
-  calDateRange = 7,
-  onCalDateRangeClick = () => {},
-  apyEchartOpt = {},
-  tvlEchartOpt = {}
-}) {
+const LineChartContent = props => {
+  const { loading = false, calDateRange = 7, onCalDateRangeClick = () => {}, apyEchartOpt = {}, tvlEchartOpt = {} } = props
   const deviceType = useDeviceType()
 
   const chartResponsiveConfig = {
-    [DEVICE_TYPE.Desktop]: {
-      chartWrapperClassName: styles.chartDiv
-    },
+    [DEVICE_TYPE.Desktop]: {},
     [DEVICE_TYPE.Tablet]: {
       cardProps: {
         size: 'small'
@@ -33,8 +21,7 @@ export default function LineChartContent({
       buttonProps: {
         size: 'small',
         style: { fontSize: '0.5rem' }
-      },
-      chartWrapperClassName: styles.chartDivMobile
+      }
     },
     [DEVICE_TYPE.Mobile]: {
       cardProps: {
@@ -43,9 +30,7 @@ export default function LineChartContent({
       buttonProps: {
         size: 'small',
         style: { fontSize: '0.5rem' }
-      },
-      chartWrapperClassName: styles.chartDivMobile,
-      tabClassName: styles.tabMobile
+      }
     }
   }[deviceType]
 
@@ -58,23 +43,29 @@ export default function LineChartContent({
   }
 
   let extra = (
-    <div className={styles.buttons}>
-      <Radio.Group buttonStyle="solid" value={calDateRange} onChange={onDateChange}>
+    <div>
+      <Radio.Group className="b-1 b-solid b-color-violet-400 border-rd" buttonStyle="solid" value={calDateRange} onChange={onDateChange}>
         <Tooltip title="last 7 days">
-          <Radio.Button value={7}>WEEK</Radio.Button>
+          <Radio.Button className="b-l-1 b-solid b-color-violet-400 text-violet-400 bg-transparent !b-rd-0" value={7}>
+            WEEK
+          </Radio.Button>
         </Tooltip>
         <Tooltip title="last 30 days">
-          <Radio.Button value={31}>MONTH</Radio.Button>
+          <Radio.Button className="b-l-1 b-solid b-color-violet-400 text-violet-400 bg-transparent !b-rd-0" value={31}>
+            MONTH
+          </Radio.Button>
         </Tooltip>
         <Tooltip title="last 365 days">
-          <Radio.Button value={365}>YEAR</Radio.Button>
+          <Radio.Button className="b-l-1 b-solid b-color-violet-400 text-violet-400 bg-transparent !b-rd-0" value={365}>
+            YEAR
+          </Radio.Button>
         </Tooltip>
       </Radio.Group>
     </div>
   )
   if (deviceType === DEVICE_TYPE.Mobile) {
     extra = (
-      <Select style={{ width: 120 }} value={calDateRange} onChange={onDateChange}>
+      <Select className="px-20 !b-rd-0 text-violet-400" style={{ width: 120 }} value={calDateRange} onChange={onDateChange}>
         <Option value={7}>WEEK</Option>
         <Option value={31}>MONTH</Option>
         <Option value={365}>YEAR</Option>
@@ -82,18 +73,34 @@ export default function LineChartContent({
     )
   }
 
+  const tabItems = useMemo(() => {
+    return [
+      {
+        key: 'apy',
+        label: 'APY (%)',
+        children: <LineEchart option={apyEchartOpt} className={chartResponsiveConfig.chartWrapperClassName} />
+      },
+      {
+        key: 'totalSupply',
+        label: 'Total Supply',
+        children: <LineEchart option={tvlEchartOpt} className={chartResponsiveConfig.chartWrapperClassName} />
+      }
+    ]
+  }, [apyEchartOpt, tvlEchartOpt, chartResponsiveConfig])
+
   return (
-    <Card loading={loading} bordered={false} {...chartResponsiveConfig.cardProps}>
-      <div className={styles.vaultKeyCard}>
-        <Tabs className={classNames(chartResponsiveConfig.tabClassName)} tabBarExtraContent={extra}>
-          <TabPane tab="APY (%)" key="apy">
-            <LineEchart option={apyEchartOpt} className={chartResponsiveConfig.chartWrapperClassName} />
-          </TabPane>
-          <TabPane tab={isUsdi ? 'Total Supply' : 'Total Supply'} key="totalSupply">
-            <LineEchart option={tvlEchartOpt} className={chartResponsiveConfig.chartWrapperClassName} />
-          </TabPane>
-        </Tabs>
+    <Card
+      className="b-rd-5"
+      style={{ background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)' }}
+      loading={loading}
+      bordered={false}
+      {...chartResponsiveConfig.cardProps}
+    >
+      <div>
+        <Tabs className={classNames(chartResponsiveConfig.tabClassName)} items={tabItems} tabBarExtraContent={extra}></Tabs>
       </div>
     </Card>
   )
 }
+
+export default LineChartContent

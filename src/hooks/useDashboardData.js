@@ -3,8 +3,11 @@ import { useEffect, useState } from 'react'
 // === Services === //
 import { getDashboardDetail } from '@/services/dashboard-service'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+
 // === Utils === //
-import { useModel } from 'umi'
 import isEmpty from 'lodash/isEmpty'
 
 const dataMerge = initialState => {
@@ -33,7 +36,7 @@ const dataMerge = initialState => {
 export default function useDashboardData() {
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(false)
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
 
   useEffect(() => {
     if (initialState?.chain) {

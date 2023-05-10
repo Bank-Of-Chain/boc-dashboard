@@ -2,6 +2,9 @@
 import { request } from 'umi'
 import isEmpty from 'lodash/isEmpty'
 
+// === Constants === //
+import { API_SERVER } from '@/config/config'
+
 /**
  * get segment profits in DAY/WEEK/MONTH
  * @param {*} address user address

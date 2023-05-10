@@ -12,29 +12,25 @@ import map from 'lodash/map'
 import { omit } from 'lodash'
 import compact from 'lodash/compact'
 import BN from 'bignumber.js'
-import { useModel } from 'umi'
 import { toLeastOneFixed, toFixed } from '@/utils/number-format'
 import { getRecentActivity } from '@/services/dashboard-service'
 import { getVaultConfig } from '@/utils/vault'
+
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 // === Constants === //
 import { USDI_DECIMALS } from '@/constants/usdi'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { RECENT_ACTIVITY_TYPE } from '@/constants/usdi'
-
-// === Styles === //
-import styles from '../style.less'
+import { CHAIN_BROWSER_URL } from '@/constants'
 
 const { Option } = Select
 
-const TransationsTable = ({
-  loading,
-  dispalyDecimal = TOKEN_DISPLAY_DECIMALS,
-  decimals = USDI_DECIMALS,
-  token = 'USDi',
-  filterOptions = RECENT_ACTIVITY_TYPE
-}) => {
-  const { initialState } = useModel('@@initialState')
+const TransationsTable = props => {
+  const { loading, dispalyDecimal = TOKEN_DISPLAY_DECIMALS, decimals = USDI_DECIMALS, token = 'USDi', filterOptions = RECENT_ACTIVITY_TYPE } = props
+  const [initialState] = useAtom(initialStateAtom)
   const [data, setData] = useState([])
   const [tableLoading, setTableLoading] = useState(false)
   const deviceType = useDeviceType()
@@ -59,8 +55,7 @@ const TransationsTable = ({
           map(datas, item => {
             if (
               item.type === filterOptions.Mint &&
-              item?.toAccountUpdate?.account?.id?.toLowerCase() ===
-                getVaultConfig(initialState.chain, initialState.vault)?.vaultBufferAddress?.toLowerCase()
+              item?.toAccountUpdate?.account?.id?.toLowerCase() === getVaultConfig(initialState.vault)?.vaultBufferAddress?.toLowerCase()
             )
               return
             if (item.type === filterOptions.Deposit)
@@ -81,7 +76,13 @@ const TransationsTable = ({
 
   const renderAddress = address => {
     return (
-      <a target={'_blank'} href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${address}`} title={address} rel="noreferrer">
+      <a
+        className="text-violet-400 hover:text-violet-500"
+        target={'_blank'}
+        href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${address}`}
+        title={address}
+        rel="noreferrer"
+      >
         {address}
       </a>
     )
@@ -218,9 +219,15 @@ const TransationsTable = ({
   }[deviceType]
 
   let extra = (
-    <Radio.Group value={filter} onChange={handleChange} buttonStyle="solid" {...responsiveConfig.radioGroupProps} className={styles.buttons}>
+    <Radio.Group
+      className="b-1 b-solid b-color-violet-400 border-rd"
+      value={filter}
+      onChange={handleChange}
+      buttonStyle="solid"
+      {...responsiveConfig.radioGroupProps}
+    >
       {map(FILTER_OPTIONS, (value, key) => (
-        <Radio.Button value={value} key={key}>
+        <Radio.Button className="b-l-1 b-solid b-color-violet-400 text-violet-400 bg-transparent !b-rd-0" value={value} key={key}>
           {key}
         </Radio.Button>
       ))}
@@ -239,8 +246,14 @@ const TransationsTable = ({
   }
 
   return (
-    <Card loading={loading} className={styles.strategiesCard} bordered={false} {...responsiveConfig.cardProps}>
-      <div className={styles.title}>
+    <Card
+      className="b-rd-5"
+      style={{ background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)' }}
+      loading={loading}
+      bordered={false}
+      {...responsiveConfig.cardProps}
+    >
+      <div className="flex justify-between align-center mb-4">
         <span>Recent Activity</span>
         {extra}
       </div>

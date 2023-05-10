@@ -6,7 +6,6 @@ import { BarEchart } from '@/components/echarts'
 import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 
 // === Hooks === //
-import { useModel } from 'umi'
 import { useAsync } from 'react-async-hook'
 
 // === Services === //
@@ -19,8 +18,9 @@ import { formatToUTC0 } from '@/utils/date'
 import { toFixed } from '@/utils/number-format'
 import { isEmpty, map, reduce, groupBy, sortBy, get } from 'lodash'
 
-// === Styles === //
-import styles from './style.less'
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 const decimals = BigNumber.from(10).pow(18)
 
@@ -28,7 +28,7 @@ const UniswapV3PositionDetails = props => {
   const { strategyName, names } = props
   const deviceType = useDeviceType()
 
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
 
   const { loading, result } = useAsync(() => {
     if (isEmpty(strategyName)) return
@@ -39,7 +39,10 @@ const UniswapV3PositionDetails = props => {
       start_seconds: current.subtract(31, 'days').format('X'),
       types: 'base-amount0-for-liquidity,base-amount1-for-liquidity,limit-amount0-for-liquidity,limit-amount1-for-liquidity'
     }
-    return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(({ content = [] }) => {
+    return getStrategyDataCollect(chain, vaultAddress, strategyName, params).then(resp => {
+      const {
+        data: { content = [] }
+      } = resp
       const nextContent = content
       const nextArray = map(
         groupBy(
@@ -161,17 +164,18 @@ const UniswapV3PositionDetails = props => {
 
   return (
     <Card
-      className={styles.offlineCard}
       bordered={false}
+      className="b-rd-4"
       style={{
-        marginTop: 32
+        marginTop: 32,
+        background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)'
       }}
       {...chartResponsiveConfig.cardProps}
     >
-      <div className={styles.cardTitle}>UniswapV3 Position Details</div>
+      <div>UniswapV3 Position Details</div>
       <div style={chartResponsiveConfig.chartStyle}>
         {loading ? (
-          <div className={styles.loadingContainer}>
+          <div>
             <Spin size="large" />
           </div>
         ) : (

@@ -9,9 +9,6 @@ import { useDeviceType, DEVICE_TYPE } from '@/components/Container/Container'
 // === Constants === //
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 
-// === Styles === //
-import styles from '../style.less'
-
 export default function ProtocolAllocation({
   loading = false,
   tokenDecimals,
@@ -36,8 +33,14 @@ export default function ProtocolAllocation({
   }[deviceType]
 
   return (
-    <Card loading={loading} className={styles.salesCard} bordered={false} {...protocolResponsiveConfig.cardProps}>
-      <div className={styles.title}>Vault Protocol Allocations</div>
+    <Card
+      className="b-rd-5"
+      style={{ background: 'linear-gradient(111.68deg,rgba(87,97,125,0.2) 7.59%,hsla(0,0%,100%,0.078) 102.04%)' }}
+      loading={loading}
+      bordered={false}
+      {...protocolResponsiveConfig.cardProps}
+    >
+      <div className="flex justify-between align-center mb-4">Vault Protocol Allocations</div>
       <Row gutter={[12, 12]}>
         <Col xl={12} lg={24} md={24} sm={24} xs={24}>
           <Suspense fallback={null}>

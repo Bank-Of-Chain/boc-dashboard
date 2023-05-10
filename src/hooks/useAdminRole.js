@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 
-import { useModel } from 'umi'
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
 
 // === Utils === //
 import * as ethers from 'ethers'
@@ -51,7 +53,7 @@ const useAdminRole = address => {
   const [loading, setLoading] = useState(false)
   const { userProvider } = useWallet()
 
-  const { initialState } = useModel('@@initialState')
+  const [initialState] = useAtom(initialStateAtom)
 
   const roleFetch = async userAddress => {
     const { vaultAddress } = initialState

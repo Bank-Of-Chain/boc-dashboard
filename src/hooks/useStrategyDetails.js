@@ -8,6 +8,7 @@ const useStrategyDetails = (chainId, vaultAddress, strategyId) => {
   const [data, setData] = useState({})
 
   useEffect(() => {
+    if (isEmpty(chainId) || isEmpty(vaultAddress) || isEmpty(strategyId)) return
     getStrategyExtends(chainId, vaultAddress, strategyId)
       .then((v = {}) => {
         const { result } = v

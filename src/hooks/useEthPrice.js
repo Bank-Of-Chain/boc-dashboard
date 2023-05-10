@@ -6,6 +6,7 @@ import { getJsonRpcProvider } from '@/utils/json-provider'
 
 // === Constants === //
 import { ETH } from '@/constants/chain'
+import { ETHI_VAULT } from '@/config/config'
 
 const { Contract } = ethers
 
@@ -53,7 +54,7 @@ export default function useEthPrice() {
       return
     }
     setLoading(true)
-    const vaultContract = new Contract(ETHI.VAULT_ADDRESS[1], VAULT_ABI, jsonRpcProvider)
+    const vaultContract = new Contract(ETHI_VAULT, VAULT_ABI, jsonRpcProvider)
     vaultContract
       .priceProvider()
       .then(priceProviderAddress => {

@@ -1,38 +1,36 @@
-import { Space, Button, message } from 'antd'
-import { useModel, history } from 'umi'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import classNames from 'classnames'
 import copy from 'copy-to-clipboard'
 
 // === Components === //
+import { Space, Button, message } from 'antd'
 import Avatar from './AvatarDropdown'
 import WalletModal from '../WalletModal'
 import { LoadingOutlined } from '@ant-design/icons'
+
+// === Hooks === //
+import useUserAddress from '@/hooks/useUserAddress'
+import useWallet from '@/hooks/useWallet'
+import { useHistory } from 'react-router-dom'
 
 // === Utils === //
 import isEmpty from 'lodash/isEmpty'
 import { isInMobileWalletApp, isInMobileH5 } from '@/utils/device'
 
+// === Jotai === //
+import { useAtom } from 'jotai'
+import { initialStateAtom } from '@/jotai'
+
 // === Contansts === //
 import { WALLET_OPTIONS } from '@/constants/wallet'
-
-// === Hooks === //
-import useUserAddress from '@/hooks/useUserAddress'
-import useWallet from '@/hooks/useWallet'
 
 // === Styles === //
 import styles from './index.less'
 
-// const menu = (
-//   <Menu>
-//     <Menu.Item>Ethereum</Menu.Item>
-//     {/* <Menu.Item>Polygon</Menu.Item> */}
-//   </Menu>
-// )
-
 const GlobalHeaderRight = () => {
+  const history = useHistory()
   const [isLoading, setIsLoading] = useState(false)
-  const { initialState, setInitialState } = useModel('@@initialState')
+  const [initialState, setInitialState] = useAtom(initialStateAtom)
   const [walletModalVisible, setWalletModalVisible] = useState(false)
   const connectTimer = useRef(null)
 
@@ -90,31 +88,24 @@ const GlobalHeaderRight = () => {
         })
       }, 200)
     })
-  }, [userProvider, address, history.location.pathname])
+  }, [userProvider, address, history?.location?.pathname])
 
-  console.log('history=', history.location.pathname)
   return (
-    <div className={styles.header}>
+    <div>
       <Space
         size={20}
         className={classNames(styles.right, styles.dark, {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
       >
-        {/* <Dropdown overlay={menu}>
-          <Space style={{ lineHeight: 2 }}>
-            <a className={styles.chain}>Ethereum</a>
-            <DownOutlined style={{ fontSize: 10 }} />
-          </Space>
-        </Dropdown> */}
-        <Button type="text" href="https://docs.bankofchain.io/" target="_blank" className={styles.colorful}>
+        <Button type="text" href="https://docs.bankofchain.io/" target="_blank">
           Docs
         </Button>
         {history.location.pathname === '/reports' &&
           (isLoading ? (
             <LoadingOutlined style={{ fontSize: 24 }} spin />
           ) : isEmpty(address) ? (
-            <Button className={styles.connectBtn} onClick={handleClickConnect}>
+            <Button className="connectBtn" onClick={handleClickConnect}>
               Connect Wallet
             </Button>
           ) : (

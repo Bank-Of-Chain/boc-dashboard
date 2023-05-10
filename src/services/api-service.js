@@ -1,5 +1,10 @@
-import { request } from 'umi'
+import axios from 'axios'
+
+// === Utils === //
 import { isNil } from 'lodash'
+
+// === Constants === //
+import { API_SERVER } from '@/config/config'
 
 export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
   try {
@@ -8,7 +13,7 @@ export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
       limit,
       ...params
     }
-    return request(`${API_SERVER}/officialApy`, {
+    return axios.get(`${API_SERVER}/officialApy`, {
       params: nextParams
     })
   } catch (error) {
@@ -32,7 +37,7 @@ export const getReports = (params, offset = 0, limit = 20) => {
     offset,
     limit
   }
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation`, {
+  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation`, {
     params: nextParams
   })
 }
@@ -45,7 +50,7 @@ export const getReports = (params, offset = 0, limit = 20) => {
  * @returns
  */
 export const getReportsById = (chainId, vaultAddress, id) => {
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${id}`)
+  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${id}`)
 }
 
 /**
@@ -60,7 +65,7 @@ export const getStrategyDetails = (chainId, vaultAddress, offset = 0, limit = 20
     offset,
     limit
   }
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/detail/list`, {
+  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/detail/list`, {
     params: nextParams
   })
 }
@@ -74,7 +79,7 @@ export const getStrategyDetails = (chainId, vaultAddress, offset = 0, limit = 20
  */
 export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
   const { chainId, vaultAddress, ...restParams } = params
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`, {
+  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`, {
     params: {
       offset,
       limit,
@@ -90,14 +95,13 @@ export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
  */
 export const updateReportStatus = (chainId, vaultAddress, reportId, isReject, headers) => {
   if (isNil(reportId)) return
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${reportId}/${isReject}`, {
-    method: 'patch',
+  return axios.patch(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/allocation/${reportId}/${isReject}`, undefined, {
     headers
   })
 }
 
 export const getStrategyDetailsReports = ({ strategyName, vaultAddress, chainId, limit = 10, offset = 0, sort = 'fetch_timestamp desc' }) => {
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/assets`, {
+  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy/assets`, {
     params: {
       strategyName,
       limit,
@@ -115,7 +119,7 @@ export const getStrategyDetailsReports = ({ strategyName, vaultAddress, chainId,
  * @returns
  */
 export const getAccountApyByAddress = (account, date, params) => {
-  return request(`${API_SERVER}/apy/account_apy/accountAddress/${account}/date/${date}`, {
+  return axios.get(`${API_SERVER}/apy/account_apy/accountAddress/${account}/date/${date}`, {
     params
   })
 }
@@ -127,7 +131,7 @@ export const getAccountApyByAddress = (account, date, params) => {
  * @returns
  */
 export const getProfits = (account, params) => {
-  return request(`${API_SERVER}/profit/account/${account}`, {
+  return axios.get(`${API_SERVER}/profit/account/${account}`, {
     params
   })
 }
@@ -139,7 +143,7 @@ export const getProfits = (account, params) => {
  * @returns
  */
 export const getPersonTvlArray = (account, params) => {
-  return request(`${API_SERVER}/token/balance/account/${account}`, {
+  return axios.get(`${API_SERVER}/token/balance/account/${account}`, {
     params: {
       limit: 365,
       ...params
@@ -154,7 +158,7 @@ export const getPersonTvlArray = (account, params) => {
  * @returns
  */
 export const getMonthProfits = (account, params) => {
-  return request(`${API_SERVER}/month_profit/account/${account}`, {
+  return axios.get(`${API_SERVER}/month_profit/account/${account}`, {
     params
   })
 }
@@ -165,18 +169,20 @@ export const getValutAPYList = ({ chainId, tokenType, duration, offset = 0, limi
   if (useCache && apyListCache[cacheKey]) {
     return Promise.resolve(apyListCache[cacheKey])
   }
-  return request(`${API_SERVER}/apy/vault_apy`, {
-    params: {
-      chainId,
-      duration,
-      offset,
-      limit,
-      tokenType
-    }
-  }).then(data => {
-    apyListCache[cacheKey] = data
-    return data
-  })
+  return axios
+    .get(`${API_SERVER}/apy/vault_apy`, {
+      params: {
+        chainId,
+        duration,
+        offset,
+        limit,
+        tokenType
+      }
+    })
+    .then(data => {
+      apyListCache[cacheKey] = data
+      return data
+    })
 }
 
 let tokenTotalSupplyCache = {}
@@ -185,17 +191,19 @@ export const getTokenTotalSupplyList = ({ chainId, offset = 0, limit, tokenType,
   if (useCache && tokenTotalSupplyCache[cacheKey]) {
     return Promise.resolve(tokenTotalSupplyCache[cacheKey])
   }
-  return request(`${API_SERVER}/token/totalSupply`, {
-    params: {
-      chainId,
-      offset,
-      limit,
-      tokenType
-    }
-  }).then(data => {
-    tokenTotalSupplyCache[cacheKey] = data
-    return data
-  })
+  return axios
+    .get(`${API_SERVER}/token/totalSupply`, {
+      params: {
+        chainId,
+        offset,
+        limit,
+        tokenType
+      }
+    })
+    .then(data => {
+      tokenTotalSupplyCache[cacheKey] = data
+      return data
+    })
 }
 
 export const clearAPICache = () => {
@@ -217,7 +225,7 @@ export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, of
     limit
   }
   const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy/daily`
-  return request(url, {
+  return axios.get(url, {
     params: nextParams
   })
 }
@@ -230,7 +238,7 @@ export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, of
  * @returns
  */
 export const getStrategyExtends = (chainId, vaultAddress, strategyId) => {
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategies/${strategyId}/data_collect`)
+  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategies/${strategyId}/data_collect`)
 }
 
 /**
@@ -242,5 +250,5 @@ export const getStrategyExtends = (chainId, vaultAddress, strategyId) => {
  * @returns
  */
 export const getStrategyDataCollect = (chainId, vaultAddress, strategyName, params) => {
-  return request(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_names/${strategyName}/data_collects`, { params })
+  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/strategy_names/${strategyName}/data_collects`, { params })
 }

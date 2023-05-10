@@ -1,13 +1,12 @@
 import React from 'react'
-import styles from './style.less'
 
 const HoverIcon = props => {
   const { defaultIcon, activeIcon } = props
 
   return (
-    <span className={styles.logo}>
-      <span className={styles.normal}>{defaultIcon}</span>
-      <span className={styles.active}>{activeIcon}</span>
+    <span className="relative inline-block h-full">
+      <span className="h-full flex cursor-pointer">{defaultIcon}</span>
+      <span className="hidden absolute top-0 left-0 opacity-0">{activeIcon}</span>
     </span>
   )
 }
