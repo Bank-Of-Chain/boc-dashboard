@@ -21,7 +21,7 @@ export default defineConfig({
   // This changes the out put dir from dist to build
   // comment this out if that isn't relevant for your project
   build: {
-    outDir: 'build',
+    outDir: 'dist',
     rollupOptions: {
       plugins: [nodePolyfills()]
     },
@@ -33,8 +33,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
-  }, //eslint()
-  plugins: [UnoCSS(), reactRefresh(), Analyze()],
+  },
+  plugins: [UnoCSS(), reactRefresh(), Analyze(), eslint()],
   optimizeDeps: {
     esbuildOptions: {
       // Node.js global to browser globalThis
