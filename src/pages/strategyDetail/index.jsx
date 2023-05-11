@@ -1,10 +1,5 @@
 import React, { Suspense, useState, useEffect } from 'react'
 
-// === Constants === //
-import { USDI_STRATEGIES_MAP, ETHI_STRATEGIES_MAP } from '@/constants/strategies'
-import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
-import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
-
 // === Components === //
 import { LeftOutlined, PieChartOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { LineEchart } from '@/components/echarts'
@@ -45,6 +40,9 @@ import useStrategyDetails from '@/hooks/useStrategyDetails'
 // === Constants === //
 import URL from '@/constants/dune'
 import BorrowingExtends from '@/constants/borrowing-extends'
+import { STRATEGIES_MAP } from '@/constants/strategies'
+import { VAULT_TYPE, TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+import { ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 
 // === Styles === //
 import styles from './style.less'
@@ -137,11 +135,6 @@ const Strategy = props => {
 
   // boc-service fixed the number to 6
   const decimals = BN(1e18)
-
-  const strategiesMap = {
-    [VAULT_TYPE.USDi]: USDI_STRATEGIES_MAP,
-    [VAULT_TYPE.ETHi]: ETHI_STRATEGIES_MAP
-  }[initialState.vault]
 
   const displayDecimals = {
     [VAULT_TYPE.USDi]: TOKEN_DISPLAY_DECIMALS,
@@ -582,7 +575,7 @@ const Strategy = props => {
                   preview={false}
                   width="100%"
                   style={{ maxWidth: '200px', borderRadius: '50%' }}
-                  src={`${IMAGE_ROOT}/images/amms/${strategiesMap[initialState.chain][strategy?.protocol]}.png`}
+                  src={`${IMAGE_ROOT}/images/amms/${STRATEGIES_MAP[strategy?.protocol]}.png`}
                   fallback={`${IMAGE_ROOT}/default.png`}
                 />
               </div>
