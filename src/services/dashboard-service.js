@@ -43,6 +43,7 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
     id
     totalAssets
     totalAssetsIncludeVaultBuffer
+    valueOfTrackedTokens
     strategies(where: {isAdded: true}) {
       id
       protocol
