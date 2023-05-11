@@ -41,7 +41,7 @@ const StrategyApyTable = ({ vault, strategyName, strategyAddress, unit, displayD
   const { chain, vaultAddress } = initialState
   const { result: dataSource = [], loading } = useAsync(
     () =>
-      getStrategyApyDetails(chain, vaultAddress, strategyAddress, 0, 100).then(({ data: resp }) => {
+      getStrategyApyDetails(chain, vaultAddress, strategyAddress, 0, 100).then(resp => {
         return map(resp, i => {
           const { dailyProfit, weeklyProfit, dailyApy, weeklyApy, detail = [], officialDetail = [] } = i
           const profit = new BN(dailyProfit)

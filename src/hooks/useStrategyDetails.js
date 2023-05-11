@@ -10,8 +10,8 @@ const useStrategyDetails = (chainId, vaultAddress, strategyId) => {
   useEffect(() => {
     if (isEmpty(chainId) || isEmpty(vaultAddress) || isEmpty(strategyId)) return
     getStrategyExtends(chainId, vaultAddress, strategyId)
-      .then((v = {}) => {
-        const { result } = v
+      .then(({ data }) => {
+        const { result } = data
         if (!isEmpty(result)) {
           setData(result)
         }

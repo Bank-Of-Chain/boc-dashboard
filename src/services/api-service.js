@@ -13,9 +13,11 @@ export const getStrategyApysOffChain = (params, offset = 0, limit = 20) => {
       limit,
       ...params
     }
-    return axios.get(`${API_SERVER}/officialApy`, {
-      params: nextParams
-    })
+    return axios
+      .get(`${API_SERVER}/officialApy`, {
+        params: nextParams
+      })
+      .then(({ data }) => data)
   } catch (error) {
     return {
       content: []
@@ -79,13 +81,15 @@ export const getStrategyDetails = (chainId, vaultAddress, offset = 0, limit = 20
  */
 export const getBaseApyByPage = (params, offset = 0, limit = 20) => {
   const { chainId, vaultAddress, ...restParams } = params
-  return axios.get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`, {
-    params: {
-      offset,
-      limit,
-      ...restParams
-    }
-  })
+  return axios
+    .get(`${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy`, {
+      params: {
+        offset,
+        limit,
+        ...restParams
+      }
+    })
+    .then(({ data }) => data)
 }
 
 /**
@@ -225,9 +229,11 @@ export const getStrategyApyDetails = (chainId, vaultAddress, strategyAddress, of
     limit
   }
   const url = `${API_SERVER}/chains/${chainId}/vaults/${vaultAddress}/verifiedApy/daily`
-  return axios.get(url, {
-    params: nextParams
-  })
+  return axios
+    .get(url, {
+      params: nextParams
+    })
+    .then(({ data }) => data)
 }
 
 /**

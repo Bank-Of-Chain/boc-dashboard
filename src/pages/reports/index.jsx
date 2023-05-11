@@ -541,7 +541,7 @@ const Reports = () => {
       ellipsis: true,
       render: (text, item, index) => {
         return (
-          <a title={text} key={index}>
+          <a className="text-violet-400 hover:text-violet-500" title={text} key={index}>
             {text}
           </a>
         )
@@ -599,11 +599,21 @@ const Reports = () => {
       render: (text, item) => {
         return (
           <Space>
-            <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.fromToken}`}>
+            <a
+              className="text-violet-400 hover:text-violet-500"
+              target="_blank"
+              rel="noreferrer"
+              href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.fromToken}`}
+            >
               {item.fromTokenName}
             </a>
             <ArrowRightOutlined />
-            <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.toToken}`}>
+            <a
+              className="text-violet-400 hover:text-violet-500"
+              target="_blank"
+              rel="noreferrer"
+              href={`${CHAIN_BROWSER_URL[initialState.chain]}/address/${item.toToken}`}
+            >
               {item.toTokenName}
             </a>
           </Space>
@@ -657,7 +667,7 @@ const Reports = () => {
       ellipsis: true,
       render: (text, item, index) => {
         return (
-          <a title={text} key={index}>
+          <a className="text-violet-400 hover:text-violet-500" title={text} key={index}>
             {text}
           </a>
         )
@@ -850,7 +860,12 @@ const Reports = () => {
         width: '14rem',
         ellipsis: true,
         render: text => (
-          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          <a
+            className="text-violet-400 hover:text-violet-500"
+            target="_blank"
+            rel="noreferrer"
+            href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          >
             {text}
           </a>
         )
@@ -924,7 +939,12 @@ const Reports = () => {
         width: '14rem',
         ellipsis: true,
         render: text => (
-          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          <a
+            className="text-violet-400 hover:text-violet-500"
+            target="_blank"
+            rel="noreferrer"
+            href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          >
             {text}
           </a>
         )
@@ -998,7 +1018,12 @@ const Reports = () => {
         width: '14rem',
         ellipsis: true,
         render: text => (
-          <a target="_blank" rel="noreferrer" href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}>
+          <a
+            className="text-violet-400 hover:text-violet-500"
+            target="_blank"
+            rel="noreferrer"
+            href={`${CHAIN_BROWSER_URL[initialState.chain]}/tx/${text}`}
+          >
             {text}
           </a>
         )

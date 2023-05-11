@@ -72,7 +72,7 @@ const ETHiHome = () => {
       limit: calDateRange,
       tokenType: TOKEN_TYPE.ethi
     })
-      .then(data => {
+      .then(({ data }) => {
         const nextApy7 = get(data, 'content.[0].apy', 0)
         setApy7(nextApy7)
       })
@@ -85,7 +85,7 @@ const ETHiHome = () => {
       limit: calDateRange,
       tokenType: TOKEN_TYPE.ethi
     })
-      .then(data => {
+      .then(({ data }) => {
         const items = appendDate(data.content, 'apy', calDateRange)
         const result = map(reverse(items), ({ date, apy }) => {
           const apyValue = isNil(apy) ? null : `${numeral(apy).format('0.00')}`
@@ -186,7 +186,7 @@ const ETHiHome = () => {
       limit: calDateRange,
       tokenType: TOKEN_TYPE.ethi
     })
-      .then(data => {
+      .then(({ data }) => {
         const items = appendDate(data.content, 'totalSupply', calDateRange)
         const result = map(reverse(items), ({ date, totalSupply }) => ({
           date,
