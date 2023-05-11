@@ -18,7 +18,7 @@ const TopSearch = ({ tokenDecimals, displayDecimals, visitData = {}, unit }) => 
   const deviceType = useDeviceType()
 
   if (!initialState.chain) return null
-  const { strategies = [], totalValueInVault = '0' } = visitData
+  const { strategies = [], valueOfTrackedTokens: totalValueInVault = '0' } = visitData
   const total = reduce(
     strategies,
     (rs, o) => {
