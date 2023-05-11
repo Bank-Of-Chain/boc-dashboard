@@ -3,14 +3,14 @@
 exports[`LineChartContent Component Render 1`] = `
 <DocumentFragment>
   <div
-    class="ant-card ant-card-small b-rd-5 css-dev-only-do-not-override-ed5zg0"
+    class="ant-card ant-card-small b-rd-5 css-dev-only-do-not-override-yp8pcc"
   >
     <div
       class="ant-card-body"
     >
       <div>
         <div
-          class="ant-tabs ant-tabs-top css-dev-only-do-not-override-ed5zg0"
+          class="ant-tabs ant-tabs-top css-dev-only-do-not-override-yp8pcc"
         >
           <div
             class="ant-tabs-nav"
@@ -97,7 +97,7 @@ exports[`LineChartContent Component Render 1`] = `
               class="ant-tabs-extra-content"
             >
               <div
-                class="ant-select px-20 !b-rd-0 text-violet-400 css-dev-only-do-not-override-ed5zg0 ant-select-single ant-select-show-arrow"
+                class="ant-select !b-rd-0 text-violet-400 css-dev-only-do-not-override-yp8pcc ant-select-single ant-select-show-arrow"
                 style="width: 120px;"
               >
                 <div
@@ -174,7 +174,7 @@ exports[`LineChartContent Component Render 1`] = `
                 <div
                   aria-busy="true"
                   aria-live="polite"
-                  class="ant-spin ant-spin-spinning ant-spin-show-text css-dev-only-do-not-override-ed5zg0"
+                  class="ant-spin ant-spin-spinning ant-spin-show-text css-dev-only-do-not-override-yp8pcc"
                   style="display: flex; align-items: center; justify-content: center; min-height: 20px; font-size: 14px;"
                 >
                   <span

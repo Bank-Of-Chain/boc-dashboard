@@ -3,7 +3,7 @@
 exports[`ChartCard Component Render 1`] = `
 <DocumentFragment>
   <div
-    class="ant-card ant-card-bordered p-4 b-rd-5 css-dev-only-do-not-override-ed5zg0"
+    class="ant-card ant-card-bordered p-4 b-rd-5 css-dev-only-do-not-override-yp8pcc"
   >
     <div
       class="ant-card-body"
