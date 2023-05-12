@@ -276,7 +276,7 @@ const ETHiHome = () => {
       },
       BN(0)
     )
-    vaultData.totalValueInVault = BN(vaultData.totalAssetsIncludeVaultBuffer).minus(strategyTotal).toString()
+    vaultData.totalValueInVault = BN(vaultData.totalAssetsIncludeVaultBuffer).minus(strategyTotal).toFixed()
     vaultData.strategies.map(item => (item.totalValue = item.debtRecordInVault))
   }
 

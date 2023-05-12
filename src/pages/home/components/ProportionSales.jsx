@@ -18,7 +18,7 @@ import { STRATEGIES_MAP } from '@/constants/strategies'
 import styles from '../style.less'
 
 const ProportionSales = ({ tokenDecimals, displayDecimals, visitData = {}, unit }) => {
-  const { strategies = [], valueOfTrackedTokens: totalValueInVault = '0' } = visitData
+  const { strategies = [], totalValueInVault = '0' } = visitData
   const { initialState } = useModel('@@initialState')
   const suffix = ` (${unit})`
 
