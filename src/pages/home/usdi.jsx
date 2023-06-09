@@ -22,7 +22,7 @@ import { notice } from '@/constants/notice'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
-import { getValutAPYList, getTokenTotalSupplyList, clearAPICache } from '@/services/api-service'
+import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getVirtualAPY } from '@/services/api-service'
 
 // === Utils === //
 import { useModel, history } from 'umi'
@@ -77,13 +77,16 @@ const USDiHome = () => {
       .catch(e => {
         console.error(e)
       })
-    getValutAPYList({
-      chainId: initialState.chain,
-      duration: APY_DURATION.monthly,
-      limit: calDateRange,
-      tokenType: TOKEN_TYPE.usdi
-    })
-      .then(data => {
+    Promise.all([
+      getValutAPYList({
+        chainId: initialState.chain,
+        duration: APY_DURATION.monthly,
+        limit: calDateRange,
+        tokenType: TOKEN_TYPE.usdi
+      }),
+      getVirtualAPY(initialState.chain, '0x30D120f80D60E7b58CA9fFaf1aaB1815f000B7c3')
+    ])
+      .then(([data, virtualApy]) => {
         const items = appendDate(data.content, 'apy', calDateRange)
         const result = map(reverse(items), ({ date, apy }) => {
           const apyValue = isNil(apy) ? null : `${numeral(apy).format('0.00')}`
@@ -98,7 +101,7 @@ const USDiHome = () => {
         const xAxisData = uniq(map(result, ({ date }) => date))
 
         // option for multi line
-        const lengndData = []
+        const lengndData = ['APY', 'Virtual APY']
         const data1 = map(xAxisData, date => {
           const item = find(result, { date })
           return item
@@ -108,11 +111,29 @@ const USDiHome = () => {
               }
             : null
         })
+
+        const data2 = map(xAxisData, date => {
+          const item = find(virtualApy, { date })
+          let value = 0
+          if (!isEmpty(item)) {
+            value = (100 * item.apy).toFixed(2)
+          }
+          return {
+            value: formatApyValue(value),
+            label: `${formatApyLabel(value)}%`
+          }
+        })
+
         const columeArray = [
           {
             seriesName: 'APY',
             seriesData: data1,
             showSymbol: size(filter(data1, i => !isNil(i.value))) === 1
+          },
+          {
+            seriesName: 'Virtual APY',
+            seriesData: data2,
+            showSymbol: size(filter(data2, i => !isNil(i.value))) === 1
           }
         ]
         const obj = {
@@ -124,12 +145,18 @@ const USDiHome = () => {
           data: columeArray
         }
         const option = multipleLine(obj)
-        option.color = ['#A68EFE', '#5470c6', '#91cc75']
+        option.color = ['#A68EFE', '#fb923c', '#91cc75']
         option.series.forEach(serie => {
           serie.connectNulls = true
           if (serie.name === 'Estimated APY') {
             serie.lineStyle = {
               width: 2,
+              type: 'dotted'
+            }
+          }
+          if (serie.name === 'Virtual APY') {
+            serie.lineStyle = {
+              width: 5,
               type: 'dotted'
             }
           }
@@ -164,13 +191,25 @@ const USDiHome = () => {
           formatter: params => {
             if (params.length > 0) {
               const { axisValueLabel, marker, seriesName, data } = params[0]
-              let tooltip = `${axisValueLabel}<br/>${marker}${seriesName}: `
+
+              const { marker: marker2, seriesName: seriesName2, data: data2 } = params[1]
+
+              let text1 = '',
+                text2 = ''
               // value maybe null
               if (data?.value) {
-                tooltip += data?.label
+                text1 = data?.label
               } else {
-                tooltip += '-'
+                text1 = '-'
               }
+              if (data2?.value) {
+                text2 = data2?.label
+              } else {
+                text2 = '-'
+              }
+
+              let tooltip = `${axisValueLabel}<br/>${marker}${seriesName}:${text1}<br/>${marker2}${seriesName2}:${text2}`
+
               return tooltip
             }
           }
