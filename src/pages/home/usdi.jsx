@@ -192,9 +192,9 @@ const USDiHome = () => {
           ...option.tooltip,
           formatter: params => {
             if (params.length > 0) {
-              const { axisValueLabel, marker, seriesName, data } = params[0]
+              const { axisValueLabel, marker, seriesName, data } = get(params, '[0]', {})
 
-              const { marker: marker2, seriesName: seriesName2, data: data2 } = params[1]
+              const { marker: marker2, seriesName: seriesName2, data: data2 } = get(params, '[1]', {})
 
               let text1 = '',
                 text2 = ''
@@ -210,7 +210,11 @@ const USDiHome = () => {
                 text2 = '-'
               }
 
-              let tooltip = `${axisValueLabel}<br/>${marker}${seriesName}:${text1}<br/>${marker2}${seriesName2}:${text2}`
+              let tooltip = `${axisValueLabel}<br/>${marker}${seriesName}:${text1}`
+
+              if (!isEmpty(params[1])) {
+                tooltip += `<br/>${marker2}${seriesName2}:${text2}`
+              }
 
               return tooltip
             }
