@@ -64,19 +64,19 @@ const USDiHome = () => {
     if (calDateRange > 7) {
       params.format = 'MM-DD'
     }
-    getValutAPYList({
-      chainId: initialState.chain,
-      duration: APY_DURATION.weekly,
-      limit: calDateRange,
-      tokenType: TOKEN_TYPE.usdi
-    })
-      .then(data => {
-        const nextApy7 = get(data, 'content.[0].apy', 0)
-        setApy7(nextApy7)
-      })
-      .catch(e => {
-        console.error(e)
-      })
+    // getValutAPYList({
+    //   chainId: initialState.chain,
+    //   duration: APY_DURATION.weekly,
+    //   limit: calDateRange,
+    //   tokenType: TOKEN_TYPE.usdi
+    // })
+    //   .then(data => {
+    //     const nextApy7 = get(data, 'content.[0].apy', 0)
+    //     setApy7(nextApy7)
+    //   })
+    //   .catch(e => {
+    //     console.error(e)
+    //   })
     Promise.all([
       getValutAPYList({
         chainId: initialState.chain,
@@ -97,6 +97,8 @@ const USDiHome = () => {
         })
         const nextApy30 = get(data, 'content.[0].apy', 0)
         setApy30(nextApy30)
+        const nextApy7 = get(virtualApy, '[0].apy', 0)
+        setApy7(100 * nextApy7)
 
         const xAxisData = uniq(map(result, ({ date }) => date))
 
@@ -293,7 +295,7 @@ const USDiHome = () => {
     //   loading
     // },
     {
-      title: 'APY (last 7 days)',
+      title: ' Virtual APY (last 7 days)',
       tip: 'Yield over the past week.',
       content: formatApyLabel(parseFloat(apy7).toFixed(2)),
       loading,
