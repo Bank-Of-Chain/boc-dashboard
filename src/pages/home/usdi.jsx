@@ -22,7 +22,7 @@ import { notice } from '@/constants/notice'
 
 // === Services === //
 import useDashboardData from '@/hooks/useDashboardData'
-import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getVirtualAPY } from '@/services/api-service'
+import { getValutAPYList, getTokenTotalSupplyList, clearAPICache, getVirtualAPY, getVirtualAPYByMonthly } from '@/services/api-service'
 
 // === Utils === //
 import { useModel, history } from 'umi'
@@ -77,6 +77,9 @@ const USDiHome = () => {
     //   .catch(e => {
     //     console.error(e)
     //   })
+    getVirtualAPYByMonthly(initialState.chain, '0x30D120f80D60E7b58CA9fFaf1aaB1815f000B7c3').then((resp = 0) => {
+      setApy30(100 * resp)
+    })
     Promise.all([
       getValutAPYList({
         chainId: initialState.chain,
@@ -95,8 +98,8 @@ const USDiHome = () => {
             apy: apyValue
           }
         })
-        const nextApy30 = get(data, 'content.[0].apy', 0)
-        setApy30(nextApy30)
+        // const nextApy30 = get(data, 'content.[0].apy', 0)
+        // setApy30(nextApy30)
         const nextApy7 = get(virtualApy, '[0].apy', 0)
         setApy7(100 * nextApy7)
 
@@ -306,7 +309,7 @@ const USDiHome = () => {
       unit: '%'
     },
     {
-      title: 'APY (last 30 days)',
+      title: 'Virtual APY (last 30 days)',
       tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,

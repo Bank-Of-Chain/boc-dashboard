@@ -254,3 +254,13 @@ export const getStrategyDataCollect = (chainId, vaultAddress, strategyName, para
 export const getVirtualAPY = (chainId = '1', vaultAddress) => {
   return request(`${API_SERVER}/officialApy/yearly/chain/${chainId}/vaults/${vaultAddress}`)
 }
+
+/**
+ *
+ * @param {*} chainId
+ * @param {*} vaultAddress
+ * @returns
+ */
+export const getVirtualAPYByMonthly = (chainId = '1', vaultAddress) => {
+  return request(`${API_SERVER}/officialApy/virtual_apy/chain/${chainId}/vaults/${vaultAddress}/duration/monthly`)
+}
