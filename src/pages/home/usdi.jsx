@@ -77,7 +77,7 @@ const USDiHome = () => {
     //   .catch(e => {
     //     console.error(e)
     //   })
-    getVirtualAPYByMonthly(initialState.chain, '0x30D120f80D60E7b58CA9fFaf1aaB1815f000B7c3').then((resp = 0) => {
+    getVirtualAPYByMonthly(initialState.chain, initialState.vaultAddress).then((resp = 0) => {
       setApy30(100 * resp)
     })
     Promise.all([
@@ -87,7 +87,7 @@ const USDiHome = () => {
         limit: calDateRange,
         tokenType: TOKEN_TYPE.usdi
       }),
-      getVirtualAPY(initialState.chain, '0x30D120f80D60E7b58CA9fFaf1aaB1815f000B7c3')
+      getVirtualAPY(initialState.chain, initialState.vaultAddress)
     ])
       .then(([data, virtualApy]) => {
         const items = appendDate(data.content, 'apy', calDateRange)
