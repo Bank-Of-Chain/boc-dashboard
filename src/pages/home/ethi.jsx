@@ -77,7 +77,7 @@ const ETHiHome = () => {
     //   .catch(e => {
     //     console.error(e)
     //   })
-    getVirtualAPYByMonthly(initialState.chain, '0x8f0Cb368C63fbEDF7a90E43fE50F7eb8B9411746').then((resp = 0) => {
+    getVirtualAPYByMonthly(initialState.chain, initialState.vaultAddress).then((resp = 0) => {
       setApy30(100 * resp)
     })
     Promise.all([
@@ -87,7 +87,7 @@ const ETHiHome = () => {
         limit: calDateRange,
         tokenType: TOKEN_TYPE.ethi
       }),
-      getVirtualAPY(initialState.chain, '0x8f0Cb368C63fbEDF7a90E43fE50F7eb8B9411746')
+      getVirtualAPY(initialState.chain, initialState.vaultAddress)
     ])
       .then(([data, virtualApy]) => {
         const items = appendDate(data.content, 'apy', calDateRange)
