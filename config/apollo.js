@@ -11,9 +11,8 @@ const start = async () => {
   if (isEmpty(env)) {
     nextEnv = await chooseEnv()
   }
-  const insideUrl = `http://apollo-config-public.bankofchain.io:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`
-  const outsideUrl = `http://54.179.161.168:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`
-  const { status, data } = await Promise.any([axios.get(insideUrl), axios.get(outsideUrl)]).catch(error => {
+  const url = `http://apollo-config.bankofchain.io:8088/configfiles/json/boc-subgraph/${nextEnv}/boc1.application`
+  const { status, data } = await axios.get(url).catch(error => {
     console.error(`load ${nextEnv} config error`)
     return {
       status: 200,
