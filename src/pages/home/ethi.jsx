@@ -284,10 +284,10 @@ const ETHiHome = () => {
       tip: 'Current total ETHi supply.',
       content: !isEmpty(pegToken) ? `${totalSupplyText}${isNotNumber ? '' : symbol}` : 0,
       loading,
-      unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} ETHi`,
+      unit: `${!isEmpty(pegToken) ? `${isNotNumber ? symbol : ''}` : ''} APTi`,
       footer: (
         <span>
-          1ETHi ≈ {price()}ETH{' '}
+          1APTi ≈ {price()}APT{' '}
           <span className={styles.history} onClick={handleHistoryClick}>
             History
           </span>

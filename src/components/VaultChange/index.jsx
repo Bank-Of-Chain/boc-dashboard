@@ -16,7 +16,7 @@ import { VAULT_TYPE } from '@/constants/vault'
 import styles from './index.less'
 
 const options = [
-  { key: 'ethi', label: 'ETHi', value: 'ethi' },
+  { key: 'ethi', label: 'APTi', value: 'ethi' },
   { key: 'usdi', label: 'USDi', value: 'usdi' }
 ]
 
