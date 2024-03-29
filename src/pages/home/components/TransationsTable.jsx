@@ -35,7 +35,94 @@ const TransationsTable = ({
   filterOptions = RECENT_ACTIVITY_TYPE
 }) => {
   const { initialState } = useModel('@@initialState')
-  const [data, setData] = useState([])
+  const [data, setData] = useState([
+    {
+      __typename: 'PegTokenUpdate',
+      id: '0xeca838d165d74ba8a8e99d370f5217fa76b0d82d31011e3c908f3fbd8ba09e85_71',
+      type: 'Burn',
+      transferredAmount: '1988749166300857',
+      totalSupplyChangeAmount: '1988749166300857',
+      timestamp: '1711713531',
+      fromAccountUpdate: {
+        __typename: 'AccountUpdate',
+        account: {
+          __typename: 'Account',
+          id: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'
+        }
+      },
+      transaction: {
+        __typename: 'Transaction',
+        id: '0xeca838d165d74ba8a8e99d370f5217fa76b0d82d31011e3c908f3fbd8ba09e85'
+      },
+      toAccountUpdate: null
+    },
+    {
+      __typename: 'PegTokenUpdate',
+      id: '0xeca838d165d74ba8a8e99d370f5217fa76b0d82d31011e3c908f3fbd8ba09e85_71',
+      type: 'Rebase',
+      transferredAmount: '1988749166300857',
+      totalSupplyChangeAmount: '1988749166300857',
+      timestamp: '1711710531',
+      fromAccountUpdate: null,
+      transaction: {
+        __typename: 'Transaction',
+        id: '0xeca838d165d74ba8a8e99d370f5217fa76b0d82d31011e3c908f3fbd8ba09e85'
+      },
+      toAccountUpdate: null
+    },
+    {
+      __typename: 'PegTokenUpdate',
+      id: '0xeca838d165d74ba8a8e99d370f5217fa76b0d82d31011e3c908f3fbd8ba09e85_71',
+      type: 'Transfer',
+      transferredAmount: '1988749166300857',
+      totalSupplyChangeAmount: '1988749166300857',
+      timestamp: '1711706531',
+      fromAccountUpdate: {
+        __typename: 'AccountUpdate',
+        account: {
+          __typename: 'Account',
+          id: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'
+        }
+      },
+      transaction: {
+        __typename: 'Transaction',
+        id: '0xeca838d165d74ba8a8e99d370f5217fa76b0d82d31011e3c908f3fbd8ba09e85'
+      },
+      toAccountUpdate: {
+        __typename: 'AccountUpdate',
+        account: {
+          __typename: 'Account',
+          id: '0xc8915157b36ed6d0f36827a1bb5e9b0cdd1e87cd'
+        }
+      }
+    },
+    {
+      __typename: 'PegTokenUpdate',
+      id: '0xeca838d165d74ba8a8e99d370f5217fa76b0d82d31011e3c908f3fbd8ba09e85_71',
+      type: 'Mint',
+      transferredAmount: '1988749166300857',
+      totalSupplyChangeAmount: '1988749166300857',
+      timestamp: '1711700531',
+      fromAccountUpdate: {
+        __typename: 'AccountUpdate',
+        account: {
+          __typename: 'Account',
+          id: '0xc8915157b36ed6d0f36827a1bb5e9b0cdd1e87cd'
+        }
+      },
+      transaction: {
+        __typename: 'Transaction',
+        id: '0xc2db5149f0442d13b2389b392930f99c8bd3b6633c0c639220848e4dc09fe42d'
+      },
+      toAccountUpdate: {
+        __typename: 'AccountUpdate',
+        account: {
+          __typename: 'Account',
+          id: '0x6b4b48ccdb446a109ae07d8b027ce521b5e2f1ff'
+        }
+      }
+    }
+  ])
   const [tableLoading, setTableLoading] = useState(false)
   const deviceType = useDeviceType()
 
@@ -46,38 +133,39 @@ const TransationsTable = ({
   const [filter, setFilter] = useState(FILTER_OPTIONS.All)
   const [currentPage, setCurrentPage] = useState(1)
 
-  useEffect(() => {
-    const nextFilter = [filter]
-    if (filter === RECENT_ACTIVITY_TYPE.Mint) {
-      nextFilter.push(RECENT_ACTIVITY_TYPE.Deposit)
-    }
-    const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : nextFilter
-    setTableLoading(true)
-    getRecentActivity(initialState.vault, initialState.chain, types)
-      .then(datas => {
-        const nextDatas = compact(
-          map(datas, item => {
-            if (
-              item.type === filterOptions.Mint &&
-              item?.toAccountUpdate?.account?.id?.toLowerCase() ===
-                getVaultConfig(initialState.chain, initialState.vault)?.vaultBufferAddress?.toLowerCase()
-            )
-              return
-            if (item.type === filterOptions.Deposit)
-              return {
-                ...item,
-                type: filterOptions.Mint
-              }
-            return item
-          })
-        )
-        setCurrentPage(1)
-        setData(nextDatas)
-      })
-      .finally(() => {
-        setTableLoading(false)
-      })
-  }, [filter])
+  // useEffect(() => {
+  //   const nextFilter = [filter]
+  //   if (filter === RECENT_ACTIVITY_TYPE.Mint) {
+  //     nextFilter.push(RECENT_ACTIVITY_TYPE.Deposit)
+  //   }
+  //   const types = filter === FILTER_OPTIONS.All ? Object.values(filterOptions) : nextFilter
+  //   setTableLoading(true)
+  //   getRecentActivity(initialState.vault, initialState.chain, types)
+  //     .then(datas => {
+  //       const nextDatas = compact(
+  //         map(datas, item => {
+  //           if (
+  //             item.type === filterOptions.Mint &&
+  //             item?.toAccountUpdate?.account?.id?.toLowerCase() ===
+  //               getVaultConfig(initialState.chain, initialState.vault)?.vaultBufferAddress?.toLowerCase()
+  //           )
+  //             return
+  //           if (item.type === filterOptions.Deposit)
+  //             return {
+  //               ...item,
+  //               type: filterOptions.Mint
+  //             }
+  //           return item
+  //         })
+  //       )
+  //       setCurrentPage(1)
+  //       console.log('nextDatas', nextDatas)
+  //       setData(nextDatas)
+  //     })
+  //     .finally(() => {
+  //       setTableLoading(false)
+  //     })
+  // }, [filter])
 
   const renderAddress = address => {
     return (

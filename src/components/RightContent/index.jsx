@@ -101,7 +101,7 @@ const GlobalHeaderRight = () => {
   }, [userProvider, address, history.location.pathname])
 
   return (
-    <div className={styles.header}>
+    <div className={styles.header} style={{ display: 'none' }}>
       <Space
         size={20}
         className={classNames(styles.right, styles.dark, {
