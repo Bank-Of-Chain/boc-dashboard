@@ -130,11 +130,11 @@ const USDiHome = () => {
         })
 
         const columeArray = [
-          {
-            seriesName: 'APY',
-            seriesData: data1,
-            showSymbol: size(filter(data1, i => !isNil(i.value))) === 1
-          },
+          // {
+          //   seriesName: 'APY',
+          //   seriesData: data1,
+          //   showSymbol: size(filter(data1, i => !isNil(i.value))) === 1
+          // },
           {
             seriesName: 'Virtual APY',
             seriesData: data2,
@@ -159,12 +159,12 @@ const USDiHome = () => {
               type: 'dotted'
             }
           }
-          if (serie.name === 'Virtual APY') {
-            serie.lineStyle = {
-              width: 5,
-              type: 'dotted'
-            }
-          }
+          // if (serie.name === 'Virtual APY') {
+          //   serie.lineStyle = {
+          //     width: 5,
+          //     type: 'dotted'
+          //   }
+          // }
         })
         option.grid = {
           top: 40,
@@ -302,14 +302,14 @@ const USDiHome = () => {
     //   loading
     // },
     {
-      title: ' Virtual APY (last 7 days)',
+      title: 'APY (Last 7 days)',
       tip: 'Yield over the past week.',
       content: formatApyLabel(parseFloat(apy7).toFixed(2)),
       loading,
       unit: '%'
     },
     {
-      title: 'Virtual APY (last 30 days)',
+      title: 'APY (Last 30 days)',
       tip: 'Yield over the past month.',
       content: formatApyLabel(parseFloat(apy30).toFixed(2)),
       loading,
@@ -320,35 +320,6 @@ const USDiHome = () => {
     <GridContent>
       <VaultChange />
       <Row gutter={[0, 30]}>
-        <Col span={24}>
-          <div
-            style={{
-              color: 'rgb(148, 163, 184)',
-              background: 'linear-gradient(111.68deg, rgba(87, 97, 125, 0.2) 7.59%, rgba(255, 255, 255, 0.078) 102.04%)',
-              padding: '1rem',
-              borderRadius: '1rem'
-            }}
-          >
-            <SoundOutlined />
-            &nbsp;&nbsp;
-            {isNoticeOpen ? (
-              <span>
-                <span>Please be well noticed !</span>
-                <br></br>
-                {notice}
-                <CaretUpOutlined style={{ float: 'right', lineHeight: 2, clear: 'both', cursor: 'pointer' }} onClick={() => setIsNoticeOpen(false)} />
-              </span>
-            ) : (
-              <span>
-                Please be well noticed !
-                <CaretDownOutlined
-                  style={{ float: 'right', lineHeight: 2, clear: 'both', cursor: 'pointer' }}
-                  onClick={() => setIsNoticeOpen(true)}
-                />
-              </span>
-            )}
-          </div>
-        </Col>
         <Col span={24}>
           <Suspense fallback={null}>
             <IntroduceRow data={introduceData} />

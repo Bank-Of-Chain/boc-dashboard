@@ -357,13 +357,13 @@ const ETHiHome = () => {
               tokenDecimals={ETHI_BN_DECIMALS}
               displayDecimals={ETHI_DISPLAY_DECIMALS}
               vaultData={vaultData}
-              unit="ETH"
+              unit="APT"
             />
           </Suspense>
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <StrategyTable unit="ETH" loading={loading} strategyMap={ETHI_STRATEGIES_MAP} displayDecimals={ETHI_DISPLAY_DECIMALS} />
+            <StrategyTable unit="APT" loading={loading} strategyMap={ETHI_STRATEGIES_MAP} displayDecimals={ETHI_DISPLAY_DECIMALS} />
           </Suspense>
         </Col>
         <Col span={24}>

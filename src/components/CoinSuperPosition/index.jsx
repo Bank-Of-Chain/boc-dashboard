@@ -23,7 +23,7 @@ const CoinSuperPosition = ({ array = [], size = 24 }) => {
         marginLeft: i === 0 ? 0 : -10,
         zIndex: array.length - i
       }}
-      src={`${IMAGE_ROOT}/images/${address}.png`}
+      src={`http://localhost:3000/images/${address}.png`}
       fallback={DEFAULT}
     />
   )

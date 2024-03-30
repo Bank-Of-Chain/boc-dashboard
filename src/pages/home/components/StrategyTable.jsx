@@ -42,7 +42,7 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           <Image
             preview={false}
             width={30}
-            src={`${IMAGE_ROOT}/images/amms/${strategyMap[initialState.chain][item.protocol]}.png`}
+            src={`http://localhost:3001/images/amms/${item.protocol}.png`}
             placeholder={item.protocol}
             style={{ borderRadius: '50%' }}
             alt={strategyMap[initialState.chain][item.protocol]}
@@ -245,7 +245,129 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
       )
     }
   ]
-  const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
+  // const data = showAll ? searchData : filter(searchData, i => BN(i.totalAsset).gt(0))
+  const data = [
+    {
+      id: 1774044010915209200,
+      chainId: 1,
+      vaultAddress: '0x8f0Cb368C63fbEDF7a90E43fE50F7eb8B9411746',
+      strategyAddress: '0x70c0e1b334124c7d46fc0c7a9048a802ab4c39c6',
+      strategyName: 'AriesAptStrategy',
+      protocol: 'Aries',
+      underlyingTokens: 'APT',
+      totalAsset: '0',
+      totalAssetBaseCurrent: '0',
+      dailyAssetChanged: null,
+      verifiedApy: 0,
+      dailyVerifiedApy: null,
+      dailyUnrealizedApy: null,
+      dailyRealizedApy: null,
+      officialWeeklyApy: 0.04025149868437827,
+      realizedApy: {
+        value: 0,
+        detail: null
+      },
+      unrealizedApy: {
+        value: 0,
+        detail: null
+      },
+      weekProfit: '0',
+      weeklyAssetChanged: '0',
+      scheduleTimestamp: 1711714931,
+      scheduleTime: '2024-03-29 12:22:11',
+      apyValidateTime: '2024-03-29'
+    },
+    {
+      id: 1774043985439006700,
+      chainId: 1,
+      vaultAddress: '0x8f0Cb368C63fbEDF7a90E43fE50F7eb8B9411746',
+      strategyAddress: '0x7600ef6e821fb16a8681eb1e2d4544cada2ce90f',
+      strategyName: 'AmnisAptStrategy',
+      protocol: 'Amnis',
+      underlyingTokens: 'APT',
+      totalAsset: '0',
+      totalAssetBaseCurrent: '0',
+      dailyAssetChanged: null,
+      verifiedApy: 0,
+      dailyVerifiedApy: null,
+      dailyUnrealizedApy: null,
+      dailyRealizedApy: null,
+      officialWeeklyApy: 0.05751511682603949,
+      realizedApy: {
+        value: 0,
+        detail: null
+      },
+      unrealizedApy: {
+        value: 0,
+        detail: null
+      },
+      weekProfit: '0',
+      weeklyAssetChanged: '0',
+      scheduleTimestamp: 1711714931,
+      scheduleTime: '2024-03-29 12:22:11',
+      apyValidateTime: '2024-03-29'
+    },
+    {
+      id: 1774044018171355100,
+      chainId: 1,
+      vaultAddress: '0x8f0Cb368C63fbEDF7a90E43fE50F7eb8B9411746',
+      strategyAddress: '0xa02110877dcaf5aedd640812d3f8a7fa9bdb24a0',
+      strategyName: 'LiquidSwapAptStrategy',
+      protocol: 'LiquidSwap',
+      underlyingTokens: 'APT',
+      totalAsset: '0',
+      totalAssetBaseCurrent: '0',
+      dailyAssetChanged: null,
+      verifiedApy: 0,
+      dailyVerifiedApy: null,
+      dailyUnrealizedApy: null,
+      dailyRealizedApy: null,
+      officialWeeklyApy: 0.022784324195248562,
+      realizedApy: {
+        value: 0,
+        detail: null
+      },
+      unrealizedApy: {
+        value: 0,
+        detail: null
+      },
+      weekProfit: '0',
+      weeklyAssetChanged: '0',
+      scheduleTimestamp: 1711714931,
+      scheduleTime: '2024-03-29 12:22:11',
+      apyValidateTime: '2024-03-29'
+    },
+    {
+      id: 1774044021791039500,
+      chainId: 1,
+      vaultAddress: '0x8f0Cb368C63fbEDF7a90E43fE50F7eb8B9411746',
+      strategyAddress: '0x5fc5b4245356ec5633e09963849a5e469c7402ae',
+      strategyName: 'AptinAptStrategy',
+      protocol: 'Aptin',
+      underlyingTokens: 'APT',
+      totalAsset: '0',
+      totalAssetBaseCurrent: '0',
+      dailyAssetChanged: null,
+      verifiedApy: 0,
+      dailyVerifiedApy: null,
+      dailyUnrealizedApy: null,
+      dailyRealizedApy: null,
+      officialWeeklyApy: 0.019221792333521392,
+      realizedApy: {
+        value: 0,
+        detail: null
+      },
+      unrealizedApy: {
+        value: 0,
+        detail: null
+      },
+      weekProfit: '0',
+      weeklyAssetChanged: '0',
+      scheduleTimestamp: 1711714931,
+      scheduleTime: '2024-03-29 12:22:11',
+      apyValidateTime: '2024-03-29'
+    }
+  ]
   const responsiveConfig = {
     [DEVICE_TYPE.Desktop]: {
       tableProps: {

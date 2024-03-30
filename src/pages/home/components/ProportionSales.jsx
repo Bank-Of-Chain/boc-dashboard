@@ -36,25 +36,43 @@ const ProportionSales = ({ strategyMap, tokenDecimals, displayDecimals, visitDat
   const vaultDisplayValue = toFixed(tvl, tokenDecimals, displayDecimals)
   if ((isEmpty(groupData) && vaultDisplayValue <= 0) || isNaN(vaultDisplayValue)) return <Empty style={{ marginTop: '4rem' }} />
 
+  // const tableData = [
+  //   ...values(
+  //     mapValues(groupData, (o, key) => {
+  //       const amount = reduce(
+  //         o,
+  //         (rs, ob) => {
+  //           return rs.plus(ob.totalValue)
+  //         },
+  //         BN(0)
+  //       )
+  //       return {
+  //         Protocol: `${strategyMap[initialState.chain][key]}${suffix}`,
+  //         amount: toFixed(amount, tokenDecimals, displayDecimals)
+  //       }
+  //     })
+  //   ),
+  //   {
+  //     Protocol: `Vault${suffix}`,
+  //     amount: toFixed(totalValueInVault, tokenDecimals, displayDecimals)
+  //   }
+  // ]
   const tableData = [
-    ...values(
-      mapValues(groupData, (o, key) => {
-        const amount = reduce(
-          o,
-          (rs, ob) => {
-            return rs.plus(ob.totalValue)
-          },
-          BN(0)
-        )
-        return {
-          Protocol: `${strategyMap[initialState.chain][key]}${suffix}`,
-          amount: toFixed(amount, tokenDecimals, displayDecimals)
-        }
-      })
-    ),
     {
-      Protocol: `Vault${suffix}`,
-      amount: toFixed(totalValueInVault, tokenDecimals, displayDecimals)
+      Protocol: 'Aries',
+      amount: '3'
+    },
+    {
+      Protocol: 'Amnis',
+      amount: '3'
+    },
+    {
+      Protocol: 'LiquidSwap',
+      amount: '3'
+    },
+    {
+      Protocol: 'Aptin',
+      amount: '1'
     }
   ]
 

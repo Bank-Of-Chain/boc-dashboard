@@ -101,12 +101,16 @@ const GlobalHeaderRight = () => {
   }, [userProvider, address, history.location.pathname])
 
   return (
-    <div className={styles.header} style={{ display: 'none' }}>
+    <div className={styles.header}>
+      <Button type="text" href="http://localhost:3000" target="_blank" className={styles.colorful}>
+        Go to deposit
+      </Button>
       <Space
         size={20}
         className={classNames(styles.right, styles.dark, {
           [styles.hidden]: isInMobileH5() || isInMobileWalletApp()
         })}
+        style={{ display: 'none' }}
       >
         {/* <Dropdown overlay={menu}>
           <Space style={{ lineHeight: 2 }}>
