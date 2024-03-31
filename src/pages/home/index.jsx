@@ -38,7 +38,7 @@ export default function Home() {
   }
 
   const toDeposit = () => {
-    window.location.href = 'http://localhost:3000'
+    window.location.href = 'http://localhost:3000/?tab=1&depositAmount=1'
   }
 
   return (
