@@ -14,8 +14,9 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
   }
   vault(id: $valutAddress) {
     id
-    totalValueInVault
+    valueOfTrackedTokens
     totalAssets
+    totalAssetsIncludeVaultBuffer
     strategies(where: {isAdded: true}) {
       id
       protocol
@@ -41,6 +42,8 @@ query ($tokenAddress: Bytes, $valutAddress: Bytes, $vaultBufferAddress: Bytes) {
   vault(id: $valutAddress) {
     id
     totalAssets
+    totalAssetsIncludeVaultBuffer
+    valueOfTrackedTokens
     strategies(where: {isAdded: true}) {
       id
       protocol

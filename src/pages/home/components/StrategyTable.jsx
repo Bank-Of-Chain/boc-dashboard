@@ -16,9 +16,14 @@ import { isMarketingHost } from '@/utils/location'
 // === Services === //
 import { getStrategyDetails } from '@/services/api-service'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
+
+// === Constants === //
+import { STRATEGIES_MAP } from '@/constants/strategies'
+
+// === Styles === //
 import styles from '../style.less'
 
-const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
+const StrategyTable = ({ loading, displayDecimals = TOKEN_DISPLAY_DECIMALS, unit = 'USD' }) => {
   const [showAll, setShowAll] = useState(true)
   const { initialState } = useModel('@@initialState')
   const deviceType = useDeviceType()
@@ -42,10 +47,10 @@ const StrategyTable = ({ loading, strategyMap, displayDecimals = TOKEN_DISPLAY_D
           <Image
             preview={false}
             width={30}
-            src={`${IMAGE_ROOT}/images/amms/${strategyMap[initialState.chain][item.protocol]}.png`}
+            src={`${IMAGE_ROOT}/images/amms/${STRATEGIES_MAP[item.protocol]}.png`}
             placeholder={item.protocol}
             style={{ borderRadius: '50%' }}
-            alt={strategyMap[initialState.chain][item.protocol]}
+            alt={STRATEGIES_MAP[item.protocol]}
             fallback={`${IMAGE_ROOT}/default.png`}
           />
           <a

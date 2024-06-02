@@ -1,3 +1,28 @@
+const STRATEGIES_MAP = [
+  'Balancer',
+  'UniswapV2',
+  'Dodo',
+  'Sushi_Kashi',
+  'Sushi_Swap',
+  'Convex',
+  'Rari',
+  'UniswapV3',
+  'YearnEarn',
+  'YearnV2',
+  'YearnIronBank',
+  'GUni',
+  'Stargate',
+  'DForce',
+  'Synapse',
+  'Aura',
+  'Aave',
+  'Euler',
+  'Alpha',
+  'Gearbox',
+  'StakeWise',
+  'Frax'
+]
+
 const USDI_ETH_STRATEGIES_MAP = [
   'Balancer',
   'UniswapV2',
@@ -60,4 +85,4 @@ export const ETHI_STRATEGIES_MAP = {
   1: ETHI_ETH_STRATEGIES_MAP
 }
 
-export { USDI_ETH_STRATEGIES_MAP, USDI_MATIC_STRATEGIES_MAP, ETHI_ETH_STRATEGIES_MAP }
+export { USDI_ETH_STRATEGIES_MAP, USDI_MATIC_STRATEGIES_MAP, ETHI_ETH_STRATEGIES_MAP, STRATEGIES_MAP }

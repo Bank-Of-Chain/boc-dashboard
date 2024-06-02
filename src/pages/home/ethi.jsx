@@ -14,7 +14,6 @@ import VaultChange from '@/components/VaultChange'
 import { SoundOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons'
 
 // === Constants === //
-import { ETHI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { ETHI_BN_DECIMALS, ETHI_DECIMALS, RECENT_ACTIVITY_TYPE, ETHI_DISPLAY_DECIMALS } from '@/constants/ethi'
 import { notice } from '@/constants/notice'
@@ -29,8 +28,8 @@ import numeral from 'numeral'
 import moment from 'moment'
 import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
+import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { isEmpty, isNil, uniq, find, size, filter, map, reverse, cloneDeep, reduce, get } from 'lodash'
 
 // === Styles === //
@@ -325,7 +324,7 @@ const ETHiHome = () => {
       },
       BN(0)
     )
-    vaultData.totalValueInVault = BN(vaultData.totalAssets).minus(strategyTotal).toString()
+    vaultData.totalValueInVault = BN(vaultData.totalAssetsIncludeVaultBuffer).minus(strategyTotal).toFixed()
     vaultData.strategies.map(item => (item.totalValue = item.debtRecordInVault))
   }
 
@@ -336,6 +335,7 @@ const ETHiHome = () => {
         <Col span={24}>
           <div
             style={{
+              display: 'none',
               color: 'rgb(148, 163, 184)',
               background: 'linear-gradient(111.68deg, rgba(87, 97, 125, 0.2) 7.59%, rgba(255, 255, 255, 0.078) 102.04%)',
               padding: '1rem',
@@ -382,7 +382,6 @@ const ETHiHome = () => {
           <Suspense fallback={null}>
             <ProtocolAllocation
               loading={loading}
-              strategyMap={ETHI_STRATEGIES_MAP}
               tokenDecimals={ETHI_BN_DECIMALS}
               displayDecimals={ETHI_DISPLAY_DECIMALS}
               vaultData={vaultData}
@@ -392,7 +391,7 @@ const ETHiHome = () => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <StrategyTable unit="ETH" loading={loading} strategyMap={ETHI_STRATEGIES_MAP} displayDecimals={ETHI_DISPLAY_DECIMALS} />
+            <StrategyTable unit="ETH" loading={loading} displayDecimals={ETHI_DISPLAY_DECIMALS} />
           </Suspense>
         </Col>
         <Col span={24}>

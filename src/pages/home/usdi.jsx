@@ -14,7 +14,6 @@ import VaultChange from '@/components/VaultChange'
 import { SoundOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons'
 
 // === Constants === //
-import { USDI_STRATEGIES_MAP } from '@/constants/strategies'
 import { TOKEN_TYPE, APY_DURATION } from '@/constants'
 import { TOKEN_DISPLAY_DECIMALS } from '@/constants/vault'
 import { USDI_BN_DECIMALS } from '@/constants/usdi'
@@ -29,9 +28,10 @@ import { useModel, history } from 'umi'
 import numeral from 'numeral'
 import moment from 'moment'
 import { BigNumber } from 'ethers'
+import BN from 'bignumber.js'
 import { formatApyLabel, formatApyValue, toFixed } from '@/utils/number-format'
 import { appendDate } from '@/utils/array-append'
-import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN } from 'lodash'
+import { isEmpty, isNil, uniq, find, map, reverse, size, filter, get, isNaN, cloneDeep, reduce } from 'lodash'
 
 // === Styles === //
 import styles from './style.less'
@@ -48,7 +48,6 @@ const USDiHome = () => {
 
   const { dataSource = {}, loading } = useDashboardData()
   const { pegToken = {}, vault = {}, vaultBuffer = {} } = dataSource
-
   useEffect(() => {
     if (!initialState.chain) {
       return
@@ -316,6 +315,18 @@ const USDiHome = () => {
       unit: '%'
     }
   ]
+  const vaultData = cloneDeep(dataSource.vault)
+  if (vaultData) {
+    const strategyTotal = reduce(
+      vaultData.strategies,
+      (rs, o) => {
+        return rs.plus(o.totalValue)
+      },
+      BN(0)
+    )
+    vaultData.totalValueInVault = BN(vaultData.totalAssetsIncludeVaultBuffer).minus(strategyTotal).toFixed()
+  }
+
   return (
     <GridContent>
       <VaultChange />
@@ -323,6 +334,7 @@ const USDiHome = () => {
         <Col span={24}>
           <div
             style={{
+              display: 'none',
               color: 'rgb(148, 163, 184)',
               background: 'linear-gradient(111.68deg, rgba(87, 97, 125, 0.2) 7.59%, rgba(255, 255, 255, 0.078) 102.04%)',
               padding: '1rem',
@@ -368,12 +380,12 @@ const USDiHome = () => {
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <ProtocolAllocation loading={loading} strategyMap={USDI_STRATEGIES_MAP} tokenDecimals={USDI_BN_DECIMALS} vaultData={dataSource.vault} />
+            <ProtocolAllocation loading={loading} tokenDecimals={USDI_BN_DECIMALS} vaultData={vaultData} />
           </Suspense>
         </Col>
         <Col span={24}>
           <Suspense fallback={null}>
-            <StrategyTable strategyMap={USDI_STRATEGIES_MAP} loading={loading} />
+            <StrategyTable loading={loading} />
           </Suspense>
         </Col>
         <Col span={24}>
